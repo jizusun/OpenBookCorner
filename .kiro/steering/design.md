@@ -22,6 +22,25 @@ The system addresses the core requirements of library management including book 
 
 The system is organized around three bounded contexts, each representing a core business domain with clear responsibilities and boundaries.
 
+## Domain Language (Ubiquitous Language)
+
+### Core Terms
+- **Library**: An organization's book collection and management system
+- **Book**: The conceptual item (title, author, ISBN)
+- **Book Copy**: Physical instance of a book that can be borrowed
+- **Member**: User with access to borrow books from their library
+- **Librarian**: User who can manage the library's catalog and settings
+- **Borrowing Record**: Active or historical record of a book being borrowed
+- **Book Request**: Member request for library to acquire a new book
+- **Donation**: Offer from member to contribute books to library
+
+### Status Terms
+- **Available**: Book copy ready for borrowing
+- **Borrowed**: Book copy currently checked out
+- **Overdue**: Borrowed book past its due date
+- **Reserved**: Book copy held for specific member
+- **Maintenance**: Book copy temporarily unavailable
+
 #### Bounded Contexts Overview
 
 ```mermaid
@@ -58,6 +77,11 @@ graph TB
 #### 1. Library Management Bounded Context
 
 **Domain Responsibility**: Managing library tenants, users, authentication, and access control.
+
+**Key Rules**: 
+- Email domain determines library membership
+- Only one library per email domain
+- Role assignments are library-scoped
 
 **Core Aggregates:**
 
@@ -176,6 +200,11 @@ export class LibraryDomainService {
 
 **Domain Responsibility**: Managing book catalog, inventory, metadata, and discovery.
 
+**Key Rules**:
+- Books have metadata (title, author, ISBN) and physical copies
+- Each copy has unique tracking (condition, location)
+- ISBN validation and external metadata enrichment
+
 **Core Aggregates:**
 
 ```typescript
@@ -278,6 +307,11 @@ export class BookInventory {
 #### 3. Circulation Bounded Context
 
 **Domain Responsibility**: Managing borrowing, returning, overdue tracking, and book requests.
+
+**Key Rules**:
+- One active borrowing per book copy
+- Due dates calculated from library policies
+- Automated overdue notifications
 
 **Core Aggregates:**
 
@@ -400,6 +434,197 @@ export class CirculationDomainService {
   }
 }
 ```
+
+## Domain Events
+
+### Event Types
+```typescript
+// Library Management Events
+interface LibraryRegistered {
+  libraryId: LibraryId;
+  domain: EmailDomain;
+  adminEmail: Email;
+}
+
+interface MemberAdded {
+  libraryId: LibraryId;
+  memberId: UserId;
+  role: Role;
+}
+
+// Catalog Events
+interface BookAdded {
+  libraryId: LibraryId;
+  bookId: BookId;
+  isbn: ISBN;
+}
+
+interface CopyAdded {
+  libraryId: LibraryId;
+  bookId: BookId;
+  copyId: CopyId;
+}
+
+// Circulation Events
+interface BookBorrowed {
+  libraryId: LibraryId;
+  borrowingId: BorrowingId;
+  copyId: CopyId;
+  memberId: UserId;
+  dueDate: Date;
+}
+
+interface BookReturned {
+  libraryId: LibraryId;
+  borrowingId: BorrowingId;
+  copyId: CopyId;
+  returnedAt: Date;
+}
+
+interface BookOverdue {
+  libraryId: LibraryId;
+  borrowingId: BorrowingId;
+  memberId: UserId;
+  daysOverdue: number;
+}
+```
+
+## Repository Patterns
+
+### Interface Segregation
+```typescript
+// Read-side repositories
+interface BookCatalogQuery {
+  findAvailableBooks(libraryId: LibraryId, search?: string): Promise<BookSummary[]>;
+  getBookDetails(bookId: BookId): Promise<BookDetails>;
+  getBorrowingHistory(copyId: CopyId): Promise<BorrowingHistory[]>;
+}
+
+// Write-side repositories
+interface BookRepository {
+  save(book: Book): Promise<void>;
+  findById(id: BookId): Promise<Book | null>;
+  findByISBN(isbn: ISBN, libraryId: LibraryId): Promise<Book | null>;
+}
+
+interface BorrowingRepository {
+  save(record: BorrowingRecord): Promise<void>;
+  findActiveByMember(memberId: UserId): Promise<BorrowingRecord[]>;
+  findOverdueRecords(libraryId: LibraryId): Promise<BorrowingRecord[]>;
+}
+```
+
+## Multi-Tenant Domain Rules
+
+### Tenant Isolation
+- All aggregates MUST include LibraryId as part of their identity
+- Cross-tenant operations are explicitly forbidden at domain level
+- Domain services validate tenant boundaries before operations
+
+### Tenant-Specific Policies
+```typescript
+interface LibraryPolicy {
+  maxBorrowingDays: number;
+  maxBooksPerMember: number;
+  allowExtensions: boolean;
+  overdueNotificationDays: number[];
+  requireApprovalForRequests: boolean;
+}
+
+class CirculationService {
+  constructor(private policyRepository: LibraryPolicyRepository) {}
+
+  async borrowBook(copyId: CopyId, memberId: UserId): Promise<BorrowingRecord> {
+    const policy = await this.policyRepository.getByLibrary(libraryId);
+    // Apply library-specific borrowing rules
+  }
+}
+```
+
+## Anti-Corruption Layer
+
+### External Service Integration
+```typescript
+// Protect domain from external API changes
+interface BookMetadataProvider {
+  lookupByISBN(isbn: ISBN): Promise<ExternalBookData>;
+}
+
+class OpenLibraryAdapter implements BookMetadataProvider {
+  async lookupByISBN(isbn: ISBN): Promise<ExternalBookData> {
+    const response = await this.httpClient.get(`/isbn/${isbn}`);
+    // Transform external format to domain format
+    return this.transformToBookMetadata(response);
+  }
+
+  private transformToBookMetadata(external: any): ExternalBookData {
+    // Isolate domain from external API structure
+  }
+}
+```
+
+## Domain Service Guidelines
+
+### When to Use Domain Services
+- Logic that doesn't naturally belong to a single aggregate
+- Operations requiring multiple aggregates
+- Complex business rules involving external systems
+- Cross-context coordination (via events)
+
+### Service Design
+```typescript
+class BookRequestService {
+  constructor(
+    private bookRepository: BookRepository,
+    private requestRepository: BookRequestRepository,
+    private eventBus: DomainEventBus
+  ) {}
+
+  async processRequest(requestId: RequestId): Promise<void> {
+    const request = await this.requestRepository.findById(requestId);
+    
+    // Check if book already exists
+    const existingBook = await this.bookRepository.findByISBN(
+      request.isbn, 
+      request.libraryId
+    );
+
+    if (existingBook) {
+      request.markAsDuplicate();
+    } else {
+      request.approve();
+      // Publish event for catalog team to add book
+      await this.eventBus.publish(new BookRequestApproved({
+        requestId: request.id,
+        isbn: request.isbn,
+        libraryId: request.libraryId
+      }));
+    }
+
+    await this.requestRepository.save(request);
+  }
+}
+```
+
+## DDD Implementation Guidelines
+
+### Aggregate Boundaries
+- Keep aggregates small and focused
+- Avoid deep object graphs within aggregates
+- Use eventual consistency between aggregates
+- Enforce invariants only within aggregate boundaries
+
+### Domain Logic Location
+- **Entities**: Identity and core business rules
+- **Value Objects**: Immutable concepts and validation
+- **Domain Services**: Multi-aggregate operations
+- **Application Services**: Orchestration and infrastructure coordination
+
+### Testing Strategy
+- **Unit Tests**: Domain logic in isolation
+- **Integration Tests**: Repository implementations
+- **Domain Tests**: Business scenarios across aggregates
+- **Contract Tests**: Anti-corruption layer boundaries
 
 ### High-Level Architecture (Cloudflare)
 
