@@ -536,24 +536,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
+      
+      - name: Install mise
+        uses: jdx/mise-action@v2
       
       - name: Install dependencies
-        run: npm ci
+        run: mise run install
       
       - name: Run unit tests
-        run: npm run test:unit
+        run: pnpm run test:unit
       
       - name: Run integration tests
-        run: npm run test:integration
+        run: pnpm run test:integration
       
       - name: Run E2E tests
-        run: npm run test:e2e
+        run: pnpm run test:e2e
       
       - name: Check coverage
-        run: npm run test:coverage
+        run: pnpm run test:coverage
 ```
 
 ## Performance Testing

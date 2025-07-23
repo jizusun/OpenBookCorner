@@ -1,0 +1,29 @@
+[tools]
+node = "23.5"
+
+[env]
+NODE_ENV = "development"
+
+[tasks.install]
+description = "Install all dependencies"
+run = "pnpm install"
+
+[tasks.dev]
+description = "Start development servers"
+run = "pnpm run dev"
+
+[tasks.build]
+description = "Build all packages"
+run = "pnpm run build"
+
+[tasks.test]
+description = "Run all tests"
+run = "pnpm run test"
+
+[tasks.lint]
+description = "Lint all packages"
+run = "pnpm run lint"
+
+[tasks.format]
+description = "Format all code"
+run = "pnpm run format"

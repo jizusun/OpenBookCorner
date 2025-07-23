@@ -30,21 +30,63 @@
 - **Event-Driven**: Domain events for cross-aggregate communication
 - **CQRS**: Separate read/write models where beneficial
 
+## Version Management with mise
+
+This project uses [mise](https://mise.jdx.dev/) to manage tool versions consistently across development environments.
+
+### Why mise?
+- **Consistent versions**: Ensures all developers use the same Node.js, pnpm, and other tool versions
+- **Automatic switching**: Automatically switches to project versions when entering the directory
+- **Task runner**: Provides convenient task shortcuts for common operations
+- **Cross-platform**: Works on macOS, Linux, and Windows
+
+### Installation
+```bash
+# macOS
+brew install mise
+
+# Linux/WSL
+curl https://mise.run | sh
+
+# Windows (PowerShell)
+irm https://mise.run | iex
+```
+
+### Usage
+```bash
+# Install all project tools (Node.js, pnpm, etc.)
+mise install
+
+# Run project tasks
+mise run dev      # Start development servers
+mise run build    # Build all packages
+mise run test     # Run all tests
+mise run lint     # Lint all code
+mise run format   # Format all code
+
+# Check tool versions
+mise list
+```
+
 ## Development Commands
 
 ### Setup & Installation
 ```bash
-# Clone and install dependencies
+# Clone repository
 git clone <repository-url>
 cd OpenBookCorner
-npm install
 
-# Backend dependencies
-cd worker && npm install && cd ..
+# Install mise (if not already installed)
+# macOS: brew install mise
+# Linux: curl https://mise.run | sh
+
+# Install project tools and dependencies
+mise install
+mise run install
 
 # Environment setup
 cp .env.example .env
-cp worker/.env.example worker/.env
+cp backend/.env.example backend/.env
 ```
 
 ### Database Operations
@@ -53,43 +95,51 @@ cp worker/.env.example worker/.env
 npx wrangler d1 create openbookcorner
 
 # Run migrations
-cd worker && npm run db:migrate && cd ..
+pnpm --filter backend run db:migrate
 
 # Generate database types
-cd worker && npm run db:generate && cd ..
+pnpm --filter backend run db:generate
 ```
 
 ### Development Servers
 ```bash
-# Start frontend (port 5173)
-npm run dev
+# Start both frontend and backend (recommended)
+mise run dev
 
-# Start backend in separate terminal (port 8787)
-cd worker && npm run dev
+# Or start individually:
+# Frontend (port 5173)
+pnpm run dev:frontend
+
+# Backend (port 8787)
+pnpm run dev:backend
 ```
 
 ### Build & Deploy
 ```bash
-# Build frontend
-npm run build
+# Build all packages
+mise run build
+
+# Or use pnpm directly:
+pnpm run build
 
 # Deploy backend to Cloudflare Workers
-cd worker && npm run deploy
+pnpm run deploy:backend
 
 # Deploy frontend to Cloudflare Pages
-npx wrangler pages deploy dist
+pnpm run deploy:frontend
 ```
 
 ### Testing
 ```bash
-# Run unit tests
-npm run test
+# Run all tests
+mise run test
 
-# Run integration tests
-npm run test:integration
+# Or use pnpm directly:
+pnpm run test
 
-# Run E2E tests
-npm run test:e2e
+# Run specific test suites:
+pnpm run test:frontend
+pnpm run test:backend
 ```
 
 ## Code Quality Standards
