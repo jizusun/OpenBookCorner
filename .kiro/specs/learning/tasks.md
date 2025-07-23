@@ -33,7 +33,11 @@ Save this as learning/svelte-tutorial.md
 
 Save this as learning/sveltekit-tutorial.md
 
+<<<<<<< HEAD
 - [-] Write a comprehensive tutorial on Tailwind CSS (latest version) in markdown format. The tutorial should:
+=======
+- [ ] Write a comprehensive tutorial on Tailwind CSS (latest version) in markdown format. The tutorial should:
+>>>>>>> 8dbe1be (ai-aided learning)
 1. Introduce what Tailwind CSS is and its utility-first approach
 2. Explain how it differs from traditional CSS frameworks
 3. Cover installation and configuration with various frameworks
