@@ -1,7 +1,7 @@
-
 ## Tasks
 
-- [ ] Write a comprehensive tutorial on Svelte 5.0 in markdown format. The tutorial should:
+- [ ] Write a comprehensive tutorial on Svelte 5.37.0 in markdown format. The tutorial should:
+
 1. Introduce what Svelte is and its core philosophy
 2. Explain how it differs from other frameworks like React or Vue
 3. Cover installation and project setup
@@ -17,7 +17,8 @@
 
 Save this as learning/svelte-tutorial.md
 
-- [ ] Write a comprehensive tutorial on SvelteKit 2.8.0 in markdown format. The tutorial should:
+- [ ] Write a comprehensive tutorial on SvelteKit 2.26.1 in markdown format. The tutorial should:
+
 1. Introduce what SvelteKit is and how it relates to Svelte
 2. Explain its file-based routing system
 3. Cover project setup and configuration
@@ -33,7 +34,8 @@ Save this as learning/svelte-tutorial.md
 
 Save this as learning/sveltekit-tutorial.md
 
-- [ ] Write a comprehensive tutorial on Tailwind CSS 3.4.0 in markdown format. The tutorial should:
+- [ ] Write a comprehensive tutorial on Tailwind CSS 4.1.11 in markdown format. The tutorial should:
+
 1. Introduce what Tailwind CSS is and its utility-first approach
 2. Explain how it differs from traditional CSS frameworks
 3. Cover installation and configuration with various frameworks
@@ -49,7 +51,8 @@ Save this as learning/sveltekit-tutorial.md
 
 Save this as learning/tailwind-tutorial.md
 
-- [ ] Write a comprehensive tutorial on shadcn-svelte 0.13.0 in markdown format. The tutorial should:
+- [ ] Write a comprehensive tutorial on shadcn-svelte 1.0.6 in markdown format. The tutorial should:
+
 1. Introduce what shadcn-svelte is and how it differs from shadcn/ui
 2. Explain its copy-paste component approach and benefits
 3. Cover installation and setup with SvelteKit
@@ -65,7 +68,8 @@ Save this as learning/tailwind-tutorial.md
 
 Save this as learning/shadcn-svelte-tutorial.md
 
-- [ ] Write a comprehensive tutorial on tRPC 10.45.0 in markdown format. The tutorial should:
+- [ ] Write a comprehensive tutorial on tRPC 11.4.3 in markdown format. The tutorial should:
+
 1. Introduce what tRPC is and its end-to-end typesafe API approach
 2. Explain how it differs from REST and GraphQL
 3. Cover installation and basic setup
@@ -81,7 +85,8 @@ Save this as learning/shadcn-svelte-tutorial.md
 
 Save this as learning/trpc-tutorial.md
 
-- [ ] Write a comprehensive tutorial on integrating tRPC 10.45.0 with SvelteKit 2.8.0 in markdown format. The tutorial should:
+- [ ] Write a comprehensive tutorial on integrating tRPC 11.4.3 with SvelteKit 2.26.1 in markdown format. The tutorial should:
+
 1. Introduce the benefits of using tRPC with SvelteKit
 2. Cover installation and setup of both technologies
 3. Explain how to create a tRPC server in SvelteKit
@@ -97,7 +102,8 @@ Save this as learning/trpc-tutorial.md
 
 Save this as learning/trpc-sveltekit-tutorial.md
 
-- [ ] Write a comprehensive tutorial on Hono.js (latest version) in markdown format. The tutorial should:
+- [ ] Write a comprehensive tutorial on Hono.js 4.8.9 in markdown format. The tutorial should:
+
 1. Introduce what Hono.js is and its focus on edge computing
 2. Explain its lightweight design and performance benefits
 3. Cover installation and basic setup
@@ -113,7 +119,8 @@ Save this as learning/trpc-sveltekit-tutorial.md
 
 Save this as learning/hono-tutorial.md
 
-- [ ] Write a comprehensive tutorial on Lucia Auth (latest version) in markdown format. The tutorial should:
+- [ ] Write a comprehensive tutorial on Lucia Auth 3.2.2 in markdown format. The tutorial should:
+
 1. Introduce what Lucia Auth is and its approach to authentication
 2. Explain how it differs from other auth libraries
 3. Cover installation and basic setup
@@ -129,7 +136,30 @@ Save this as learning/hono-tutorial.md
 
 Save this as learning/lucia-auth-tutorial.md
 
-- [ ] Write a comprehensive tutorial on Drizzle ORM (latest version) in markdown format. The tutorial should:
+- [ ] Write a comprehensive tutorial on Drizzle ORM 0.44.3 in markdown format. The tutorial should:
+
+1. Introduce what Drizzle ORM is and its type-safe approach
+2. Explain how it differs from other ORMs
+3. Cover installation and setup with different databases
+4. Explain schema definition and migrations
+5. Cover CRUD operations and query building
+6. Explain relationships and joins
+7. Cover transactions and batch operations
+8. Explain how to use with edge runtimes like Cloudflare D1
+9. Discuss performance considerations
+10. Cover integration with other frameworks and libraries
+11. Include practical examples throughout
+12. Follow the official documentation style and recommendations
+
+Save this as learning/drizzle-orm-tutorial.md 6. Explain how to implement passwordless authentication 7. Cover middleware and protected routes 8. Explain database adapters and configuration 9. Discuss integration with different frameworks (focus on SvelteKit) 10. Cover security best practices 11. Include practical examples throughout 12. Follow the official documentation style and recommendations
+
+Save this as learning/lucia-auth-tutorial.md
+
+- [ ] Write a comprehensive tutorial on Drizzle ORM 0.44.3 in markdown format. The tutorial should:
+  - **GitHub**: [https://github.com/drizzle-team/drizzle-orm](https://github.com/drizzle-team/drizzle-orm)
+  - **Documentation**: [https://orm.drizzle.team](https://orm.drizzle.team)
+  - **Getting Started**: [https://orm.drizzle.team/docs/get-started-sqlite](https://orm.drizzle.team/docs/get-started-sqlite)
+
 1. Introduce what Drizzle ORM is and its type-safe approach
 2. Explain how it differs from other ORMs
 3. Cover installation and setup with different databases
@@ -144,5 +174,3 @@ Save this as learning/lucia-auth-tutorial.md
 12. Follow the official documentation style and recommendations
 
 Save this as learning/drizzle-orm-tutorial.md
-
-

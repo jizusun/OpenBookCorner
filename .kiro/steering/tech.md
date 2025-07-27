@@ -3,24 +3,56 @@
 ## Core Technology Stack
 
 ### Frontend
-- **Framework**: SvelteKit ^2.8.0 with TypeScript ^5.7.0
-- **Styling**: Tailwind CSS ^3.4.0 for utility-first styling
-- **UI Components**: shadcn-svelte ^0.13.0 (copy-paste, tree-shakeable components)
+
+- **Framework**: SvelteKit ^2.26.1 with TypeScript ^5.7.0
+  - **GitHub**: [https://github.com/sveltejs/kit](https://github.com/sveltejs/kit)
+  - **Documentation**: [https://kit.svelte.dev/docs](https://kit.svelte.dev/docs)
+  - **Tutorial**: [https://svelte.dev/tutorial/kit/introducing-sveltekit](https://svelte.dev/tutorial/kit/introducing-sveltekit)
+- **Svelte**: ^5.37.0
+  - **GitHub**: [https://github.com/sveltejs/svelte](https://github.com/sveltejs/svelte)
+  - **Documentation**: [https://svelte.dev/docs](https://svelte.dev/docs)
+  - **Tutorial**: [https://svelte.dev/tutorial](https://svelte.dev/tutorial)
+- **Styling**: Tailwind CSS ^4.1.11 for utility-first styling
+  - **GitHub**: [https://github.com/tailwindlabs/tailwindcss](https://github.com/tailwindlabs/tailwindcss)
+  - **Documentation**: [https://tailwindcss.com/docs](https://tailwindcss.com/docs)
+  - **Getting Started**: [https://tailwindcss.com/docs/installation](https://tailwindcss.com/docs/installation)
+- **UI Components**: shadcn-svelte ^1.0.6 (copy-paste, tree-shakeable components)
+  - **GitHub**: [https://github.com/huntabyte/shadcn-svelte](https://github.com/huntabyte/shadcn-svelte)
+  - **Documentation**: [https://www.shadcn-svelte.com](https://www.shadcn-svelte.com)
+  - **Getting Started**: [https://www.shadcn-svelte.com/docs/installation](https://www.shadcn-svelte.com/docs/installation)
 - **API Client**: tRPC-SvelteKit ^0.3.0 for type-safe API calls
+  - **GitHub**: [https://github.com/trpc/trpc](https://github.com/trpc/trpc)
+  - **Documentation**: [https://trpc.io/docs](https://trpc.io/docs)
+  - **Getting Started**: [https://trpc.io/docs/quickstart](https://trpc.io/docs/quickstart)
+  - **Integration Guide**: [https://trpc.io/docs/client/sveltekit](https://trpc.io/docs/client/sveltekit)
 - **PWA**: @vite-pwa/sveltekit ^0.6.0 with Service Worker
 - **Camera**: Camera API for barcode scanning functionality
 - **Build Tool**: Vite ^5.4.0
 
 ### Backend
+
 - **Runtime**: Cloudflare Workers (Workerd runtime)
-- **Framework**: Hono.js ^4.6.0 for edge-optimized HTTP handling
-- **API**: tRPC ^10.45.0 with @hono/trpc-server ^0.3.0 integration
-- **Authentication**: Lucia Auth ^3.2.0 for session management
-- **ORM**: Drizzle ORM ^0.36.0 for type-safe database operations
+- **Framework**: Hono.js ^4.8.9 for edge-optimized HTTP handling
+  - **GitHub**: [https://github.com/honojs/hono](https://github.com/honojs/hono)
+  - **Documentation**: [https://hono.dev](https://hono.dev)
+  - **Getting Started**: [https://hono.dev/getting-started/basic](https://hono.dev/getting-started/basic)
+- **API**: tRPC ^11.4.3 with @hono/trpc-server ^0.3.0 integration
+  - **GitHub**: [https://github.com/trpc/trpc](https://github.com/trpc/trpc)
+  - **Documentation**: [https://trpc.io/docs](https://trpc.io/docs)
+  - **Getting Started**: [https://trpc.io/docs/quickstart](https://trpc.io/docs/quickstart)
+- **Authentication**: Lucia Auth ^3.2.2 for session management
+  - **GitHub**: [https://github.com/lucia-auth/lucia](https://github.com/lucia-auth/lucia)
+  - **Documentation**: [https://lucia-auth.com](https://lucia-auth.com)
+  - **Getting Started**: [https://lucia-auth.com/getting-started](https://lucia-auth.com/getting-started)
+- **ORM**: Drizzle ORM ^0.44.3 for type-safe database operations
+  - **GitHub**: [https://github.com/drizzle-team/drizzle-orm](https://github.com/drizzle-team/drizzle-orm)
+  - **Documentation**: [https://orm.drizzle.team](https://orm.drizzle.team)
+  - **Getting Started**: [https://orm.drizzle.team/docs/get-started-sqlite](https://orm.drizzle.team/docs/get-started-sqlite)
 - **Language**: TypeScript ^5.7.0 throughout
 - **Deployment**: Wrangler ^3.84.0
 
 ### Database & Storage
+
 - **Primary Database**: Cloudflare D1 (SQLite 3.45.0-based)
 - **Database Adapter**: @lucia-auth/adapter-sqlite ^3.0.0
 - **Caching**: Cloudflare KV for sessions and temporary data
@@ -29,6 +61,7 @@
 - **Schema Validation**: Zod ^3.23.0
 
 ### Architecture Patterns
+
 - **Domain-Driven Design**: Organized around bounded contexts (Library Management, Catalog Management, Circulation)
 - **Multi-tenant**: Complete data isolation at application level
 - **Event-Driven**: Domain events for cross-aggregate communication
@@ -39,12 +72,14 @@
 This project uses [mise](https://mise.jdx.dev/) v2024.12.0 to manage tool versions consistently across development environments.
 
 ### Why mise?
+
 - **Consistent versions**: Ensures all developers use the same Node.js, pnpm, and other tool versions
 - **Automatic switching**: Automatically switches to project versions when entering the directory
 - **Task runner**: Provides convenient task shortcuts for common operations
 - **Cross-platform**: Works on macOS, Linux, and Windows
 
 ### Installation
+
 ```bash
 # macOS
 brew install mise
@@ -60,6 +95,7 @@ curl https://mise.run | MISE_VERSION=v2024.12.0 sh
 ```
 
 ### Usage
+
 ```bash
 # Install all project tools (Node.js, pnpm, etc.)
 mise install
@@ -78,6 +114,7 @@ mise list
 ## Development Commands
 
 ### Setup & Installation
+
 ```bash
 # Clone repository
 git clone <repository-url>
@@ -97,6 +134,7 @@ cp backend/.env.example backend/.env
 ```
 
 ### Database Operations
+
 ```bash
 # Create D1 database
 npx wrangler d1 create openbookcorner
@@ -109,6 +147,7 @@ pnpm --filter backend run db:generate
 ```
 
 ### Development Servers
+
 ```bash
 # Start both frontend and backend (recommended)
 mise run dev
@@ -122,6 +161,7 @@ pnpm run dev:backend
 ```
 
 ### Build & Deploy
+
 ```bash
 # Build all packages
 mise run build
@@ -137,6 +177,7 @@ pnpm run deploy:frontend
 ```
 
 ### Testing
+
 ```bash
 # Run all tests
 mise run test
@@ -152,6 +193,7 @@ pnpm run test:backend
 ## Version Requirements
 
 ### Node.js & Package Manager
+
 - **Node.js**: ^20.11.0 (LTS)
 - **pnpm**: ^9.12.0 (workspace support)
 - **npm**: Not used (pnpm only)
@@ -159,33 +201,36 @@ pnpm run test:backend
 ### Key Dependencies Versions
 
 **Frontend Dependencies:**
+
 ```json
 {
-  "@sveltejs/kit": "^2.8.0",
+  "@sveltejs/kit": "^2.26.1",
   "@sveltejs/vite-plugin-svelte": "^4.0.0",
-  "svelte": "^5.0.0",
+  "svelte": "^5.37.0",
   "typescript": "^5.7.0",
   "vite": "^5.4.0",
-  "tailwindcss": "^3.4.0",
+  "tailwindcss": "^4.1.11",
   "@tailwindcss/typography": "^0.5.15",
   "autoprefixer": "^10.4.20",
   "postcss": "^8.4.49",
   "@vite-pwa/sveltekit": "^0.6.0",
   "trpc-sveltekit": "^0.3.0",
-  "@trpc/client": "^10.45.0",
-  "zod": "^3.23.0"
+  "@trpc/client": "^11.4.3",
+  "zod": "^3.23.0",
+  "shadcn-svelte": "^1.0.6"
 }
 ```
 
 **Backend Dependencies:**
+
 ```json
 {
-  "hono": "^4.6.0",
+  "hono": "^4.8.9",
   "@hono/trpc-server": "^0.3.0",
-  "@trpc/server": "^10.45.0",
-  "lucia": "^3.2.0",
+  "@trpc/server": "^11.4.3",
+  "lucia": "^3.2.2",
   "@lucia-auth/adapter-sqlite": "^3.0.0",
-  "drizzle-orm": "^0.36.0",
+  "drizzle-orm": "^0.44.3",
   "drizzle-kit": "^0.28.0",
   "wrangler": "^3.84.0",
   "typescript": "^5.7.0",
@@ -194,6 +239,7 @@ pnpm run test:backend
 ```
 
 **Development Dependencies:**
+
 ```json
 {
   "vitest": "^2.1.0",
@@ -208,6 +254,7 @@ pnpm run test:backend
 ```
 
 ### Runtime Versions
+
 - **Cloudflare Workers**: Workerd runtime (V8 engine)
 - **SQLite**: 3.45.0 (via Cloudflare D1)
 - **WebAssembly**: Supported for performance-critical operations
@@ -215,24 +262,28 @@ pnpm run test:backend
 ## Code Quality Standards
 
 ### TypeScript
+
 - Strict mode enabled
 - No `any` types - use proper typing
 - Prefer interfaces over types for object shapes
 - Use branded types for domain identifiers (UserId, BookId, etc.)
 
 ### Error Handling
+
 - Use Result pattern for operations that can fail
 - Domain errors for business rule violations
 - Proper error boundaries in UI components
 - Structured error responses from API
 
 ### Multi-tenancy
+
 - All database queries MUST include tenant scoping
 - Use middleware to enforce tenant isolation
 - Never expose cross-tenant data
 - Validate tenant access in all API procedures
 
 ### Performance
+
 - Leverage Cloudflare edge locations
 - Implement proper caching strategies
 - Optimize bundle sizes (tree-shaking, code splitting)
@@ -241,18 +292,21 @@ pnpm run test:backend
 ## Security Guidelines
 
 ### Authentication
+
 - Email-based passwordless authentication only
 - Domain-based tenant association
 - Secure session management with Lucia Auth
 - Proper CORS configuration
 
 ### Authorization
+
 - Role-based access control (Super Admin, Library Admin, Library Reader)
 - Validate permissions at API level
 - UI should reflect user permissions
 - Principle of least privilege
 
 ### Data Protection
+
 - Complete tenant data isolation
 - Sanitize all user inputs
 - Secure environment variable handling
