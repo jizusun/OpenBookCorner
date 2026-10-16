@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "openbookcorner",
+  "compatibility_date": "2025-09-02",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "@tanstack/react-start/server-entry",
+  "observability": { "enabled": true },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "openbookcorner",
+      "database_id": "REPLACE_WITH_D1_ID_AFTER_wrangler_d1_create",
+      "migrations_dir": "drizzle"
+    }
+  ]
+}
