@@ -35,7 +35,7 @@ function LoginPage() {
     setPending(true)
     try {
       await loginFn({ data: { email, password } })
-      await router.navigate({ to: '/books' })
+      await router.navigate({ to: '/my-books' })
     } catch {
       setError('Invalid email or password')
     } finally {

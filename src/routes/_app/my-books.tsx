@@ -35,9 +35,12 @@ function MyBooksPage() {
   const queryClient = useQueryClient()
   const toast = useToast()
 
-  const { data: items, isLoading } = useQuery({
+  const { data: items, isLoading, isFetching } = useQuery({
     queryKey: ['my-books'],
     queryFn: () => myBooksFn({ data: undefined }),
+    // Always revalidate on mount so a stale/empty snapshot is never shown.
+    refetchOnMount: 'always',
+    staleTime: 0,
   })
 
   const doReturn = useMutation({
@@ -81,7 +84,21 @@ function MyBooksPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">My Books</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-2xl font-bold">My Books</h1>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/scan"
+            className={buttonVariants({ size: 'sm' })}
+            data-testid="scan-to-borrow"
+          >
+            <span aria-hidden className="mr-1">📷</span> Scan to borrow
+          </Link>
+          <Link to="/books" className={buttonVariants({ size: 'sm', variant: 'outline' })}>
+            Browse catalog
+          </Link>
+        </div>
+      </div>
 
       {summary && (
         <p
@@ -92,17 +109,27 @@ function MyBooksPage() {
         </p>
       )}
 
-      {isLoading && <BookListSkeleton count={3} />}
+      {(isLoading || (isFetching && (!items || items.length === 0))) && (
+        <BookListSkeleton count={3} />
+      )}
 
-      {!isLoading && items && items.length === 0 && (
+      {!isLoading && !isFetching && items && items.length === 0 && (
         <EmptyState
           icon="📖"
           title="You haven't borrowed any books yet."
-          description="Browse the catalog and borrow a book to see it here."
+          description="Scan a book's barcode to borrow it, or browse the catalog."
           action={
-            <Link to="/books" className={buttonVariants({ size: 'sm' })}>
-              Browse the catalog
-            </Link>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <Link to="/scan" className={buttonVariants({ size: 'sm' })}>
+                <span aria-hidden className="mr-1">📷</span> Scan to borrow
+              </Link>
+              <Link
+                to="/books"
+                className={buttonVariants({ size: 'sm', variant: 'outline' })}
+              >
+                Browse the catalog
+              </Link>
+            </div>
           }
         />
       )}
