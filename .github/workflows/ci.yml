@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Typecheck · Unit · Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install mise (Node + pnpm via corepack)
+        uses: jdx/mise-action@v2
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate route tree
+        run: pnpm run generate-routes
+
+      - name: Typecheck
+        run: pnpm exec tsc --noEmit
+
+      - name: Lint
+        run: pnpm run lint
+        continue-on-error: true
+
+      - name: Unit & component tests
+        run: pnpm run test:unit
+
+      - name: Build
+        run: pnpm run build
+
+  e2e:
+    name: E2E (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install mise (Node + pnpm via corepack)
+        uses: jdx/mise-action@v2
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate route tree
+        run: pnpm run generate-routes
+
+      - name: Install Playwright browsers (with OS deps)
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Seed local D1 for E2E
+        run: |
+          pnpm exec wrangler d1 migrations apply openbookcorner --local
+          pnpm exec tsx scripts/seed.ts > /tmp/seed.sql
+          pnpm exec wrangler d1 execute openbookcorner --local --file /tmp/seed.sql
+
+      - name: Run E2E tests
+        run: pnpm run test:e2e
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
