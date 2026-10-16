@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteRouteImport } from './routes/_app/route'
 import { Route as AppMyBooksRouteImport } from './routes/_app/my-books'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
+import { Route as AppAdminOverdueRouteImport } from './routes/_app/admin/overdue'
 import { Route as AppBooksIndexRouteImport } from './routes/_app/books/index'
 import { Route as AppBooksAddRouteImport } from './routes/_app/books/add'
 
@@ -35,6 +36,11 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppAdminOverdueRoute = AppAdminOverdueRouteImport.update({
+  id: '/admin/overdue',
+  path: '/admin/overdue',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppBooksIndexRoute = AppBooksIndexRouteImport.update({
   id: '/books/',
   path: '/books/',
@@ -50,6 +56,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/my-books': typeof AppMyBooksRoute
   '/login': typeof AuthLoginRoute
+  '/admin/overdue': typeof AppAdminOverdueRoute
   '/books/add': typeof AppBooksAddRoute
   '/books/': typeof AppBooksIndexRoute
 }
@@ -57,6 +64,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/my-books': typeof AppMyBooksRoute
   '/login': typeof AuthLoginRoute
+  '/admin/overdue': typeof AppAdminOverdueRoute
   '/books/add': typeof AppBooksAddRoute
   '/books': typeof AppBooksIndexRoute
 }
@@ -66,20 +74,23 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteRouteWithChildren
   '/_app/my-books': typeof AppMyBooksRoute
   '/_auth/login': typeof AuthLoginRoute
+  '/_app/admin/overdue': typeof AppAdminOverdueRoute
   '/_app/books/add': typeof AppBooksAddRoute
   '/_app/books/': typeof AppBooksIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/my-books' | '/login' | '/books/add' | '/books/'
+  fullPaths:
+    '/' | '/my-books' | '/login' | '/admin/overdue' | '/books/add' | '/books/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/my-books' | '/login' | '/books/add' | '/books'
+  to: '/' | '/my-books' | '/login' | '/admin/overdue' | '/books/add' | '/books'
   id:
     | '__root__'
     | '/'
     | '/_app'
     | '/_app/my-books'
     | '/_auth/login'
+    | '/_app/admin/overdue'
     | '/_app/books/add'
     | '/_app/books/'
   fileRoutesById: FileRoutesById
@@ -120,6 +131,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/admin/overdue': {
+      id: '/_app/admin/overdue'
+      path: '/admin/overdue'
+      fullPath: '/admin/overdue'
+      preLoaderRoute: typeof AppAdminOverdueRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/_app/books/': {
       id: '/_app/books/'
       path: '/books'
@@ -139,12 +157,14 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteRouteChildren {
   AppMyBooksRoute: typeof AppMyBooksRoute
+  AppAdminOverdueRoute: typeof AppAdminOverdueRoute
   AppBooksAddRoute: typeof AppBooksAddRoute
   AppBooksIndexRoute: typeof AppBooksIndexRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppMyBooksRoute: AppMyBooksRoute,
+  AppAdminOverdueRoute: AppAdminOverdueRoute,
   AppBooksAddRoute: AppBooksAddRoute,
   AppBooksIndexRoute: AppBooksIndexRoute,
 }

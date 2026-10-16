@@ -33,3 +33,14 @@ export const addBook = createServerFn({ method: 'POST' })
     const { db, libraryId } = await requireAdmin()
     return new BookService(db).add({ ...data, libraryId })
   })
+
+// Admin-only ISBN metadata lookup (Open Library). Returns null when not found,
+// so the UI can fall back to manual entry with the scanned ISBN.
+export const lookupIsbn = createServerFn({ method: 'GET' })
+  .validator(z.object({ isbn: z.string().min(1) }))
+  .handler(async ({ data }) => {
+    const { requireAdmin } = await import('@/server/auth/guards')
+    const { lookupIsbnMetadata } = await import('@/server/services/openLibrary')
+    await requireAdmin() // gate the external call behind admin auth
+    return lookupIsbnMetadata(data.isbn)
+  })
