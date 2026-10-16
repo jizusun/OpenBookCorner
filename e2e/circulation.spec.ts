@@ -31,7 +31,7 @@ test.describe('Core circulation flow', () => {
     await expect(returnBtn).toBeVisible()
     await returnBtn.click()
 
-    await expect(page.getByText('No books currently borrowed.')).toBeVisible()
+    await expect(page.getByText("You haven't borrowed any books yet.")).toBeVisible()
   })
 
   test('invalid credentials are rejected', async ({ page }) => {
