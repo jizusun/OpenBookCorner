@@ -15,6 +15,8 @@ export default defineConfig({
     observability: {
       enabled: true,
     },
+    // Per-version preview URLs (each uploaded version gets its own URL).
+    previewUrls: true,
     domains: ['openbookcorner.jizu.dev'],
     env: {
       DB: bindings.d1({
