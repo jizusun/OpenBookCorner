@@ -35,11 +35,36 @@ export async function lookupBookMetadata(isbn: string): Promise<BookMetadata | n
     lookupGoogleBooks(isbn).catch(() => null),
   ])
 
+  let result: BookMetadata | null
+  let resolvedBy: 'openLibrary+googleBooks' | 'openLibrary' | 'googleBooks' | 'none'
+
   if (ol && gb) {
     // Both found it — base on the one with richer text (description), fill from the other.
     const base = ol.description ? ol : gb
     const other = base === ol ? gb : ol
-    return merge(base, other)
+    result = merge(base, other)
+    resolvedBy = 'openLibrary+googleBooks'
+  } else if (ol) {
+    result = ol
+    resolvedBy = 'openLibrary'
+  } else if (gb) {
+    result = gb
+    resolvedBy = 'googleBooks'
+  } else {
+    result = null
+    resolvedBy = 'none'
   }
-  return ol ?? gb ?? null
+
+  // Structured log — visible via `wrangler tail` to debug coverage (esp. CJK ISBNs).
+  console.log(
+    JSON.stringify({
+      event: 'isbn_lookup',
+      isbn,
+      resolvedBy,
+      found: result !== null,
+      title: result?.title,
+    }),
+  )
+
+  return result
 }
