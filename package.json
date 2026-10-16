@@ -2,7 +2,7 @@
   "name": "@obc/root",
   "version": "0.0.0",
   "private": true,
-  "workspaces": ["apps/*", "db"],
+  "workspaces": ["apps/*", "db", "e2e"],
   "type": "module",
   "scripts": {
     "dev": "bun --filter @obc/api --filter @obc/app dev",
@@ -14,6 +14,7 @@
     "format": "oxfmt",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "bun --cwd e2e test",
     "db:generate": "bun --cwd db generate",
     "db:migrate:local": "bun --cwd db migrate:local",
     "db:migrate:remote": "bun --cwd db migrate:remote",
