@@ -1,8 +1,13 @@
 [tools]
 node = "lts"
-# pnpm is provided by corepack (Node ships it) via the packageManager field in
-# package.json. We intentionally do NOT pin pnpm through mise's npm/aqua backend,
-# which is currently flaky (jdx/mise#7630, #7022 — causes `pnpm: command not found`).
+
+# pnpm is provided by Corepack. mise runs `corepack enable` during Node install
+# (node.corepack) and skips its own npm shim (node.npm_shim) so Corepack's pnpm/yarn
+# shims land on PATH correctly. See jdx/mise discussion #10194. The exact pnpm version
+# comes from the `packageManager` field in package.json.
+[settings]
+node.corepack = true
+node.npm_shim = false
 
 [env]
 NODE_ENV = "development"
