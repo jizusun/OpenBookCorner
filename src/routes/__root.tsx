@@ -10,6 +10,8 @@ import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 
 import appCss from '../styles.css?url'
 
+import { Pwa } from '@/components/Pwa'
+
 import type { QueryClient } from '@tanstack/react-query'
 
 interface MyRouterContext {
@@ -27,13 +29,26 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'OpenBookCorner',
+      },
+      {
+        name: 'theme-color',
+        content: '#0f172a',
       },
     ],
     links: [
       {
         rel: 'stylesheet',
         href: appCss,
+      },
+      {
+        rel: 'manifest',
+        href: '/manifest.webmanifest',
+      },
+      {
+        rel: 'icon',
+        href: '/icon.svg',
+        type: 'image/svg+xml',
       },
     ],
   }),
@@ -47,6 +62,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        <Pwa />
         {children}
         <TanStackDevtools
           config={{

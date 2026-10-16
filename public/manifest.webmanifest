@@ -1,0 +1,13 @@
+{
+  "name": "OpenBookCorner",
+  "short_name": "BookCorner",
+  "description": "Your company's library — browse, borrow, and return books.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0f172a",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
