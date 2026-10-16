@@ -2,7 +2,7 @@
   "name": "@obc/root",
   "version": "0.0.0",
   "private": true,
-  "workspaces": ["apps/*", "db", "packages/*"],
+  "workspaces": ["apps/*", "db"],
   "type": "module",
   "scripts": {
     "dev": "bun --filter @obc/api --filter @obc/app dev",
