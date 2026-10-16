@@ -25,14 +25,37 @@ describe('BookService (tenant scoping)', () => {
     await seedBook(db, 'book-b', LIB_B)
     const svc = new BookService(db)
     const booksA = await svc.listByLibrary(LIB_A)
-    expect(booksA).toHaveLength(1)
-    expect(booksA[0].id).toBe(BOOK_A)
+    expect(booksA.items).toHaveLength(1)
+    expect(booksA.items[0].id).toBe(BOOK_A)
+    expect(booksA.total).toBe(1)
   })
 
   it('does NOT leak books across tenants', async () => {
     const svc = new BookService(db)
     const booksB = await svc.listByLibrary(LIB_B)
-    expect(booksB).toHaveLength(0) // BOOK_A belongs to LIB_A
+    expect(booksB.items).toHaveLength(0) // BOOK_A belongs to LIB_A
+    expect(booksB.total).toBe(0)
+  })
+
+  it('filters by search term (title/author), tenant-scoped', async () => {
+    const svc = new BookService(db)
+    // BOOK_A title is "Book book-a", author "Author"
+    const hit = await svc.listByLibrary(LIB_A, { search: 'book-a' })
+    expect(hit.items).toHaveLength(1)
+    const miss = await svc.listByLibrary(LIB_A, { search: 'nonexistent-xyz' })
+    expect(miss.items).toHaveLength(0)
+    expect(miss.total).toBe(0)
+  })
+
+  it('paginates results', async () => {
+    const svc = new BookService(db)
+    for (let i = 0; i < 24; i++) await seedBook(db, `pg-${i}`, LIB_A)
+    const p1 = await svc.listByLibrary(LIB_A, { page: 1, limit: 10 })
+    expect(p1.items).toHaveLength(10)
+    expect(p1.total).toBe(25) // 24 + BOOK_A
+    expect(p1.totalPages).toBe(3)
+    const p3 = await svc.listByLibrary(LIB_A, { page: 3, limit: 10 })
+    expect(p3.items).toHaveLength(5)
   })
 })
 
@@ -43,7 +66,7 @@ describe('CirculationService.borrow', () => {
     expect(res.dueDate).toBeTruthy()
 
     const books = await new BookService(db).listByLibrary(LIB_A)
-    expect(books[0].isAvailable).toBe(false)
+    expect(books.items[0].isAvailable).toBe(false)
 
     const mine = await svc.myBooks(READER_A, LIB_A)
     expect(mine).toHaveLength(1)
@@ -80,7 +103,7 @@ describe('CirculationService.returnBook', () => {
     expect(res.success).toBe(true)
 
     const books = await new BookService(db).listByLibrary(LIB_A)
-    expect(books[0].isAvailable).toBe(true)
+    expect(books.items[0].isAvailable).toBe(true)
     expect(await svc.myBooks(READER_A, LIB_A)).toHaveLength(0)
   })
 

@@ -151,3 +151,9 @@ drizzle/seed.sql
 
 # cf CLI build output
 .cloudflare/
+
+# Playwright
+test-results/
+playwright-report/
+/blob-report/
+.playwright/
