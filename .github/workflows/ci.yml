@@ -59,7 +59,7 @@ jobs:
         run: bun --cwd apps/app generate-routes
 
       - name: Install Playwright browser
-        run: bun --cwd e2e exec playwright install --with-deps chromium
+        run: cd e2e && bunx playwright install --with-deps chromium
 
       - name: Run E2E tests
         run: bun run test:e2e
