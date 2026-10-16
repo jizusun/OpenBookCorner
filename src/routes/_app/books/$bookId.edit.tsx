@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useToast } from '@/components/Toast'
 
 export const Route = createFileRoute('/_app/books/$bookId/edit')({
   beforeLoad: async () => {
@@ -25,6 +26,7 @@ function EditBookPage() {
   const queryClient = useQueryClient()
   const getBookFn = useServerFn(getBook)
   const updateFn = useServerFn(updateBook)
+  const toast = useToast()
 
   const { data: book, isLoading } = useQuery({
     queryKey: ['book', bookId],
@@ -80,6 +82,7 @@ function EditBookPage() {
       })
       await queryClient.invalidateQueries({ queryKey: ['book', bookId] })
       await queryClient.invalidateQueries({ queryKey: ['books'] })
+      toast.success('Changes saved.')
       await navigate({ to: '/books/$bookId', params: { bookId } })
     } catch {
       setError('Could not save changes. Please try again.')

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useToast } from '@/components/Toast'
 
 export const Route = createFileRoute('/_app/books/add')({ component: AddBookPage })
 
@@ -16,6 +17,7 @@ function AddBookPage() {
   const lookupFn = useServerFn(lookupIsbn)
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const toast = useToast()
 
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
@@ -93,6 +95,7 @@ function AddBookPage() {
       })
       await queryClient.invalidateQueries({ queryKey: ['books'] })
       setSuccess(`"${title.trim()}" added to the catalog.`)
+      toast.success(`"${title.trim()}" added to the catalog.`)
       setTitle('')
       setAuthor('')
       setIsbn('')

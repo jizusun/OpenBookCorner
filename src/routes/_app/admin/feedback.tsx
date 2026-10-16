@@ -4,6 +4,8 @@ import { useServerFn } from '@tanstack/react-start'
 import { listFeedback } from '@/server/functions/feedback'
 import { me } from '@/server/functions/auth'
 import { Badge } from '@/components/ui/badge'
+import { EmptyState } from '@/components/ui/empty-state'
+import { Skeleton } from '@/components/ui/skeleton'
 
 const CATEGORY_LABELS: Record<string, string> = {
   feature_request: 'Feature request',
@@ -36,11 +38,19 @@ function FeedbackPage() {
         What readers are asking for — use this to prioritize features.
       </p>
 
-      {isLoading && <p className="text-muted-foreground">Loading…</p>}
+      {isLoading && (
+        <div className="space-y-3" data-testid="loading-skeleton">
+          <Skeleton className="h-20 w-full" />
+          <Skeleton className="h-20 w-full" />
+        </div>
+      )}
       {!isLoading && items && items.length === 0 && (
-        <p className="text-muted-foreground" data-testid="feedback-empty">
-          No feedback yet.
-        </p>
+        <EmptyState
+          data-testid="feedback-empty"
+          icon="💬"
+          title="No feedback yet"
+          description="When readers send feedback, it will show up here."
+        />
       )}
 
       <div className="space-y-3">

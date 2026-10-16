@@ -11,6 +11,8 @@ import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 import appCss from '../styles.css?url'
 
 import { Pwa } from '@/components/Pwa'
+import { ToastProvider } from '@/components/Toast'
+import { themeInitScript } from '@/components/ThemeToggle'
 
 import type { QueryClient } from '@tanstack/react-query'
 
@@ -59,11 +61,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <HeadContent />
       </head>
       <body>
         <Pwa />
-        {children}
+        <ToastProvider>{children}</ToastProvider>
         <TanStackDevtools
           config={{
             position: 'bottom-right',
