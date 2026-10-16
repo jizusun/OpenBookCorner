@@ -1,39 +1,114 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { useState } from 'react'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useServerFn } from '@tanstack/react-start'
+import { z } from 'zod'
 import { listBooks } from '@/server/functions/book'
 import { borrowBook } from '@/server/functions/borrowing'
+import { me } from '@/server/functions/auth'
 import { BookCard } from '@/components/books/BookCard'
+import { Button, buttonVariants } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
-export const Route = createFileRoute('/_app/books/')({ component: CatalogPage })
+const searchSchema = z.object({
+  q: z.string().optional(),
+  page: z.number().int().min(1).optional(),
+})
+
+export const Route = createFileRoute('/_app/books/')({
+  validateSearch: searchSchema,
+  component: CatalogPage,
+})
 
 function CatalogPage() {
+  const { q, page } = Route.useSearch()
+  const navigate = useNavigate({ from: Route.fullPath })
   const listFn = useServerFn(listBooks)
   const borrowFn = useServerFn(borrowBook)
+  const meFn = useServerFn(me)
   const queryClient = useQueryClient()
 
-  const { data: books, isLoading } = useQuery({
-    queryKey: ['books'],
-    queryFn: () => listFn({ data: undefined }),
+  const [term, setTerm] = useState(q ?? '')
+  const currentPage = page ?? 1
+
+  const { data: user } = useQuery({ queryKey: ['auth', 'me'], queryFn: () => meFn({ data: undefined }) })
+  const isAdmin = user?.role === 'library_admin' || user?.role === 'super_admin'
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['books', { q: q ?? '', page: currentPage }],
+    queryFn: () => listFn({ data: { search: q, page: currentPage, limit: 20 } }),
   })
 
   const borrow = useMutation({
-    mutationFn: (bookId: string) => borrowFn({ data: { bookId } }),
+    mutationFn: (bookId: string) => {
+      if (typeof navigator !== 'undefined' && !navigator.onLine) {
+        return Promise.reject(new Error('You are offline. Connect to the internet to borrow.'))
+      }
+      return borrowFn({ data: { bookId } })
+    },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['books'] })
       queryClient.invalidateQueries({ queryKey: ['my-books'] })
     },
   })
 
+  function submitSearch(e: React.FormEvent) {
+    e.preventDefault()
+    const next = term.trim()
+    navigate({ search: { q: next || undefined, page: undefined } })
+  }
+
+  function goToPage(p: number) {
+    navigate({ search: (prev) => ({ ...prev, page: p === 1 ? undefined : p }) })
+  }
+
+  const items = data?.items ?? []
+  const totalPages = data?.totalPages ?? 1
+
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Library Catalog</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Library Catalog</h1>
+        {isAdmin && (
+          <Link to="/books/add" className={buttonVariants({ size: 'sm' })}>
+            Add Book
+          </Link>
+        )}
+      </div>
+
+      <form onSubmit={submitSearch} className="flex gap-2" data-testid="search-form">
+        <Input
+          placeholder="Search by title or author…"
+          value={term}
+          onChange={(e) => setTerm(e.target.value)}
+          data-testid="search-input"
+        />
+        <Button type="submit" variant="outline">
+          Search
+        </Button>
+        {q && (
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => {
+              setTerm('')
+              navigate({ search: {} })
+            }}
+          >
+            Clear
+          </Button>
+        )}
+      </form>
+
       {isLoading && <p className="text-muted-foreground">Loading…</p>}
-      {books && books.length === 0 && (
-        <p className="text-muted-foreground">No books in the catalog yet.</p>
+      {!isLoading && items.length === 0 && (
+        <p className="text-muted-foreground" data-testid="no-books">
+          No books found.
+        </p>
       )}
+
       <div className="grid gap-4">
-        {books?.map((book) => (
+        {items.map((book) => (
           <BookCard
             key={book.id}
             book={book}
@@ -42,6 +117,30 @@ function CatalogPage() {
           />
         ))}
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-3 pt-2" data-testid="pagination">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={currentPage <= 1}
+            onClick={() => goToPage(currentPage - 1)}
+          >
+            Previous
+          </Button>
+          <span className="text-sm text-muted-foreground">
+            Page {currentPage} of {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={currentPage >= totalPages}
+            onClick={() => goToPage(currentPage + 1)}
+          >
+            Next
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
