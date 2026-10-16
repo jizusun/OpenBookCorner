@@ -42,7 +42,17 @@ export class BookService {
     return { items, total, page, limit, totalPages: Math.max(1, Math.ceil(total / limit)) }
   }
 
-  async add(input: { isbn: string; title: string; author: string; libraryId: string }) {
+  async add(input: {
+    isbn: string
+    title: string
+    author: string
+    libraryId: string
+    publisher?: string
+    publishedYear?: number
+    coverImageUrl?: string
+    description?: string
+    subjects?: string[]
+  }) {
     const id = crypto.randomUUID()
     const now = new Date().toISOString()
     await this.db.insert(books).values({
@@ -50,12 +60,26 @@ export class BookService {
       isbn: input.isbn,
       title: input.title,
       author: input.author,
+      publisher: input.publisher ?? null,
+      publishedYear: input.publishedYear ?? null,
+      coverImageUrl: input.coverImageUrl ?? null,
+      description: input.description ?? null,
+      subjects: input.subjects ?? null,
       libraryId: input.libraryId,
       isAvailable: true,
       createdAt: now,
       updatedAt: now,
     })
     return { id }
+  }
+
+  // Single book by id, tenant-scoped (for the detail/discovery page).
+  async getById(bookId: string, libraryId: string) {
+    return this.db
+      .select()
+      .from(books)
+      .where(and(eq(books.id, bookId), eq(books.libraryId, libraryId)))
+      .get()
   }
 }
 

@@ -51,6 +51,12 @@ export const books = sqliteTable('books', {
   isbn: text('isbn').notNull(),
   title: text('title').notNull(),
   author: text('author').notNull(),
+  // Richer metadata (nullable — populated from Open Library on scan/lookup).
+  publisher: text('publisher'),
+  publishedYear: integer('published_year'),
+  coverImageUrl: text('cover_image_url'),
+  description: text('description'),
+  subjects: text('subjects', { mode: 'json' }).$type<string[]>(),
   libraryId: text('library_id')
     .notNull()
     .references(() => libraries.id),

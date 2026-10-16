@@ -20,6 +20,14 @@ function AddBookPage() {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [isbn, setIsbn] = useState('')
+  // Metadata captured from the Open Library lookup (saved with the book).
+  const [meta, setMeta] = useState<{
+    publisher?: string
+    publishedYear?: number
+    coverImageUrl?: string
+    description?: string
+    subjects?: string[]
+  }>({})
   const [scanning, setScanning] = useState(false)
   const [looking, setLooking] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -35,15 +43,24 @@ function AddBookPage() {
     setError(null)
     setInfo(null)
     try {
-      const meta = await lookupFn({ data: { isbn: value } })
-      if (meta) {
-        if (meta.title) setTitle(meta.title)
-        if (meta.author) setAuthor(meta.author)
-        setInfo('Details auto-filled from Open Library. You can edit them before saving.')
+      const m = await lookupFn({ data: { isbn: value } })
+      if (m) {
+        if (m.title) setTitle(m.title)
+        if (m.author) setAuthor(m.author)
+        setMeta({
+          publisher: m.publisher,
+          publishedYear: m.publishedYear,
+          coverImageUrl: m.coverImageUrl,
+          description: m.description,
+          subjects: m.subjects,
+        })
+        setInfo('Details auto-filled from Open Library. You can edit the title/author before saving.')
       } else {
+        setMeta({})
         setInfo('ISBN not found online. Enter the title and author manually.')
       }
     } catch {
+      setMeta({})
       setInfo('Lookup failed. Enter the title and author manually.')
     } finally {
       setLooking(false)
@@ -62,12 +79,24 @@ function AddBookPage() {
     setSuccess(null)
     setPending(true)
     try {
-      await addFn({ data: { title: title.trim(), author: author.trim(), isbn: isbn.trim() } })
+      await addFn({
+        data: {
+          title: title.trim(),
+          author: author.trim(),
+          isbn: isbn.trim(),
+          publisher: meta.publisher,
+          publishedYear: meta.publishedYear,
+          coverImageUrl: meta.coverImageUrl,
+          description: meta.description,
+          subjects: meta.subjects,
+        },
+      })
       await queryClient.invalidateQueries({ queryKey: ['books'] })
       setSuccess(`"${title.trim()}" added to the catalog.`)
       setTitle('')
       setAuthor('')
       setIsbn('')
+      setMeta({})
       setInfo(null)
     } catch (err) {
       setError(
