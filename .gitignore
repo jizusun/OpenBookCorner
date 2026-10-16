@@ -137,3 +137,10 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# TanStack Start / Cloudflare build artifacts
+.output
+.nitro
+.vinxi
+.tanstack
+.wrangler
