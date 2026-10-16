@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { ConfirmDialog } from '@/components/ui/modal'
 import { circulationErrorMessage } from '@/lib/errors'
 import { useToast } from '@/components/Toast'
+import { useViewMode } from '@/lib/view-mode'
 
 export const Route = createFileRoute('/_app/books/$bookId')({ component: BookDetailPage })
 
@@ -20,13 +21,16 @@ function BookDetailPage() {
 
   const { data: user } = useQuery(trpc.auth.me.queryOptions())
   const isAdmin = user?.role === 'library_admin' || user?.role === 'super_admin'
+  const viewMode = useViewMode()
+  // Manage mode = admin in Admin view: show Edit/Delete + borrower, hide Borrow.
+  const manageMode = isAdmin && viewMode === 'admin'
 
   const { data: book, isLoading } = useQuery(trpc.book.get.queryOptions({ bookId }))
 
   // Admin-only: who currently holds the book. Only query when admin + borrowed.
   const { data: borrower } = useQuery({
     ...trpc.book.borrower.queryOptions({ bookId }),
-    enabled: !!isAdmin && !!book && !book.isAvailable,
+    enabled: !!manageMode && !!book && !book.isAvailable,
   })
 
   const borrow = useMutation({
@@ -135,17 +139,19 @@ function BookDetailPage() {
               <Badge variant={book.isAvailable ? 'default' : 'secondary'}>
                 {book.isAvailable ? 'Available' : 'Borrowed'}
               </Badge>
-              <Button
-                size="sm"
-                disabled={!book.isAvailable || borrow.isPending}
-                onClick={() => borrow.mutate({ bookId })}
-              >
-                {borrow.isPending ? 'Borrowing…' : 'Borrow'}
-              </Button>
+              {!manageMode && (
+                <Button
+                  size="sm"
+                  disabled={!book.isAvailable || borrow.isPending}
+                  onClick={() => borrow.mutate({ bookId })}
+                >
+                  {borrow.isPending ? 'Borrowing…' : 'Borrow'}
+                </Button>
+              )}
             </div>
 
             {/* Admin: current borrower + due date */}
-            {isAdmin && !book.isAvailable && borrower && (
+            {manageMode && !book.isAvailable && borrower && (
               <div
                 className="rounded-md border border-input bg-muted/40 px-3 py-2 text-sm"
                 data-testid="borrower-info"
@@ -160,7 +166,7 @@ function BookDetailPage() {
               </div>
             )}
 
-            {isAdmin && (
+            {manageMode && (
               <div className="flex items-center gap-2 pt-1" data-testid="admin-controls">
                 <Link
                   to="/books/$bookId/edit"

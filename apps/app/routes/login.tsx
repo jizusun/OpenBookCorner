@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { signIn } from '@/lib/auth-client'
+import { setViewMode } from '@/lib/view-mode'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -16,6 +17,7 @@ function LoginPage() {
   const [pending, setPending] = useState(false)
 
   const demoAccounts = [
+    { role: 'Super Admin', email: 'super@demo.test', password: 'password123' },
     { role: 'Library Admin', email: 'admin@demo.test', password: 'password123' },
     { role: 'Library Reader', email: 'reader@demo.test', password: 'password123' },
   ]
@@ -36,7 +38,19 @@ function LoginPage() {
         setError('Invalid email or password')
         return
       }
-      await router.navigate({ to: '/my-books' })
+      // Route to the role's default view and reset the stored view mode so a
+      // stale value from a previous session doesn't misroute.
+      const role = (res.data?.user as { role?: string } | undefined)?.role
+      if (role === 'super_admin') {
+        setViewMode('system')
+        await router.navigate({ to: '/admin/tenants' })
+      } else if (role === 'library_admin') {
+        setViewMode('admin')
+        await router.navigate({ to: '/books' })
+      } else {
+        setViewMode('reader')
+        await router.navigate({ to: '/my-books' })
+      }
     } catch {
       setError('Invalid email or password')
     } finally {

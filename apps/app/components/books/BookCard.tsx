@@ -18,9 +18,11 @@ interface BookCardProps {
   book: BookCardBook
   onBorrow: (bookId: string) => void
   pending?: boolean
+  /** Whether the current user may borrow (readers only). Defaults to true. */
+  canBorrow?: boolean
 }
 
-export function BookCard({ book, onBorrow, pending }: BookCardProps) {
+export function BookCard({ book, onBorrow, pending, canBorrow = true }: BookCardProps) {
   return (
     <Card className="w-full">
       <CardContent className="flex gap-4 p-4">
@@ -57,13 +59,15 @@ export function BookCard({ book, onBorrow, pending }: BookCardProps) {
             <Badge variant={book.isAvailable ? 'default' : 'secondary'}>
               {book.isAvailable ? 'Available' : 'Borrowed'}
             </Badge>
-            <Button
-              size="sm"
-              disabled={!book.isAvailable || pending}
-              onClick={() => onBorrow(book.id)}
-            >
-              Borrow
-            </Button>
+            {canBorrow && (
+              <Button
+                size="sm"
+                disabled={!book.isAvailable || pending}
+                onClick={() => onBorrow(book.id)}
+              >
+                Borrow
+              </Button>
+            )}
           </div>
         </div>
       </CardContent>
