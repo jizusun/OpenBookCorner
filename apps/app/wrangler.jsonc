@@ -1,0 +1,16 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "openbookcorner",
+  "main": "./worker.ts",
+  "compatibility_date": "2025-09-02",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  "preview_urls": true,
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  },
+  "services": [{ "binding": "API", "service": "openbookcorner-api" }],
+  "routes": [{ "pattern": "openbookcorner.jizu.dev", "custom_domain": true }]
+}
