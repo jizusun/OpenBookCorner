@@ -396,3 +396,66 @@ export class FeedbackService {
     }))
   }
 }
+
+
+/**
+ * Super-admin only: manage libraries (tenants) across the whole system.
+ * NOT tenant-scoped — these intentionally span all libraries.
+ */
+export class TenantAdminService {
+  constructor(private db: Database) {}
+
+  // All libraries with lightweight counts (books, members).
+  async listAll() {
+    const libs = await this.db.select().from(libraries).orderBy(desc(libraries.createdAt)).all()
+
+    const bookCounts = await this.db
+      .select({ libraryId: books.libraryId, count: sql<number>`count(*)` })
+      .from(books)
+      .groupBy(books.libraryId)
+      .all()
+    const memberCounts = await this.db
+      .select({ libraryId: user.libraryId, count: sql<number>`count(*)` })
+      .from(user)
+      .groupBy(user.libraryId)
+      .all()
+
+    const bookBy = new Map(bookCounts.map((r) => [r.libraryId, r.count]))
+    const memberBy = new Map(memberCounts.map((r) => [r.libraryId, r.count]))
+
+    return libs.map((l) => ({
+      id: l.id,
+      name: l.name,
+      emailDomains: l.emailDomains,
+      isActive: l.isActive,
+      createdAt: l.createdAt,
+      bookCount: bookBy.get(l.id) ?? 0,
+      memberCount: memberBy.get(l.id) ?? 0,
+    }))
+  }
+
+  // Create a new library (tenant).
+  async create(input: { name: string; emailDomains: string[] }) {
+    const id = crypto.randomUUID()
+    const now = new Date().toISOString()
+    await this.db.insert(libraries).values({
+      id,
+      name: input.name,
+      emailDomains: input.emailDomains,
+      settings: { borrowingPeriodDays: 14, maxBooksPerReader: 5, allowExtensions: false },
+      isActive: true,
+      createdAt: now,
+      updatedAt: now,
+    })
+    return { id }
+  }
+
+  // Activate / deactivate a library.
+  async setActive(libraryId: string, isActive: boolean) {
+    await this.db
+      .update(libraries)
+      .set({ isActive, updatedAt: new Date().toISOString() })
+      .where(eq(libraries.id, libraryId))
+    return { id: libraryId, isActive }
+  }
+}

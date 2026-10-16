@@ -18,6 +18,15 @@ export function Modal({ open, onClose, ariaLabel, children, ...rest }: ModalProp
   const panelRef = useRef<HTMLDivElement>(null)
   const previouslyFocused = useRef<HTMLElement | null>(null)
 
+  // Keep the latest onClose in a ref so the focus/trap effect depends ONLY on
+  // `open`. If `onClose` were a dependency, a parent that recreates the handler
+  // on every render (e.g. a form updating state on each keystroke) would re-run
+  // this effect and re-autofocus the first element — stealing focus mid-typing.
+  const onCloseRef = useRef(onClose)
+  useEffect(() => {
+    onCloseRef.current = onClose
+  }, [onClose])
+
   useEffect(() => {
     if (!open) return
     previouslyFocused.current = document.activeElement as HTMLElement | null
@@ -38,7 +47,7 @@ export function Modal({ open, onClose, ariaLabel, children, ...rest }: ModalProp
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') {
         e.preventDefault()
-        onClose()
+        onCloseRef.current()
         return
       }
       if (e.key === 'Tab') {
@@ -62,7 +71,7 @@ export function Modal({ open, onClose, ariaLabel, children, ...rest }: ModalProp
       document.removeEventListener('keydown', onKeyDown)
       previouslyFocused.current?.focus?.()
     }
-  }, [open, onClose])
+  }, [open])
 
   if (!open) return null
 

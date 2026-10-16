@@ -1,0 +1,134 @@
+import { useState } from 'react'
+import { createFileRoute, redirect } from '@tanstack/react-router'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { trpc, trpcClient } from '@/lib/trpc'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { EmptyState } from '@/components/ui/empty-state'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useToast } from '@/components/Toast'
+
+export const Route = createFileRoute('/_app/admin/tenants')({
+  // Super-admin only.
+  beforeLoad: async () => {
+    const user = await trpcClient.auth.requireMe.query()
+    if (user.role !== 'super_admin') throw redirect({ to: '/books' })
+  },
+  component: TenantsPage,
+})
+
+function TenantsPage() {
+  const queryClient = useQueryClient()
+  const toast = useToast()
+  const { data: tenants, isLoading } = useQuery(trpc.tenant.list.queryOptions())
+
+  const [name, setName] = useState('')
+  const [domains, setDomains] = useState('')
+
+  const create = useMutation({
+    ...trpc.tenant.create.mutationOptions(),
+    onSuccess: () => {
+      toast.success('Library created.')
+      setName('')
+      setDomains('')
+      queryClient.invalidateQueries({ queryKey: trpc.tenant.list.queryKey() })
+    },
+    onError: () => toast.error('Could not create the library.'),
+  })
+
+  const toggle = useMutation({
+    ...trpc.tenant.setActive.mutationOptions(),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: trpc.tenant.list.queryKey() }),
+    onError: () => toast.error('Could not update the library.'),
+  })
+
+  function submit(e: React.FormEvent) {
+    e.preventDefault()
+    const list = domains
+      .split(',')
+      .map((d) => d.trim())
+      .filter(Boolean)
+    if (!name.trim() || list.length === 0) return
+    create.mutate({ name: name.trim(), emailDomains: list })
+  }
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold">Tenants</h1>
+        <p className="text-sm text-muted-foreground">
+          Manage libraries across the system (super admin).
+        </p>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Create a library</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={submit} className="space-y-4" data-testid="create-tenant-form">
+            <div className="space-y-2">
+              <Label htmlFor="t-name">Library name</Label>
+              <Input id="t-name" value={name} onChange={(e) => setName(e.target.value)} required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="t-domains">Email domains (comma-separated)</Label>
+              <Input
+                id="t-domains"
+                value={domains}
+                onChange={(e) => setDomains(e.target.value)}
+                placeholder="@acme.com, @acme.io"
+                required
+              />
+            </div>
+            <Button type="submit" disabled={create.isPending}>
+              {create.isPending ? 'Creating…' : 'Create library'}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+
+      {isLoading && (
+        <div className="space-y-2" data-testid="loading-skeleton">
+          <Skeleton className="h-16 w-full" />
+          <Skeleton className="h-16 w-full" />
+        </div>
+      )}
+
+      {!isLoading && tenants && tenants.length === 0 && (
+        <EmptyState icon="🏛️" title="No libraries yet" description="Create the first one above." />
+      )}
+
+      <div className="grid gap-3" data-testid="tenant-list">
+        {tenants?.map((t) => (
+          <Card key={t.id}>
+            <CardContent className="flex items-center justify-between gap-4 p-4">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold">{t.name}</span>
+                  <Badge variant={t.isActive ? 'default' : 'secondary'}>
+                    {t.isActive ? 'Active' : 'Inactive'}
+                  </Badge>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {t.emailDomains.join(', ')} · {t.bookCount} books · {t.memberCount} members
+                </p>
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={toggle.isPending}
+                onClick={() => toggle.mutate({ libraryId: t.id, isActive: !t.isActive })}
+              >
+                {t.isActive ? 'Deactivate' : 'Activate'}
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  )
+}

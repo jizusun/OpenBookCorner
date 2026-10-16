@@ -1,10 +1,41 @@
 // @vitest-environment jsdom
 import { render, screen, fireEvent, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useState } from 'react'
 import { describe, it, expect, vi } from 'vitest'
 import { EmptyState } from '@/components/ui/empty-state'
-import { ConfirmDialog } from '@/components/ui/modal'
+import { ConfirmDialog, Modal } from '@/components/ui/modal'
 import { ToastProvider, useToast } from '@/components/Toast'
+
+describe('Modal (focus is not stolen while typing)', () => {
+  // Regression: the feedback dialog became untypeable because the focus-trap
+  // effect depended on `onClose`, which a parent recreated on every keystroke,
+  // re-running autofocus and yanking focus to the first field after each char.
+  function Harness() {
+    const [msg, setMsg] = useState('')
+    // onClose is intentionally recreated every render (no useCallback), like the
+    // original FeedbackButton. The Modal must tolerate this.
+    const onClose = () => setMsg('')
+    return (
+      <Modal open onClose={onClose} ariaLabel="Test dialog">
+        <select aria-label="type">
+          <option value="a">a</option>
+          <option value="b">b</option>
+        </select>
+        <textarea aria-label="message" value={msg} onChange={(e) => setMsg(e.target.value)} />
+      </Modal>
+    )
+  }
+
+  it('keeps every character typed into a textarea', async () => {
+    render(<Harness />)
+    const textarea = screen.getByLabelText('message') as HTMLTextAreaElement
+    textarea.focus()
+    await userEvent.type(textarea, 'hello world')
+    expect(textarea.value).toBe('hello world')
+    expect(document.activeElement).toBe(textarea)
+  })
+})
 
 describe('EmptyState', () => {
   it('renders title, description and action', () => {

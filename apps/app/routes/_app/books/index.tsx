@@ -11,6 +11,7 @@ import { useToast } from '@/components/Toast'
 import { Badge } from '@/components/ui/badge'
 import { BookListSkeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { useViewMode } from '@/lib/view-mode'
 
 const searchSchema = z.object({
   q: z.string().optional(),
@@ -37,6 +38,9 @@ function CatalogPage() {
 
   const { data: user } = useQuery(trpc.auth.me.queryOptions())
   const isAdmin = user?.role === 'library_admin' || user?.role === 'super_admin'
+  const viewMode = useViewMode()
+  // Manage mode = admin currently in Admin view: show Add Book, hide Borrow.
+  const manageMode = isAdmin && viewMode === 'admin'
 
   const listInput = { search: q, page: currentPage, limit: 20 }
   const booksKey = trpc.book.list.queryKey(listInput)
@@ -115,7 +119,7 @@ function CatalogPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Library Catalog</h1>
-        {isAdmin && (
+        {manageMode && (
           <Link to="/books/add" className={buttonVariants({ size: 'sm' })}>
             Add Book
           </Link>
@@ -194,7 +198,7 @@ function CatalogPage() {
           description={
             q
               ? 'Try a different title or author, or clear the search.'
-              : isAdmin
+              : manageMode
                 ? 'Add your first book to get started.'
                 : 'Check back soon — your librarian is still stocking the shelves.'
           }
@@ -210,7 +214,7 @@ function CatalogPage() {
               >
                 Clear search
               </Button>
-            ) : isAdmin ? (
+            ) : manageMode ? (
               <Link to="/books/add" className={buttonVariants({ size: 'sm' })}>
                 Add Book
               </Link>
@@ -241,6 +245,7 @@ function CatalogPage() {
             book={book}
             onBorrow={(id) => borrow.mutate({ bookId: id })}
             pending={borrow.isPending && borrow.variables?.bookId === book.id}
+            canBorrow={!manageMode}
           />
         ))}
       </div>

@@ -187,3 +187,91 @@ scan ISBN → Open Library / Google Books → (B1 keyed CN ISBN API) → [B22] p
 2. Standalone "add by photo" entry point, or purely a fallback in the lookup chain.
 
 **Status:** documented now, to be implemented later (not in the current PR train).
+
+
+---
+
+## 番薯借阅 — product teardown + UI / IA reference (user-provided)
+
+> Source: user-provided analysis (2026-10-17), reverse-engineered from the official site,
+> early-version screenshots, and an admin-demo video. 番薯借阅 has **no standalone app**: the
+> product is four layers — **Reader Mini Program + Admin Mini Program + web backend (auxiliary) +
+> Official-Account / WeCom entry points**. Button copy / tab order / redesigns vary across minor
+> versions; treat IA as directional, not pixel-exact.
+
+### Positioning — "four layers of subtraction"
+Not "a complete library system" but compressing the heaviest library tasks (cataloging, search,
+borrow/return, reminders, membership) into **phone + WeChat**:
+1. **Setup subtraction** — no hardware/deploy; scan to catalog → individuals/small orgs can open a library.
+2. **Operation subtraction** — borrow/return via a WeChat scan, no counter/PC backend.
+3. **Memory subtraction** — overdue/arrival reminders + records live in the system, not people's heads.
+4. **Operations subtraction** — reviews/favorites/share/hot-book rankings give the library its own content flow.
+Hard constraints: 免安装 (scan to use, no App), 免硬件 (one phone), 扫码录书 (own 20M+ ISBN DB),
+双端 (reader + admin Mini Programs; web is auxiliary), 可嵌入 (Official Account menu / WeCom), 私有化部署.
+
+### Reader Mini Program — information architecture
+Standard Mini Program shell: top = library name + search; middle = content flow; bottom tab bar.
+- **Home**: library name + join status (joined / pending); search by title/author/ISBN; blocks for
+  新书上线 / 热门借阅, 书单推荐, 馆内动态 (who borrowed what, new arrivals, review stream). Bottom tab
+  ≈ 首页 / 书库(分类) / 动态 / 我的.
+- **Book detail**: cover, title, author, publisher; 馆藏数 / 可借数 / 在借状态; **shelf location (e.g. A01)**;
+  action buttons 借阅 / 预约 / 收藏 / 分享; **review area** (reviews, like, reply); if fully borrowed →
+  "已借完" + **到馆通知 toggle**.
+- **"我的" (personal center)** — list style: 我想读 · 已借阅 · 已归还 · 已预约(带"距释放还有 X 天") ·
+  **生成借书码** (show to admin for offline self-borrow) · 书评 · 收藏 · 消息提醒 (overdue/arrival/join-review).
+- **Borrow/return interactions** — two modes: **scan self-service** (reader scans book code → "确认借阅" →
+  done); **order / proxy** (reader taps 借阅 → order → admin confirms → pickup/mail). Return: reader side
+  shows a "待还清单"; the actual 还书 is usually an admin scan.
+
+### Admin Mini Program — page tree (tool-backend feel, not a content flow)
+- **Library settings**: name, type (职工书屋/绘本馆/社区书馆…), join verification (public apply / password /
+  review), borrow rules (册数/天数/续借), member levels & permissions.
+- **Catalog mgmt (scan-to-catalog)**: core page = a **scan box + a queue of book cards**; scan ISBN →
+  auto title/author/cover → pick category/shelf → "已扫 N 本 / 结束录书" → into 藏书 list (filter by
+  category/shelf), single-item edit/move-shelf; **batch ops weak** (acknowledged pain).
+- **Member mgmt**: member list (avatar, nickname, borrow count); **邀请新成员** (generate join code);
+  card-application review; member detail (their loans, validity, permissions); assign **admin sub-accounts**.
+- **Borrow/return (admin proxy)**: path = member list → pick person → "TA的借阅" → 还书 (tap) / 借书
+  (scan book code → check → confirm). I.e. **"find the person first, then scan the book."**
+- **Data / operations**: borrow-record list, overdue list + **一键催还**, hot-book / borrow rankings,
+  荐购 list, pending orders (order mode).
+
+### Web backend (PC) — auxiliary only
+Left-menu + table pages (藏书表 / 借阅记录表 / 会员表); bulk view, export, member/rule settings,
+operational stats. Daily borrow/return is **not** done here.
+
+### Official Account / WeCom — entry points, not a separate UI
+Official Account menu → reader Mini Program; WeCom workbench → admin; join-code images + borrow/return
+reminders delivered as **WeChat service notifications** (tap → deep-link into the Mini Program page).
+
+### Reader vs Admin at a glance
+| Dimension | Reader | Admin |
+|---|---|---|
+| Feel | reading-community, book-list flow | tool-backend, list + scan |
+| First screen | find books, status, reserve | #books, #members, to-dos |
+| Core action | search / borrow-code / renew | scan-catalog / proxy borrow-return / review |
+| High-freq pages | book detail, my loans | catalog, members, borrow records |
+| Web dependence | ~none | export only |
+
+### Known shortcomings (from user feedback)
+- **Batch ops weak** (scan one-by-one; moving hundreds across shelves / re-categorizing is painful) → **B21**.
+- **Reminders not "default-on"** (overdue reminder must be set manually, doesn't persist next time) → informs R3/B16 defaults.
+- **Pricing unfriendly to large personal collections** (per-user pricing) — not applicable to our model.
+- Early version was over-loaded / tightly coupled (team acknowledged in a 1.0 rebuild note).
+
+### Implications for OpenBookCorner's two-view design (what we're building)
+Our **Reader view / Admin view** split (admins can switch; super-admin adds a System view) maps directly
+onto 番薔's reader/admin Mini Program separation. Alignment notes & gaps:
+- **Reader view** should trend toward the "reading-community flow": our catalog + My Books exist (✅);
+  gaps vs 番薯 reader IA → **到馆通知 toggle** on a borrowed book (B13/R6), **预约/收藏/分享** actions on
+  detail (B13/B18), **书评** on detail (R6), **借书码 / scan self-borrow** (B2), **我想读 / 历史 / 预约** lists in
+  My Books (B15), a **馆内动态** feed (B17).
+- **Admin view** should trend toward the "tool backend": we have Add Book (scan), Overdue (+contact),
+  Settings, Feedback (✅); gaps → **scan-queue cataloging UX** ("已扫 N 本") + **batch move-shelf** (B21),
+  **member management + invite code + join review + sub-admins** (R4/B11), **admin-proxy borrow/return**
+  ("find person → scan book") (B14), **一键催还** on the overdue list (B16), **rankings / 荐购 / orders**
+  (B10/R6/B14).
+- **System view (super-admin)** — our cross-tenant tenant management; no direct 番薯 analog (番薯 is per-library),
+  closest to their SaaS console. Keep distinct from library-admin.
+- **Shelf location** (A01-style) recurs in both reader detail and admin cataloging → **B6** gains priority
+  as it threads through several screens.

@@ -35,11 +35,15 @@ export default async function globalSetup() {
 
   await createUser('reader@demo.test', 'Demo Reader')
   await createUser('admin@demo.test', 'Demo Admin')
+  await createUser('super@demo.test', 'Demo Super Admin')
 
-  // Attach to the demo library + roles (local D1).
+  // Attach to the demo library + roles (local D1). The super admin also gets the
+  // demo library so Admin/Reader views work when they switch; their System view
+  // (tenant management) is role-based and spans all libraries.
   const sql =
     "UPDATE user SET library_id='lib-demo-001', role='library_admin' WHERE email='admin@demo.test';" +
-    "UPDATE user SET library_id='lib-demo-001', role='library_reader' WHERE email='reader@demo.test';"
+    "UPDATE user SET library_id='lib-demo-001', role='library_reader' WHERE email='reader@demo.test';" +
+    "UPDATE user SET library_id='lib-demo-001', role='super_admin' WHERE email='super@demo.test';"
   execSync(
     `bunx wrangler d1 execute openbookcorner --local --command "${sql}"`,
     { cwd: new URL('../apps/api', import.meta.url).pathname, stdio: 'ignore' },

@@ -46,3 +46,16 @@ export const adminProcedure = tenantProcedure.use(({ ctx, next }) => {
   }
   return next({ ctx })
 })
+
+/**
+ * Requires a super admin. NOT tenant-scoped: super admins manage libraries
+ * (tenants) across the whole system, so these procedures operate without a
+ * libraryId filter. Only `protectedProcedure` + a role check — never leak this
+ * onto tenant-scoped data paths.
+ */
+export const superAdminProcedure = protectedProcedure.use(({ ctx, next }) => {
+  if (ctx.user.role !== 'super_admin') {
+    throw new TRPCError({ code: 'FORBIDDEN', message: 'SUPER_ADMIN_REQUIRED' })
+  }
+  return next({ ctx })
+})

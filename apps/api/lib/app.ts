@@ -8,6 +8,7 @@ import { bookRouter } from '../routers/book'
 import { borrowingRouter } from '../routers/borrowing'
 import { feedbackRouter } from '../routers/feedback'
 import { libraryRouter } from '../routers/library'
+import { tenantRouter } from '../routers/tenant'
 
 const appRouter = router({
   auth: authRouter,
@@ -15,6 +16,7 @@ const appRouter = router({
   borrowing: borrowingRouter,
   library: libraryRouter,
   feedback: feedbackRouter,
+  tenant: tenantRouter,
 })
 
 const app = new Hono<AppContext>()
