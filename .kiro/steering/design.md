@@ -636,12 +636,12 @@ graph TB
         Cache[Local Cache]
     end
     
-    subgraph "tRPC API - Cloudflare Workers"
-        AuthAPI[Auth Router]
-        LibraryAPI[Library Router]
-        BookAPI[Book Router]
-        BorrowAPI[Borrowing Router]
-        BarcodeAPI[Barcode Router]
+    subgraph "TanStack Start Server (Cloudflare Workers)"
+        AuthAPI[Auth Functions]
+        LibraryAPI[Library Functions]
+        BookAPI[Book Functions]
+        BorrowAPI[Borrowing Functions]
+        BarcodeAPI[Barcode Functions]
     end
     
     subgraph "Data Layer"
@@ -667,21 +667,21 @@ graph TB
 ### Technology Stack (Cloudflare Optimized)
 
 **Frontend:**
-- SvelteKit with TypeScript (deployed to Cloudflare Pages)
-- Built-in PWA capabilities (Service Worker, Web App Manifest)
+- TanStack Start (React, Vite) with TypeScript (deployed to Cloudflare)
+- PWA capabilities via Vite PWA plugin (Service Worker, Web App Manifest)
 - Tailwind CSS for styling (minimal bundle size)
-- shadcn-svelte for UI components (copy-paste, tree-shakeable)
-- tRPC-SvelteKit for type-safe API calls
-- Camera API for barcode scanning
+- shadcn/ui for UI components (copy-paste, tree-shakeable, you own the source)
+- TanStack Query + TanStack Start server functions for type-safe data fetching
+- Camera API for barcode scanning (Phase 1; WeChat JS-SDK `wx.scanCode` in Phase 2)
 
 **Backend:**
-- Cloudflare Workers with Hono.js framework
+- Cloudflare Workers (TanStack Start deploys here)
 - TypeScript
-- tRPC with @hono/trpc-server integration
+- TanStack Start server functions (`createServerFn`) — type-safe client↔server calls (no tRPC, no Hono)
 - Lucia Auth for authentication and session management
 - Drizzle ORM for type-safe database operations
 - Multi-tenant database architecture
-- Type-safe API procedures
+- Type-safe server functions with Zod-validated inputs
 
 **Database:**
 - Cloudflare D1 (SQLite-based, free tier: 100k reads/day, 100k writes/day)
@@ -693,339 +693,313 @@ graph TB
 - Cloudflare Email Workers for email notifications (free tier available)
 - Cloudflare R2 for book cover image storage (free tier: 10GB storage)
 
-### Hono.js + tRPC Backend Architecture
+### TanStack Start Server Architecture (server functions)
 
-**Backend Structure with Hono.js:**
+**Server structure with TanStack Start server functions:**
+
+Server logic lives in `src/server/` and ships inside the same TanStack Start app (deployed to
+Cloudflare Workers). There is no separate HTTP framework or RPC layer — `createServerFn` provides
+type-safe, client-callable server functions. A reusable auth + tenant guard middleware validates the
+Lucia session and tenant, then enriches `context` with `{ user, libraryId, db, kv, r2 }`.
 
 ```typescript
-// worker/src/index.ts - Main Hono app
-import { Hono } from 'hono';
-import { cors } from 'hono/cors';
-import { jwt } from 'hono/jwt';
-import { trpcServer } from '@hono/trpc-server';
-import { appRouter } from './router';
-import { createContext } from './context';
+// src/server/middleware/auth.ts - reusable auth + tenant guards
+import { createMiddleware } from '@tanstack/react-start';
+import { getBindings } from '@/server/db/bindings';
+import { initializeLucia } from '@/server/auth/lucia';
 
-const app = new Hono<{ Bindings: CloudflareBindings }>();
+// Validates the Lucia session cookie and attaches the user + bindings
+export const authMiddleware = createMiddleware().server(async ({ next, request }) => {
+  const env = getBindings(); // Cloudflare D1/KV/R2 bindings
+  const lucia = initializeLucia(env.DB);
 
-// CORS middleware
-app.use('*', cors({
-  origin: ['https://your-app.pages.dev'],
-  credentials: true
-}));
+  const sessionId = lucia.readSessionCookie(request.headers.get('Cookie') ?? '');
+  if (!sessionId) throw new Error('UNAUTHORIZED');
 
-// Tenant isolation middleware
-app.use('/api/trpc/*', async (c, next) => {
-  const token = c.req.header('Authorization')?.replace('Bearer ', '');
-  if (token) {
-    try {
-      const payload = await jwt.verify(token, c.env.JWT_SECRET);
-      c.set('user', payload);
-    } catch (e) {
-      // Handle invalid token
-    }
-  }
-  await next();
+  const { user, session } = await lucia.validateSession(sessionId);
+  if (!user || !session) throw new Error('UNAUTHORIZED');
+
+  return next({
+    context: { db: env.DB, kv: env.KV, r2: env.R2, lucia, user, session },
+  });
 });
 
-// tRPC integration with Hono
-app.use('/api/trpc/*', trpcServer({
-  router: appRouter,
-  createContext: (opts, c) => createContext(opts, c),
-  onError: ({ error, path }) => {
-    console.error(`tRPC Error on ${path}:`, error);
-  }
-}));
-
-// Health check endpoint
-app.get('/health', (c) => c.json({ status: 'ok' }));
-
-export default app;
-```
-
-**tRPC Context with Hono:**
-
-```typescript
-// worker/src/context.ts
-import type { Context } from 'hono';
-import type { CloudflareBindings } from './types';
-
-export async function createContext(
-  opts: any,
-  c: Context<{ Bindings: CloudflareBindings }>
-) {
-  const user = c.get('user');
-  
-  return {
-    db: c.env.DB, // D1 Database
-    kv: c.env.KV, // KV Store
-    r2: c.env.R2, // R2 Storage
-    user,
-    libraryId: user?.libraryId,
-    userRole: user?.role,
-  };
-}
-
-export type Context = Awaited<ReturnType<typeof createContext>>;
-```
-
-**Domain-based tRPC Routers:**
-
-```typescript
-// worker/src/router/index.ts
-import { router } from '../trpc';
-import { authRouter } from './auth';
-import { libraryRouter } from './library';
-import { bookRouter } from './book';
-import { borrowingRouter } from './borrowing';
-import { barcodeRouter } from './barcode';
-
-export const appRouter = router({
-  auth: authRouter,
-  library: libraryRouter,
-  book: bookRouter,
-  borrowing: borrowingRouter,
-  barcode: barcodeRouter,
+// Ensures the request is scoped to the user's library (tenant isolation)
+export const tenantMiddleware = createMiddleware().server(async ({ next, context }) => {
+  if (!context.user?.libraryId) throw new Error('NO_LIBRARY_ACCESS');
+  return next({ context: { libraryId: context.user.libraryId, userRole: context.user.role } });
 });
 
-export type AppRouter = typeof appRouter;
+// Admin-only guard
+export const adminMiddleware = createMiddleware().server(async ({ next, context }) => {
+  if (context.userRole !== 'library_admin' && context.userRole !== 'super_admin') {
+    throw new Error('Insufficient permissions');
+  }
+  return next();
+});
 ```
 
-**Example Book Router with Hono Context:**
+**Reusable server-function guards:**
 
 ```typescript
-// worker/src/router/book.ts
+// src/server/functions/_guards.ts
+import { createServerFn } from '@tanstack/react-start';
+import { authMiddleware, tenantMiddleware, adminMiddleware } from '@/server/middleware/auth';
+
+// Any authenticated member: context has { user, libraryId, db, kv, r2 }
+export const authed = createServerFn().middleware([authMiddleware, tenantMiddleware]);
+
+// Admin-only
+export const adminOnly = createServerFn().middleware([
+  authMiddleware,
+  tenantMiddleware,
+  adminMiddleware,
+]);
+```
+
+**Server functions grouped by domain:**
+
+Instead of tRPC routers, each bounded context has a file under `src/server/functions/`
+(`auth.ts`, `library.ts`, `book.ts`, `borrowing.ts`, `barcode.ts`). The client imports and calls these
+functions directly with full end-to-end type inference.
+
+```typescript
+// src/server/functions/index.ts (barrel re-export, optional)
+export * as auth from './auth';
+export * as library from './library';
+export * as book from './book';
+export * as borrowing from './borrowing';
+export * as barcode from './barcode';
+```
+
+**Example book server functions (tenant-scoped):**
+
+```typescript
+// src/server/functions/book.ts
 import { z } from 'zod';
-import { router, protectedProcedure, adminProcedure } from '../trpc';
-import { BookService } from '../services/BookService';
+import { authed, adminOnly } from './_guards';
+import { BookService } from '@/server/services/BookService';
 
-export const bookRouter = router({
-  list: protectedProcedure
-    .input(z.object({
-      search: z.string().optional(),
-      page: z.number().default(1),
-      limit: z.number().max(50).default(20)
-    }))
-    .query(async ({ input, ctx }) => {
-      const bookService = new BookService(ctx.db);
-      return await bookService.findByLibrary(
-        ctx.libraryId!,
-        input
-      );
-    }),
+export const listBooks = authed
+  .validator(z.object({
+    search: z.string().optional(),
+    page: z.number().default(1),
+    limit: z.number().max(50).default(20),
+  }))
+  .handler(async ({ data, context }) => {
+    const bookService = new BookService(context.db);
+    // ALWAYS scoped by the authenticated tenant
+    return bookService.findByLibrary(context.libraryId, data);
+  });
 
-  add: adminProcedure
-    .input(z.object({
-      isbn: z.string(),
-      title: z.string(),
-      author: z.string(),
-      quantity: z.number().default(1)
-    }))
-    .mutation(async ({ input, ctx }) => {
-      const bookService = new BookService(ctx.db);
-      return await bookService.create({
-        ...input,
-        libraryId: ctx.libraryId!
-      });
-    }),
+export const addBook = adminOnly
+  .validator(z.object({
+    isbn: z.string(),
+    title: z.string(),
+    author: z.string(),
+    quantity: z.number().default(1),
+  }))
+  .handler(async ({ data, context }) => {
+    const bookService = new BookService(context.db);
+    return bookService.create({ ...data, libraryId: context.libraryId });
+  });
 
-  borrow: protectedProcedure
-    .input(z.object({ bookId: z.string().uuid() }))
-    .mutation(async ({ input, ctx }) => {
-      const bookService = new BookService(ctx.db);
-      return await bookService.borrowBook(
-        input.bookId,
-        ctx.user!.id,
-        ctx.libraryId!
-      );
-    }),
-});
+export const borrowBook = authed
+  .validator(z.object({ bookId: z.string().uuid() }))
+  .handler(async ({ data, context }) => {
+    const bookService = new BookService(context.db);
+    return bookService.borrowBook(data.bookId, context.user.id, context.libraryId);
+  });
 ```
 
-### SvelteKit + tRPC Integration
+### TanStack Start + TanStack Query Integration
 
 **Frontend Architecture:**
 
 ```typescript
-// src/lib/trpc.ts - tRPC client setup
-import { createTRPCClient, type TRPCClientInit } from 'trpc-sveltekit';
-import type { AppRouter } from '../../../worker/src/router';
+// src/lib/queryClient.ts - QueryClient setup (TanStack Query)
+import { QueryClient } from '@tanstack/react-query';
 
-export const trpc = createTRPCClient<AppRouter>({
-  url: '/api/trpc',
-  transformer: superjson,
-  headers: () => {
-    const token = localStorage.getItem('auth-token');
-    return token ? { Authorization: `Bearer ${token}` } : {};
-  }
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: { staleTime: 60_000, retry: 1 },
+  },
 });
 
-// src/routes/+layout.ts - Global data loading
-export const load = async ({ fetch }) => {
-  try {
-    const user = await trpc.auth.me.query();
-    return { user };
-  } catch (error) {
-    return { user: null };
-  }
-};
+// Auth state is loaded via a server function consumed through TanStack Query.
+// src/hooks/useAuth.ts
+import { useQuery } from '@tanstack/react-query';
+import { me } from '@/server/functions/auth';
+
+export function useAuth() {
+  return useQuery({
+    queryKey: ['auth', 'me'],
+    queryFn: () => me(),
+    retry: false,
+  });
+}
 ```
 
-**SvelteKit Routes Structure:**
+**TanStack Router Routes Structure:**
 ```
 src/routes/
-├── +layout.svelte          # Global layout with PWA shell
-├── +layout.ts              # Global data loading
-├── (auth)/
-│   ├── login/+page.svelte  # Login page
-│   └── verify/+page.svelte # Verification page
-├── (app)/
-│   ├── +layout.svelte      # Authenticated layout
+├── __root.tsx              # Root route (global shell / PWA)
+├── _auth/
+│   ├── login.tsx           # Login page
+│   └── verify.tsx          # Verification page
+├── _app/
+│   ├── route.tsx           # Authenticated layout
 │   ├── books/
-│   │   ├── +page.svelte    # Book catalog
-│   │   ├── +page.ts        # Load books data
-│   │   └── [id]/+page.svelte # Book details
-│   ├── borrow/+page.svelte # Borrowing interface
-│   ├── scan/+page.svelte   # Barcode scanner
+│   │   ├── index.tsx       # Book catalog (loads books data)
+│   │   └── $bookId.tsx     # Book details
+│   ├── borrow.tsx          # Borrowing interface
+│   ├── scan.tsx            # Barcode scanner
 │   └── admin/
-│       └── +page.svelte    # Admin dashboard
-└── api/
-    └── trpc/[...trpc]/+server.ts # tRPC handler
+│       └── index.tsx       # Admin dashboard
+└── (server functions live in src/server/functions/, not as HTTP routes)
 ```
 
-**tRPC API Design:**
+**Server Function API Design:**
 
 ```typescript
-// Main tRPC Router
-export const appRouter = router({
-  auth: authRouter,
-  library: libraryRouter,
-  book: bookRouter,
-  borrowing: borrowingRouter,
-  request: requestRouter,
-  barcode: barcodeRouter,
-});
+// Server functions are grouped by domain under src/server/functions/
+// (auth.ts, library.ts, book.ts, borrowing.ts, request.ts, barcode.ts).
+// Clients import and call them directly — no central router object.
 
-// SvelteKit Usage Examples
-// src/routes/(app)/books/+page.ts
-export const load = async ({ parent }) => {
-  const { user } = await parent();
-  const books = await trpc.book.list.query({
-    libraryId: user.libraryId,
-    page: 1,
-    limit: 20
+// src/routes/_app/books/index.tsx — load books via TanStack Query
+import { useQuery } from '@tanstack/react-query';
+import { listBooks } from '@/server/functions/book';
+
+function BooksRoute() {
+  const { data: books } = useQuery({
+    queryKey: ['books', { page: 1, limit: 20 }],
+    // libraryId is derived from the authenticated session on the server
+    queryFn: () => listBooks({ data: { page: 1, limit: 20 } }),
   });
-  return { books };
-};
+  // ...render books
+}
 
-// src/routes/(app)/scan/+page.svelte
-<script lang="ts">
-  import { trpc } from '$lib/trpc';
-  import { page } from '$app/stores';
-  
-  async function handleBarcodeScan(isbn: string) {
-    const result = await trpc.barcode.scan.mutate({
-      isbn,
-      action: 'borrow'
-    });
-    // Handle result with reactive updates
-  }
-</script>
+// src/routes/_app/scan.tsx — scan to borrow via a mutation
+import { useMutation } from '@tanstack/react-query';
+import { scanBarcode } from '@/server/functions/barcode';
+
+function ScanRoute() {
+  const scan = useMutation({
+    mutationFn: (isbn: string) => scanBarcode({ data: { isbn, action: 'borrow' } }),
+  });
+
+  const handleBarcodeScan = (isbn: string) => scan.mutate(isbn);
+  // ...render scanner
+}
 ```
 
-**UI Components with shadcn-svelte:**
+**UI Components with shadcn/ui:**
 
-```typescript
-// src/lib/components/ui/book-card.svelte
-<script lang="ts">
-  import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
-  import { Button } from '$lib/components/ui/button';
-  import { Badge } from '$lib/components/ui/badge';
-  import type { Book } from '$lib/types';
+```tsx
+// src/components/books/BookCard.tsx
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import type { Book } from '@/server/domain/types';
 
-  export let book: Book;
-  export let onBorrow: (bookId: string) => void;
-</script>
+interface BookCardProps {
+  book: Book;
+  onBorrow: (bookId: string) => void;
+}
 
-<Card class="w-full max-w-sm">
-  <CardHeader>
-    <CardTitle class="text-lg">{book.title}</CardTitle>
-    <p class="text-sm text-muted-foreground">by {book.author}</p>
-  </CardHeader>
-  <CardContent>
-    <div class="flex justify-between items-center">
-      <Badge variant={book.availableQuantity > 0 ? 'default' : 'secondary'}>
-        {book.availableQuantity > 0 ? 'Available' : 'Borrowed'}
-      </Badge>
-      <Button 
-        size="sm" 
-        disabled={book.availableQuantity === 0}
-        on:click={() => onBorrow(book.id)}
-      >
-        Borrow
-      </Button>
-    </div>
-  </CardContent>
-</Card>
+export function BookCard({ book, onBorrow }: BookCardProps) {
+  const isAvailable = book.availableQuantity > 0;
+
+  return (
+    <Card className="w-full max-w-sm">
+      <CardHeader>
+        <CardTitle className="text-lg">{book.title}</CardTitle>
+        <p className="text-sm text-muted-foreground">by {book.author}</p>
+      </CardHeader>
+      <CardContent>
+        <div className="flex justify-between items-center">
+          <Badge variant={isAvailable ? 'default' : 'secondary'}>
+            {isAvailable ? 'Available' : 'Borrowed'}
+          </Badge>
+          <Button size="sm" disabled={!isAvailable} onClick={() => onBorrow(book.id)}>
+            Borrow
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 ```
 
 **Barcode Scanner Component:**
 
-```svelte
-<!-- src/lib/components/barcode-scanner.svelte -->
-<script lang="ts">
-  import { Button } from '$lib/components/ui/button';
-  import { Card, CardContent } from '$lib/components/ui/card';
-  import { onMount } from 'svelte';
+```tsx
+// src/components/barcode/BarcodeScanner.tsx
+import { useRef, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 
-  export let onScan: (isbn: string) => void;
-  
-  let videoElement: HTMLVideoElement;
-  let scanning = false;
+interface BarcodeScannerProps {
+  onScan: (isbn: string) => void;
+}
 
-  async function startScanning() {
-    scanning = true;
-    const stream = await navigator.mediaDevices.getUserMedia({ 
-      video: { facingMode: 'environment' } 
+export function BarcodeScanner({ onScan }: BarcodeScannerProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [scanning, setScanning] = useState(false);
+
+  const startScanning = async () => {
+    setScanning(true);
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment' },
     });
-    videoElement.srcObject = stream;
-    // Implement barcode detection logic
-  }
+    if (videoRef.current) videoRef.current.srcObject = stream;
+    // Implement barcode detection logic (calls onScan on detection)
+  };
 
-  function stopScanning() {
-    scanning = false;
-    const stream = videoElement.srcObject as MediaStream;
-    stream?.getTracks().forEach(track => track.stop());
-  }
-</script>
+  const stopScanning = () => {
+    setScanning(false);
+    const stream = videoRef.current?.srcObject as MediaStream | null;
+    stream?.getTracks().forEach((track) => track.stop());
+  };
 
-<Card class="w-full max-w-md mx-auto">
-  <CardContent class="p-6">
-    <div class="space-y-4">
-      <video bind:this={videoElement} class="w-full rounded-lg" autoplay muted></video>
-      <div class="flex gap-2">
-        <Button on:click={startScanning} disabled={scanning} class="flex-1">
-          Start Scanning
-        </Button>
-        <Button variant="outline" on:click={stopScanning} disabled={!scanning} class="flex-1">
-          Stop
-        </Button>
-      </div>
-    </div>
-  </CardContent>
-</Card>
+  return (
+    <Card className="w-full max-w-md mx-auto">
+      <CardContent className="p-6">
+        <div className="space-y-4">
+          <video ref={videoRef} className="w-full rounded-lg" autoPlay muted />
+          <div className="flex gap-2">
+            <Button onClick={startScanning} disabled={scanning} className="flex-1">
+              Start Scanning
+            </Button>
+            <Button
+              variant="outline"
+              onClick={stopScanning}
+              disabled={!scanning}
+              className="flex-1"
+            >
+              Stop
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 ```
 
 **PWA Configuration:**
 ```typescript
-// vite.config.js
-import { sveltekit } from '@sveltejs/kit/vite';
-import { SvelteKitPWA } from '@vite-pwa/sveltekit';
+// vite.config.ts
+import { defineConfig } from 'vite';
+import { tanstackStart } from '@tanstack/react-start/plugin/vite';
+import viteReact from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
 
-export default {
+export default defineConfig({
   plugins: [
-    sveltekit(),
-    SvelteKitPWA({
+    tanstackStart(),
+    viteReact(),
+    VitePWA({
       strategies: 'injectManifest',
       srcDir: 'src',
       filename: 'sw.ts',
@@ -1055,16 +1029,16 @@ export default {
       }
     })
   ]
-};
+});
 ```
 
 **Component Library Setup:**
 ```bash
-# Initialize shadcn-svelte
-npx shadcn-svelte@latest init
+# Initialize shadcn/ui
+npx shadcn@latest init
 
 # Add essential components for library management
-npx shadcn-svelte@latest add button card input table badge dialog sheet tabs
+npx shadcn@latest add button card input table badge dialog sheet tabs
 ```
 
 ### Drizzle ORM Schema
@@ -1225,152 +1199,87 @@ export const users = sqliteTable('users', {
 });
 ```
 
-**Authentication Router with Lucia:**
+**Authentication Server Functions with Lucia (Phase 1: email/password):**
 
 ```typescript
-// worker/src/router/auth.ts
+// src/server/functions/auth.ts
 import { z } from 'zod';
-import { TRPCError } from '@trpc/server';
-import { router, publicProcedure, protectedProcedure } from '../trpc';
-import { UserService } from '../services/UserService';
-import { generateId } from 'lucia';
+import { createServerFn } from '@tanstack/react-start';
+import { authed } from './_guards';
+import { UserService } from '@/server/services/UserService';
+import { getBindings } from '@/server/db/bindings';
+import { initializeLucia } from '@/server/auth/lucia';
+import { verifyPassword } from '@/server/auth/password';
 
-export const authRouter = router({
-  login: publicProcedure
-    .input(z.object({ email: z.string().email() }))
-    .mutation(async ({ input, ctx }) => {
-      // Generate 6-digit verification code
-      const code = Math.random().toString().slice(2, 8);
-      
-      // Store code in KV with 5-minute expiration
-      await ctx.kv.put(`auth:${input.email}`, code, { expirationTtl: 300 });
-      
-      // Send verification email (implement email service)
-      // await sendVerificationEmail(input.email, code);
-      
-      return { success: true, message: 'Verification code sent' };
-    }),
+// Phase 1 uses email/password. (Email-verification-code login can be layered on later;
+// WeChat OAuth arrives in Phase 2 — see ADR 0001.)
+export const login = createServerFn({ method: 'POST' })
+  .validator(z.object({ email: z.string().email(), password: z.string().min(8) }))
+  .handler(async ({ data }) => {
+    const env = getBindings();
+    const lucia = initializeLucia(env.DB);
+    const userService = new UserService(env.DB);
 
-  verify: publicProcedure
-    .input(z.object({ 
-      email: z.string().email(), 
-      code: z.string().length(6) 
-    }))
-    .mutation(async ({ input, ctx }) => {
-      // Verify code from KV
-      const storedCode = await ctx.kv.get(`auth:${input.email}`);
-      
-      if (!storedCode || storedCode !== input.code) {
-        throw new TRPCError({ 
-          code: 'UNAUTHORIZED', 
-          message: 'Invalid or expired verification code' 
-        });
-      }
-      
-      // Find or create user
-      const userService = new UserService(ctx.db);
-      const user = await userService.findOrCreateByEmail(input.email);
-      
-      if (!user) {
-        throw new TRPCError({ 
-          code: 'NOT_FOUND', 
-          message: 'User not found or email domain not allowed' 
-        });
-      }
-      
-      // Create Lucia session
-      const session = await ctx.lucia.createSession(user.id, {});
-      const sessionCookie = ctx.lucia.createSessionCookie(session.id);
-      
-      // Clean up verification code
-      await ctx.kv.delete(`auth:${input.email}`);
-      
-      return { 
-        success: true,
-        sessionCookie: sessionCookie.serialize(),
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          libraryId: user.libraryId,
-          role: user.role
-        }
-      };
-    }),
+    const user = await userService.findByEmail(data.email);
+    if (!user || !(await verifyPassword(user, data.password))) {
+      throw new Error('Invalid email or password');
+    }
 
-  me: protectedProcedure
-    .query(async ({ ctx }) => {
-      if (!ctx.user) {
-        throw new TRPCError({ code: 'UNAUTHORIZED' });
-      }
-      
-      return {
-        id: ctx.user.id,
-        email: ctx.user.email,
-        name: ctx.user.name,
-        libraryId: ctx.user.libraryId,
-        role: ctx.user.role
-      };
-    }),
+    // Create Lucia session and set the cookie
+    const session = await lucia.createSession(user.id, {});
+    const sessionCookie = lucia.createSessionCookie(session.id);
 
-  logout: protectedProcedure
-    .mutation(async ({ ctx }) => {
-      if (!ctx.session) {
-        throw new TRPCError({ code: 'UNAUTHORIZED' });
-      }
-      
-      await ctx.lucia.invalidateSession(ctx.session.id);
-      const sessionCookie = ctx.lucia.createBlankSessionCookie();
-      
-      return { 
-        success: true,
-        sessionCookie: sessionCookie.serialize()
-      };
-    }),
+    return {
+      success: true,
+      sessionCookie: sessionCookie.serialize(),
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        libraryId: user.libraryId,
+        role: user.role,
+      },
+    };
+  });
+
+export const me = authed.handler(async ({ context }) => {
+  // context.user is guaranteed by the auth guard middleware
+  return {
+    id: context.user.id,
+    email: context.user.email,
+    name: context.user.name,
+    libraryId: context.user.libraryId,
+    role: context.user.role,
+  };
+});
+
+export const logout = authed.handler(async ({ context }) => {
+  await context.lucia.invalidateSession(context.session.id);
+  const sessionCookie = context.lucia.createBlankSessionCookie();
+  return { success: true, sessionCookie: sessionCookie.serialize() };
 });
 ```
 
-**Updated tRPC Context with Lucia:**
+**Lucia session helper (used by the auth guard middleware):**
 
 ```typescript
-// worker/src/context.ts
-import type { Context } from 'hono';
-import type { CloudflareBindings } from './types';
-import { initializeLucia } from './auth/lucia';
+// src/server/auth/session.ts
+import { initializeLucia } from './lucia';
 
-export async function createContext(
-  opts: any,
-  c: Context<{ Bindings: CloudflareBindings }>
-) {
-  const lucia = initializeLucia(c.env.DB);
-  
-  // Get session from cookie
-  const sessionId = lucia.readSessionCookie(c.req.header('Cookie') ?? '');
-  let user = null;
-  let session = null;
-  
-  if (sessionId) {
-    const result = await lucia.validateSession(sessionId);
-    user = result.user;
-    session = result.session;
-  }
-  
-  return {
-    db: c.env.DB,
-    kv: c.env.KV,
-    r2: c.env.R2,
-    lucia,
-    user,
-    session,
-    libraryId: user?.libraryId,
-    userRole: user?.role,
-  };
+// Resolve the current user + session from the request cookie. The auth middleware
+// (src/server/middleware/auth.ts) uses this to enrich server-function context.
+export async function resolveSession(db: D1Database, cookieHeader: string | null) {
+  const lucia = initializeLucia(db);
+
+  const sessionId = lucia.readSessionCookie(cookieHeader ?? '');
+  if (!sessionId) return { user: null, session: null, lucia };
+
+  const { user, session } = await lucia.validateSession(sessionId);
+  return { user, session, lucia };
 }
-
-export type Context = Awaited<ReturnType<typeof createContext>>;
 ```
 
-**Hono.js Services Layer with Drizzle:**
+**Services Layer with Drizzle (framework-agnostic, called from server functions):**
 
 ```typescript
 // worker/src/services/BookService.ts
@@ -1491,31 +1400,30 @@ export class BookService {
 **Multi-tenant Middleware:**
 
 ```typescript
-// worker/src/middleware/tenant.ts
-import type { Context, Next } from 'hono';
+// src/server/middleware/tenant.ts
+import { createMiddleware } from '@tanstack/react-start';
 
-export async function tenantMiddleware(c: Context, next: Next) {
-  const user = c.get('user');
-  
-  if (!user?.libraryId) {
-    return c.json({ error: 'No library access' }, 403);
+// Ensures every server function runs scoped to the authenticated user's library.
+export const tenantMiddleware = createMiddleware().server(async ({ next, context }) => {
+  if (!context.user?.libraryId) {
+    throw new Error('No library access');
   }
-  
-  // Ensure all DB operations are scoped to user's library
-  c.set('libraryId', user.libraryId);
-  
-  await next();
-}
+
+  // Enrich context so all DB operations are scoped to the user's library
+  return next({
+    context: { libraryId: context.user.libraryId, userRole: context.user.role },
+  });
+});
 ```
 
 **Benefits for our PWA:**
-- **Type Safety**: Shared types between client and server
+- **Type Safety**: Shared types between client and server (server functions inferred end to end)
 - **Excellent DX**: Auto-completion and compile-time error checking
-- **SvelteKit Integration**: Built-in stores, reactive updates, optimistic UI
-- **Smallest Bundle**: Compiles away framework overhead, tree-shakeable
-- **PWA-First**: SvelteKit has built-in PWA support with service workers
-- **Performance**: Fastest runtime performance, perfect for mobile devices
-- **Edge Optimized**: Hono.js built specifically for Cloudflare Workers
+- **TanStack Start Integration**: TanStack Query caching, optimistic UI, typed routing
+- **Smallest Bundle**: Tree-shakeable (shadcn/ui source you own), Vite code splitting
+- **PWA-First**: Vite PWA plugin provides service workers and offline support
+- **Performance**: Optimized runtime, perfect for mobile devices
+- **Edge Optimized**: Runs on Cloudflare Workers at the edge
 - **Multi-tenant Security**: Built-in tenant isolation at middleware level
 
 ## Core Domain Models

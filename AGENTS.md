@@ -7,8 +7,8 @@ Instructions for AI coding agents working in this repository. Read this before w
 OpenBookCorner is a **multi-tenant library-management PWA**. See `docs/adr/0001-tech-stack-and-hosting.md`
 for the finalized stack decision and `.kiro/steering/` for product, design, structure, tech, and testing docs.
 
-> Note: the `.kiro/steering/*` docs predate ADR 0001 and still describe a SvelteKit stack. Where they
-> conflict with ADR 0001, **ADR 0001 wins** until the steering docs are rewritten for React/TanStack Start.
+> Note: `.kiro/steering/*` and the Release 1 MVP spec have been updated to match ADR 0001
+> (TanStack Start + server functions). ADR 0001 remains the source of truth if any conflict arises.
 
 ## Stack (ADR 0001)
 

@@ -21,15 +21,15 @@ The design prioritizes architectural correctness over feature richness, ensuring
 
 ```mermaid
 graph TB
-    subgraph "Frontend - SvelteKit PWA"
+    subgraph "Frontend - TanStack Start (React) PWA"
         UI[User Interface]
         Auth[Auth Components]
         Catalog[Book Catalog]
         Borrowing[Borrowing Interface]
     end
     
-    subgraph "Backend - Cloudflare Workers"
-        API[tRPC API Router]
+    subgraph "TanStack Start Server (Cloudflare Workers)"
+        API[Server Functions]
         AuthService[Auth Service]
         LibraryService[Library Service]
         BookService[Book Service]
@@ -241,139 +241,199 @@ interface BorrowedBook {
 
 ### 5. User Interface Components
 
-**Design Decision**: Minimal, functional UI with shadcn-svelte components
+**Design Decision**: Minimal, functional UI with shadcn/ui components
 **Rationale**: Focus on core functionality over visual polish, using proven component library for consistency
 
 #### Authentication UI
-```svelte
-<!-- Login Component -->
-<script lang="ts">
-  import { Button } from '$lib/components/ui/button';
-  import { Input } from '$lib/components/ui/input';
-  import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
-  
-  let email = '';
-  let verificationCode = '';
-  let step: 'email' | 'verify' = 'email';
-</script>
+```tsx
+// Login Component (src/components/auth/LoginCard.tsx)
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { sendCode, verifyCode } from "@/server/functions/auth";
 
-<Card class="w-full max-w-md mx-auto">
-  <CardHeader>
-    <CardTitle>Library Access</CardTitle>
-  </CardHeader>
-  <CardContent>
-    {#if step === 'email'}
-      <div class="space-y-4">
-        <Input bind:value={email} placeholder="Enter your work email" type="email" />
-        <Button on:click={sendCode} class="w-full">Send Verification Code</Button>
-      </div>
-    {:else}
-      <div class="space-y-4">
-        <Input bind:value={verificationCode} placeholder="Enter 6-digit code" />
-        <Button on:click={verifyCode} class="w-full">Verify & Login</Button>
-      </div>
-    {/if}
-  </CardContent>
-</Card>
+export function LoginCard() {
+  const [email, setEmail] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [step, setStep] = useState<"email" | "verify">("email");
+
+  const sendCodeMutation = useMutation({
+    mutationFn: () => sendCode({ data: { email } }),
+    onSuccess: () => setStep("verify"),
+  });
+
+  const verifyCodeMutation = useMutation({
+    mutationFn: () => verifyCode({ data: { email, code: verificationCode } }),
+  });
+
+  return (
+    <Card className="w-full max-w-md mx-auto">
+      <CardHeader>
+        <CardTitle>Library Access</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {step === "email" ? (
+          <div className="space-y-4">
+            <Input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your work email"
+              type="email"
+            />
+            <Button onClick={() => sendCodeMutation.mutate()} className="w-full">
+              Send Verification Code
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <Input
+              value={verificationCode}
+              onChange={(e) => setVerificationCode(e.target.value)}
+              placeholder="Enter 6-digit code"
+            />
+            <Button onClick={() => verifyCodeMutation.mutate()} className="w-full">
+              Verify & Login
+            </Button>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
 ```
 
 #### Book Catalog UI
-```svelte
-<!-- Catalog Component -->
-<script lang="ts">
-  import { Card, CardContent } from '$lib/components/ui/card';
-  import { Button } from '$lib/components/ui/button';
-  import { Badge } from '$lib/components/ui/badge';
-  
-  export let books: Book[];
-  export let userRole: string;
-</script>
+```tsx
+// Catalog Component (src/components/books/BookCatalog.tsx)
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { borrowBook } from "@/server/functions/book";
+import type { Book } from "@/server/domain/types";
 
-<div class="space-y-4">
-  <div class="flex justify-between items-center">
-    <h1 class="text-2xl font-bold">Library Catalog</h1>
-    {#if userRole === 'library_admin'}
-      <Button href="/admin/books/add">Add Book</Button>
-    {/if}
-  </div>
-  
-  <div class="grid gap-4">
-    {#each books as book}
-      <Card>
-        <CardContent class="p-4">
-          <div class="flex justify-between items-start">
-            <div>
-              <h3 class="font-semibold">{book.title}</h3>
-              <p class="text-sm text-muted-foreground">by {book.author}</p>
-              <p class="text-xs text-muted-foreground">ISBN: {book.isbn}</p>
-            </div>
-            <div class="flex flex-col items-end gap-2">
-              <Badge variant={book.isAvailable ? 'default' : 'secondary'}>
-                {book.isAvailable ? 'Available' : 'Borrowed'}
-              </Badge>
-              {#if book.isAvailable && userRole === 'library_reader'}
-                <Button size="sm" on:click={() => borrowBook(book.id)}>
-                  Borrow
-                </Button>
-              {/if}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    {/each}
-  </div>
-</div>
+interface BookCatalogProps {
+  books: Book[];
+  userRole: string;
+}
+
+export function BookCatalog({ books, userRole }: BookCatalogProps) {
+  const queryClient = useQueryClient();
+  const borrow = useMutation({
+    mutationFn: (bookId: string) => borrowBook({ data: { bookId } }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["books"] }),
+  });
+
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Library Catalog</h1>
+        {userRole === "library_admin" && (
+          <Button asChild>
+            <a href="/admin/books/add">Add Book</a>
+          </Button>
+        )}
+      </div>
+
+      <div className="grid gap-4">
+        {books.map((book) => (
+          <Card key={book.id}>
+            <CardContent className="p-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-semibold">{book.title}</h3>
+                  <p className="text-sm text-muted-foreground">by {book.author}</p>
+                  <p className="text-xs text-muted-foreground">ISBN: {book.isbn}</p>
+                </div>
+                <div className="flex flex-col items-end gap-2">
+                  <Badge variant={book.isAvailable ? "default" : "secondary"}>
+                    {book.isAvailable ? "Available" : "Borrowed"}
+                  </Badge>
+                  {book.isAvailable && userRole === "library_reader" && (
+                    <Button size="sm" onClick={() => borrow.mutate(book.id)}>
+                      Borrow
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
 ```
 
 #### My Books UI
-```svelte
-<!-- My Books Component -->
-<script lang="ts">
-  import { Card, CardContent } from '$lib/components/ui/card';
-  import { Button } from '$lib/components/ui/button';
-  import { Badge } from '$lib/components/ui/badge';
-  
-  export let borrowedBooks: BorrowedBook[];
-</script>
+```tsx
+// My Books Component (src/components/books/MyBooks.tsx)
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { returnBook } from "@/server/functions/borrowing";
+import type { BorrowedBook } from "@/server/domain/types";
 
-<div class="space-y-4">
-  <h1 class="text-2xl font-bold">My Books</h1>
-  
-  {#if borrowedBooks.length === 0}
-    <Card>
-      <CardContent class="p-8 text-center">
-        <p class="text-muted-foreground">No books currently borrowed</p>
-        <Button href="/catalog" class="mt-4">Browse Catalog</Button>
-      </CardContent>
-    </Card>
-  {:else}
-    <div class="grid gap-4">
-      {#each borrowedBooks as item}
+interface MyBooksProps {
+  borrowedBooks: BorrowedBook[];
+}
+
+export function MyBooks({ borrowedBooks }: MyBooksProps) {
+  const queryClient = useQueryClient();
+  const returnMutation = useMutation({
+    mutationFn: (transactionId: string) => returnBook({ data: { transactionId } }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["my-books"] }),
+  });
+
+  return (
+    <div className="space-y-4">
+      <h1 className="text-2xl font-bold">My Books</h1>
+
+      {borrowedBooks.length === 0 ? (
         <Card>
-          <CardContent class="p-4">
-            <div class="flex justify-between items-start">
-              <div>
-                <h3 class="font-semibold">{item.book.title}</h3>
-                <p class="text-sm text-muted-foreground">by {item.book.author}</p>
-                <p class="text-xs text-muted-foreground">
-                  Due: {item.dueDate.toLocaleDateString()}
-                </p>
-              </div>
-              <div class="flex flex-col items-end gap-2">
-                <Badge variant={item.isOverdue ? 'destructive' : 'default'}>
-                  {item.isOverdue ? 'Overdue' : 'Borrowed'}
-                </Badge>
-                <Button size="sm" on:click={() => returnBook(item.transactionId)}>
-                  Return
-                </Button>
-              </div>
-            </div>
+          <CardContent className="p-8 text-center">
+            <p className="text-muted-foreground">No books currently borrowed</p>
+            <Button asChild className="mt-4">
+              <a href="/catalog">Browse Catalog</a>
+            </Button>
           </CardContent>
         </Card>
-      {/each}
+      ) : (
+        <div className="grid gap-4">
+          {borrowedBooks.map((item) => (
+            <Card key={item.transactionId}>
+              <CardContent className="p-4">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="font-semibold">{item.book.title}</h3>
+                    <p className="text-sm text-muted-foreground">by {item.book.author}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Due: {item.dueDate.toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <Badge variant={item.isOverdue ? "destructive" : "default"}>
+                      {item.isOverdue ? "Overdue" : "Borrowed"}
+                    </Badge>
+                    <Button
+                      size="sm"
+                      onClick={() => returnMutation.mutate(item.transactionId)}
+                    >
+                      Return
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
-  {/if}
-</div>
+  );
+}
 ```
 
 ## Data Models
@@ -449,70 +509,96 @@ CREATE INDEX idx_transactions_book_id ON borrow_transactions(book_id);
 CREATE INDEX idx_transactions_library_id ON borrow_transactions(library_id);
 ```
 
-### tRPC API Schema
+### Server Function API Schema
+
+Server logic uses **TanStack Start server functions** (`createServerFn`) grouped by domain under
+`src/server/functions/`. A reusable auth + tenant guard middleware validates the session and tenant,
+then puts `{ user, libraryId, db }` on `context`. Every data access is scoped by `libraryId`.
 
 ```typescript
-// Authentication Router
-export const authRouter = router({
-  sendCode: publicProcedure
-    .input(z.object({ email: z.string().email() }))
-    .mutation(async ({ input, ctx }) => {
-      // Generate and store verification code
-      // Send email (mock in MVP)
-    }),
-    
-  verifyCode: publicProcedure
-    .input(z.object({ 
-      email: z.string().email(), 
-      code: z.string().length(6) 
-    }))
-    .mutation(async ({ input, ctx }) => {
-      // Verify code and create session
-    }),
-    
-  me: protectedProcedure
-    .query(async ({ ctx }) => {
-      // Return current user info
-    }),
+// src/server/functions/_guards.ts
+import { createServerFn } from "@tanstack/react-start";
+import { authMiddleware, tenantMiddleware } from "@/server/middleware/auth";
+
+// Any authenticated member (context has { user, libraryId, db })
+export const authed = createServerFn().middleware([authMiddleware, tenantMiddleware]);
+
+// Admin-only guard (adds a role check on top of authed)
+export const adminOnly = createServerFn().middleware([
+  authMiddleware,
+  tenantMiddleware,
+  adminMiddleware,
+]);
+```
+
+```typescript
+// src/server/functions/auth.ts
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+
+export const sendCode = createServerFn({ method: "POST" })
+  .validator(z.object({ email: z.string().email() }))
+  .handler(async ({ data, context }) => {
+    // Generate and store verification code in KV (5-min TTL)
+    // Send email (mock in MVP)
+  });
+
+export const verifyCode = createServerFn({ method: "POST" })
+  .validator(z.object({ email: z.string().email(), code: z.string().length(6) }))
+  .handler(async ({ data, context }) => {
+    // Verify code, create Lucia session
+  });
+
+export const me = authed.handler(async ({ context }) => {
+  // context.user is set by the auth guard
+  return context.user;
+});
+```
+
+```typescript
+// src/server/functions/book.ts
+import { z } from "zod";
+import { authed, adminOnly } from "./_guards";
+import { BookService } from "@/server/services/BookService";
+
+export const listBooks = authed.handler(async ({ context }) => {
+  const svc = new BookService(context.db);
+  // ALWAYS scoped by the authenticated tenant
+  return svc.findByLibrary(context.libraryId);
 });
 
-// Book Router
-export const bookRouter = router({
-  list: protectedProcedure
-    .query(async ({ ctx }) => {
-      // Return books for user's library
-    }),
-    
-  add: adminProcedure
-    .input(z.object({
-      isbn: z.string(),
-      title: z.string(),
-      author: z.string()
-    }))
-    .mutation(async ({ input, ctx }) => {
-      // Add book to library catalog
-    }),
-    
-  borrow: protectedProcedure
-    .input(z.object({ bookId: z.string() }))
-    .mutation(async ({ input, ctx }) => {
-      // Create borrow transaction
-    }),
+export const addBook = adminOnly
+  .validator(z.object({ isbn: z.string(), title: z.string(), author: z.string() }))
+  .handler(async ({ data, context }) => {
+    const svc = new BookService(context.db);
+    return svc.create({ ...data, libraryId: context.libraryId });
+  });
+
+export const borrowBook = authed
+  .validator(z.object({ bookId: z.string() }))
+  .handler(async ({ data, context }) => {
+    const svc = new BookService(context.db);
+    return svc.borrowBook(data.bookId, context.user.id, context.libraryId);
+  });
+```
+
+```typescript
+// src/server/functions/borrowing.ts
+import { z } from "zod";
+import { authed } from "./_guards";
+import { CirculationService } from "@/server/services/CirculationService";
+
+export const myBooks = authed.handler(async ({ context }) => {
+  const svc = new CirculationService(context.db);
+  return svc.getUserBorrowedBooks(context.user.id, context.libraryId);
 });
 
-// Borrowing Router
-export const borrowingRouter = router({
-  myBooks: protectedProcedure
-    .query(async ({ ctx }) => {
-      // Return user's borrowed books
-    }),
-    
-  return: protectedProcedure
-    .input(z.object({ transactionId: z.string() }))
-    .mutation(async ({ input, ctx }) => {
-      // Process book return
-    }),
-});
+export const returnBook = authed
+  .validator(z.object({ transactionId: z.string() }))
+  .handler(async ({ data, context }) => {
+    const svc = new CirculationService(context.db);
+    return svc.returnBook(data.transactionId, context.libraryId);
+  });
 ```
 
 ## Error Handling
@@ -554,18 +640,14 @@ class CirculationService {
     const book = await this.bookRepository.findById(bookId);
     
     if (!book) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Book not found'
-      });
+      throw new DomainError('Book not found', ErrorCode.BOOK_NOT_AVAILABLE);
     }
     
     if (!book.isAvailable) {
-      throw new TRPCError({
-        code: 'BAD_REQUEST',
-        message: 'Book is not available for borrowing',
-        cause: ErrorCode.BOOK_NOT_AVAILABLE
-      });
+      throw new DomainError(
+        'Book is not available for borrowing',
+        ErrorCode.BOOK_NOT_AVAILABLE
+      );
     }
     
     // Process borrowing...
@@ -573,34 +655,40 @@ class CirculationService {
 }
 ```
 
+> Server functions surface `DomainError` to the client with its `code`; TanStack Query exposes it in
+> the mutation/query `error` state for the UI to map to a friendly message.
+
 ### Frontend Error Handling
 
-```svelte
-<!-- Error Display Component -->
-<script lang="ts">
-  import { Alert, AlertDescription } from '$lib/components/ui/alert';
-  
-  export let error: string | null = null;
-  
-  function getErrorMessage(error: string): string {
-    switch (error) {
-      case 'BOOK_NOT_AVAILABLE':
-        return 'This book is currently borrowed by another member.';
-      case 'INVALID_VERIFICATION_CODE':
-        return 'The verification code is invalid or has expired.';
-      case 'INSUFFICIENT_PERMISSIONS':
-        return 'You do not have permission to perform this action.';
-      default:
-        return 'An unexpected error occurred. Please try again.';
-    }
-  }
-</script>
+```tsx
+// Error Display Component (src/components/ErrorAlert.tsx)
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
-{#if error}
-  <Alert variant="destructive" class="mb-4">
-    <AlertDescription>{getErrorMessage(error)}</AlertDescription>
-  </Alert>
-{/if}
+interface ErrorAlertProps {
+  error: string | null;
+}
+
+function getErrorMessage(error: string): string {
+  switch (error) {
+    case "BOOK_NOT_AVAILABLE":
+      return "This book is currently borrowed by another member.";
+    case "INVALID_VERIFICATION_CODE":
+      return "The verification code is invalid or has expired.";
+    case "INSUFFICIENT_PERMISSIONS":
+      return "You do not have permission to perform this action.";
+    default:
+      return "An unexpected error occurred. Please try again.";
+  }
+}
+
+export function ErrorAlert({ error }: ErrorAlertProps) {
+  if (!error) return null;
+  return (
+    <Alert variant="destructive" className="mb-4">
+      <AlertDescription>{getErrorMessage(error)}</AlertDescription>
+    </Alert>
+  );
+}
 ```
 
 ## Testing Strategy
@@ -654,8 +742,10 @@ describe('CirculationService', () => {
 ### Integration Testing
 
 ```typescript
-// API Integration Tests
-describe('Book API', () => {
+// Server Function Integration Tests
+// Server functions are tested by invoking their handler with a mocked context
+// (the auth/tenant guard is mocked to supply user + libraryId + db).
+describe('Book server functions', () => {
   let testDb: D1Database;
   let testLibrary: Library;
   let testUser: User;
@@ -666,21 +756,26 @@ describe('Book API', () => {
     testUser = await createTestUser(testDb, testLibrary.id);
   });
   
-  describe('POST /api/trpc/book.add', () => {
+  describe('addBook', () => {
     it('should add book to library catalog', async () => {
-      const response = await request(app)
-        .post('/api/trpc/book.add')
-        .set('Authorization', `Bearer ${testUser.sessionToken}`)
-        .send({
+      const context = {
+        db: testDb,
+        user: testUser,
+        libraryId: testLibrary.id,
+      };
+
+      const result = await addBook({
+        data: {
           isbn: '978-0132350884',
           title: 'Clean Code',
-          author: 'Robert Martin'
-        });
-        
-      expect(response.status).toBe(200);
-      expect(response.body.result.data.title).toBe('Clean Code');
+          author: 'Robert Martin',
+        },
+        context,
+      });
+
+      expect(result.title).toBe('Clean Code');
       
-      // Verify in database
+      // Verify in database (scoped by tenant)
       const books = await testDb.prepare(
         'SELECT * FROM books WHERE library_id = ?'
       ).bind(testLibrary.id).all();

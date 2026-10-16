@@ -70,10 +70,12 @@ This application enables organizations to digitally transform their library mana
 
 ## 🏗️ Technology Stack
 
-**Frontend:** SvelteKit + TypeScript + Tailwind CSS + PWA  
-**Backend:** Cloudflare Workers + Hono.js + tRPC  
-**Database:** Cloudflare D1 + KV + R2 Storage  
-**Auth:** Lucia Auth with email verification
+**Frontend:** TanStack Start (React) + shadcn/ui + Tailwind CSS + TanStack Query + PWA  
+**Server:** TanStack Start server functions on Cloudflare Workers (no separate API layer)  
+**Database:** Cloudflare D1 + KV + R2 Storage (Drizzle ORM)  
+**Auth:** Lucia Auth (email/password in Phase 1; WeChat OAuth planned for Phase 2)
+
+> See `docs/adr/0001-tech-stack-and-hosting.md` for the full decision and the phased WeChat/China plan.
 
 
 ## 📱 Key Features
@@ -99,4 +101,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Built with ❤️ using SvelteKit, Cloudflare, and modern web technologies**
+**Built with ❤️ using TanStack Start, Cloudflare, and modern web technologies**
