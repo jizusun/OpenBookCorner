@@ -38,9 +38,9 @@ function AppLayout() {
   }
 
   const navItems: NavItem[] = [
-    { to: '/books', label: 'Catalog' },
     { to: '/my-books', label: 'My Books' },
     { to: '/scan', label: 'Scan' },
+    { to: '/books', label: 'Catalog' },
     ...(isAdmin
       ? [
           { to: '/admin/overdue', label: 'Overdue' },
@@ -82,7 +82,7 @@ function AppLayout() {
                 {menuOpen ? '✕' : '☰'}
               </span>
             </Button>
-            <Link to="/books" className="font-semibold">
+            <Link to="/my-books" className="font-semibold">
               OpenBookCorner
             </Link>
             {/* Inline nav — hidden on small screens */}

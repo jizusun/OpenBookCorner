@@ -12,7 +12,8 @@ test.describe('Core circulation flow', () => {
       await this.page.getByLabel('Email').fill('reader@demo.test')
       await this.page.getByLabel('Password').fill('password123')
       await this.page.getByRole('button', { name: 'Sign In' }).click()
-      await expect(this.page.getByRole('heading', { name: 'Library Catalog' })).toBeVisible()
+      // After login the reader lands on their My Books (default) page.
+      await expect(this.page.getByRole('heading', { name: 'My Books' })).toBeVisible()
     }
   }
 
@@ -20,18 +21,23 @@ test.describe('Core circulation flow', () => {
     const app = new LibraryApp(page)
     await app.loginAsReader()
 
+    // Go to the catalog to borrow a book.
+    await page.getByRole('link', { name: 'Catalog' }).first().click()
+    await expect(page.getByRole('heading', { name: 'Library Catalog' })).toBeVisible()
+
     const borrowBtn = page.getByRole('button', { name: 'Borrow' }).first()
     await expect(borrowBtn).toBeEnabled()
     await borrowBtn.click()
 
-    await page.getByRole('link', { name: 'My Books' }).click()
+    await page.getByRole('link', { name: 'My Books' }).first().click()
     await expect(page.getByRole('heading', { name: 'My Books' })).toBeVisible()
 
+    // At least one borrowed book is listed; return it.
     const returnBtn = page.getByRole('button', { name: 'Return' }).first()
     await expect(returnBtn).toBeVisible()
     await returnBtn.click()
-
-    await expect(page.getByText("You haven't borrowed any books yet.")).toBeVisible()
+    // The returned row's Return button disappears (optimistic removal).
+    await expect(page.getByText('Returned. Thanks!')).toBeVisible()
   })
 
   test('invalid credentials are rejected', async ({ page }) => {
