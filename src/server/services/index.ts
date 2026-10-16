@@ -145,6 +145,56 @@ export class CirculationService {
       isOverdue: new Date(r.tx.dueDate).getTime() < now,
     }))
   }
+
+  // Overdue books for a library (admin view). Tenant-scoped; excludes returned books.
+  // `range` filters by days overdue: '1-7', '8-14', '15+', or 'all'.
+  async listOverdue(libraryId: string, range: '1-7' | '8-14' | '15+' | 'all' = 'all') {
+    const rows = await this.db
+      .select({ tx: borrowTransactions, book: books, user: users })
+      .from(borrowTransactions)
+      .innerJoin(books, eq(borrowTransactions.bookId, books.id))
+      .innerJoin(users, eq(borrowTransactions.userId, users.id))
+      .where(
+        and(
+          eq(borrowTransactions.libraryId, libraryId),
+          isNull(borrowTransactions.returnedAt),
+        ),
+      )
+      .all()
+
+    const now = Date.now()
+    const DAY = 24 * 60 * 60 * 1000
+
+    const overdue = rows
+      .map((r) => {
+        const daysOverdue = Math.floor((now - new Date(r.tx.dueDate).getTime()) / DAY)
+        return {
+          transactionId: r.tx.id,
+          title: r.book.title,
+          author: r.book.author,
+          borrowerName: r.user.name,
+          borrowerEmail: r.user.email,
+          dueDate: r.tx.dueDate,
+          daysOverdue,
+        }
+      })
+      .filter((r) => r.daysOverdue >= 1)
+      .filter((r) => {
+        switch (range) {
+          case '1-7':
+            return r.daysOverdue >= 1 && r.daysOverdue <= 7
+          case '8-14':
+            return r.daysOverdue >= 8 && r.daysOverdue <= 14
+          case '15+':
+            return r.daysOverdue >= 15
+          default:
+            return true
+        }
+      })
+      .sort((a, b) => b.daysOverdue - a.daysOverdue)
+
+    return overdue
+  }
 }
 
 export class UserService {
