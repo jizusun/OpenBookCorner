@@ -16,11 +16,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install mise (Node + pnpm via corepack)
+      # Install Node (and any other mise tools) from .mise.toml.
+      - name: Set up mise
         uses: jdx/mise-action@v2
 
-      - name: Enable pnpm
-        run: corepack enable
+      # pnpm comes from Corepack (reads packageManager in package.json). Done in the
+      # same shell env mise activates, so later steps find the pnpm shim on PATH.
+      - name: Enable pnpm via Corepack
+        run: |
+          corepack enable
+          corepack prepare --activate
+          pnpm --version
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -47,11 +53,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install mise (Node + pnpm via corepack)
+      - name: Set up mise
         uses: jdx/mise-action@v2
 
-      - name: Enable pnpm
-        run: corepack enable
+      - name: Enable pnpm via Corepack
+        run: |
+          corepack enable
+          corepack prepare --activate
+          pnpm --version
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
