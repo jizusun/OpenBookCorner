@@ -1,37 +1,6 @@
 [tools]
-node = "lts"
+node = "24"
+bun = "1.4.3"
 
-# pnpm is provided by Corepack. mise runs `corepack enable` during Node install
-# (node.corepack) and skips its own npm shim (node.npm_shim) so Corepack's pnpm/yarn
-# shims land on PATH correctly. See jdx/mise discussion #10194. The exact pnpm version
-# comes from the `packageManager` field in package.json.
 [settings]
-node.corepack = true
-node.npm_shim = false
-
-[env]
-NODE_ENV = "development"
-
-[tasks.install]
-description = "Install all dependencies"
-run = "pnpm install"
-
-[tasks.dev]
-description = "Start development servers"
-run = "pnpm run dev"
-
-[tasks.build]
-description = "Build all packages"
-run = "pnpm run build"
-
-[tasks.test]
-description = "Run all tests"
-run = "pnpm run test"
-
-[tasks.lint]
-description = "Lint all packages"
-run = "pnpm run lint"
-
-[tasks.format]
-description = "Format all code"
-run = "pnpm run format"
+idiomatic_version_file_enable_tools = []

@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "types": ["vite/client", "node", "@cloudflare/workers-types"],
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "composite": true,
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "references": [{ "path": "../api" }, { "path": "../../db" }],
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.test.tsx"]
+}

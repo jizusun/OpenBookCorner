@@ -1,0 +1,30 @@
+{
+  "name": "@obc/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.ts",
+    "./schema": "./schema/index.ts",
+    "./testing": "./testing.ts"
+  },
+  "scripts": {
+    "generate": "drizzle-kit generate",
+    "migrate:local": "wrangler d1 migrations apply openbookcorner --local",
+    "migrate:remote": "wrangler d1 migrations apply openbookcorner --remote",
+    "seed:local": "wrangler d1 execute openbookcorner --local --file ./seeds/seed.sql",
+    "seed:remote": "wrangler d1 execute openbookcorner --remote --file ./seeds/seed.sql",
+    "typecheck": "tsc --build"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.44.2"
+  },
+  "devDependencies": {
+    "@better-auth/cli": "^1.2.8",
+    "better-sqlite3": "^11.8.1",
+    "drizzle-kit": "^0.31.1",
+    "sql.js": "^1.12.0",
+    "@types/sql.js": "^1.4.9",
+    "wrangler": "^4.42.0"
+  }
+}

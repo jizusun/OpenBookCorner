@@ -1,0 +1,7 @@
+{
+  "routesDirectory": "./routes",
+  "generatedRouteTree": "./lib/routeTree.gen.ts",
+  "quoteStyle": "single",
+  "semicolons": false,
+  "autoCodeSplitting": true
+}

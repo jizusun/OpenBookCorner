@@ -4,31 +4,53 @@ Instructions for AI coding agents working in this repository. Read this before w
 
 ## Project
 
-OpenBookCorner is a **multi-tenant library-management PWA**. See `docs/adr/0001-tech-stack-and-hosting.md`
-for the finalized stack decision and `.kiro/steering/` for product, design, structure, tech, and testing docs.
+OpenBookCorner is a **multi-tenant library-management PWA**. See
+`docs/adr/0002-react-starter-kit-migration.md` for the current architecture (it supersedes the
+stack parts of `docs/adr/0001-tech-stack-and-hosting.md`). `.kiro/steering/` holds product/design docs.
 
-> Note: `.kiro/steering/*` and the Release 1 MVP spec have been updated to match ADR 0001
-> (TanStack Start + server functions). ADR 0001 remains the source of truth if any conflict arises.
+## Stack (ADR 0002 — React Starter Kit architecture on Cloudflare D1)
 
-## Stack (ADR 0001)
+Bun monorepo (workspaces: `apps/*`, `db`, `packages/*`):
 
-- Frontend: **TanStack Start** (React, Vite) + **shadcn/ui** + Tailwind CSS
-- Client data: **TanStack Query** (caching, optimistic UI, offline persistence)
-- Server logic: **TanStack Start server functions** (`createServerFn`) — type-safe, no tRPC, no Hono
-- ORM/DB: **Drizzle ORM** + **Cloudflare D1** (SQLite), **KV** (sessions/codes), **R2** (covers)
-- Auth: **Lucia Auth**, email/password for Phase 1
-- Hosting: **Cloudflare Workers** (Phase 1). WeChat/China migration is Phase 2 — see ADR 0001.
+- `apps/app` — **React 19 SPA**: **TanStack Router** (file-based) + **TanStack Query** + **tRPC client**
+  (`@trpc/tanstack-react-query`) + **Tailwind v4** + **shadcn/ui**. Deployed as the public Worker
+  (`openbookcorner`): serves built static assets and forwards `/api/*` to the API worker over a
+  **service binding**.
+- `apps/api` — **Hono + tRPC** Worker (`openbookcorner-api`): routers `auth/book/borrowing/library/feedback`
+  with `tenantProcedure`/`adminProcedure` middleware. **Better Auth** (email/password) at `/api/auth/*`.
+- `db` (`@obc/db`) — **Drizzle ORM** schema for **Cloudflare D1** (SQLite): Better Auth tables
+  (`user/session/account/verification`, `user` extended with `libraryId`+`role`) + domain tables
+  (`libraries/books/borrowTransactions/feedback`). In-memory **sql.js** test DB in `db/testing.ts`.
+- Toolchain: **Bun 1.4.3**, TypeScript 5.9, Vite 6, Vitest 2, oxlint. Build order:
+  `db` → `apps/api` (composite, emits d.ts) → `apps/app`. Typecheck via `bun run typecheck` (`tsc --build`).
+
+> We keep **Cloudflare D1** (not the kit's Neon/Hyperdrive). Dropped for Phase 1: Stripe, orgs,
+> passkeys, email OTP, Google OAuth, Astro web, email app, Terraform. WeChat/China is Phase 2.
 
 ## Non-negotiable rules
 
 1. **Multi-tenant isolation**: EVERY database query MUST be scoped by `libraryId`. Never allow
-   cross-tenant reads/writes. Validate tenant access in every server function.
-2. **Type safety**: strict TypeScript, no `any`. Use branded ID types (`UserId`, `BookId`, `LibraryId`).
-   Validate all inputs with Zod (validate server-function inputs with `.validator(zodSchema)`).
-3. **Server functions**: check auth + tenant first (reusable auth/tenant middleware or guard), then act.
-4. **Testing (BDD + TDD)**: follow `.kiro/steering/testing.md`. Use Vitest + Playwright. For React
-   component tests use `@testing-library/react` (the steering doc's `@testing-library/svelte` is superseded).
-5. **Verify before done**: run build + relevant tests after changes. Clean up temp files.
+   cross-tenant reads/writes. Use `tenantProcedure`/`adminProcedure` in `apps/api/lib/trpc.ts`.
+2. **Type safety**: strict TypeScript, no `any`. Validate all tRPC inputs with Zod (`.input(zodSchema)`).
+   NOTE: `apps/app/lib/trpc.ts` exports need explicit type annotations (`TRPCClient<AppRouter>` /
+   `TRPCOptionsProxy<AppRouter>`) to avoid TS2742.
+3. **tRPC procedures**: pick the right base — `publicProcedure`, `tenantProcedure` (members),
+   `adminProcedure` (library_admin/super_admin) — then act.
+4. **Testing**: Vitest. API/db tests run from the root config (`bun run test`); app component tests
+   via `bun --cwd apps/app test` (happy-dom/jsdom). Use `@testing-library/react`.
+5. **Verify before done**: `bun run typecheck` + tests + `bun --cwd apps/app build` after changes.
+   Clean up temp files.
+
+## Deploy
+
+- API: `cd apps/api && wrangler deploy` (D1 binding `DB` → database `openbookcorner`).
+- App: `cd apps/app && vite build && wrangler deploy` (serves `dist/`, service binding `API`).
+- D1 migrations: generate with `bun --cwd db generate`; apply with
+  `wrangler d1 migrations apply openbookcorner --remote` (from `apps/api`, migrations dir `../../db/migrations`).
+- Secret: `BETTER_AUTH_SECRET` on the API worker (`wrangler secret put`).
+- Deploy env is WSL + Windows mihomo proxy: route Node fetch through `HTTPS_PROXY=http://127.0.0.1:7890`.
+  `cf` CLI is authenticated via OAuth for token minting; wrangler used for D1 + deploy.
+
 
 ## Agent tooling available in this repo
 
