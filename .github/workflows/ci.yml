@@ -16,17 +16,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Install Node (and any other mise tools) from .mise.toml.
-      - name: Set up mise
+      # Installs Node from .mise.toml and enables Corepack (node.corepack=true),
+      # which puts the pnpm shim (version from packageManager) on PATH.
+      - name: Set up mise (Node + Corepack pnpm)
         uses: jdx/mise-action@v2
-
-      # pnpm comes from Corepack (reads packageManager in package.json). Install the
-      # shim into a dir on $GITHUB_PATH so every later step resolves `pnpm`.
-      - name: Enable pnpm via Corepack
-        run: |
-          mkdir -p "$HOME/.corepack-bin"
-          corepack enable --install-directory "$HOME/.corepack-bin" pnpm
-          echo "$HOME/.corepack-bin" >> "$GITHUB_PATH"
 
       - name: Verify pnpm
         run: pnpm --version
@@ -56,14 +49,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up mise
+      - name: Set up mise (Node + Corepack pnpm)
         uses: jdx/mise-action@v2
-
-      - name: Enable pnpm via Corepack
-        run: |
-          mkdir -p "$HOME/.corepack-bin"
-          corepack enable --install-directory "$HOME/.corepack-bin" pnpm
-          echo "$HOME/.corepack-bin" >> "$GITHUB_PATH"
 
       - name: Verify pnpm
         run: pnpm --version
