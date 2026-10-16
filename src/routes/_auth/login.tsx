@@ -17,6 +17,18 @@ function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
 
+  // Demo accounts (seeded). Shown on the login page for demo purposes only.
+  const demoAccounts = [
+    { role: 'Library Admin', email: 'admin@demo.test', password: 'password123' },
+    { role: 'Library Reader', email: 'reader@demo.test', password: 'password123' },
+  ]
+
+  function fillDemo(demo: { email: string; password: string }) {
+    setEmail(demo.email)
+    setPassword(demo.password)
+    setError(null)
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
@@ -67,6 +79,28 @@ function LoginPage() {
               {pending ? 'Signing in…' : 'Sign In'}
             </Button>
           </form>
+
+          {/* Demo credentials — click a role to autofill, then Sign In. */}
+          <div className="mt-6 rounded-md border border-dashed p-4">
+            <p className="text-xs font-medium text-muted-foreground">
+              Demo accounts — click a role to autofill
+            </p>
+            <div className="mt-3 space-y-2">
+              {demoAccounts.map((demo) => (
+                <button
+                  key={demo.email}
+                  type="button"
+                  onClick={() => fillDemo(demo)}
+                  className="flex w-full items-center justify-between rounded-md border bg-muted/40 px-3 py-2 text-left text-sm transition-colors hover:bg-muted"
+                >
+                  <span className="font-medium">{demo.role}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {demo.email} · {demo.password}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>
