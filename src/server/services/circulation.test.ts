@@ -167,3 +167,39 @@ describe('CirculationService.borrow — business rules', () => {
     await expect(svc.borrow('ok-book', READER_A, LIB_A)).resolves.toHaveProperty('dueDate')
   })
 })
+
+describe('CirculationService.borrowByIsbn (scan-to-borrow)', () => {
+  it('borrows a catalog book by its ISBN', async () => {
+    // seedBook sets isbn '9780000000001'
+    const svc = new CirculationService(db)
+    const res = await svc.borrowByIsbn('9780000000001', READER_A, LIB_A)
+    expect(res).toMatchObject({ bookId: BOOK_A })
+    expect(res.dueDate).toBeTruthy()
+    const mine = await svc.myBooks(READER_A, LIB_A)
+    expect(mine.some((m) => m.bookId === BOOK_A)).toBe(true)
+  })
+
+  it('normalizes dashed ISBN input', async () => {
+    const svc = new CirculationService(db)
+    const res = await svc.borrowByIsbn('978-0-00-000000-1', READER_A, LIB_A)
+    expect(res.bookId).toBe(BOOK_A)
+  })
+
+  // --- Negation ---
+  it('rejects an ISBN not in the library catalog', async () => {
+    const svc = new CirculationService(db)
+    await expect(svc.borrowByIsbn('9789999999999', READER_A, LIB_A)).rejects.toThrow('BOOK_NOT_IN_LIBRARY')
+  })
+
+  it('rejects when the matched book is already borrowed', async () => {
+    const svc = new CirculationService(db)
+    await svc.borrow(BOOK_A, READER_A, LIB_A)
+    await expect(svc.borrowByIsbn('9780000000001', READER_A, LIB_A)).rejects.toThrow('BOOK_NOT_AVAILABLE')
+  })
+
+  it('is tenant-scoped (ISBN in another library is not borrowable)', async () => {
+    const svc = new CirculationService(db)
+    // BOOK_A/isbn belongs to LIB_A; READER_B is in LIB_B
+    await expect(svc.borrowByIsbn('9780000000001', READER_B, LIB_B)).rejects.toThrow('BOOK_NOT_IN_LIBRARY')
+  })
+})

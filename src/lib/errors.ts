@@ -2,6 +2,7 @@
 // user-facing messages. Falls back to a generic message for anything unexpected.
 const MESSAGES: Record<string, string> = {
   BOOK_NOT_FOUND: 'This book could not be found.',
+  BOOK_NOT_IN_LIBRARY: 'This book is not in your library\u2019s catalog yet. Ask a librarian to add it.',
   BOOK_NOT_AVAILABLE: 'This book is currently borrowed by someone else.',
   BORROW_LIMIT_REACHED: "You've reached your borrowing limit. Return a book before borrowing another.",
   HAS_OVERDUE_BOOKS: 'You have an overdue book. Please return it before borrowing more.',

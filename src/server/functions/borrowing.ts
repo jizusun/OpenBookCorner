@@ -10,6 +10,16 @@ export const borrowBook = createServerFn({ method: 'POST' })
     return new CirculationService(db).borrow(data.bookId, user.id, libraryId)
   })
 
+// Scan-to-borrow: borrow a book by its scanned ISBN (resolved within the tenant).
+export const borrowByIsbn = createServerFn({ method: 'POST' })
+  .validator(z.object({ isbn: z.string().min(1) }))
+  .handler(async ({ data }) => {
+    const { requireTenant } = await import('@/server/auth/guards')
+    const { CirculationService } = await import('@/server/services')
+    const { db, user, libraryId } = await requireTenant()
+    return new CirculationService(db).borrowByIsbn(data.isbn, user.id, libraryId)
+  })
+
 export const returnBook = createServerFn({ method: 'POST' })
   .validator(z.object({ transactionId: z.string().min(1) }))
   .handler(async ({ data }) => {
