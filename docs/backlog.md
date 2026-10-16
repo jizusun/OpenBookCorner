@@ -4,11 +4,15 @@ Running backlog of candidate features for OpenBookCorner, beyond the current spe
 (`.kiro/specs/`). Items are mapped against what's already built and prioritized.
 
 > **Competitor reference — 番薯借阅 (Fanshu Jieyue), fanshujieyue.com** (云阁(上海)信息科技,
-> launched 2019-05): an **institutional library-management SaaS** for company/kids-picture-book/
-> community libraries (not a personal rental app). The "competitive scan" items below are mapped
-> from its **verified** feature set (user-confirmed). Key traits: WeChat Mini Program (admin + reader
-> editions) + web; no install, scan-to-use; embeddable in 公众号 / 企业微信; private deployment +
-> white-label + WeChat Pay; a self-built **20M+ Chinese ISBN database** for scan-to-catalog.
+> launched 2019-05): an **institutional library-management SaaS** ("书馆运营管理移动解决方案")
+> for company/kids-picture-book/bookstore/community libraries (not a personal rental app). Mapped
+> from its **verified** feature set (user-confirmed + official site fanshujieyue.com).
+> Positioning: 信息化/移动化/智能化/云服务. Selling points: 免安装(扫码即用)、免设备(手机运营,
+> 省电脑+扫码枪)、省人力(扫码录书/借阅)、全流程自动提醒、嵌入公众号/企业微信、私有化部署+专属小程序
+> +微信支付. WeChat Mini Program (admin + reader editions) + web; self-built **20M+ Chinese ISBN DB**.
+> Verified system auto-reminders: 逾期、荐购到馆、入馆申请、权限变更、订单更新、一键催还.
+> Customer segments: 职工书屋、童书馆、书店、社区书馆. (Real customer request on their site:
+> **批量操作 — batch move-to-shelf** for hundreds/thousands of books.)
 
 ## Legend
 - ✅ Done · 🟡 Partial · ⬜ Not started · (R#) maps to an existing release spec
@@ -48,6 +52,9 @@ How we compare to 番薯借阅's verified features (✅ have · 🟡 partial · 
 | 借阅记录 (在借/预约/历史) | 🟡 "My Books" shows active; ⬜ history/holds lists (B15) |
 | 逾期管理 (还书前3天 + 逾期提醒, 一键催还) | 🟡 overdue view + contact ✅; ⬜ reminders + one-click nudge (R3 + B16) |
 | 荐购 (reader purchase suggestion + 到馆提醒) | ⬜ gap = Book Requests (R6) |
+| 到馆通知 (notify when a borrowed book becomes available) | ⬜ gap = availability subscription (R6) |
+| 系统自动提醒 (入馆申请/权限变更/订单更新/一键催还) | ⬜ gap = notification matrix (B16 + R4) |
+| 批量操作 (e.g. 批量转移书架 — customer-requested) | ⬜ gap (B21) |
 | 书评社区 (notes, 摘抄, reply/like/share) | ⬜ gap = Ratings & Reviews + comments (R6, extend) |
 | 馆内动态信息流 (borrow/荐购/书单/上架 feed) | ⬜ gap (B17) |
 | 收藏 / 分享 (friend/link/poster) | ⬜ gap (B18) |
@@ -82,6 +89,7 @@ How we compare to 番薯借阅's verified features (✅ have · 🟡 partial · 
 | B12 | **Audit log** (借还/管理操作日志) | Traceability for multi-admin tenants | S | Low |
 | B7 | **Overdue fines** (罚金), optional/policy-driven | Return discipline where desired | S | Low |
 | B9 | **Recommendations** (by history / subjects) | Discovery; leverages subjects metadata | M | Low |
+| B21 | **Batch admin operations** (e.g. 批量转移书架, bulk edit/category/delete) | Real 番薯 customer pain: moving hundreds of books one-by-one; essential at scale | S | Med |
 
 ## Cross-cutting polish
 - ⬜ Toasts / success + error feedback on borrow/return/add; loading & empty states; error boundaries
