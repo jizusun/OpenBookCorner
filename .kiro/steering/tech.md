@@ -1,26 +1,38 @@
 # Technology Stack & Development Guidelines
 
+> Finalized per `docs/adr/0001-tech-stack-and-hosting.md`. Phase 1 targets Cloudflare with
+> email/password auth. WeChat/China integration is Phase 2 (see ADR 0001).
+
 ## Core Technology Stack
 
 ### Frontend
-- **Framework**: SvelteKit with TypeScript
+- **Framework**: TanStack Start (React, full-stack, Vite) with TypeScript
 - **Styling**: Tailwind CSS for utility-first styling
-- **UI Components**: shadcn-svelte (copy-paste, tree-shakeable components)
-- **API Client**: tRPC-SvelteKit for type-safe API calls
-- **PWA**: Built-in SvelteKit PWA capabilities with Service Worker
-- **Camera**: Camera API for barcode scanning functionality
+- **UI Components**: shadcn/ui (copy-paste, tree-shakeable, you own the component source)
+- **Client Data / State**: TanStack Query (caching, optimistic UI, offline persistence)
+- **Routing**: TanStack Router (type-safe routes, typed search params)
+- **Server calls**: TanStack Start **server functions** (`createServerFn`), consumed through
+  TanStack Query for caching/optimistic UI (no tRPC)
+- **PWA**: Vite PWA plugin (Service Worker, Web App Manifest)
+- **Camera**: Camera API for barcode scanning (Phase 1 web). In WeChat WebView (Phase 2),
+  ISBN scanning uses the WeChat JS-SDK `wx.scanCode`.
 
-### Backend
-- **Runtime**: Cloudflare Workers
-- **Framework**: Hono.js for edge-optimized HTTP handling
-- **API**: tRPC with @hono/trpc-server integration
-- **Authentication**: Lucia Auth for session management
+### Backend / Server
+- **Runtime**: Cloudflare Workers (TanStack Start deploys here)
+- **Server logic**: TanStack Start **server functions** (`createServerFn`) — type-safe client↔server
+  calls with no separate RPC layer. (No tRPC, no Hono in Phase 1.)
+- **Service layer**: plain TypeScript domain services called from server functions
+- **Authentication**: Lucia Auth. **Phase 1: email/password.** (Phase 2 adds WeChat OAuth.)
 - **ORM**: Drizzle ORM for type-safe database operations
 - **Language**: TypeScript throughout
 
+> A standalone API (Hono + tRPC, or Hono RPC) may be reintroduced in **Phase 2** only if the backend
+> must be split from the frontend for China hosting. It is intentionally omitted in Phase 1.
+
 ### Database & Storage
-- **Primary Database**: Cloudflare D1 (SQLite-based)
-- **Caching**: Cloudflare KV for sessions and temporary data
+- **Primary Database**: Cloudflare D1 (SQLite-based). Drizzle keeps this portable to Postgres
+  for the Phase 2 China migration.
+- **Caching / Sessions / Codes**: Cloudflare KV
 - **File Storage**: Cloudflare R2 for book cover images
 - **External APIs**: Open Library API for book metadata
 
@@ -29,6 +41,18 @@
 - **Multi-tenant**: Complete data isolation at application level
 - **Event-Driven**: Domain events for cross-aggregate communication
 - **CQRS**: Separate read/write models where beneficial
+
+## AI / Agent Tooling
+
+This project is set up for AI-assisted development. See `AGENTS.md` and `.kiro/agents/openbookcorner.json`.
+
+- **TanStack Intent**: versioned Agent Skills shipped inside TanStack npm packages. Run
+  `npx @tanstack/intent@latest install` once the project is scaffolded, then `load` skills on demand
+  (e.g. `@tanstack/query#fetching`) so agents use version-matched APIs.
+- **shadcn MCP** (`npx shadcn@latest mcp`): browse/search/install UI components via natural language.
+- **Cloudflare MCP** (`https://mcp.cloudflare.com/mcp`): Cloudflare docs + Workers/D1/KV/R2 ops + deploy.
+- **llms.txt**: Drizzle (via its `llms.txt`). (Hono `https://hono.dev/llms-full.txt` only if a
+  standalone Hono API is added in Phase 2.)
 
 ## Version Management with mise
 
@@ -87,6 +111,9 @@ mise run install
 # Environment setup
 cp .env.example .env
 cp backend/.env.example backend/.env
+
+# One-time: install TanStack Intent agent-skill guidance
+npx @tanstack/intent@latest install
 ```
 
 ### Database Operations
@@ -107,10 +134,10 @@ pnpm --filter backend run db:generate
 mise run dev
 
 # Or start individually:
-# Frontend (port 5173)
+# Frontend (TanStack Start dev server)
 pnpm run dev:frontend
 
-# Backend (port 8787)
+# Backend (Cloudflare Worker, port 8787)
 pnpm run dev:backend
 ```
 
@@ -125,7 +152,7 @@ pnpm run build
 # Deploy backend to Cloudflare Workers
 pnpm run deploy:backend
 
-# Deploy frontend to Cloudflare Pages
+# Deploy frontend to Cloudflare (Workers/Pages)
 pnpm run deploy:frontend
 ```
 
@@ -164,17 +191,18 @@ pnpm run test:backend
 
 ### Performance
 - Leverage Cloudflare edge locations
-- Implement proper caching strategies
+- Implement proper caching strategies (TanStack Query on the client)
 - Optimize bundle sizes (tree-shaking, code splitting)
 - Use efficient database queries with proper indexes
 
 ## Security Guidelines
 
 ### Authentication
-- Email-based passwordless authentication only
-- Domain-based tenant association
+- Phase 1: email/password authentication via Lucia Auth
 - Secure session management with Lucia Auth
 - Proper CORS configuration
+- Phase 2: WeChat OAuth with `openid`/`unionid` account binding (requires ICP filing +
+  WeChat Official Account — see ADR 0001)
 
 ### Authorization
 - Role-based access control (Super Admin, Library Admin, Library Reader)

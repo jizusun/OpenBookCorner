@@ -14,19 +14,18 @@ for the finalized stack decision and `.kiro/steering/` for product, design, stru
 
 - Frontend: **TanStack Start** (React, Vite) + **shadcn/ui** + Tailwind CSS
 - Client data: **TanStack Query** (caching, optimistic UI, offline persistence)
-- API: **tRPC** (end-to-end types)
-- Backend: **Cloudflare Workers** + **Hono**
+- Server logic: **TanStack Start server functions** (`createServerFn`) — type-safe, no tRPC, no Hono
 - ORM/DB: **Drizzle ORM** + **Cloudflare D1** (SQLite), **KV** (sessions/codes), **R2** (covers)
 - Auth: **Lucia Auth**, email/password for Phase 1
-- Hosting: **Cloudflare** (Phase 1). WeChat/China migration is Phase 2 — see ADR 0001.
+- Hosting: **Cloudflare Workers** (Phase 1). WeChat/China migration is Phase 2 — see ADR 0001.
 
 ## Non-negotiable rules
 
 1. **Multi-tenant isolation**: EVERY database query MUST be scoped by `libraryId`. Never allow
-   cross-tenant reads/writes. Validate tenant access in every tRPC procedure.
+   cross-tenant reads/writes. Validate tenant access in every server function.
 2. **Type safety**: strict TypeScript, no `any`. Use branded ID types (`UserId`, `BookId`, `LibraryId`).
-   Validate all inputs with Zod.
-3. **tRPC procedures**: check auth + tenant first (`protectedProcedure` / `adminProcedure`), then act.
+   Validate all inputs with Zod (validate server-function inputs with `.validator(zodSchema)`).
+3. **Server functions**: check auth + tenant first (reusable auth/tenant middleware or guard), then act.
 4. **Testing (BDD + TDD)**: follow `.kiro/steering/testing.md`. Use Vitest + Playwright. For React
    component tests use `@testing-library/react` (the steering doc's `@testing-library/svelte` is superseded).
 5. **Verify before done**: run build + relevant tests after changes. Clean up temp files.
@@ -65,15 +64,21 @@ npx @tanstack/intent@latest load @tanstack/react-router#routing
 Always `load` the relevant TanStack skill before writing TanStack-heavy code, so you use the API that
 matches the installed version.
 
+### Cloudflare CLI / Agent Setup
+Besides the remote MCP, Cloudflare offers an **Agent Setup** flow (https://developers.cloudflare.com/agent-setup/)
+to connect coding agents and build/deploy from the terminal, and **Wrangler** is the primary CLI for
+Workers/D1/KV/R2 operations and deploys (`npx wrangler ...`). Use Wrangler for local dev, resource
+creation, and deploys; authenticate with `npx wrangler login` (never paste tokens into chat).
+
 ### llms.txt docs
-- Hono: https://hono.dev/llms-full.txt
 - Drizzle: via its `llms.txt`
-Fetch these when you need current Hono/Drizzle guidance.
+- Hono: https://hono.dev/llms-full.txt (only relevant if a standalone Hono API is added in Phase 2)
+Fetch these when you need current Drizzle (or, in Phase 2, Hono) guidance.
 
 ## Workflow expectations
 
 - Follow the feature order in `.kiro/steering/structure.md`: model/types → schema (tenant-scoped) →
-  service (tenant validation) → tRPC router → UI → tests → docs.
+  service (tenant validation) → server functions → UI → tests → docs.
 - Keep changes scoped. Match existing conventions. Ask before destructive or production actions.
 
 <!-- tanstack-intent:start -->
