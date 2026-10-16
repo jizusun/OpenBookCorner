@@ -75,7 +75,7 @@ framework, UI library, and hosting against these requirements, with a strong emp
 - **Portability**: runs on any JS runtime (Vite/Nitro), easing the Phase 2 migration off Cloudflare.
 
 Trade-offs accepted: TanStack Start is the **youngest** option; SSR + Workers + edge auth cookies
-need care; and the existing SvelteKit specs/steering docs must be rewritten for React.
+need care; and the SvelteKit specs/steering docs required rewriting for React (now completed).
 
 ### Why shadcn/ui
 
@@ -113,9 +113,9 @@ See `AGENTS.md` and `.kiro/agents/openbookcorner.json` for how these are wired i
 
 ## Consequences / Open items
 
-- **Spec rewrite required**: update `.kiro/steering/tech.md`, `structure.md`, `design.md`, and
-  `testing.md` from SvelteKit → TanStack Start/React (component structure, routing, file naming,
-  `@testing-library/react` instead of `@testing-library/svelte`).
+- **Spec rewrite (done)**: `.kiro/steering/tech.md`, `structure.md`, `design.md`, `testing.md`,
+  the Release 1 MVP spec, `README.md`, and `AGENTS.md` have been updated from SvelteKit → TanStack
+  Start/React with server functions (incl. `@testing-library/react`).
 - **Phase 2 gatekeepers to confirm early**: ICP filing + WeChat Official Account / Open Platform
   registration. Without ICP filing, WeChat web login cannot go to production.
 - **Barcode scanning** (Release 2) will need WeChat JS-SDK inside WeChat WebView, not the Camera API.

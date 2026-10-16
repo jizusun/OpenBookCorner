@@ -6,10 +6,10 @@ This implementation plan transforms the MVP requirements and design into actiona
 ## Tasks
 
 - [ ] 1. Project Foundation and Development Environment
-  - Initialize SvelteKit frontend project with TypeScript and PWA configuration
-  - Set up Cloudflare Workers backend with Hono.js and tRPC
+  - Initialize TanStack Start (React) project with TypeScript, Tailwind, shadcn/ui, and PWA configuration
+  - Configure Cloudflare Workers deployment (wrangler.toml with D1/KV/R2 bindings)
   - Configure development tooling (ESLint, Prettier, Vitest)
-  - Set up multi-package workspace structure (frontend + worker)
+  - Set up TanStack Query client with offline persistence
   - _Requirements: All requirements depend on proper project foundation_
 
 - [ ] 2. Database Schema and Multi-Tenant Foundation
@@ -19,31 +19,31 @@ This implementation plan transforms the MVP requirements and design into actiona
   - Create tenant isolation middleware for all database operations
   - _Requirements: 1.1, 1.3, 1.4, 1.5_
 
-- [ ] 3. Authentication System with Email Verification
-  - Implement Lucia Auth configuration for session management
-  - Create email verification code system using Cloudflare KV
-  - Build tRPC authentication router (login, verify, logout)
+- [ ] 3. Authentication System with Email/Password
+  - Implement Lucia Auth configuration for session management (email/password, Phase 1)
+  - Store sessions in Cloudflare KV / D1 per Lucia adapter
+  - Build auth server functions (login, logout, me)
   - Add tenant association logic based on email domains
   - _Requirements: 1.2, 1.3_
 
-- [ ] 4. Core tRPC API Structure
-  - Set up tRPC server with Hono.js integration
-  - Create domain-based router structure (auth, library, book, borrowing)
-  - Implement protected procedures with role-based access control
-  - Add request context with user and tenant information
+- [ ] 4. Server Functions Foundation
+  - Set up TanStack Start server functions (`createServerFn`) with Zod validators
+  - Create reusable auth + tenant guard middleware for server functions
+  - Enforce role-based access control inside guarded server functions
+  - Provide request context with authenticated user + libraryId
   - _Requirements: 1.3, 1.4, 1.5_
 
 - [ ] 5. Frontend Authentication Flow
-  - Create login page with email input and verification code form
-  - Implement tRPC client configuration with authentication headers
-  - Build authentication store for user session management
-  - Add route protection for authenticated areas
+  - Create login page with email + password form
+  - Call auth server functions via TanStack Query
+  - Build authentication hook/context for user session management
+  - Add route protection for authenticated areas (TanStack Router)
   - _Requirements: 1.2, 1.3_
 
 - [ ] 6. Book Catalog Data Models and API
   - Create book schema in database (title, author, ISBN, availability)
   - Implement BookService with CRUD operations and tenant scoping
-  - Build book tRPC router with list and add procedures
+  - Build book server functions for list and add (with tenant + role guards)
   - Add ISBN validation and basic book metadata handling
   - _Requirements: 2.1, 2.2, 2.3, 2.4_
 
@@ -64,7 +64,7 @@ This implementation plan transforms the MVP requirements and design into actiona
 - [ ] 9. Borrowing Transaction System
   - Create borrow_transactions table with due date tracking
   - Implement CirculationService for borrow/return operations
-  - Build borrowing tRPC router with borrow and return procedures
+  - Build borrowing server functions for borrow and return (with tenant guards)
   - Add business logic for availability checking and due date calculation
   - _Requirements: 4.1, 4.2, 4.6_
 
@@ -83,21 +83,21 @@ This implementation plan transforms the MVP requirements and design into actiona
   - _Requirements: 4.3, 4.4_
 
 - [ ] 12. User Role Management and Authorization
-  - Implement role-based access control in tRPC procedures
-  - Create admin-only procedures for book management
+  - Implement role-based access control in server functions
+  - Create admin-only server functions for book management
   - Add UI role checking to show/hide admin features
   - Ensure tenant isolation in all user operations
   - _Requirements: 1.4, 1.5, 2.1_
 
 - [ ] 13. Basic UI Components and Styling
-  - Set up Tailwind CSS and shadcn-svelte component library
+  - Set up Tailwind CSS and shadcn/ui component library
   - Create reusable UI components (Button, Card, Input, Badge)
   - Implement consistent styling across all pages
   - Add responsive design for mobile and desktop
   - _Requirements: 2.4, 3.4_
 
 - [ ] 14. PWA Configuration and Service Worker
-  - Configure SvelteKit PWA with web app manifest
+  - Configure the Vite PWA plugin with web app manifest
   - Implement basic service worker for offline capability
   - Add PWA installation prompts and icons
   - Set up basic caching strategy for static assets
@@ -111,7 +111,7 @@ This implementation plan transforms the MVP requirements and design into actiona
   - _Requirements: 1.4, 1.5_
 
 - [ ] 16. Error Handling and User Feedback
-  - Implement comprehensive error handling in tRPC procedures
+  - Implement comprehensive error handling in server functions
   - Add user-friendly error messages and validation feedback
   - Create loading states and success notifications
   - Add proper error boundaries in UI components

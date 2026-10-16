@@ -12,7 +12,7 @@ Intent keeps them version-matched automatically.
 
 Use this directory only for **project-specific** guidance that isn't owned by a library, e.g.:
 - multi-tenant `libraryId` scoping patterns for this codebase
-- the project's tRPC procedure conventions (`protectedProcedure` / `adminProcedure`)
+- the project's server-function conventions (reusable `authed` / `adminOnly` guards)
 - Drizzle schema + migration conventions for D1
 
 ## SKILL.md format
