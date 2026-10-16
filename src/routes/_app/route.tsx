@@ -2,6 +2,7 @@ import { createFileRoute, Link, Outlet, redirect, useRouter } from '@tanstack/re
 import { useServerFn } from '@tanstack/react-start'
 import { me, logout } from '@/server/functions/auth'
 import { Button } from '@/components/ui/button'
+import { FeedbackButton } from '@/components/FeedbackButton'
 
 export const Route = createFileRoute('/_app')({
   // Server-validated auth: me() throws if unauthenticated; redirect to login.
@@ -42,6 +43,16 @@ function AppLayout() {
                 Overdue
               </Link>
             )}
+            {isAdmin && (
+              <Link to="/admin/settings" activeProps={{ className: 'underline' }}>
+                Settings
+              </Link>
+            )}
+            {isAdmin && (
+              <Link to="/admin/feedback" activeProps={{ className: 'underline' }}>
+                Feedback
+              </Link>
+            )}
           </nav>
           <div className="flex items-center gap-3 text-sm">
             <span className="text-muted-foreground">{user.name}</span>
@@ -54,6 +65,7 @@ function AppLayout() {
       <main className="mx-auto max-w-4xl p-4">
         <Outlet />
       </main>
+      <FeedbackButton />
     </div>
   )
 }

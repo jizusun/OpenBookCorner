@@ -33,6 +33,11 @@ export async function createTestDb() {
       id TEXT PRIMARY KEY, book_id TEXT NOT NULL, user_id TEXT NOT NULL, library_id TEXT NOT NULL,
       borrowed_at TEXT NOT NULL, due_date TEXT NOT NULL, returned_at TEXT
     );
+    CREATE TABLE feedback (
+      id TEXT PRIMARY KEY, library_id TEXT NOT NULL, user_id TEXT NOT NULL,
+      category TEXT NOT NULL DEFAULT 'other', message TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'new', created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
   `)
   const db = drizzle(sqlite, { schema }) as unknown as Db
 
