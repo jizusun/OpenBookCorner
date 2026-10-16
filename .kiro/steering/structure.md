@@ -9,53 +9,48 @@ inclusion: always
 ## Repository Structure
 
 ```
-OpenBookCorner/
-├── frontend/                     # TanStack Start (React) Frontend
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── ui/              # shadcn/ui components (you own the source)
-│   │   │   ├── barcode/        # Barcode scanning components
-│   │   │   ├── books/          # Book-related components
-│   │   │   └── auth/           # Authentication components
-│   │   ├── routes/             # TanStack Router file-based routes
-│   │   │   ├── __root.tsx      # Root route (global shell / PWA)
-│   │   │   ├── _auth/          # Auth route group (login, verify)
-│   │   │   └── _app/           # Authenticated app route group
-│   │   ├── lib/
-│   │   │   ├── trpc.ts         # tRPC + TanStack Query client setup
-│   │   │   ├── query.ts        # QueryClient + offline persistence config
-│   │   │   └── utils.ts        # Utility functions
-│   │   ├── hooks/              # React hooks (e.g. useAuth)
-│   │   ├── router.tsx          # Router instance
-│   │   └── styles.css          # Tailwind entry
-│   ├── public/                 # Static assets
-│   ├── app.config.ts           # TanStack Start config
-│   ├── vite.config.ts          # Vite configuration (incl. PWA plugin)
-│   ├── tailwind.config.ts      # Tailwind CSS configuration
-│   ├── components.json         # shadcn/ui registry configuration
-│   └── tsconfig.json           # TypeScript configuration
-├── backend/                      # Cloudflare Workers Backend
-│   ├── src/
-│   │   ├── router/             # tRPC routers by domain
-│   │   ├── services/           # Domain services
+OpenBookCorner/                   # Single TanStack Start (React) app on Cloudflare Workers
+├── src/
+│   ├── components/
+│   │   ├── ui/                  # shadcn/ui components (you own the source)
+│   │   ├── barcode/            # Barcode scanning components
+│   │   ├── books/              # Book-related components
+│   │   └── auth/               # Authentication components
+│   ├── routes/                 # TanStack Router file-based routes
+│   │   ├── __root.tsx          # Root route (global shell / PWA)
+│   │   ├── _auth/              # Auth route group (login, verify)
+│   │   └── _app/               # Authenticated app route group
+│   ├── server/                 # Server-only code (runs on the Worker)
+│   │   ├── functions/          # TanStack Start server functions by domain (book.ts, borrowing.ts…)
+│   │   ├── services/           # Domain services (plain TS, called from server functions)
 │   │   ├── domain/             # Domain models and aggregates
-│   │   ├── db/                 # Database layer (Drizzle)
+│   │   ├── db/                 # Database layer (Drizzle schema + client)
 │   │   ├── auth/               # Authentication logic (Lucia)
-│   │   ├── middleware/         # Request middleware
-│   │   ├── context.ts          # tRPC context creation
-│   │   ├── trpc.ts             # tRPC server setup
-│   │   └── index.ts            # Worker entry point (Hono app)
-│   ├── wrangler.toml           # Cloudflare configuration
-│   ├── package.json            # Backend dependencies
-│   └── tsconfig.json           # Backend TypeScript configuration
-├── shared/                       # Shared types and utilities
-│   ├── types.ts                 # Shared TypeScript types
-│   └── utils.ts                 # Shared utility functions
-├── tests/                        # Test files
-├── package.json                  # Root workspace configuration
-├── AGENTS.md                     # AI agent instructions + tooling
-└── .kiro/                        # Kiro AI configuration (agents, skills, steering, specs)
+│   │   └── middleware/         # Server-function middleware (auth + tenant guards)
+│   ├── lib/
+│   │   ├── query.ts            # QueryClient + offline persistence config
+│   │   └── utils.ts            # Utility functions
+│   ├── hooks/                  # React hooks (e.g. useAuth)
+│   ├── router.tsx              # Router instance
+│   └── styles.css              # Tailwind entry
+├── public/                     # Static assets
+├── tests/                      # Test files
+├── app.config.ts               # TanStack Start config
+├── vite.config.ts              # Vite configuration (incl. PWA plugin)
+├── tailwind.config.ts          # Tailwind CSS configuration
+├── components.json             # shadcn/ui registry configuration
+├── drizzle.config.ts           # Drizzle migration config
+├── wrangler.toml               # Cloudflare Workers configuration (D1/KV/R2 bindings)
+├── tsconfig.json               # TypeScript configuration
+├── package.json                # Dependencies + scripts
+├── AGENTS.md                   # AI agent instructions + tooling
+└── .kiro/                      # Kiro AI configuration (agents, skills, steering, specs)
 ```
+
+> Phase 1 is a **single deployable** (TanStack Start on Workers): the React UI and the server
+> functions ship together. If Phase 2 requires splitting the API out for China hosting, the
+> `src/server/*` layer can be lifted into a standalone service (e.g. Hono) with minimal change,
+> since services/domain/db are already framework-agnostic.
 
 ## Domain Organization
 
@@ -75,8 +70,8 @@ Organize code around three main domains:
 - Hooks: camelCase with `use` prefix (e.g. `useAuth.ts`)
 - Utils: camelCase (e.g. `formatDate.ts`)
 
-**Backend (Workers):**
-- Routers: camelCase domain names (e.g. `book.ts`)
+**Server (Workers):**
+- Server functions: camelCase domain files (e.g. `server/functions/book.ts`)
 - Services: PascalCase with Service suffix (e.g. `BookService.ts`)
 - Domain models: PascalCase (e.g. `Library.ts`)
 - Types: PascalCase interfaces (e.g. `BookMetadata`)
@@ -92,7 +87,7 @@ Organize code around three main domains:
 
 ### Type Safety Requirements
 - Use branded types for domain IDs (`UserId`, `BookId`, `LibraryId`)
-- Share types between frontend/backend via tRPC
+- Share types between client and server via TanStack Start server functions (inferred end to end)
 - Validate inputs with Zod schemas
 - Enable strict TypeScript mode
 - No `any` types allowed
@@ -125,43 +120,51 @@ export function BookCard({ book, onBorrow }: BookCardProps) {
 }
 ```
 
-### Data Fetching Pattern (TanStack Query + tRPC)
+### Data Fetching Pattern (TanStack Query + server functions)
 ```tsx
-// Read: useQuery via tRPC + TanStack Query
-const { data: books } = useQuery(trpc.book.list.queryOptions({ search }));
+// Define a server function (runs on the Worker, type-safe end to end)
+import { createServerFn } from '@tanstack/react-start';
+import { z } from 'zod';
+
+export const listBooks = createServerFn({ method: 'GET' })
+  .validator(z.object({ search: z.string().optional() }))
+  .handler(async ({ data, context }) => {
+    // context carries the authenticated user + libraryId (set by middleware)
+    const svc = new BookService(context.db);
+    return svc.findByLibrary(context.libraryId, { search: data.search });
+  });
+
+// Consume it via TanStack Query on the client
+const { data: books } = useQuery({
+  queryKey: ['books', search],
+  queryFn: () => listBooks({ data: { search } }),
+});
 
 // Write with optimistic update
-const borrow = useMutation(
-  trpc.book.borrow.mutationOptions({
-    onMutate: async (vars) => {
-      // optimistic cache update
-    },
-    onSettled: () => queryClient.invalidateQueries(),
-  }),
-);
+const borrow = useMutation({
+  mutationFn: (bookId: string) => borrowBook({ data: { bookId } }),
+  onMutate: async (bookId) => {
+    // optimistic cache update
+  },
+  onSettled: () => queryClient.invalidateQueries({ queryKey: ['books'] }),
+});
 ```
 
-### tRPC Router Pattern
+### Server Function Pattern (auth + tenant guard first)
 ```typescript
-export const domainRouter = router({
-  // Queries (read operations)
-  list: protectedProcedure
-    .input(listSchema)
-    .query(async ({ input, ctx }) => {
-      // MUST validate tenant access first
-      if (!ctx.libraryId) throw new TRPCError({ code: 'UNAUTHORIZED' });
-      // Implementation
-    }),
+import { createServerFn } from '@tanstack/react-start';
 
-  // Mutations (write operations)
-  create: adminProcedure
-    .input(createSchema)
-    .mutation(async ({ input, ctx }) => {
-      // MUST validate permissions and tenant
-      if (!ctx.libraryId) throw new TRPCError({ code: 'UNAUTHORIZED' });
-      // Implementation
-    }),
-});
+// Reusable guard: validates session + tenant, returns enriched context
+const authed = createServerFn().middleware([authMiddleware, tenantMiddleware]);
+
+export const addBook = authed
+  .validator(createBookSchema)
+  .handler(async ({ data, context }) => {
+    // MUST have a tenant + admin role (enforced in middleware)
+    if (!context.libraryId) throw new Error('UNAUTHORIZED');
+    const svc = new BookService(context.db);
+    return svc.create({ ...data, libraryId: context.libraryId });
+  });
 ```
 
 ### Database Service Pattern
@@ -185,7 +188,7 @@ export class DomainService {
 1. Design domain model and types
 2. Create/update database schema with tenant isolation
 3. Implement backend service with tenant validation
-4. Create tRPC router with proper procedures
+4. Implement server functions (auth + tenant guard, then call service)
 5. Build frontend routes/components (use shadcn MCP for UI, TanStack Intent skills for data/routing)
 6. Add comprehensive tests
 7. Update documentation

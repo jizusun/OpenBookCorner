@@ -272,30 +272,28 @@ describe('Book Repository', () => {
 });
 ```
 
-### tRPC Procedures
+### Server Functions
 ```typescript
-// tests/api/book.test.ts
-describe('Book tRPC Router', () => {
-  let caller: ReturnType<typeof createCaller>;
+// tests/server/book.test.ts
+// Server functions are tested by invoking their handler with a mocked context
+// (the auth/tenant middleware is mocked to supply user + libraryId).
+import { listBooks, addBook } from '@/server/functions/book';
+import { createMockContext } from '../utils/context';
 
-  beforeEach(() => {
-    caller = createCaller(createMockContext());
-  });
-
+describe('Book server functions', () => {
   it('should list books for authenticated user', async () => {
-    const books = await caller.book.list({ search: 'Clean' });
+    const context = createMockContext();
+    const books = await listBooks({ data: { search: 'Clean' }, context });
     expect(books).toHaveLength(1);
     expect(books[0].title).toBe('Clean Code');
   });
 
-  it('should reject unauthorized book creation', async () => {
+  it('should reject book creation for non-admin role', async () => {
     const context = createMockContext({ role: 'library_reader' });
-    const caller = createCaller(context);
-    
-    await expect(caller.book.add({
-      isbn: '978-0132350884',
-      title: 'Clean Code',
-      author: 'Robert Martin'
+
+    await expect(addBook({
+      data: { isbn: '978-0132350884', title: 'Clean Code', author: 'Robert Martin' },
+      context,
     })).rejects.toThrow('Insufficient permissions');
   });
 });
@@ -503,7 +501,7 @@ describe('Library', () => {
 ### Test Coverage Requirements
 - **Minimum 90% code coverage** for domain logic
 - **100% coverage** for critical business rules
-- **All tRPC procedures** must have integration tests
+- **All server functions** must have integration tests
 - **All UI components** must have component tests
 - **All user workflows** must have E2E tests
 
@@ -517,14 +515,11 @@ vi.mock('@/services/EmailService', () => ({
   }
 }));
 
-// Mock tRPC client for component tests
-vi.mock('@/lib/trpc', () => ({
-  trpc: {
-    book: {
-      list: { queryOptions: vi.fn() },
-      borrow: { mutationOptions: vi.fn() }
-    }
-  }
+// Mock server functions for component tests
+vi.mock('@/server/functions/book', () => ({
+  listBooks: vi.fn(),
+  borrowBook: vi.fn(),
+  addBook: vi.fn()
 }));
 ```
 
