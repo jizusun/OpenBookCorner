@@ -29,11 +29,11 @@ async function main() {
   const domains = JSON.stringify(['@demo.test'])
 
   const lines = [
-    `INSERT INTO libraries (id, name, email_domains, settings, is_active, created_at, updated_at) VALUES ('${LIBRARY_ID}', 'Demo Library', '${esc(domains)}', '${esc(settings)}', 1, '${now}', '${now}');`,
-    `INSERT INTO users (id, email, name, password_hash, library_id, role, is_active, created_at) VALUES ('user-admin-001', 'admin@demo.test', 'Demo Admin', '${esc(adminHash)}', '${LIBRARY_ID}', 'library_admin', 1, '${now}');`,
-    `INSERT INTO users (id, email, name, password_hash, library_id, role, is_active, created_at) VALUES ('user-reader-001', 'reader@demo.test', 'Demo Reader', '${esc(readerHash)}', '${LIBRARY_ID}', 'library_reader', 1, '${now}');`,
-    `INSERT INTO books (id, isbn, title, author, library_id, is_available, created_at, updated_at) VALUES ('book-001', '9780132350884', 'Clean Code', 'Robert C. Martin', '${LIBRARY_ID}', 1, '${now}', '${now}');`,
-    `INSERT INTO books (id, isbn, title, author, library_id, is_available, created_at, updated_at) VALUES ('book-002', '9780201633610', 'Design Patterns', 'Gang of Four', '${LIBRARY_ID}', 1, '${now}', '${now}');`,
+    `INSERT OR IGNORE INTO libraries (id, name, email_domains, settings, is_active, created_at, updated_at) VALUES ('${LIBRARY_ID}', 'Demo Library', '${esc(domains)}', '${esc(settings)}', 1, '${now}', '${now}');`,
+    `INSERT OR IGNORE INTO users (id, email, name, password_hash, library_id, role, is_active, created_at) VALUES ('user-admin-001', 'admin@demo.test', 'Demo Admin', '${esc(adminHash)}', '${LIBRARY_ID}', 'library_admin', 1, '${now}');`,
+    `INSERT OR IGNORE INTO users (id, email, name, password_hash, library_id, role, is_active, created_at) VALUES ('user-reader-001', 'reader@demo.test', 'Demo Reader', '${esc(readerHash)}', '${LIBRARY_ID}', 'library_reader', 1, '${now}');`,
+    `INSERT OR IGNORE INTO books (id, isbn, title, author, library_id, is_available, created_at, updated_at) VALUES ('book-001', '9780132350884', 'Clean Code', 'Robert C. Martin', '${LIBRARY_ID}', 1, '${now}', '${now}');`,
+    `INSERT OR IGNORE INTO books (id, isbn, title, author, library_id, is_available, created_at, updated_at) VALUES ('book-002', '9780201633610', 'Design Patterns', 'Gang of Four', '${LIBRARY_ID}', 1, '${now}', '${now}');`,
   ]
   process.stdout.write(lines.join('\n') + '\n')
 }

@@ -64,14 +64,13 @@ jobs:
       - name: Install Playwright browsers (with OS deps)
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Seed local D1 for E2E
-        run: |
-          pnpm exec wrangler d1 migrations apply openbookcorner --local
-          pnpm exec tsx scripts/seed.ts > /tmp/seed.sql
-          pnpm exec wrangler d1 execute openbookcorner --local --file /tmp/seed.sql
+      - name: Build (production, served by wrangler dev in E2E)
+        run: pnpm run build
 
       - name: Run E2E tests
         run: pnpm run test:e2e
+        env:
+          E2E_SKIP_BUILD: '1'
 
       - name: Upload Playwright report
         if: ${{ !cancelled() }}
