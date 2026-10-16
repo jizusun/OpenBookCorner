@@ -33,16 +33,18 @@ Every feature implementation must follow this strict sequence:
 - **Vitest**: Unit and integration testing framework
 - **Playwright**: End-to-end testing and browser automation
 - **Cucumber**: BDD framework for Gherkin scenarios
-- **@testing-library/svelte**: Component testing utilities
+- **@testing-library/react**: Component testing utilities
 - **MSW (Mock Service Worker)**: API mocking for tests
 
 ### Test Configuration
 ```typescript
 // vitest.config.ts
+import react from '@vitejs/plugin-react';
+
 export default defineConfig({
-  plugins: [sveltekit()],
+  plugins: [react()],
   test: {
-    include: ['src/**/*.{test,spec}.{js,ts}'],
+    include: ['src/**/*.{test,spec}.{ts,tsx}'],
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     coverage: {
@@ -301,12 +303,13 @@ describe('Book tRPC Router', () => {
 
 ## Component Testing
 
-### Svelte Component Tests
-```typescript
-// tests/components/BookCard.test.ts
-import { render, screen } from '@testing-library/svelte';
+### React Component Tests
+```tsx
+// tests/components/BookCard.test.tsx
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
-import BookCard from '$lib/components/BookCard.svelte';
+import { BookCard } from '@/components/books/BookCard';
 
 describe('BookCard Component', () => {
   const mockBook = {
@@ -317,8 +320,8 @@ describe('BookCard Component', () => {
   };
 
   it('should display book information', () => {
-    render(BookCard, { book: mockBook });
-    
+    render(<BookCard book={mockBook} onBorrow={() => {}} />);
+
     expect(screen.getByText('Clean Code')).toBeInTheDocument();
     expect(screen.getByText('by Robert Martin')).toBeInTheDocument();
     expect(screen.getByText('Available')).toBeInTheDocument();
@@ -326,16 +329,16 @@ describe('BookCard Component', () => {
 
   it('should call onBorrow when borrow button clicked', async () => {
     const onBorrow = vi.fn();
-    render(BookCard, { book: mockBook, onBorrow });
-    
-    await screen.getByRole('button', { name: 'Borrow' }).click();
+    render(<BookCard book={mockBook} onBorrow={onBorrow} />);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Borrow' }));
     expect(onBorrow).toHaveBeenCalledWith(mockBook.id);
   });
 
   it('should disable borrow button when no copies available', () => {
     const unavailableBook = { ...mockBook, availableQuantity: 0 };
-    render(BookCard, { book: unavailableBook });
-    
+    render(<BookCard book={unavailableBook} onBorrow={() => {}} />);
+
     expect(screen.getByRole('button', { name: 'Borrow' })).toBeDisabled();
     expect(screen.getByText('Borrowed')).toBeInTheDocument();
   });
@@ -476,7 +479,7 @@ export async function seedTestData(db: D1Database) {
 
 ### Test Organization
 - **Unit tests**: `src/**/*.test.ts` - Test individual functions and classes
-- **Component tests**: `src/**/*.component.test.ts` - Test Svelte components
+- **Component tests**: `src/**/*.component.test.tsx` - Test React components
 - **Integration tests**: `tests/integration/**/*.test.ts` - Test API and database
 - **E2E tests**: `tests/e2e/**/*.spec.ts` - Test complete user workflows
 - **BDD features**: `tests/features/**/*.feature` - Gherkin scenarios
@@ -507,7 +510,7 @@ describe('Library', () => {
 ### Mocking Strategy
 ```typescript
 // Mock external dependencies
-vi.mock('$lib/services/EmailService', () => ({
+vi.mock('@/services/EmailService', () => ({
   EmailService: {
     sendVerificationCode: vi.fn(),
     sendOverdueNotification: vi.fn()
@@ -515,11 +518,11 @@ vi.mock('$lib/services/EmailService', () => ({
 }));
 
 // Mock tRPC client for component tests
-vi.mock('$lib/trpc', () => ({
+vi.mock('@/lib/trpc', () => ({
   trpc: {
     book: {
-      list: { query: vi.fn() },
-      borrow: { mutate: vi.fn() }
+      list: { queryOptions: vi.fn() },
+      borrow: { mutationOptions: vi.fn() }
     }
   }
 }));

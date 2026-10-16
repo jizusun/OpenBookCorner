@@ -28,12 +28,18 @@ framework, UI library, and hosting against these requirements, with a strong emp
 | Frontend framework | **TanStack Start** (React, full-stack, Vite) |
 | UI components | **shadcn/ui** + Tailwind CSS |
 | Data layer (client) | **TanStack Query** (caching, optimistic UI, offline persistence) |
-| API | **tRPC** (end-to-end type safety) |
-| Backend runtime | **Cloudflare Workers** + **Hono** |
+| API / server logic | **TanStack Start server functions** (`createServerFn`) — type-safe, no separate API layer |
+| Backend runtime | **Cloudflare Workers** (TanStack Start deploys to Workers) |
 | ORM | **Drizzle ORM** |
 | Database | **Cloudflare D1** (SQLite) + **KV** (sessions/codes) + **R2** (covers) |
 | Auth (Phase 1) | **Lucia Auth**, email/password (simplest) |
 | Hosting (Phase 1) | **Cloudflare** (Workers + Pages/static assets) |
+
+> **No tRPC and no Hono in Phase 1.** TanStack Start's server functions provide end-to-end type
+> safety natively, so a separate RPC layer (tRPC) and a standalone HTTP framework (Hono) are
+> unnecessary boilerplate for an all-in-one TanStack Start app. A decoupled API (e.g. Hono + tRPC,
+> or Hono RPC) can be reintroduced in **Phase 2** if/when the backend must be split from the
+> frontend for China hosting.
 
 ### Phased hosting / identity plan
 
@@ -65,7 +71,7 @@ framework, UI library, and hosting against these requirements, with a strong emp
 - **Offline + optimistic UI**: TanStack Query (native to TanStack Start) is best-in-class for
   Release 5 offline requirements and the Task 10 optimistic borrow/return flow.
 - **Type safety**: TanStack Start has the strongest end-to-end typed routing/params, matching our
-  no-`any`, branded-types mandate; pairs first-class with tRPC.
+  no-`any`, branded-types mandate; its server functions give typed client↔server calls without tRPC.
 - **Portability**: runs on any JS runtime (Vite/Nitro), easing the Phase 2 migration off Cloudflare.
 
 Trade-offs accepted: TanStack Start is the **youngest** option; SSR + Workers + edge auth cookies
@@ -77,10 +83,18 @@ Best UI library for AI-assisted development: components are **copy-paste source 
 (no dependency/version drift for agents), ships an **official MCP server** for browse/search/install,
 and the component schema can be fed to agents to prevent hallucinated props. Multi-framework.
 
-### Why Hono + tRPC + Drizzle + D1 (unchanged from original spec)
+### Why TanStack Start server functions + Drizzle + D1 (no tRPC, no Hono)
 
-Cloudflare-native, framework-agnostic backend. Hono is built for Workers; tRPC gives shared types;
-Drizzle is portable to Postgres for Phase 2. This backend survives any frontend choice.
+TanStack Start's `createServerFn` provides type-safe server logic callable from the client with
+full inference — covering what tRPC would give us, without the extra RPC layer or a standalone HTTP
+framework (Hono). For an all-in-one TanStack Start app on Cloudflare, this is the simplest Phase 1
+path: server functions call Drizzle services, which query D1 with mandatory `libraryId` scoping.
+Drizzle stays portable to Postgres for the Phase 2 China migration.
+
+**Why not tRPC/Hono now:** they add boilerplate and a network seam we don't need while the frontend
+and server live in one TanStack Start app. The seam becomes useful only in **Phase 2**, if the API
+must be split out and hosted in China separately from the frontend — at which point Hono + tRPC (or
+Hono RPC) can be introduced for that boundary.
 
 ### AI / agent tooling (a first-class selection criterion)
 
@@ -92,7 +106,8 @@ The stack was chosen partly because each layer has strong, current agent tooling
 - **shadcn MCP server** — official; lets agents browse/search/install components from the registry.
 - **Cloudflare MCP server** (`https://mcp.cloudflare.com/mcp`) — official; ~2,500 API endpoints
   plus developer docs; can build/deploy Workers.
-- **Hono** ships `llms.txt` / `llms-full.txt`; **Drizzle** is consumable via `llms.txt`.
+- **llms.txt** — **Drizzle** is consumable via its `llms.txt`. (Hono's `llms.txt` only becomes
+  relevant if a standalone Hono API is introduced in Phase 2.)
 
 See `AGENTS.md` and `.kiro/agents/openbookcorner.json` for how these are wired into this repo.
 
