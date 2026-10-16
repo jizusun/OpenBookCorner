@@ -144,3 +144,7 @@ vite.config.ts.timestamp-*
 .vinxi
 .tanstack
 .wrangler
+
+# Generated seed SQL (produced by scripts/seed.ts)
+scripts/seed.sql
+drizzle/seed.sql
