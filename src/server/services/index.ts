@@ -146,6 +146,29 @@ export class CirculationService {
 
     const library = await this.db.select().from(libraries).where(eq(libraries.id, libraryId)).get()
     const period = library?.settings.borrowingPeriodDays ?? DEFAULT_BORROW_DAYS
+    const maxBooks = library?.settings.maxBooksPerReader ?? 5
+
+    // Business rules: a reader cannot exceed the per-reader limit, and cannot borrow
+    // while they have any overdue book outstanding.
+    const activeLoans = await this.db
+      .select({ dueDate: borrowTransactions.dueDate })
+      .from(borrowTransactions)
+      .where(
+        and(
+          eq(borrowTransactions.userId, userId),
+          eq(borrowTransactions.libraryId, libraryId),
+          isNull(borrowTransactions.returnedAt),
+        ),
+      )
+      .all()
+
+    const nowMs = Date.now()
+    if (activeLoans.some((l) => new Date(l.dueDate).getTime() < nowMs)) {
+      throw new Error('HAS_OVERDUE_BOOKS')
+    }
+    if (activeLoans.length >= maxBooks) {
+      throw new Error('BORROW_LIMIT_REACHED')
+    }
 
     const now = new Date()
     const due = new Date(now.getTime() + period * 24 * 60 * 60 * 1000)
@@ -212,6 +235,7 @@ export class CirculationService {
       bookId: r.book.id,
       title: r.book.title,
       author: r.book.author,
+      coverImageUrl: r.book.coverImageUrl,
       borrowedAt: r.tx.borrowedAt,
       dueDate: r.tx.dueDate,
       isOverdue: new Date(r.tx.dueDate).getTime() < now,

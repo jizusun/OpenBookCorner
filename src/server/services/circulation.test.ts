@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { BookService, CirculationService } from './index'
 import { createTestDb, seedBook, seedLibrary, seedUser } from './testdb'
+import { borrowTransactions } from '@/db/schema'
 import type { Db } from '@/db'
 
 const LIB_A = 'lib-a'
@@ -127,5 +128,42 @@ describe('CirculationService.returnBook', () => {
     const txId = (await svc.myBooks(READER_A, LIB_A))[0].transactionId
     // READER_B (different user/tenant) must not be able to return READER_A's transaction.
     await expect(svc.returnBook(txId, READER_B, LIB_B)).rejects.toThrow('INVALID_RETURN_REQUEST')
+  })
+})
+
+describe('CirculationService.borrow — business rules', () => {
+  it('blocks borrowing once the per-reader limit is reached', async () => {
+    const svc = new CirculationService(db)
+    // seedLibrary default maxBooksPerReader = 5
+    for (let i = 0; i < 5; i++) {
+      await seedBook(db, `lim-${i}`, LIB_A)
+      await svc.borrow(`lim-${i}`, READER_A, LIB_A)
+    }
+    await seedBook(db, 'lim-extra', LIB_A)
+    await expect(svc.borrow('lim-extra', READER_A, LIB_A)).rejects.toThrow('BORROW_LIMIT_REACHED')
+  })
+
+  it('blocks borrowing while the reader has an overdue book', async () => {
+    const svc = new CirculationService(db)
+    // Create an overdue active loan directly.
+    const DAY = 24 * 60 * 60 * 1000
+    const past = new Date(Date.now() - 3 * DAY).toISOString()
+    await db.insert(borrowTransactions).values({
+      id: 'overdue-tx',
+      bookId: BOOK_A,
+      userId: READER_A,
+      libraryId: LIB_A,
+      borrowedAt: new Date(Date.now() - 20 * DAY).toISOString(),
+      dueDate: past,
+      returnedAt: null,
+    })
+    await seedBook(db, 'another', LIB_A)
+    await expect(svc.borrow('another', READER_A, LIB_A)).rejects.toThrow('HAS_OVERDUE_BOOKS')
+  })
+
+  it('allows borrowing when under limit and no overdue books', async () => {
+    const svc = new CirculationService(db)
+    await seedBook(db, 'ok-book', LIB_A)
+    await expect(svc.borrow('ok-book', READER_A, LIB_A)).resolves.toHaveProperty('dueDate')
   })
 })

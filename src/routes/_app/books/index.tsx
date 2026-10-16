@@ -9,6 +9,7 @@ import { me } from '@/server/functions/auth'
 import { BookCard } from '@/components/books/BookCard'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { circulationErrorMessage } from '@/lib/errors'
 
 const searchSchema = z.object({
   q: z.string().optional(),
@@ -29,6 +30,7 @@ function CatalogPage() {
   const queryClient = useQueryClient()
 
   const [term, setTerm] = useState(q ?? '')
+  const [borrowMsg, setBorrowMsg] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null)
   const currentPage = page ?? 1
 
   const { data: user } = useQuery({ queryKey: ['auth', 'me'], queryFn: () => meFn({ data: undefined }) })
@@ -42,10 +44,12 @@ function CatalogPage() {
   const borrow = useMutation({
     mutationFn: (bookId: string) => {
       if (typeof navigator !== 'undefined' && !navigator.onLine) {
-        return Promise.reject(new Error('You are offline. Connect to the internet to borrow.'))
+        return Promise.reject(new Error('offline'))
       }
       return borrowFn({ data: { bookId } })
     },
+    onSuccess: () => setBorrowMsg({ kind: 'ok', text: 'Borrowed — see it in "My Books".' }),
+    onError: (e) => setBorrowMsg({ kind: 'err', text: circulationErrorMessage(e) }),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['books'] })
       queryClient.invalidateQueries({ queryKey: ['my-books'] })
@@ -75,6 +79,19 @@ function CatalogPage() {
           </Link>
         )}
       </div>
+
+      {borrowMsg && (
+        <div
+          data-testid="borrow-msg"
+          className={
+            borrowMsg.kind === 'ok'
+              ? 'rounded-md border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-800'
+              : 'rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive'
+          }
+        >
+          {borrowMsg.text}
+        </div>
+      )}
 
       <form onSubmit={submitSearch} className="flex gap-2" data-testid="search-form">
         <Input
