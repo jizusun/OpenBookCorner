@@ -1,9 +1,11 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { useState } from 'react'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useServerFn } from '@tanstack/react-start'
-import { getBook } from '@/server/functions/book'
+import { getBook, deleteBook } from '@/server/functions/book'
 import { borrowBook } from '@/server/functions/borrowing'
-import { Button } from '@/components/ui/button'
+import { me } from '@/server/functions/auth'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 
@@ -11,9 +13,15 @@ export const Route = createFileRoute('/_app/books/$bookId')({ component: BookDet
 
 function BookDetailPage() {
   const { bookId } = Route.useParams()
+  const navigate = useNavigate()
   const getBookFn = useServerFn(getBook)
   const borrowFn = useServerFn(borrowBook)
+  const deleteFn = useServerFn(deleteBook)
+  const meFn = useServerFn(me)
   const queryClient = useQueryClient()
+
+  const { data: user } = useQuery({ queryKey: ['auth', 'me'], queryFn: () => meFn({ data: undefined }) })
+  const isAdmin = user?.role === 'library_admin' || user?.role === 'super_admin'
 
   const { data: book, isLoading } = useQuery({
     queryKey: ['book', bookId],
@@ -28,6 +36,29 @@ function BookDetailPage() {
       queryClient.invalidateQueries({ queryKey: ['my-books'] })
     },
   })
+
+  const [deleteError, setDeleteError] = useState<string | null>(null)
+  const remove = useMutation({
+    mutationFn: () => deleteFn({ data: { bookId } }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['books'] })
+      await navigate({ to: '/books' })
+    },
+    onError: (e) => {
+      setDeleteError(
+        e instanceof Error && e.message.includes('BORROWED')
+          ? 'This book is currently borrowed and cannot be deleted until it is returned.'
+          : 'Could not delete the book.',
+      )
+    },
+  })
+
+  function confirmDelete() {
+    setDeleteError(null)
+    if (typeof window !== 'undefined' && window.confirm('Delete this book from the catalog? This cannot be undone.')) {
+      remove.mutate()
+    }
+  }
 
   if (isLoading) return <p className="text-muted-foreground">Loading…</p>
   if (!book) {
@@ -97,6 +128,27 @@ function BookDetailPage() {
                 {borrow.isPending ? 'Borrowing…' : 'Borrow'}
               </Button>
             </div>
+
+            {isAdmin && (
+              <div className="flex items-center gap-2 pt-1" data-testid="admin-controls">
+                <Link
+                  to="/books/$bookId/edit"
+                  params={{ bookId }}
+                  className={buttonVariants({ variant: 'outline', size: 'sm' })}
+                >
+                  Edit
+                </Link>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  disabled={remove.isPending}
+                  onClick={confirmDelete}
+                >
+                  {remove.isPending ? 'Deleting…' : 'Delete'}
+                </Button>
+              </div>
+            )}
+            {deleteError && <p className="text-sm text-destructive">{deleteError}</p>}
 
             {book.subjects && book.subjects.length > 0 && (
               <div className="flex flex-wrap gap-2 pt-1">

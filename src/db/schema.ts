@@ -81,6 +81,23 @@ export const borrowTransactions = sqliteTable('borrow_transactions', {
   returnedAt: text('returned_at'),
 })
 
+// User feedback / feature requests (tenant-scoped).
+export const feedback = sqliteTable('feedback', {
+  id: text('id').primaryKey(),
+  libraryId: text('library_id')
+    .notNull()
+    .references(() => libraries.id),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id),
+  category: text('category', {
+    enum: ['feature_request', 'bug', 'book_suggestion', 'other'],
+  }).notNull().default('other'),
+  message: text('message').notNull(),
+  status: text('status', { enum: ['new', 'reviewed', 'done'] }).notNull().default('new'),
+  createdAt: text('created_at').notNull().default('CURRENT_TIMESTAMP'),
+})
+
 // --- Relations ---
 export const librariesRelations = relations(libraries, ({ many }) => ({
   users: many(users),
@@ -107,3 +124,4 @@ export type Library = typeof libraries.$inferSelect
 export type User = typeof users.$inferSelect
 export type Book = typeof books.$inferSelect
 export type BorrowTransaction = typeof borrowTransactions.$inferSelect
+export type Feedback = typeof feedback.$inferSelect

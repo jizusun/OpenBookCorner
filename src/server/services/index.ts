@@ -1,6 +1,6 @@
 import { and, desc, eq, isNull, like, or, sql } from 'drizzle-orm'
 import type { Db } from '@/db'
-import { books, borrowTransactions, libraries, users } from '@/db/schema'
+import { books, borrowTransactions, feedback, libraries, users, type LibrarySettings } from '@/db/schema'
 
 const DEFAULT_BORROW_DAYS = 14
 
@@ -80,6 +80,54 @@ export class BookService {
       .from(books)
       .where(and(eq(books.id, bookId), eq(books.libraryId, libraryId)))
       .get()
+  }
+
+  // Update editable fields of a book, tenant-scoped. Returns false if not found.
+  async update(
+    bookId: string,
+    libraryId: string,
+    fields: {
+      title?: string
+      author?: string
+      isbn?: string
+      publisher?: string | null
+      publishedYear?: number | null
+      coverImageUrl?: string | null
+      description?: string | null
+      subjects?: string[] | null
+    },
+  ) {
+    const existing = await this.getById(bookId, libraryId)
+    if (!existing) return { updated: false }
+    await this.db
+      .update(books)
+      .set({ ...fields, updatedAt: new Date().toISOString() })
+      .where(and(eq(books.id, bookId), eq(books.libraryId, libraryId)))
+    return { updated: true }
+  }
+
+  // Delete a book, tenant-scoped. Blocks deletion while an active (unreturned) borrow exists.
+  async delete(bookId: string, libraryId: string) {
+    const existing = await this.getById(bookId, libraryId)
+    if (!existing) throw new Error('BOOK_NOT_FOUND')
+
+    const activeBorrow = await this.db
+      .select({ id: borrowTransactions.id })
+      .from(borrowTransactions)
+      .where(
+        and(
+          eq(borrowTransactions.bookId, bookId),
+          eq(borrowTransactions.libraryId, libraryId),
+          isNull(borrowTransactions.returnedAt),
+        ),
+      )
+      .get()
+    if (activeBorrow) throw new Error('BOOK_CURRENTLY_BORROWED')
+
+    await this.db
+      .delete(books)
+      .where(and(eq(books.id, bookId), eq(books.libraryId, libraryId)))
+    return { deleted: true }
   }
 }
 
@@ -226,5 +274,86 @@ export class UserService {
 
   async findByEmail(email: string) {
     return this.db.select().from(users).where(eq(users.email, email)).get()
+  }
+}
+
+export class LibraryService {
+  constructor(private db: Db) {}
+
+  async get(libraryId: string) {
+    return this.db.select().from(libraries).where(eq(libraries.id, libraryId)).get()
+  }
+
+  // Update library name and borrowing-policy settings (tenant-scoped, admin-gated upstream).
+  async updateSettings(
+    libraryId: string,
+    input: {
+      name?: string
+      borrowingPeriodDays?: number
+      maxBooksPerReader?: number
+      allowExtensions?: boolean
+    },
+  ) {
+    const lib = await this.get(libraryId)
+    if (!lib) throw new Error('LIBRARY_NOT_FOUND')
+
+    const settings: LibrarySettings = {
+      borrowingPeriodDays: input.borrowingPeriodDays ?? lib.settings.borrowingPeriodDays,
+      maxBooksPerReader: input.maxBooksPerReader ?? lib.settings.maxBooksPerReader,
+      allowExtensions: input.allowExtensions ?? lib.settings.allowExtensions,
+    }
+    await this.db
+      .update(libraries)
+      .set({
+        name: input.name ?? lib.name,
+        settings,
+        updatedAt: new Date().toISOString(),
+      })
+      .where(eq(libraries.id, libraryId))
+    return { name: input.name ?? lib.name, settings }
+  }
+}
+
+export class FeedbackService {
+  constructor(private db: Db) {}
+
+  // Submit feedback (any authenticated member), tenant + user scoped.
+  async submit(input: {
+    libraryId: string
+    userId: string
+    category: 'feature_request' | 'bug' | 'book_suggestion' | 'other'
+    message: string
+  }) {
+    const id = crypto.randomUUID()
+    await this.db.insert(feedback).values({
+      id,
+      libraryId: input.libraryId,
+      userId: input.userId,
+      category: input.category,
+      message: input.message,
+      status: 'new',
+      createdAt: new Date().toISOString(),
+    })
+    return { id }
+  }
+
+  // List feedback for a library (admin), newest first, with submitter name/email.
+  async listByLibrary(libraryId: string) {
+    const rows = await this.db
+      .select({ fb: feedback, user: users })
+      .from(feedback)
+      .innerJoin(users, eq(feedback.userId, users.id))
+      .where(eq(feedback.libraryId, libraryId))
+      .orderBy(desc(feedback.createdAt))
+      .all()
+    return rows.map((r) => ({
+      id: r.fb.id,
+      category: r.fb.category,
+      message: r.fb.message,
+      status: r.fb.status,
+      createdAt: r.fb.createdAt,
+      submitterName: r.user.name,
+      submitterEmail: r.user.email,
+    }))
   }
 }
