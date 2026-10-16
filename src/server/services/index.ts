@@ -1,4 +1,4 @@
-import { and, eq, isNull } from 'drizzle-orm'
+import { and, desc, eq, isNull, like, or, sql } from 'drizzle-orm'
 import type { Db } from '@/db'
 import { books, borrowTransactions, libraries, users } from '@/db/schema'
 
@@ -7,9 +7,39 @@ const DEFAULT_BORROW_DAYS = 14
 export class BookService {
   constructor(private db: Db) {}
 
-  // ALWAYS scoped by libraryId (multi-tenant isolation).
-  async listByLibrary(libraryId: string) {
-    return this.db.select().from(books).where(eq(books.libraryId, libraryId)).all()
+  // ALWAYS scoped by libraryId (multi-tenant isolation). Supports optional
+  // search (title/author) and pagination. Returns items + total count.
+  async listByLibrary(
+    libraryId: string,
+    opts: { search?: string; page?: number; limit?: number } = {},
+  ) {
+    const page = Math.max(1, opts.page ?? 1)
+    const limit = Math.min(50, Math.max(1, opts.limit ?? 20))
+    const offset = (page - 1) * limit
+
+    const search = opts.search?.trim()
+    const searchFilter = search
+      ? or(like(books.title, `%${search}%`), like(books.author, `%${search}%`))
+      : undefined
+    const where = and(eq(books.libraryId, libraryId), searchFilter)
+
+    const items = await this.db
+      .select()
+      .from(books)
+      .where(where)
+      .orderBy(desc(books.createdAt))
+      .limit(limit)
+      .offset(offset)
+      .all()
+
+    const countRow = await this.db
+      .select({ count: sql<number>`count(*)` })
+      .from(books)
+      .where(where)
+      .get()
+    const total = countRow?.count ?? 0
+
+    return { items, total, page, limit, totalPages: Math.max(1, Math.ceil(total / limit)) }
   }
 
   async add(input: { isbn: string; title: string; author: string; libraryId: string }) {
