@@ -5,6 +5,7 @@
   "compatibility_flags": ["nodejs_compat"],
   "main": "@tanstack/react-start/server-entry",
   "observability": { "enabled": true },
+  "preview_urls": true,
   "routes": [
     { "pattern": "openbookcorner.jizu.dev", "custom_domain": true }
   ],

@@ -66,9 +66,23 @@ matches the installed version.
 
 ### Cloudflare CLI / Agent Setup
 Besides the remote MCP, Cloudflare offers an **Agent Setup** flow (https://developers.cloudflare.com/agent-setup/)
-to connect coding agents and build/deploy from the terminal, and **Wrangler** is the primary CLI for
-Workers/D1/KV/R2 operations and deploys (`npx wrangler ...`). Use Wrangler for local dev, resource
-creation, and deploys; authenticate with `npx wrangler login` (never paste tokens into chat).
+to connect coding agents and build/deploy from the terminal.
+
+**Use the `cf` CLI whenever possible.** This project is migrated to the Cloudflare CLI
+(`cloudflare.config.ts`), so prefer `cf` for account/API/deploy work:
+
+- Deploy: `pnpm exec cf deploy` (builds via Vite + deploys the Worker; uses `cloudflare.config.ts`).
+- Account/API ops: `pnpm exec cf accounts tokens ...`, `cf d1 ... --remote`, `cf zones ...`, etc.
+- Preview deployments: `cf deploy` uploads a **version** and (with `previewUrls: true`, which is set
+  on the worker) each version gets its own **per-version preview URL** — use `cf previews` to manage
+  them. This lets you share/test a build without touching the production custom domain.
+- Auth: `cf auth login` (device flow). The `cf` shim may be intercepted by mise; call it via
+  `pnpm exec cf` to use the project-local binary. Never paste tokens into chat.
+
+**Wrangler is the single exception — local development only.** `cf dev` does not support `--local`
+yet (Miniflare v5 is preparing cf local dev), and *"you can only populate local resources with data
+via the Wrangler CLI"* (Cloudflare docs). So the E2E server + local D1 seeding use
+`wrangler dev --local` / `wrangler d1 ... --local`. Everything else should go through `cf`.
 
 ### llms.txt docs
 - Drizzle: via its `llms.txt`
