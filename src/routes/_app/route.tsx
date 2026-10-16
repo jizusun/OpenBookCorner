@@ -19,6 +19,7 @@ function AppLayout() {
   const { user } = Route.useRouteContext()
   const router = useRouter()
   const logoutFn = useServerFn(logout)
+  const isAdmin = user.role === 'library_admin' || user.role === 'super_admin'
 
   async function handleLogout() {
     await logoutFn({ data: undefined })
@@ -36,6 +37,11 @@ function AppLayout() {
             <Link to="/my-books" activeProps={{ className: 'underline' }}>
               My Books
             </Link>
+            {isAdmin && (
+              <Link to="/admin/overdue" activeProps={{ className: 'underline' }}>
+                Overdue
+              </Link>
+            )}
           </nav>
           <div className="flex items-center gap-3 text-sm">
             <span className="text-muted-foreground">{user.name}</span>
