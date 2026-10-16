@@ -49,6 +49,16 @@ export const getBook = createServerFn({ method: 'GET' })
     return new BookService(db).getById(data.bookId, libraryId)
   })
 
+// Admin: current borrower + due date for a book (tenant-scoped). null if available.
+export const getBookBorrower = createServerFn({ method: 'GET' })
+  .validator(z.object({ bookId: z.string().min(1) }))
+  .handler(async ({ data }) => {
+    const { requireAdmin } = await import('@/server/auth/guards')
+    const { BookService } = await import('@/server/services')
+    const { db, libraryId } = await requireAdmin()
+    return new BookService(db).getActiveBorrower(data.bookId, libraryId)
+  })
+
 // Admin: update a book's editable fields (tenant-scoped).
 export const updateBook = createServerFn({ method: 'POST' })
   .validator(

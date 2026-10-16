@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useToast } from '@/components/Toast'
 
 export const Route = createFileRoute('/_app/admin/settings')({
   beforeLoad: async () => {
@@ -23,6 +24,7 @@ function SettingsPage() {
   const queryClient = useQueryClient()
   const getFn = useServerFn(getLibrarySettings)
   const updateFn = useServerFn(updateLibrarySettings)
+  const toast = useToast()
 
   const { data: lib, isLoading } = useQuery({
     queryKey: ['library-settings'],
@@ -73,6 +75,7 @@ function SettingsPage() {
       })
       await queryClient.invalidateQueries({ queryKey: ['library-settings'] })
       setSaved(true)
+      toast.success('Settings saved.')
     } catch {
       setError('Could not save settings. Check the values and try again.')
     } finally {

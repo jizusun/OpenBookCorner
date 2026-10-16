@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useServerFn } from '@tanstack/react-start'
@@ -7,24 +6,34 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { circulationErrorMessage } from '@/lib/errors'
+import { useToast } from '@/components/Toast'
+import { BookListSkeleton } from '@/components/ui/skeleton'
+import { EmptyState } from '@/components/ui/empty-state'
 
 export const Route = createFileRoute('/_app/my-books')({ component: MyBooksPage })
 
+const DAY = 24 * 60 * 60 * 1000
+
+function daysUntil(dueDate: string): number {
+  return Math.ceil((new Date(dueDate).getTime() - Date.now()) / DAY)
+}
+
 // Human-friendly due-date urgency.
 function dueInfo(dueDate: string): { label: string; variant: 'default' | 'secondary' | 'destructive' } {
-  const DAY = 24 * 60 * 60 * 1000
-  const diffDays = Math.ceil((new Date(dueDate).getTime() - Date.now()) / DAY)
+  const diffDays = daysUntil(dueDate)
   if (diffDays < 0) return { label: `Overdue by ${Math.abs(diffDays)} day${Math.abs(diffDays) === 1 ? '' : 's'}`, variant: 'destructive' }
   if (diffDays === 0) return { label: 'Due today', variant: 'destructive' }
   if (diffDays <= 2) return { label: `Due in ${diffDays} day${diffDays === 1 ? '' : 's'}`, variant: 'secondary' }
   return { label: `Due in ${diffDays} days`, variant: 'default' }
 }
 
+type MyBookItem = Awaited<ReturnType<typeof myBooks>>[number]
+
 function MyBooksPage() {
   const myBooksFn = useServerFn(myBooks)
   const returnFn = useServerFn(returnBook)
   const queryClient = useQueryClient()
-  const [msg, setMsg] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null)
+  const toast = useToast()
 
   const { data: items, isLoading } = useQuery({
     queryKey: ['my-books'],
@@ -33,47 +42,75 @@ function MyBooksPage() {
 
   const doReturn = useMutation({
     mutationFn: (transactionId: string) => returnFn({ data: { transactionId } }),
-    onSuccess: () => setMsg({ kind: 'ok', text: 'Returned. Thanks!' }),
-    onError: (e) => setMsg({ kind: 'err', text: circulationErrorMessage(e) }),
+    // Optimistic: remove the returned book from the list immediately.
+    onMutate: async (transactionId: string) => {
+      await queryClient.cancelQueries({ queryKey: ['my-books'] })
+      const prev = queryClient.getQueryData<MyBookItem[]>(['my-books'])
+      if (prev) {
+        queryClient.setQueryData<MyBookItem[]>(
+          ['my-books'],
+          prev.filter((b) => b.transactionId !== transactionId),
+        )
+      }
+      return { prev }
+    },
+    onSuccess: () => toast.success('Returned. Thanks!'),
+    onError: (e, _id, ctx) => {
+      if (ctx?.prev) queryClient.setQueryData(['my-books'], ctx.prev)
+      toast.error(circulationErrorMessage(e))
+    },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['my-books'] })
       queryClient.invalidateQueries({ queryKey: ['books'] })
     },
   })
 
+  // Due-soon summary line.
+  const summary = (() => {
+    if (!items || items.length === 0) return null
+    const overdue = items.filter((i) => daysUntil(i.dueDate) < 0).length
+    const dueSoon = items.filter((i) => {
+      const d = daysUntil(i.dueDate)
+      return d >= 0 && d <= 2
+    }).length
+    const parts = [`${items.length} book${items.length === 1 ? '' : 's'} borrowed`]
+    if (overdue > 0) parts.push(`${overdue} overdue`)
+    if (dueSoon > 0) parts.push(`${dueSoon} due soon`)
+    return { text: parts.join(' · '), urgent: overdue > 0 || dueSoon > 0 }
+  })()
+
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">My Books</h1>
 
-      {msg && (
-        <div
-          data-testid="return-msg"
-          className={
-            msg.kind === 'ok'
-              ? 'rounded-md border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-800'
-              : 'rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive'
-          }
+      {summary && (
+        <p
+          data-testid="my-books-summary"
+          className={`text-sm ${summary.urgent ? 'font-medium text-destructive' : 'text-muted-foreground'}`}
         >
-          {msg.text}
-        </div>
+          {summary.text}
+        </p>
       )}
 
-      {isLoading && <p className="text-muted-foreground">Loading…</p>}
+      {isLoading && <BookListSkeleton count={3} />}
 
       {!isLoading && items && items.length === 0 && (
-        <Card>
-          <CardContent className="flex flex-col items-center gap-3 p-8 text-center">
-            <p className="text-muted-foreground">You haven't borrowed any books yet.</p>
+        <EmptyState
+          icon="📖"
+          title="You haven't borrowed any books yet."
+          description="Browse the catalog and borrow a book to see it here."
+          action={
             <Link to="/books" className={buttonVariants({ size: 'sm' })}>
               Browse the catalog
             </Link>
-          </CardContent>
-        </Card>
+          }
+        />
       )}
 
       <div className="grid gap-4">
         {items?.map((item) => {
           const due = dueInfo(item.dueDate)
+          const pending = doReturn.isPending && doReturn.variables === item.transactionId
           return (
             <Card key={item.transactionId}>
               <CardContent className="flex gap-4 p-4">
@@ -107,13 +144,10 @@ function MyBooksPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      disabled={doReturn.isPending && doReturn.variables === item.transactionId}
-                      onClick={() => {
-                        setMsg(null)
-                        doReturn.mutate(item.transactionId)
-                      }}
+                      disabled={pending}
+                      onClick={() => doReturn.mutate(item.transactionId)}
                     >
-                      {doReturn.isPending && doReturn.variables === item.transactionId ? 'Returning…' : 'Return'}
+                      {pending ? 'Returning…' : 'Return'}
                     </Button>
                   </div>
                 </div>

@@ -82,7 +82,28 @@ export class BookService {
       .get()
   }
 
-  // Find a book by ISBN within a library (normalized match). First available copy wins
+  // Admin: who currently holds this book + when it's due (tenant-scoped).
+  // Returns null when the book is available / not borrowed.
+  async getActiveBorrower(bookId: string, libraryId: string) {
+    const row = await this.db
+      .select({
+        borrowerName: users.name,
+        borrowerEmail: users.email,
+        borrowedAt: borrowTransactions.borrowedAt,
+        dueDate: borrowTransactions.dueDate,
+      })
+      .from(borrowTransactions)
+      .innerJoin(users, eq(borrowTransactions.userId, users.id))
+      .where(
+        and(
+          eq(borrowTransactions.bookId, bookId),
+          eq(borrowTransactions.libraryId, libraryId),
+          isNull(borrowTransactions.returnedAt),
+        ),
+      )
+      .get()
+    return row ?? null
+  }
   // if duplicates exist (available ordered first).
   async findByIsbn(isbnRaw: string, libraryId: string) {
     const isbn = isbnRaw.replace(/[^0-9Xx]/g, '').toUpperCase()

@@ -6,6 +6,8 @@ import { listOverdue } from '@/server/functions/borrowing'
 import { me } from '@/server/functions/auth'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { EmptyState } from '@/components/ui/empty-state'
+import { Skeleton } from '@/components/ui/skeleton'
 
 const RANGES = [
   { value: 'all', label: 'All' },
@@ -58,11 +60,20 @@ function OverduePage() {
         ))}
       </div>
 
-      {isLoading && <p className="text-muted-foreground">Loading…</p>}
+      {isLoading && (
+        <div className="space-y-2" data-testid="loading-skeleton">
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+        </div>
+      )}
       {!isLoading && items && items.length === 0 && (
-        <p className="text-muted-foreground" data-testid="overdue-empty">
-          No overdue books in this range.
-        </p>
+        <EmptyState
+          data-testid="overdue-empty"
+          icon="✅"
+          title="No overdue books in this range"
+          description="Nothing needs chasing right now."
+        />
       )}
 
       {items && items.length > 0 && (
