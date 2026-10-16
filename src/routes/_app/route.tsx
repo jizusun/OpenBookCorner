@@ -40,6 +40,9 @@ function AppLayout() {
             <Link to="/my-books" activeProps={{ className: 'underline' }}>
               My Books
             </Link>
+            <Link to="/scan" activeProps={{ className: 'underline' }}>
+              Scan
+            </Link>
             {isAdmin && (
               <Link to="/admin/overdue" activeProps={{ className: 'underline' }}>
                 Overdue

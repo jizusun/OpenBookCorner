@@ -82,6 +82,20 @@ export class BookService {
       .get()
   }
 
+  // Find a book by ISBN within a library (normalized match). First available copy wins
+  // if duplicates exist (available ordered first).
+  async findByIsbn(isbnRaw: string, libraryId: string) {
+    const isbn = isbnRaw.replace(/[^0-9Xx]/g, '').toUpperCase()
+    if (!isbn) return undefined
+    const matches = await this.db
+      .select()
+      .from(books)
+      .where(and(eq(books.libraryId, libraryId), eq(books.isbn, isbn)))
+      .all()
+    if (matches.length === 0) return undefined
+    return matches.find((b) => b.isAvailable) ?? matches[0]
+  }
+
   // Update editable fields of a book, tenant-scoped. Returns false if not found.
   async update(
     bookId: string,
@@ -186,6 +200,16 @@ export class CirculationService {
     ])
 
     return { dueDate: due.toISOString() }
+  }
+
+  // Scan-to-borrow: resolve a book in this library by ISBN, then borrow it (reusing
+  // all borrow rules). Throws BOOK_NOT_IN_LIBRARY if no catalog match for the ISBN.
+  async borrowByIsbn(isbn: string, userId: string, libraryId: string) {
+    const bookSvc = new BookService(this.db)
+    const book = await bookSvc.findByIsbn(isbn, libraryId)
+    if (!book) throw new Error('BOOK_NOT_IN_LIBRARY')
+    const res = await this.borrow(book.id, userId, libraryId)
+    return { bookId: book.id, title: book.title, dueDate: res.dueDate }
   }
 
   async returnBook(transactionId: string, userId: string, libraryId: string) {
