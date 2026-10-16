@@ -51,9 +51,10 @@ export function FeedbackButton() {
         type="button"
         onClick={() => setOpen(true)}
         data-testid="feedback-button"
-        className="fixed bottom-4 right-4 z-40 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-lg hover:bg-primary/90"
+        aria-label="Send feedback"
+        className="fixed bottom-4 left-4 z-50 flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-lg hover:bg-primary/90"
       >
-        Feedback
+        <span aria-hidden>💬</span> Feedback
       </button>
 
       {open && (

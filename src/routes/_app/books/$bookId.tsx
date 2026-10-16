@@ -8,6 +8,7 @@ import { me } from '@/server/functions/auth'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
+import { circulationErrorMessage } from '@/lib/errors'
 
 export const Route = createFileRoute('/_app/books/$bookId')({ component: BookDetailPage })
 
@@ -30,6 +31,7 @@ function BookDetailPage() {
 
   const borrow = useMutation({
     mutationFn: () => borrowFn({ data: { bookId } }),
+    onError: (e) => setBorrowError(circulationErrorMessage(e)),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['book', bookId] })
       queryClient.invalidateQueries({ queryKey: ['books'] })
@@ -37,6 +39,7 @@ function BookDetailPage() {
     },
   })
 
+  const [borrowError, setBorrowError] = useState<string | null>(null)
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const remove = useMutation({
     mutationFn: () => deleteFn({ data: { bookId } }),
@@ -123,11 +126,16 @@ function BookDetailPage() {
               <Button
                 size="sm"
                 disabled={!book.isAvailable || borrow.isPending}
-                onClick={() => borrow.mutate()}
+                onClick={() => {
+                  setBorrowError(null)
+                  borrow.mutate()
+                }}
               >
                 {borrow.isPending ? 'Borrowing…' : 'Borrow'}
               </Button>
             </div>
+
+            {borrowError && <p className="text-sm text-destructive" data-testid="borrow-error">{borrowError}</p>}
 
             {isAdmin && (
               <div className="flex items-center gap-2 pt-1" data-testid="admin-controls">

@@ -3,6 +3,7 @@ import { useServerFn } from '@tanstack/react-start'
 import { me, logout } from '@/server/functions/auth'
 import { Button } from '@/components/ui/button'
 import { FeedbackButton } from '@/components/FeedbackButton'
+import { useInstallPrompt } from '@/components/Pwa'
 
 export const Route = createFileRoute('/_app')({
   // Server-validated auth: me() throws if unauthenticated; redirect to login.
@@ -21,6 +22,7 @@ function AppLayout() {
   const router = useRouter()
   const logoutFn = useServerFn(logout)
   const isAdmin = user.role === 'library_admin' || user.role === 'super_admin'
+  const { canInstall, install } = useInstallPrompt()
 
   async function handleLogout() {
     await logoutFn({ data: undefined })
@@ -55,6 +57,11 @@ function AppLayout() {
             )}
           </nav>
           <div className="flex items-center gap-3 text-sm">
+            {canInstall && (
+              <Button size="sm" variant="outline" onClick={install} data-testid="install-button">
+                Install app
+              </Button>
+            )}
             <span className="text-muted-foreground">{user.name}</span>
             <Button size="sm" variant="outline" onClick={handleLogout}>
               Sign out
