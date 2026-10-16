@@ -25,6 +25,7 @@ export async function createTestDb() {
     );
     CREATE TABLE books (
       id TEXT PRIMARY KEY, isbn TEXT NOT NULL, title TEXT NOT NULL, author TEXT NOT NULL,
+      publisher TEXT, published_year INTEGER, cover_image_url TEXT, description TEXT, subjects TEXT,
       library_id TEXT NOT NULL, is_available INTEGER NOT NULL DEFAULT 1,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );

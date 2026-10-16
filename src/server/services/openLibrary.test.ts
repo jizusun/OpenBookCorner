@@ -21,7 +21,7 @@ afterEach(() => {
 })
 
 describe('lookupIsbnMetadata', () => {
-  it('returns normalized metadata and resolves the author name', async () => {
+  it('returns normalized metadata, resolves author, cover, description + subjects', async () => {
     mockFetchOnce({
       '/isbn/9780132350884.json': {
         status: 200,
@@ -30,9 +30,14 @@ describe('lookupIsbnMetadata', () => {
           authors: [{ key: '/authors/OL1A' }],
           publishers: ['Prentice Hall'],
           publish_date: 'August 2008',
+          works: [{ key: '/works/OL1W' }],
         },
       },
       '/authors/OL1A.json': { status: 200, body: { name: 'Robert C. Martin' } },
+      '/works/OL1W.json': {
+        status: 200,
+        body: { description: 'A handbook of agile software craftsmanship.', subjects: ['Software', 'Craftsmanship'] },
+      },
     })
 
     const meta = await lookupIsbnMetadata('978-0-13-235088-4') // dashed input
@@ -43,7 +48,10 @@ describe('lookupIsbnMetadata', () => {
       author: 'Robert C. Martin',
       publisher: 'Prentice Hall',
       publishedYear: 2008,
+      description: 'A handbook of agile software craftsmanship.',
+      subjects: ['Software', 'Craftsmanship'],
     })
+    expect(meta?.coverImageUrl).toBe('https://covers.openlibrary.org/b/isbn/9780132350884-L.jpg')
   })
 
   // --- Negation ---
