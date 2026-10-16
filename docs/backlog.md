@@ -90,6 +90,7 @@ How we compare to 番薯借阅's verified features (✅ have · 🟡 partial · 
 | B7 | **Overdue fines** (罚金), optional/policy-driven | Return discipline where desired | S | Low |
 | B9 | **Recommendations** (by history / subjects) | Discovery; leverages subjects metadata | M | Low |
 | B21 | **Batch admin operations** (e.g. 批量转移书架, bulk edit/category/delete) | Real 番薯 customer pain: moving hundreds of books one-by-one; essential at scale | S | Med |
+| B22 | **Photo → AI vision metadata fallback** | Robust answer to the "no stable/free CN ISBN provider" problem: photograph the cover, a vision model drafts title/author/publisher. See design note below. | M | **High (later)** |
 
 ## Cross-cutting polish
 - ⬜ Toasts / success + error feedback on borrow/return/add; loading & empty states; error boundaries
@@ -149,3 +150,40 @@ Mini Program front end. Gated on the hosting decision — do not start until com
 
 > **Immediate recommendation:** ship **P0** as the next PR train (B1 → B3 → B2), since B3
 > unblocks B13/B5 and B1 is a fast, isolated win that fixes the CN-metadata gap you hit.
+
+## Design note — B22: Photo → AI vision metadata fallback
+
+**Problem.** Free ISBN providers (Open Library, Google Books) have poor mainland-Chinese
+coverage, and there is no stable *free* CN ISBN API (keyed CN providers = B1). For books
+that resolve to nothing — common for CN titles — we want a last-resort that doesn't depend
+on any ISBN database existing.
+
+**Approach (preferred): on-Worker vision model via Cloudflare Workers AI.**
+- Librarian photographs the **book cover** (reuse the existing camera UI).
+- The image is sent to a **vision-capable model through the Cloudflare `AI` binding**
+  (`env.AI.run(<vision-model>, { image, prompt })`) — runs inside our Worker, **no external
+  API key**, aligns with ADR Phase 1, generous Workers AI free allocation.
+- The model returns a **draft** `{ title, author, publisher?, publishedYear? }` (and ISBN if
+  legible), which **pre-fills the editable** Add Book fields. Chinese covers read well with
+  modern VLMs (and an external **Qwen-VL/Gemini** model can be added later behind an env key
+  for even better CJK accuracy).
+
+**Chain position (last fallback):**
+```
+scan ISBN → Open Library / Google Books → (B1 keyed CN ISBN API) → [B22] photo + AI vision → manual entry
+```
+
+**Guardrails (important):**
+- **Human-in-the-loop:** AI output is a *draft the librarian confirms*; fields stay editable.
+  Never auto-save AI metadata as authoritative. This bounds hallucination risk.
+- **Fallback only:** invoke the vision call **only** when ISBN lookups return `none`
+  (cost + latency are higher than a REST lookup; don't put it on the default path).
+- **ISBN still wins** when a barcode resolves in a DB — that's authoritative.
+- Reuse the `resolvedBy` telemetry: log `resolvedBy: "ai-vision"` for observability.
+
+**Open questions for implementation:**
+1. Workers AI model choice (on-Worker, free) vs. env-gated external VLM (Qwen-VL/Gemini,
+   better CJK) — start with Workers AI, allow upgrade.
+2. Standalone "add by photo" entry point, or purely a fallback in the lookup chain.
+
+**Status:** documented now, to be implemented later (not in the current PR train).
