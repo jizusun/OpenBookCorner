@@ -148,3 +148,6 @@ vite.config.ts.timestamp-*
 # Generated seed SQL (produced by scripts/seed.ts)
 scripts/seed.sql
 drizzle/seed.sql
+
+# cf CLI build output
+.cloudflare/
