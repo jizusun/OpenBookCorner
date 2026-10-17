@@ -1,0 +1,53 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "openbookcorner",
+  "main": "./apps/app/worker.ts",
+  "compatibility_date": "2025-09-02",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  "preview_urls": true,
+  "assets": {
+    "directory": "./apps/app/dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  },
+  "vars": {
+    "ENVIRONMENT": "production",
+    "APP_NAME": "OpenBookCorner",
+    "APP_ORIGIN": "https://openbookcorner.jizu.dev"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "openbookcorner",
+      "database_id": "11371372-82fe-488e-b497-2e94518ce488",
+      "migrations_dir": "./db/migrations"
+    }
+  ],
+  "r2_buckets": [{ "binding": "COVERS", "bucket_name": "openbookcorner-covers" }],
+
+  // Required for `wrangler preview` / Workers Builds preview builds. Reuses the
+  // same D1/R2 (shared demo data), ENVIRONMENT=development so Better Auth trusts
+  // the preview origin.
+  "previews": {
+    "vars": {
+      "ENVIRONMENT": "development",
+      "APP_NAME": "OpenBookCorner",
+      "APP_ORIGIN": "https://openbookcorner.jizu.dev"
+    },
+    "d1_databases": [
+      {
+        "binding": "DB",
+        "database_name": "openbookcorner",
+        "database_id": "11371372-82fe-488e-b497-2e94518ce488"
+      }
+    ],
+    "r2_buckets": [{ "binding": "COVERS", "bucket_name": "openbookcorner-covers" }]
+  }
+
+  // This root config lets Workers Builds use its DEFAULT commands from Root
+  // directory "/": `bun run build` (installs workspaces + builds apps/app) and
+  // `npx wrangler deploy` / `npx wrangler preview` (which read THIS file).
+  // No custom-domain route here — it's bound to the Worker already, and a
+  // custom_domain route makes `wrangler dev` rewrite the Origin (breaks auth).
+}
