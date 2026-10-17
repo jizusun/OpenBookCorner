@@ -34,8 +34,13 @@ worker.use(logger())
 worker.use('/api/*', async (c, next) => {
   const environment = c.env.ENVIRONMENT ?? 'development'
   // Fail closed in production: never sign sessions with a public fallback secret.
-  // The dev fallback is ONLY used outside production (local dev / E2E).
-  if (environment === 'production' && !c.env.BETTER_AUTH_SECRET) {
+  // Fail closed on any internet-reachable deployment: production AND preview are
+  // publicly reachable, so a missing BETTER_AUTH_SECRET must NOT silently fall
+  // back to the public dev constant (that would let anyone forge session
+  // cookies, including admin/super-admin). The dev fallback is ONLY for local
+  // dev / E2E (development).
+  const requiresRealSecret = environment === 'production' || environment === 'preview'
+  if (requiresRealSecret && !c.env.BETTER_AUTH_SECRET) {
     return c.json({ error: 'Server misconfigured: BETTER_AUTH_SECRET is required' }, 500)
   }
   const env: Env = {

@@ -4,15 +4,17 @@ name: Preview
 # https://preview.openbookcorner.jizu.dev and seeds its demo users. This
 # replaces the disabled Workers Builds preview builds.
 #
-# Requires one repository secret:
-#   CLOUDFLARE_API_TOKEN  — scoped token (see AGENTS.md for exact permissions):
-#                           Workers Scripts: Edit, D1: Edit, Workers R2 Storage: Edit,
-#                           Account Settings: Read (+ Zone > Workers Routes: Edit for the custom domain)
+# Requires two repository secrets:
+#   CLOUDFLARE_API_TOKEN         — scoped token (see AGENTS.md for exact permissions):
+#                                  Workers Scripts: Edit, D1: Edit, Workers R2 Storage: Edit,
+#                                  Account Settings: Read (+ Zone > Workers Routes: Edit)
+#   PREVIEW_BETTER_AUTH_SECRET   — a strong random string used to sign preview
+#                                  Better Auth sessions (NEVER the public dev fallback).
 #
 # CLOUDFLARE_ACCOUNT_ID is a non-secret and set as an env below.
-# The preview Worker runs with ENVIRONMENT=preview, which tolerates a missing
-# BETTER_AUTH_SECRET (deterministic dev fallback) — acceptable for a preview;
-# production still fails closed on a missing secret.
+# The preview Worker runs with ENVIRONMENT=preview and FAILS CLOSED on a missing
+# BETTER_AUTH_SECRET (same as production) — it is internet-reachable, so it must
+# not sign sessions with the public dev constant.
 
 on:
   pull_request:
@@ -65,6 +67,13 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           command: deploy --config wrangler.preview.jsonc
+          # Provision a REAL session-signing secret (never the public dev
+          # fallback) on this internet-reachable preview. The name here must
+          # match the env var below.
+          secrets: |
+            BETTER_AUTH_SECRET
+        env:
+          BETTER_AUTH_SECRET: ${{ secrets.PREVIEW_BETTER_AUTH_SECRET }}
 
       - name: Seed demo users into preview D1
         env:
