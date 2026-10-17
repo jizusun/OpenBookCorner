@@ -1,0 +1,97 @@
+name: Preview
+
+# Deploys a single shared PREVIEW Worker (openbookcorner-preview) on
+# https://preview.openbookcorner.jizu.dev and seeds its demo users. This
+# replaces the disabled Workers Builds preview builds.
+#
+# Requires one repository secret:
+#   CLOUDFLARE_API_TOKEN  — scoped token (see AGENTS.md for exact permissions):
+#                           Workers Scripts: Edit, D1: Edit, Workers R2 Storage: Edit,
+#                           Account Settings: Read (+ Zone > Workers Routes: Edit for the custom domain)
+#
+# CLOUDFLARE_ACCOUNT_ID is a non-secret and set as an env below.
+# The preview Worker runs with ENVIRONMENT=preview, which tolerates a missing
+# BETTER_AUTH_SECRET (deterministic dev fallback) — acceptable for a preview;
+# production still fails closed on a missing secret.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+# One preview deploy at a time (the preview Worker + its D1 are shared across
+# all PRs), and let a newer commit supersede an in-flight run for the same PR.
+concurrency:
+  group: preview-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pull-requests: write
+
+env:
+  CLOUDFLARE_ACCOUNT_ID: 69f6e3b623318562cf2917e23251be5d
+  PREVIEW_ORIGIN: https://preview.openbookcorner.jizu.dev
+  PREVIEW_D1_ID: 6d67a9a0-0ac1-4c50-bbef-6c035e3300a7
+
+jobs:
+  deploy-preview:
+    name: Build · Deploy · Seed
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.3
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Generate route tree
+        run: bun --cwd apps/app generate-routes
+
+      - name: Build SPA
+        run: bun --cwd apps/app build
+
+      - name: Apply D1 migrations to preview DB
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: d1 migrations apply openbookcorner-preview --remote --config wrangler.preview.jsonc
+
+      - name: Deploy preview Worker
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: deploy --config wrangler.preview.jsonc
+
+      - name: Seed demo users into preview D1
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          SEED_D1_NAME: openbookcorner-preview
+        run: |
+          chmod +x db/scripts/seed-users.sh
+          db/scripts/seed-users.sh "$PREVIEW_ORIGIN" "$PREVIEW_D1_ID"
+
+      - name: Comment deploy result on the PR
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const url = process.env.PREVIEW_ORIGIN;
+            const ok = '${{ job.status }}' === 'success';
+            const runUrl = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
+            const marker = '<!-- preview-url -->';
+            const body = ok
+              ? `${marker}\n🚀 **Preview deployed:** ${url}\n\nDemo accounts (password \`password123\`): \`reader@demo.test\`, \`admin@demo.test\`, \`super@demo.test\`.\n\n_Single shared preview environment for all PRs. ([run](${runUrl}))_`
+              : `${marker}\n❌ **Preview deploy failed.** See the [workflow run](${runUrl}) for logs.\n\n_(Target: ${url} — single shared preview environment.)_`;
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const { data: comments } = await github.rest.issues.listComments({ owner, repo, issue_number });
+            const existing = comments.find((c) => c.body && c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }

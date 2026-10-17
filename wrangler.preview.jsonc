@@ -1,0 +1,49 @@
+{
+  // Dedicated PREVIEW Worker, deployed from GitHub Actions on pull_request
+  // (.github/workflows/preview.yml) — this replaces the disabled Workers Builds
+  // preview builds. It is a SEPARATE Worker from production (`openbookcorner`),
+  // bound to the ISOLATED preview D1 + R2 (never production data), and served on
+  // a single stable custom-domain host: https://preview.openbookcorner.jizu.dev
+  //
+  // Why a fixed custom-domain host (not a per-branch *.workers.dev alias):
+  // `wrangler versions upload --preview-alias` only supports *.workers.dev, and
+  // we deliberately do NOT trust *.workers.dev in Better Auth (anyone can deploy
+  // there — Copilot security review). A fixed *.openbookcorner.jizu.dev host is
+  // covered by our wildcard cert AND is trusted by Better Auth, so login works.
+  // Trade-off: one shared preview env for all PRs (matches the shared preview
+  // D1 we already use), not per-branch isolation.
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "openbookcorner-preview",
+  "main": "./apps/app/worker.ts",
+  "compatibility_date": "2025-09-02",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  "assets": {
+    "directory": "./apps/app/dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  },
+  "vars": {
+    // ENVIRONMENT=preview relaxes Better Auth origin trust to localhost + our
+    // own *.openbookcorner.jizu.dev (set in apps/api/lib/auth.ts). APP_ORIGIN is
+    // the preview host itself, so Better Auth's baseURL + cookies match the host
+    // the browser is on (the production-origin mismatch is what broke login).
+    "ENVIRONMENT": "preview",
+    "APP_NAME": "OpenBookCorner (Preview)",
+    "APP_ORIGIN": "https://preview.openbookcorner.jizu.dev"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "openbookcorner-preview",
+      "database_id": "6d67a9a0-0ac1-4c50-bbef-6c035e3300a7",
+      "migrations_dir": "./db/migrations"
+    }
+  ],
+  "r2_buckets": [{ "binding": "COVERS", "bucket_name": "openbookcorner-covers-preview" }],
+  "routes": [
+    { "pattern": "preview.openbookcorner.jizu.dev", "custom_domain": true }
+  ]
+  // BETTER_AUTH_SECRET is provided at deploy time by the workflow
+  // (wrangler secret / --var is not used; see preview.yml) — never hardcoded.
+}
