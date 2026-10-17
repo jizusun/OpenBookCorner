@@ -8,12 +8,14 @@
  * import updates existing rows instead of duplicating. Tenant-scoped: everything
  * is written under the given libraryId.
  */
+import { desc, eq } from 'drizzle-orm'
 import {
   books,
   borrowTransactions,
   members,
   purchaseRequests,
   reviews,
+  importRuns,
   type Database,
 } from '@obc/db'
 
@@ -135,7 +137,11 @@ export class FanshuImportService {
   constructor(private db: Database) {}
 
   /** Run the full import into `libraryId`. Idempotent (upsert by id). */
-  async import(libraryId: string, sheets: FanshuSheets): Promise<ImportCounts> {
+  async import(
+    libraryId: string,
+    sheets: FanshuSheets,
+    meta?: { sourceUrl?: string; r2Key?: string; fileName?: string; ranByUserId?: string },
+  ): Promise<ImportCounts> {
     const input: TransformInput = { libraryId, ...sheets }
 
     const memberRows = transformMembers(input)
@@ -206,7 +212,7 @@ export class FanshuImportService {
         .onConflictDoUpdate({ target: purchaseRequests.id, set: r }),
     )
 
-    return {
+    const counts = {
       books: bookRows.length,
       members: memberRows.length,
       loans: loans.length,
@@ -214,5 +220,31 @@ export class FanshuImportService {
       purchaseRequests: recRows.length,
       orphanLoans: orphans,
     }
+
+    // Audit trail: record where this import came from, who ran it, and counts.
+    await this.db.insert(importRuns).values({
+      id: crypto.randomUUID(),
+      libraryId,
+      source: 'fanshu',
+      sourceUrl: meta?.sourceUrl ?? null,
+      r2Key: meta?.r2Key ?? null,
+      fileName: meta?.fileName ?? null,
+      ranByUserId: meta?.ranByUserId ?? null,
+      status: 'success',
+      counts,
+      createdAt: new Date().toISOString(),
+    })
+
+    return counts
+  }
+
+  /** Import audit history for a library, newest first. */
+  async listRuns(libraryId: string) {
+    return this.db
+      .select()
+      .from(importRuns)
+      .where(eq(importRuns.libraryId, libraryId))
+      .orderBy(desc(importRuns.createdAt))
+      .all()
   }
 }

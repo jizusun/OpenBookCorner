@@ -130,6 +130,22 @@ export const purchaseRequests = sqliteTable('purchase_requests', {
   createdAt: text('created_at').notNull().default('CURRENT_TIMESTAMP'),
 })
 
+export const importRuns = sqliteTable('import_runs', {
+  id: text('id').primaryKey(),
+  libraryId: text('library_id')
+    .notNull()
+    .references(() => libraries.id),
+  source: text('source').notNull().default('fanshu'),
+  sourceUrl: text('source_url'), // original download URL (e.g. cos1.fanshujieyue.com/…)
+  r2Key: text('r2_key'), // archived copy in R2 (imports/fanshu/…)
+  fileName: text('file_name'),
+  ranByUserId: text('ran_by_user_id').references(() => user.id),
+  status: text('status', { enum: ['success', 'failed'] }).notNull().default('success'),
+  counts: text('counts', { mode: 'json' }).$type<Record<string, unknown>>(),
+  error: text('error'),
+  createdAt: text('created_at').notNull().default('CURRENT_TIMESTAMP'),
+})
+
 export const borrowTransactions = sqliteTable('borrow_transactions', {
   id: text('id').primaryKey(),
   bookId: text('book_id')
@@ -195,3 +211,4 @@ export type Review = typeof reviews.$inferSelect
 export type PurchaseRequest = typeof purchaseRequests.$inferSelect
 export type BorrowTransaction = typeof borrowTransactions.$inferSelect
 export type Feedback = typeof feedback.$inferSelect
+export type ImportRun = typeof importRuns.$inferSelect

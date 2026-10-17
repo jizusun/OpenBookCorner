@@ -86,6 +86,28 @@ describe('FanshuImportService', () => {
     expect((await db.select().from(borrowTransactions).where(eq(borrowTransactions.libraryId, LIB)))).toHaveLength(1)
   })
 
+  it('records an import_runs audit row (source + counts + who)', async () => {
+    const svc = new FanshuImportService(db)
+    await svc.import(LIB, sheets, {
+      sourceUrl: 'https://cos1.fanshujieyue.com/upload-s/x.xls',
+      fileName: 'x.xls',
+      ranByUserId: 'user-1',
+    })
+    const runs = await svc.listRuns(LIB)
+    expect(runs).toHaveLength(1)
+    expect(runs[0]).toMatchObject({
+      source: 'fanshu',
+      sourceUrl: 'https://cos1.fanshujieyue.com/upload-s/x.xls',
+      fileName: 'x.xls',
+      ranByUserId: 'user-1',
+      status: 'success',
+    })
+    expect((runs[0].counts as { books: number }).books).toBe(2)
+    // second import appends another run (history, newest first)
+    await svc.import(LIB, sheets)
+    expect(await svc.listRuns(LIB)).toHaveLength(2)
+  })
+
   it('re-import does NOT reset live availableCount (no double-borrow)', async () => {
     const svc = new FanshuImportService(db)
     await svc.import(LIB, sheets)

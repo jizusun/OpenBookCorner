@@ -48,9 +48,12 @@ export const libraryRouter = router({
   // Tenant admin operation: import a parsed 番薯 export into THIS library.
   // Idempotent (re-running updates rather than duplicates). Scoped to ctx.libraryId.
   importFanshu: adminProcedure
-    .input(z.object({ sheets: fanshuSheets }))
+    .input(z.object({ sheets: fanshuSheets, fileName: z.string().optional() }))
     .mutation(({ ctx, input }) =>
-      new FanshuImportService(ctx.db).import(ctx.libraryId, input.sheets),
+      new FanshuImportService(ctx.db).import(ctx.libraryId, input.sheets, {
+        fileName: input.fileName,
+        ranByUserId: ctx.user.id,
+      }),
     ),
 
   // Same as above, but the Worker fetches + parses the .xls from a 番薯 export
@@ -61,6 +64,14 @@ export const libraryRouter = router({
       const sheets = await fetchFanshuWorkbook(input.url)
       return input.preview
         ? previewFanshuImport(ctx.libraryId, sheets)
-        : new FanshuImportService(ctx.db).import(ctx.libraryId, sheets)
+        : new FanshuImportService(ctx.db).import(ctx.libraryId, sheets, {
+            sourceUrl: input.url,
+            ranByUserId: ctx.user.id,
+          })
     }),
+
+  // Import audit history (newest first): source URL, R2 key, counts, who/when.
+  importHistory: adminProcedure.query(({ ctx }) =>
+    new FanshuImportService(ctx.db).listRuns(ctx.libraryId),
+  ),
 })
