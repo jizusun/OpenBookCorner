@@ -24,6 +24,10 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (!id.includes('node_modules')) return
+          // @zxing is dynamically imported only when scanning without native
+          // BarcodeDetector (iOS). Leave it OUT of manual chunks so Rollup keeps
+          // it in its own lazy chunk instead of the always-loaded vendor bundle.
+          if (id.includes('@zxing')) return
           if (/[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/.test(id)) return 'react'
           if (id.includes('@tanstack')) return 'tanstack'
           if (id.includes('@trpc') || id.includes('better-auth')) return 'api'
