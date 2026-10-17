@@ -4,6 +4,7 @@ import {
   borrowTransactions,
   feedback,
   libraries,
+  members,
   user,
   type Database,
   type LibrarySettings,
@@ -91,15 +92,19 @@ export class BookService {
   }
 
   async getActiveBorrower(bookId: string, libraryId: string) {
+    // A loan is held by EITHER a login `user` (app-created) OR a `member`
+    // (imported from 番薯 — no login). Left-join both and coalesce so
+    // member-backed loans still surface a borrower name.
     const row = await this.db
       .select({
-        borrowerName: user.name,
-        borrowerEmail: user.email,
+        borrowerName: sql<string>`coalesce(${user.name}, ${members.name})`,
+        borrowerEmail: sql<string | null>`coalesce(${user.email}, ${members.email})`,
         borrowedAt: borrowTransactions.borrowedAt,
         dueDate: borrowTransactions.dueDate,
       })
       .from(borrowTransactions)
-      .innerJoin(user, eq(borrowTransactions.userId, user.id))
+      .leftJoin(user, eq(borrowTransactions.userId, user.id))
+      .leftJoin(members, eq(borrowTransactions.memberId, members.id))
       .where(
         and(
           eq(borrowTransactions.bookId, bookId),
@@ -310,10 +315,16 @@ export class CirculationService {
 
   async listOverdue(libraryId: string, range: '1-7' | '8-14' | '15+' | 'all' = 'all') {
     const rows = await this.db
-      .select({ tx: borrowTransactions, book: books, borrower: user })
+      .select({
+        tx: borrowTransactions,
+        book: books,
+        borrowerName: sql<string>`coalesce(${user.name}, ${members.name})`,
+        borrowerEmail: sql<string | null>`coalesce(${user.email}, ${members.email})`,
+      })
       .from(borrowTransactions)
       .innerJoin(books, eq(borrowTransactions.bookId, books.id))
-      .innerJoin(user, eq(borrowTransactions.userId, user.id))
+      .leftJoin(user, eq(borrowTransactions.userId, user.id))
+      .leftJoin(members, eq(borrowTransactions.memberId, members.id))
       .where(and(eq(borrowTransactions.libraryId, libraryId), isNull(borrowTransactions.returnedAt)))
       .all()
 
@@ -327,8 +338,8 @@ export class CirculationService {
           transactionId: r.tx.id,
           title: r.book.title,
           author: r.book.author,
-          borrowerName: r.borrower.name,
-          borrowerEmail: r.borrower.email,
+          borrowerName: r.borrowerName,
+          borrowerEmail: r.borrowerEmail,
           dueDate: r.tx.dueDate,
           daysOverdue,
         }

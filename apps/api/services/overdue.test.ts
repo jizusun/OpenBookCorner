@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { CirculationService } from './index'
-import { createTestDb, seedBook, seedLibrary, seedUser } from '@obc/db/testing'
+import { CirculationService, BookService } from './index'
+import { createTestDb, seedBook, seedLibrary, seedUser, seedMember } from '@obc/db/testing'
 import { borrowTransactions } from '@obc/db'
 import type { Database as Db } from '@obc/db'
 
@@ -18,7 +18,8 @@ async function addTx(
   opts: {
     id: string
     bookId: string
-    userId: string
+    userId?: string | null
+    memberId?: string | null
     libraryId: string
     daysOverdue: number
     returned?: boolean
@@ -29,7 +30,8 @@ async function addTx(
   await db.insert(borrowTransactions).values({
     id: opts.id,
     bookId: opts.bookId,
-    userId: opts.userId,
+    userId: opts.userId ?? null,
+    memberId: opts.memberId ?? null,
     libraryId: opts.libraryId,
     borrowedAt: new Date(now - (opts.daysOverdue + 14) * DAY).toISOString(),
     dueDate,
@@ -94,5 +96,40 @@ describe('CirculationService.listOverdue', () => {
     const svc = new CirculationService(db)
     expect(await svc.listOverdue(LIB_A, 'all')).toHaveLength(1)
     expect(await svc.listOverdue(LIB_B, 'all')).toHaveLength(1)
+  })
+
+  // --- Imported (member-backed) loans: userId is null, memberId is set. These
+  // must still appear (regression: inner-join on user used to drop them). ---
+  it('includes member-backed (imported) overdue loans with the member name', async () => {
+    await seedMember(db, 'mem-1', LIB_A, 'Imported Reader')
+    await addTx(db, { id: 'm1', bookId: 'book-1', memberId: 'mem-1', libraryId: LIB_A, daysOverdue: 9 })
+    // mix with a normal user loan
+    await addTx(db, { id: 'u1', bookId: 'book-2', userId: READER_A, libraryId: LIB_A, daysOverdue: 2 })
+
+    const overdue = await new CirculationService(db).listOverdue(LIB_A, 'all')
+    expect(overdue).toHaveLength(2)
+    const imported = overdue.find((o) => o.transactionId === 'm1')!
+    expect(imported.borrowerName).toBe('Imported Reader')
+  })
+})
+
+describe('BookService.getActiveBorrower (member-backed loans)', () => {
+  beforeEach(async () => {
+    // re-seed is handled by the outer beforeEach; add a member here
+  })
+
+  it('resolves a member borrower for an imported not-returned loan', async () => {
+    await seedMember(db, 'mem-x', LIB_A, 'Imported Borrower')
+    await addTx(db, { id: 'mx', bookId: 'book-1', memberId: 'mem-x', libraryId: LIB_A, daysOverdue: 1 })
+
+    const borrower = await new BookService(db).getActiveBorrower('book-1', LIB_A)
+    expect(borrower).not.toBeNull()
+    expect(borrower!.borrowerName).toBe('Imported Borrower')
+  })
+
+  it('still resolves a user borrower for an app-created loan', async () => {
+    await addTx(db, { id: 'uu', bookId: 'book-2', userId: READER_A, libraryId: LIB_A, daysOverdue: 1 })
+    const borrower = await new BookService(db).getActiveBorrower('book-2', LIB_A)
+    expect(borrower!.borrowerName).toBe(READER_A)
   })
 })
