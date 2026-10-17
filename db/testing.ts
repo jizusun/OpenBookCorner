@@ -30,11 +30,32 @@ export async function createTestDb(): Promise<Database> {
       library_id TEXT NOT NULL,
       quantity INTEGER NOT NULL DEFAULT 1, available_count INTEGER NOT NULL DEFAULT 1,
       is_available INTEGER NOT NULL DEFAULT 1,
+      copy_code TEXT, category TEXT, shelf_location TEXT, translator TEXT, series TEXT,
+      page_count INTEGER, price TEXT, price_unit TEXT, cn_library_class TEXT, entered_at TEXT,
+      source TEXT, raw TEXT,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
+    CREATE TABLE members (
+      id TEXT PRIMARY KEY, library_id TEXT NOT NULL, name TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'library_reader', phone TEXT, email TEXT,
+      member_no TEXT, employee_no TEXT, student_no TEXT, class_name TEXT, department TEXT,
+      note TEXT, joined_at TEXT, is_placeholder INTEGER NOT NULL DEFAULT 0,
+      user_id TEXT, source TEXT, raw TEXT,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
     CREATE TABLE borrow_transactions (
-      id TEXT PRIMARY KEY, book_id TEXT NOT NULL, user_id TEXT NOT NULL, library_id TEXT NOT NULL,
-      borrowed_at TEXT NOT NULL, due_date TEXT NOT NULL, returned_at TEXT
+      id TEXT PRIMARY KEY, book_id TEXT NOT NULL, user_id TEXT, member_id TEXT, library_id TEXT NOT NULL,
+      borrowed_at TEXT NOT NULL, due_date TEXT NOT NULL, returned_at TEXT, source TEXT, raw TEXT
+    );
+    CREATE TABLE reviews (
+      id TEXT PRIMARY KEY, library_id TEXT NOT NULL, isbn TEXT, book_title TEXT,
+      member_name TEXT, nickname TEXT, body TEXT NOT NULL, reviewed_at TEXT, source TEXT, raw TEXT,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE purchase_requests (
+      id TEXT PRIMARY KEY, library_id TEXT NOT NULL, isbn TEXT, title TEXT NOT NULL,
+      author TEXT, publisher TEXT, requester_count INTEGER DEFAULT 1, requesters TEXT,
+      source TEXT, raw TEXT, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
     CREATE TABLE feedback (
       id TEXT PRIMARY KEY, library_id TEXT NOT NULL, user_id TEXT NOT NULL,
