@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { z } from 'zod'
 import { trpc, trpcClient } from '@/lib/trpc'
 import { BookCard } from '@/components/books/BookCard'
@@ -10,6 +10,7 @@ import { circulationErrorMessage } from '@/lib/errors'
 import { useToast } from '@/components/Toast'
 import { BookListSkeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { useInfiniteList, LoadMoreSentinel } from '@/components/InfiniteList'
 import { useViewMode } from '@/lib/view-mode'
 
 const sortSchema = z.enum(['enteredAt', 'title', 'author', 'available', 'price'])
@@ -57,15 +58,12 @@ function CatalogPage() {
     shelf,
     availability: avail,
   }
-  const infinite = useInfiniteQuery({
-    queryKey: ['book.list.infinite', baseInput],
-    initialPageParam: 1,
-    queryFn: ({ pageParam }) => trpcClient.book.list.query({ ...baseInput, page: pageParam }),
-    getNextPageParam: (last) => (last.page < last.totalPages ? last.page + 1 : undefined),
-  })
+  const infinite = useInfiniteList(['book.list.infinite', baseInput], (page) =>
+    trpcClient.book.list.query({ ...baseInput, page }),
+  )
 
-  const items: Book[] = infinite.data?.pages.flatMap((p) => p.items) ?? []
-  const total = infinite.data?.pages[0]?.total ?? 0
+  const items: Book[] = infinite.items
+  const total = infinite.total
 
   const borrow = useMutation({
     ...trpc.borrowing.borrow.mutationOptions(),
@@ -76,20 +74,6 @@ function CatalogPage() {
       queryClient.invalidateQueries({ queryKey: trpc.borrowing.myBooks.queryKey() })
     },
   })
-
-  // Infinite-scroll sentinel: load the next page when it scrolls into view.
-  const sentinel = useRef<HTMLDivElement | null>(null)
-  useEffect(() => {
-    const el = sentinel.current
-    if (!el || typeof IntersectionObserver === 'undefined') return
-    const io = new IntersectionObserver((entries) => {
-      if (entries[0]?.isIntersecting && infinite.hasNextPage && !infinite.isFetchingNextPage) {
-        void infinite.fetchNextPage()
-      }
-    })
-    io.observe(el)
-    return () => io.disconnect()
-  }, [infinite])
 
   function submitSearch(e: React.FormEvent) {
     e.preventDefault()
@@ -230,19 +214,12 @@ function CatalogPage() {
         ))}
       </div>
 
-      {/* Infinite-scroll sentinel + manual fallback */}
-      {infinite.hasNextPage && (
-        <div ref={sentinel} className="flex justify-center py-4" data-testid="load-more">
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={infinite.isFetchingNextPage}
-            onClick={() => infinite.fetchNextPage()}
-          >
-            {infinite.isFetchingNextPage ? '加载中…' : '加载更多'}
-          </Button>
-        </div>
-      )}
+      {/* Infinite-scroll sentinel + manual fallback (shared component) */}
+      <LoadMoreSentinel
+        hasNextPage={infinite.hasNextPage}
+        isFetchingNextPage={infinite.isFetchingNextPage}
+        fetchNextPage={() => infinite.fetchNextPage()}
+      />
     </div>
   )
 }
