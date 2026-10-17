@@ -10,8 +10,8 @@ async function createUser(email: string, name: string) {
     headers: {
       'content-type': 'application/json',
       // Better Auth rejects requests without an Origin that matches a trusted
-      // origin (MISSING_OR_NULL_ORIGIN). In dev, APP_ORIGIN is the SPA origin.
-      origin: 'http://localhost:5173',
+      // origin (MISSING_OR_NULL_ORIGIN). The single worker's APP_ORIGIN is :8787.
+      origin: 'http://localhost:8787',
     },
     body: JSON.stringify({ email, password: 'password123', name }),
   })
@@ -46,6 +46,6 @@ export default async function globalSetup() {
     "UPDATE user SET library_id='lib-demo-001', role='super_admin' WHERE email='super@demo.test';"
   execSync(
     `bunx wrangler d1 execute openbookcorner --local --command "${sql}"`,
-    { cwd: new URL('../apps/api', import.meta.url).pathname, stdio: 'ignore' },
+    { cwd: new URL('../apps/app', import.meta.url).pathname, stdio: 'ignore' },
   )
 }
