@@ -75,6 +75,7 @@ function AppLayout() {
     : inAdminView
       ? [
           { to: '/books', label: 'Catalog' },
+          { to: '/admin/members', label: 'Members' },
           { to: '/admin/overdue', label: 'Overdue' },
           { to: '/admin/settings', label: 'Settings' },
           { to: '/admin/feedback', label: 'Feedback' },

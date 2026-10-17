@@ -8,6 +8,7 @@ import { bookRouter } from '../routers/book'
 import { borrowingRouter } from '../routers/borrowing'
 import { feedbackRouter } from '../routers/feedback'
 import { libraryRouter } from '../routers/library'
+import { memberRouter } from '../routers/member'
 import { tenantRouter } from '../routers/tenant'
 
 const appRouter = router({
@@ -15,6 +16,7 @@ const appRouter = router({
   book: bookRouter,
   borrowing: borrowingRouter,
   library: libraryRouter,
+  member: memberRouter,
   feedback: feedbackRouter,
   tenant: tenantRouter,
 })
