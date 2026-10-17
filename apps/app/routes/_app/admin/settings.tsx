@@ -9,8 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/components/Toast'
 
 export const Route = createFileRoute('/_app/admin/settings')({
-  beforeLoad: async () => {
-    const user = await trpcClient.auth.requireMe.query()
+  beforeLoad: ({ context }) => {
+    const user = context.user
     if (user.role !== 'library_admin' && user.role !== 'super_admin') {
       throw redirect({ to: '/books' })
     }

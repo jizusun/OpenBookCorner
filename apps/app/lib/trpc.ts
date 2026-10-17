@@ -24,3 +24,15 @@ export const trpc: TRPCOptionsProxy<AppRouter> = createTRPCOptionsProxy<AppRoute
   client: trpcClient,
   queryClient,
 })
+
+/**
+ * Resolve the current user for route guards, CACHED through TanStack Query.
+ * Route `beforeLoad` runs on hover-preload (defaultPreload:'intent') too, so a
+ * raw `trpcClient.auth.requireMe.query()` in every admin route fired a fresh
+ * uncached request per hovered menu item. Going through `ensureQueryData`
+ * dedupes to a single request (honoring the 30s staleTime) and the real
+ * navigation reuses the cache. Throws (→ redirect to /login) when unauthed.
+ */
+export function ensureRequireMe() {
+  return queryClient.ensureQueryData(trpc.auth.requireMe.queryOptions())
+}
