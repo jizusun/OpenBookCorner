@@ -24,7 +24,26 @@
       "migrations_dir": "../../db/migrations"
     }
   ],
-  "r2_buckets": [{ "binding": "COVERS", "bucket_name": "openbookcorner-covers" }]
+  "r2_buckets": [{ "binding": "COVERS", "bucket_name": "openbookcorner-covers" }],
+
+  // Required for `wrangler preview` / Workers Builds preview builds. Previews
+  // reuse the same D1/R2 (shared demo data) but run with ENVIRONMENT=development
+  // so Better Auth trusts the preview origin (see createAuth trustedOrigins).
+  "previews": {
+    "vars": {
+      "ENVIRONMENT": "development",
+      "APP_NAME": "OpenBookCorner",
+      "APP_ORIGIN": "https://openbookcorner.jizu.dev"
+    },
+    "d1_databases": [
+      {
+        "binding": "DB",
+        "database_name": "openbookcorner",
+        "database_id": "11371372-82fe-488e-b497-2e94518ce488"
+      }
+    ],
+    "r2_buckets": [{ "binding": "COVERS", "bucket_name": "openbookcorner-covers" }]
+  }
 
   // NOTE: the custom-domain route (openbookcorner.jizu.dev) is intentionally NOT
   // in this config. Including a custom_domain route makes `wrangler dev` simulate

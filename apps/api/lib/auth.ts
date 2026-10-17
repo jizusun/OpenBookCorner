@@ -12,13 +12,18 @@ import type { Env } from './env'
  * organizations, passkeys, or OTP (dropped from the react-starter-kit baseline).
  */
 export function createAuth(db: Database, env: Env): Auth {
-  // Trust the configured origin in all environments; additionally trust any
-  // localhost port in non-production so local dev + E2E work regardless of how
-  // APP_ORIGIN/ENVIRONMENT vars resolve under `wrangler dev`.
+  // Trust the configured origin in all environments; additionally trust localhost
+  // (dev/E2E) and Workers preview URLs (*.workers.dev) in non-production so a
+  // Workers Builds *preview* can complete auth on its generated preview origin.
   const trustedOrigins =
     env.ENVIRONMENT === 'production'
       ? [env.APP_ORIGIN]
-      : [env.APP_ORIGIN, 'http://localhost:*', 'http://127.0.0.1:*']
+      : [
+          env.APP_ORIGIN,
+          'http://localhost:*',
+          'http://127.0.0.1:*',
+          'https://*.workers.dev',
+        ]
 
   const options: BetterAuthOptions = {
     baseURL: `${env.APP_ORIGIN}/api/auth`,
