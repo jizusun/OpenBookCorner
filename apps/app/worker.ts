@@ -47,7 +47,14 @@ worker.use('/api/*', async (c, next) => {
     ...envSchema.parse({
       ENVIRONMENT: environment,
       APP_NAME: c.env.APP_NAME ?? 'OpenBookCorner',
-      APP_ORIGIN: c.env.APP_ORIGIN ?? 'http://localhost:5173',
+      // Preview URLs are per-PR (pr-N.openbookcorner.jizu.dev), so a static
+      // APP_ORIGIN can't match. Derive it from the incoming request in preview
+      // (and dev) so Better Auth's baseURL + cookies match the host the browser
+      // is actually on. Production uses the fixed configured origin.
+      APP_ORIGIN:
+        environment === 'production'
+          ? (c.env.APP_ORIGIN ?? 'https://openbookcorner.jizu.dev')
+          : new URL(c.req.url).origin,
       BETTER_AUTH_SECRET:
         c.env.BETTER_AUTH_SECRET ?? 'dev-only-insecure-secret-change-me-32chars',
     }),
