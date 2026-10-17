@@ -57,10 +57,24 @@ export interface TransformInput {
 }
 
 // Deterministic id so re-imports are idempotent (same source row → same id).
+// Uses a hash of the FULL key — NOT a prefix slice. Slicing the key to N chars
+// collides when keys share a long common prefix (e.g. UUID libraryId + memberId),
+// which would make different loans upsert onto the same row. FNV-1a (64-bit,
+// rendered hex) over the whole key avoids that with no dependencies.
+function fnv1a64(str: string): string {
+  // 64-bit FNV-1a using BigInt for correctness across long keys.
+  let hash = 0xcbf29ce484222325n
+  const prime = 0x100000001b3n
+  const mask = 0xffffffffffffffffn
+  for (let i = 0; i < str.length; i++) {
+    hash ^= BigInt(str.charCodeAt(i))
+    hash = (hash * prime) & mask
+  }
+  return hash.toString(16).padStart(16, '0')
+}
+
 function defaultId(prefix: string, key: string): string {
-  // simple stable slug; collisions avoided by including the natural key
-  const safe = key.replace(/[^a-zA-Z0-9]/g, '').slice(0, 48)
-  return `${prefix}_${safe}`
+  return `${prefix}_${fnv1a64(key)}`
 }
 
 export function transformBooks(input: TransformInput) {
@@ -103,7 +117,10 @@ export function transformBooks(input: TransformInput) {
       cnLibraryClass: orNull(b['中图法分类号']),
       enteredAt: toIso(b['录入时间']),
       source: 'fanshu-import',
-      raw: b as Record<string, unknown>,
+      // Preserve EVERY contributing source row (all physical copies for this
+      // ISBN + the stock row), so no per-copy field (馆内编码/所属书架/…) is lost
+      // when we dedupe by ISBN.
+      raw: { books: [b] as Row[], stock: st ?? null } as Record<string, unknown>,
       createdAt: nowIso,
       updatedAt: nowIso,
     }
@@ -113,7 +130,13 @@ export function transformBooks(input: TransformInput) {
     const isbn = s(b['ISBN'])
     if (!isbn) continue
     rowCount.set(isbn, (rowCount.get(isbn) ?? 0) + 1)
-    if (!byIsbn.has(isbn)) byIsbn.set(isbn, buildBook(isbn, b))
+    const existing = byIsbn.get(isbn)
+    if (!existing) {
+      byIsbn.set(isbn, buildBook(isbn, b))
+    } else {
+      // Additional physical copy of the same ISBN — keep its full row in raw.
+      ;(existing.raw as { books: Row[] }).books.push(b)
+    }
   }
   // If 存量明细 was missing for an ISBN, fall back quantity to the row count.
   for (const [isbn, book] of byIsbn) {

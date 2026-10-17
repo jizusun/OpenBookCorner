@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { createFileRoute, Link, Outlet, redirect, useRouter } from '@tanstack/react-router'
 import { signOut } from '@/lib/auth-client'
 import { ensureRequireMe } from '@/lib/trpc'
+import { queryClient } from '@/lib/query'
 import { Button } from '@/components/ui/button'
 import { FeedbackButton } from '@/components/FeedbackButton'
 import { useInstallPrompt } from '@/components/Pwa'
@@ -45,6 +46,9 @@ function AppLayout() {
 
   async function handleLogout() {
     await signOut()
+    // Drop all cached queries so the next user can't inherit this session's
+    // cached identity (e.g. requireMe).
+    queryClient.clear()
     await router.navigate({ to: '/login' })
   }
 

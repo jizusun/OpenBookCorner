@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { signIn } from '@/lib/auth-client'
+import { queryClient } from '@/lib/query'
 import { setViewMode } from '@/lib/view-mode'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -38,6 +39,11 @@ function LoginPage() {
         setError('Invalid email or password')
         return
       }
+      // Clear any cached queries from a PREVIOUS session before routing. Without
+      // this, the cached `auth.requireMe` (resolved via ensureQueryData with a
+      // staleTime) would serve the prior user's identity to the new user — e.g.
+      // a reader signing in right after an admin would be shown as that admin.
+      queryClient.clear()
       // Route to the role's default view and reset the stored view mode so a
       // stale value from a previous session doesn't misroute.
       const role = (res.data?.user as { role?: string } | undefined)?.role

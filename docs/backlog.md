@@ -384,3 +384,20 @@ These evidence-backed behaviors become concrete items (feed into existing B#/R# 
 - **Tenant login URL + branded login page**: super-admin UI exposes a per-tenant
   login URL; the login page reads the tenant and displays the library NAME; tenant
   admin + reader sign in there.
+
+## PR #7 review P2 follow-ups (番薯 import — backlogged)
+
+- **Member-backed loans in circulation**: `getActiveBorrower` / `listOverdue` inner-join `user`
+  on `userId`, so imported member-loans (null userId, set memberId) don't appear in borrower
+  details / overdue; and the return endpoint keys on userId so they can't be returned in-app.
+  Resolve member-backed borrowers in those queries + add a tenant-authorized member-loan return path.
+- **Ambiguous member names**: name→memberId map keeps only the last member per name (dups + multiple
+  微信用户). Resolve via a unique exported id where available; otherwise report ambiguous rows instead
+  of assigning an arbitrary borrower.
+- **Invalid-date loans**: rows with empty/unparseable borrow/due dates are silently dropped (not
+  counted in skipped). Count + report them (or reject the workbook with row-level errors).
+- **Import UI race**: disable the file picker + URL field while a preview/import is in flight (or ignore
+  superseded selections) so sheets from file B can't pair with file A's counts.
+- **Book-delete FK safety**: migration 0002 dropped DB-level FKs on borrow_transactions; `BookService.delete`
+  only blocks ACTIVE loans, so deleting a book with returned history can leave dangling bookId refs.
+  Add service-level handling for historical references.

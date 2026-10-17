@@ -58,7 +58,10 @@ describe('FanshuImportService', () => {
     expect(b222.isAvailable).toBe(false)
     const b111 = bookRows.find((b) => b.isbn === '111')!
     expect(b111.shelfLocation).toBe('S1')
-    expect(b111.raw).toMatchObject({ 标题: 'A', ISBN: '111' }) // zero data loss
+    // raw aggregates all contributing source rows (both copies of 111 + stock)
+    const b111raw = b111.raw as { books: Record<string, unknown>[]; stock: unknown }
+    expect(b111raw.books).toHaveLength(2) // zero data loss across duplicate ISBN
+    expect(b111raw.books[0]).toMatchObject({ ISBN: '111' })
 
     const memberRows = await db.select().from(members).where(eq(members.libraryId, LIB))
     expect(memberRows).toHaveLength(2)
@@ -81,6 +84,28 @@ describe('FanshuImportService', () => {
     expect((await db.select().from(books).where(eq(books.libraryId, LIB)))).toHaveLength(2)
     expect((await db.select().from(members).where(eq(members.libraryId, LIB)))).toHaveLength(2)
     expect((await db.select().from(borrowTransactions).where(eq(borrowTransactions.libraryId, LIB)))).toHaveLength(1)
+  })
+
+  it('re-import does NOT reset live availableCount (no double-borrow)', async () => {
+    const svc = new FanshuImportService(db)
+    await svc.import(LIB, sheets)
+    // Simulate the app borrowing book 111 after import: availableCount 1 → 0.
+    const before = (await db.select().from(books).where(eq(books.isbn, '111')))[0]!
+    await db
+      .update(books)
+      .set({ availableCount: 0, isAvailable: false })
+      .where(eq(books.id, before.id))
+
+    // Re-import the SAME workbook (stock snapshot says 111 has 1 available).
+    await svc.import(LIB, sheets)
+
+    const after = (await db.select().from(books).where(eq(books.isbn, '111')))[0]!
+    // Live inventory must be preserved — NOT reset to the stock snapshot (1),
+    // which would let a second reader borrow an already-borrowed copy.
+    expect(after.availableCount).toBe(0)
+    expect(after.isAvailable).toBe(false)
+    // Catalog metadata still refreshes on re-import.
+    expect(after.shelfLocation).toBe('S1')
   })
 })
 

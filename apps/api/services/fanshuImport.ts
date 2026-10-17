@@ -156,7 +156,35 @@ export class FanshuImportService {
       this.db.insert(members).values(r).onConflictDoUpdate({ target: members.id, set: r }),
     )
     await insertChunked(this.db, bookRows, (r) =>
-      this.db.insert(books).values(r).onConflictDoUpdate({ target: books.id, set: r }),
+      this.db
+        .insert(books)
+        .values(r)
+        .onConflictDoUpdate({
+          target: books.id,
+          // On re-import, refresh catalog metadata but PRESERVE live inventory
+          // (quantity/availableCount/isAvailable) — those are mutated by the app
+          // as copies are borrowed/returned. Overwriting them with the original
+          // stock snapshot would make an already-borrowed copy borrowable again.
+          set: {
+            isbn: r.isbn,
+            title: r.title,
+            author: r.author,
+            publisher: r.publisher,
+            copyCode: r.copyCode,
+            category: r.category,
+            shelfLocation: r.shelfLocation,
+            translator: r.translator,
+            series: r.series,
+            pageCount: r.pageCount,
+            price: r.price,
+            priceUnit: r.priceUnit,
+            cnLibraryClass: r.cnLibraryClass,
+            enteredAt: r.enteredAt,
+            source: r.source,
+            raw: r.raw,
+            updatedAt: r.updatedAt,
+          },
+        }),
     )
     await insertChunked(this.db, loans, (r) =>
       this.db

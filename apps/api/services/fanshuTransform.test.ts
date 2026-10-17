@@ -55,8 +55,13 @@ describe('fanshu transforms', () => {
     expect(a.pageCount).toBe(100)
     expect(a.price).toBe('10')
     expect(a.priceUnit).toBe('CNY')
-    // raw preserves the full original row (zero data loss)
-    expect(a.raw).toMatchObject({ 标题: 'A', ISBN: '111' })
+    // raw preserves EVERY contributing source row (both copies of ISBN 111 +
+    // the stock row) — zero data loss when deduping by ISBN.
+    const aRaw = a.raw as { books: Record<string, unknown>[]; stock: Record<string, unknown> | null }
+    expect(aRaw.books).toHaveLength(2)
+    expect(aRaw.books[0]).toMatchObject({ 标题: 'A', ISBN: '111' })
+    expect(aRaw.books[1]).toMatchObject({ 标题: 'A copy 2', ISBN: '111' })
+    expect(aRaw.stock).toMatchObject({ ISBN: '111', 书籍总量: 2 })
     const b = out.find((x) => x.isbn === '222')!
     expect(b.availableCount).toBe(0)
     expect(b.isAvailable).toBe(false)
@@ -124,5 +129,33 @@ describe('fanshu transforms', () => {
     const a = transformMembers(input({ members }))[0]
     const b = transformMembers(input({ members }))[0]
     expect(a.id).toBe(b.id)
+  })
+
+  it('loan ids do not collide when keys share a long UUID prefix (regression)', () => {
+    // library + member ids are UUIDs → keys share a long common prefix. A
+    // prefix-slice id would collide; a full-key hash must not.
+    const LIB = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
+    const members = [
+      { 姓名: 'A', 成员权限: '普通成员', 会员号: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb' },
+      { 姓名: 'B', 成员权限: '普通成员', 会员号: 'cccccccc-cccc-cccc-cccc-cccccccccccc' },
+    ]
+    const books = [
+      { 标题: 'X', 作者: 'x', ISBN: '111' },
+      { 标题: 'Y', 作者: 'y', ISBN: '222' },
+    ]
+    const loans = [
+      { 成员名称: 'A', 书籍ISBN: '111', 借书日期: '2023-01-01', 应还日期: '2023-02-01' },
+      { 成员名称: 'B', 书籍ISBN: '222', 借书日期: '2023-03-01', 应还日期: '2023-04-01' },
+      { 成员名称: 'A', 书籍ISBN: '111', 借书日期: '2023-05-01', 应还日期: '2023-06-01' },
+    ]
+    const inp = input({ libraryId: LIB, members, books, loans })
+    const m = transformMembers(inp)
+    const b = transformBooks(inp)
+    const memberIdByName = new Map(m.map((x) => [String((x.raw as Record<string, unknown>)['姓名']), x.id]))
+    const bookIdByIsbn = new Map(b.map((x) => [x.isbn, x.id]))
+    const { loans: out } = transformLoans(inp, memberIdByName, bookIdByIsbn)
+    const ids = out.map((l) => l.id)
+    expect(ids).toHaveLength(3)
+    expect(new Set(ids).size).toBe(3) // all distinct — no collisions
   })
 })
