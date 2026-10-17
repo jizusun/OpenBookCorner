@@ -26,6 +26,17 @@
   ],
   "r2_buckets": [{ "binding": "COVERS", "bucket_name": "openbookcorner-covers" }],
 
+  // Custom-domain route for BOTH production and preview traffic. Preview URLs
+  // become <preview-name>.openbookcorner.jizu.dev, which the existing advanced
+  // certificate (*.openbookcorner.jizu.dev) already covers — no ACM/Total TLS
+  // needed, and not *.workers.dev (so it isn't blocked by corporate proxies).
+  // This route lives ONLY in the root config (used by Workers Builds + prod
+  // deploy); apps/app/wrangler.jsonc has NO route so `wrangler dev`/E2E keep a
+  // clean localhost Origin for Better Auth.
+  "routes": [
+    { "pattern": "openbookcorner.jizu.dev", "custom_domain": true, "previews_enabled": true }
+  ],
+
   // Required for `wrangler preview` / Workers Builds preview builds. Reuses the
   // same D1/R2 (shared demo data), ENVIRONMENT=development so Better Auth trusts
   // the preview origin.
@@ -45,9 +56,6 @@
     "r2_buckets": [{ "binding": "COVERS", "bucket_name": "openbookcorner-covers" }]
   }
 
-  // This root config lets Workers Builds use its DEFAULT commands from Root
-  // directory "/": `bun run build` (installs workspaces + builds apps/app) and
+  // Workers Builds uses DEFAULT commands from Root "/": `bun run build` +
   // `npx wrangler deploy` / `npx wrangler preview` (which read THIS file).
-  // No custom-domain route here — it's bound to the Worker already, and a
-  // custom_domain route makes `wrangler dev` rewrite the Origin (breaks auth).
 }

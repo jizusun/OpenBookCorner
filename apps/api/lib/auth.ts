@@ -23,6 +23,7 @@ export function createAuth(db: Database, env: Env): Auth {
           'http://localhost:*',
           'http://127.0.0.1:*',
           'https://*.workers.dev',
+          'https://*.openbookcorner.jizu.dev',
         ]
 
   const options: BetterAuthOptions = {
