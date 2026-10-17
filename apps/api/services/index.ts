@@ -563,7 +563,15 @@ export class MemberService {
 
   async listByLibrary(
     libraryId: string,
-    opts: { search?: string; page?: number; limit?: number } = {},
+    opts: {
+      search?: string
+      page?: number
+      limit?: number
+      sortBy?: 'name' | 'joinedAt' | 'borrowedCount' | 'memberExpiry'
+      sortDir?: 'asc' | 'desc'
+      role?: 'library_admin' | 'library_reader'
+      plan?: string
+    } = {},
   ) {
     const page = Math.max(1, opts.page ?? 1)
     const limit = Math.min(200, Math.max(1, opts.limit ?? 50))
@@ -577,13 +585,26 @@ export class MemberService {
           like(members.memberNo, `%${search}%`),
         )
       : undefined
-    const where = and(eq(members.libraryId, libraryId), searchFilter)
+    const roleFilter = opts.role ? eq(members.role, opts.role) : undefined
+    const planFilter = opts.plan ? eq(members.membershipPlan, opts.plan) : undefined
+    const where = and(eq(members.libraryId, libraryId), searchFilter, roleFilter, planFilter)
+
+    const dir = opts.sortDir ?? 'asc'
+    const col =
+      opts.sortBy === 'joinedAt'
+        ? members.joinedAt
+        : opts.sortBy === 'borrowedCount'
+          ? members.borrowedCount
+          : opts.sortBy === 'memberExpiry'
+            ? members.memberExpiry
+            : members.name
+    const dirExpr = dir === 'asc' ? sql`${col} asc` : sql`${col} desc`
 
     const items = await this.db
       .select()
       .from(members)
       .where(where)
-      .orderBy(members.name)
+      .orderBy(sql`${col} IS NULL`, dirExpr)
       .limit(limit)
       .offset(offset)
       .all()
@@ -596,5 +617,29 @@ export class MemberService {
     const total = countRow?.count ?? 0
 
     return { items, total, page, limit, totalPages: Math.max(1, Math.ceil(total / limit)) }
+  }
+
+  /** Distinct membership plans (for the filter dropdown). Roles are fixed. */
+  async listFacets(libraryId: string) {
+    const plans = await this.db
+      .selectDistinct({ v: members.membershipPlan })
+      .from(members)
+      .where(eq(members.libraryId, libraryId))
+      .all()
+    return {
+      plans: plans
+        .map((r) => r.v)
+        .filter((v): v is string => !!v && v.trim() !== '')
+        .sort(),
+    }
+  }
+
+  async getById(memberId: string, libraryId: string) {
+    const row = await this.db
+      .select()
+      .from(members)
+      .where(and(eq(members.id, memberId), eq(members.libraryId, libraryId)))
+      .get()
+    return row ?? null
   }
 }
