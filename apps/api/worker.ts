@@ -10,6 +10,7 @@ import { envSchema, type Env } from './lib/env'
 
 type CloudflareEnv = {
   DB: D1Database
+  COVERS: R2Bucket
   APP_ORIGIN?: string
   APP_NAME?: string
   BETTER_AUTH_SECRET?: string
@@ -30,6 +31,7 @@ worker.use(async (c, next) => {
       BETTER_AUTH_SECRET: c.env.BETTER_AUTH_SECRET ?? 'dev-secret-change-me-32chars-min!!',
     }),
     DB: c.env.DB,
+    COVERS: c.env.COVERS,
   }
   const db = createDb(c.env.DB)
   const auth = createAuth(db, env)

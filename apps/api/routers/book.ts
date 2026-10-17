@@ -4,6 +4,7 @@ import { TRPCError } from '@trpc/server'
 import { adminProcedure, router, tenantProcedure } from '../lib/trpc'
 import { BookService } from '../services'
 import { lookupBookMetadata } from '../services/bookMetadata'
+import { storeCoverImage } from '../services/covers'
 
 export const bookRouter = router({
   list: tenantProcedure
@@ -39,9 +40,16 @@ export const bookRouter = router({
         subjects: z.array(z.string()).optional(),
       }),
     )
-    .mutation(({ ctx, input }) =>
-      new BookService(ctx.db).add({ ...input, libraryId: ctx.libraryId }),
-    ),
+    .mutation(async ({ ctx, input }) => {
+      // If a cover URL is present, persist the image to R2 and store our own
+      // same-origin path; fall back to the external URL if storage fails.
+      let coverImageUrl = input.coverImageUrl
+      if (coverImageUrl && ctx.env.COVERS) {
+        const stored = await storeCoverImage(ctx.env.COVERS, coverImageUrl, input.isbn)
+        if (stored) coverImageUrl = stored
+      }
+      return new BookService(ctx.db).add({ ...input, coverImageUrl, libraryId: ctx.libraryId })
+    }),
 
   update: adminProcedure
     .input(

@@ -7,8 +7,8 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url)
 
-    // Forward API + auth traffic to the API worker (same-origin from the SPA).
-    if (url.pathname.startsWith('/api/')) {
+    // Forward API + auth + cover traffic to the API worker (same-origin from the SPA).
+    if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/covers/')) {
       return env.API.fetch(request)
     }
 

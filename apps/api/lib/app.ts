@@ -23,6 +23,19 @@ const app = new Hono<AppContext>()
 
 app.get('/health', (c) => c.json({ status: 'healthy', timestamp: new Date().toISOString() }))
 
+// Serve stored cover images from R2 (same-origin, long-cache). Keys are
+// content-addressed, so immutable caching is safe.
+app.get('/covers/:key', async (c) => {
+  const r2 = c.env.COVERS
+  if (!r2) return c.notFound()
+  const obj = await r2.get(c.req.param('key'))
+  if (!obj) return c.notFound()
+  const headers = new Headers()
+  headers.set('Content-Type', obj.httpMetadata?.contentType ?? 'image/jpeg')
+  headers.set('Cache-Control', 'public, max-age=31536000, immutable')
+  return new Response(obj.body, { headers })
+})
+
 // Better Auth HTTP routes (sign-in / sign-up / sign-out / get-session).
 app.on(['GET', 'POST'], '/api/auth/*', async (c) => {
   const auth = c.get('auth')

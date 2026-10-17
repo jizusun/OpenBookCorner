@@ -13,6 +13,57 @@ async function login(page: Page, email: string, landingHeading = 'My Books') {
   await expect(page.getByRole('heading', { name: landingHeading })).toBeVisible()
 }
 
+// --- contrast helpers (WCAG) ---
+// Resolve any CSS color string (oklch, rgb, hex…) to sRGB via the browser, then
+// compute WCAG contrast. Done in-page so oklch() is handled by the engine.
+async function contrastOf(
+  locator: import('@playwright/test').Locator,
+): Promise<number> {
+  return locator.evaluate((el) => {
+    function toRgb(input: string): [number, number, number] {
+      const cv = document.createElement('canvas')
+      cv.width = cv.height = 1
+      const ctx = cv.getContext('2d')!
+      ctx.fillStyle = '#000'
+      ctx.fillStyle = input
+      ctx.fillRect(0, 0, 1, 1)
+      const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data
+      return [r, g, b]
+    }
+    function lum([r, g, b]: [number, number, number]): number {
+      const a = [r, g, b].map((v) => {
+        const x = v / 255
+        return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4
+      })
+      return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2]
+    }
+    const s = getComputedStyle(el)
+    const l1 = lum(toRgb(s.color))
+    const l2 = lum(toRgb(s.backgroundColor))
+    const [hi, lo] = l1 > l2 ? [l1, l2] : [l2, l1]
+    return (hi + 0.05) / (lo + 0.05)
+  })
+}
+
+test.describe('Theme (primary contrast — regression)', () => {
+  // Regression: button-styled links showed blue text on a blue bg because an
+  // unlayered `a { color }` rule beat the Tailwind text-primary-foreground
+  // utility. Assert readable contrast on both a <button> and a button-styled <a>.
+  test('primary Sign In button has readable text (WCAG AA)', async ({ page }) => {
+    await page.goto('/login', { waitUntil: 'domcontentloaded' })
+    const btn = page.getByRole('button', { name: 'Sign In' })
+    await expect(btn).toBeVisible()
+    expect(await contrastOf(btn)).toBeGreaterThanOrEqual(4.5)
+  })
+
+  test('button-styled links (Scan to borrow) have readable text', async ({ page }) => {
+    await login(page, 'reader@demo.test')
+    const link = page.getByTestId('scan-to-borrow')
+    await expect(link).toBeVisible()
+    expect(await contrastOf(link)).toBeGreaterThanOrEqual(4.5)
+  })
+})
+
 test.describe('Auth', () => {
   test('login page renders without the auth-client crash (regression)', async ({ page }) => {
     await page.goto('/login', { waitUntil: 'domcontentloaded' })
