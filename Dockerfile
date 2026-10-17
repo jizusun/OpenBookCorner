@@ -1,8 +1,8 @@
-# Self-hosted OpenBookCorner — compiled single-binary image.
-# Build stage compiles the backend to ONE executable (`bun build --compile`,
-# using bun:sqlite so there are no external native .node files) and builds the
-# SPA. The runtime stage ships ONLY the binary + the static SPA on a tiny base,
-# so the image is far smaller than shipping node_modules.
+# Self-hosted OpenBookCorner — LAYERED image.
+# The Bun runtime lives in the base image layer (changes rarely → cached). The
+# app ships as a small bundled JS file (`bun build`, ~3 MB, no node_modules) in
+# its own layer, and the SPA in another. Rebuilding after a code change only
+# replaces the tiny app/SPA layers, not the runtime.
 
 # ---------- build ----------
 FROM oven/bun:1.4.3-alpine AS build
@@ -16,26 +16,28 @@ COPY e2e/package.json e2e/
 RUN bun install --frozen-lockfile
 
 COPY . .
-# Build the SPA, then compile the self-host server to a single executable.
+# 1) build the SPA  2) bundle the server to a single JS file (deps inlined,
+#    tree-shaken; NO node_modules, NOT a compiled binary — the Bun runtime is
+#    provided by the base image at runtime).
 RUN bun --cwd apps/app generate-routes \
  && bun --filter @obc/app build \
- && bun build apps/app/server.selfhost.ts --compile --target bun --outfile /app/obc-selfhost
+ && bun build apps/app/server.selfhost.ts --target bun --outfile /app/server.js
 
 # ---------- runtime ----------
-# Distroless-ish small base. The compiled binary bundles the Bun runtime, so we
-# don't need Bun/Node installed here — just a libc + the binary + the SPA.
-FROM alpine:3.20 AS runtime
+# Base layer = Bun runtime (cached across builds). Then the SPA layer, then the
+# app-code layer last (smallest + changes most often → best cache behavior).
+FROM oven/bun:1.4.3-alpine AS runtime
 WORKDIR /app
-RUN apk add --no-cache libstdc++ libgcc ca-certificates
 ENV ENVIRONMENT=production \
     DB_PATH=/data/obc.db \
     DIST_DIR=/app/dist \
     PORT=3000
 
-COPY --from=build /app/obc-selfhost /app/obc-selfhost
+# SPA layer (changes less often than nothing here, but kept separate from code).
 COPY --from=build /app/apps/app/dist /app/dist
+# App code layer — the ~3 MB bundled JS (last = most-frequently-rebuilt).
+COPY --from=build /app/server.js /app/server.js
 
 VOLUME /data
 EXPOSE 3000
-# The compiled binary serves the SPA from ./dist (relative to its own dir).
-CMD ["/app/obc-selfhost"]
+CMD ["bun", "run", "/app/server.js"]
