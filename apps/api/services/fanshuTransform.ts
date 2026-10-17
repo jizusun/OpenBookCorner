@@ -98,7 +98,6 @@ export function transformBooks(input: TransformInput) {
       title: s(b['标题']) || isbn,
       author: s(b['作者']) || '',
       publisher: orNull(b['出版社']),
-      publishedYear: null as number | null,
       coverImageUrl: null as string | null,
       description: null as string | null,
       subjects: null as string[] | null,
@@ -116,6 +115,14 @@ export function transformBooks(input: TransformInput) {
       priceUnit: orNull(b['价格单位']),
       cnLibraryClass: orNull(b['中图法分类号']),
       enteredAt: toIso(b['录入时间']),
+      isShelved: s(b['已上架']) === '' ? null : s(b['已上架']) === '是',
+      publishedDate: orNull(b['出版时间']),
+      publishedYear: ((): number | null => {
+        const d = s(b['出版时间'])
+        const m = d.match(/^(\d{4})/)
+        return m ? Number(m[1]) : null
+      })(),
+      wordCount: numOrNull(b['字数']),
       source: 'fanshu-import',
       // Preserve EVERY contributing source row (all physical copies for this
       // ISBN + the stock row), so no per-copy field (馆内编码/所属书架/…) is lost

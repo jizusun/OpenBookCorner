@@ -33,7 +33,9 @@ export class BookService {
       .select()
       .from(books)
       .where(where)
-      .orderBy(desc(books.createdAt))
+      // Default sort = 上架时间 (录入时间 / enteredAt) newest first; rows without
+      // an entered date sort last; createdAt breaks ties.
+      .orderBy(sql`${books.enteredAt} IS NULL`, desc(books.enteredAt), desc(books.createdAt))
       .limit(limit)
       .offset(offset)
       .all()

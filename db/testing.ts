@@ -32,6 +32,7 @@ export async function createTestDb(): Promise<Database> {
       is_available INTEGER NOT NULL DEFAULT 1,
       copy_code TEXT, category TEXT, shelf_location TEXT, translator TEXT, series TEXT,
       page_count INTEGER, price TEXT, price_unit TEXT, cn_library_class TEXT, entered_at TEXT,
+      is_shelved INTEGER, published_date TEXT, word_count INTEGER,
       source TEXT, raw TEXT,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );

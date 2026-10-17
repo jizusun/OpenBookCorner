@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { BookService, CirculationService } from './index'
 import { createTestDb, seedBook, seedLibrary, seedUser } from '@obc/db/testing'
-import { borrowTransactions } from '@obc/db'
+import { borrowTransactions, books } from '@obc/db'
 import type { Database as Db } from '@obc/db'
 
 const LIB_A = 'lib-a'
@@ -119,6 +119,34 @@ describe('BookService (tenant scoping)', () => {
     expect(booksA.items).toHaveLength(1)
     expect(booksA.items[0].id).toBe(BOOK_A)
     expect(booksA.total).toBe(1)
+  })
+
+  it('defaults to sorting by 上架时间 (enteredAt) newest-first, nulls last', async () => {
+    const now = new Date().toISOString()
+    const mk = async (id: string, enteredAt: string | null) => {
+      await db.insert(books).values({
+        id,
+        isbn: `isbn-${id}`,
+        title: id,
+        author: 'A',
+        libraryId: LIB_A,
+        quantity: 1,
+        availableCount: 1,
+        isAvailable: true,
+        enteredAt,
+        createdAt: now,
+        updatedAt: now,
+      })
+    }
+    await mk('old', '2020-01-01T00:00:00.000Z')
+    await mk('new', '2024-06-01T00:00:00.000Z')
+    await mk('mid', '2022-03-01T00:00:00.000Z')
+
+    const res = await new BookService(db).listByLibrary(LIB_A)
+    const order = res.items.map((b) => b.id)
+    // newest 上架 first; BOOK_A (seeded with null enteredAt) sorts LAST
+    expect(order.slice(0, 3)).toEqual(['new', 'mid', 'old'])
+    expect(order[order.length - 1]).toBe(BOOK_A)
   })
 
   it('does NOT leak books across tenants', async () => {
