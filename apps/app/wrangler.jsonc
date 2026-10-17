@@ -11,6 +11,24 @@
     "binding": "ASSETS",
     "not_found_handling": "single-page-application"
   },
-  "services": [{ "binding": "API", "service": "openbookcorner-api" }],
-  "routes": [{ "pattern": "openbookcorner.jizu.dev", "custom_domain": true }]
+  "vars": {
+    "ENVIRONMENT": "production",
+    "APP_NAME": "OpenBookCorner",
+    "APP_ORIGIN": "https://openbookcorner.jizu.dev"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "openbookcorner",
+      "database_id": "11371372-82fe-488e-b497-2e94518ce488",
+      "migrations_dir": "../../db/migrations"
+    }
+  ],
+  "r2_buckets": [{ "binding": "COVERS", "bucket_name": "openbookcorner-covers" }]
+
+  // NOTE: the custom-domain route (openbookcorner.jizu.dev) is intentionally NOT
+  // in this config. Including a custom_domain route makes `wrangler dev` simulate
+  // that host and rewrite the request Origin, which breaks Better Auth's origin
+  // check locally/in E2E. The custom domain is already bound to this Worker in
+  // Cloudflare; `wrangler deploy` keeps it attached.
 }

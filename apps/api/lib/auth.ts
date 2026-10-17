@@ -12,9 +12,17 @@ import type { Env } from './env'
  * organizations, passkeys, or OTP (dropped from the react-starter-kit baseline).
  */
 export function createAuth(db: Database, env: Env): Auth {
+  // Trust the configured origin in all environments; additionally trust any
+  // localhost port in non-production so local dev + E2E work regardless of how
+  // APP_ORIGIN/ENVIRONMENT vars resolve under `wrangler dev`.
+  const trustedOrigins =
+    env.ENVIRONMENT === 'production'
+      ? [env.APP_ORIGIN]
+      : [env.APP_ORIGIN, 'http://localhost:*', 'http://127.0.0.1:*']
+
   const options: BetterAuthOptions = {
     baseURL: `${env.APP_ORIGIN}/api/auth`,
-    trustedOrigins: [env.APP_ORIGIN],
+    trustedOrigins,
     secret: env.BETTER_AUTH_SECRET,
     database: drizzleAdapter(db, {
       provider: 'sqlite',

@@ -11,6 +11,7 @@ dist/
 # generated
 **/routeTree.gen.ts
 **/worker-configuration.d.ts
+**/*.tsbuildinfo
 
 # migration scratch (old single-app source kept locally for porting)
 .migration-old/
