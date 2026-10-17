@@ -8,7 +8,8 @@
     "noEmit": true,
     "composite": true,
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@obc/api": ["../api/index.ts"]
     }
   },
   "references": [{ "path": "../api" }, { "path": "../../db" }],
