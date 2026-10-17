@@ -57,9 +57,11 @@ export class BookService {
     coverImageUrl?: string
     description?: string
     subjects?: string[]
+    quantity?: number
   }) {
     const id = crypto.randomUUID()
     const now = new Date().toISOString()
+    const quantity = Math.max(1, input.quantity ?? 1)
     await this.db.insert(books).values({
       id,
       isbn: input.isbn,
@@ -71,7 +73,9 @@ export class BookService {
       description: input.description ?? null,
       subjects: input.subjects ?? null,
       libraryId: input.libraryId,
-      isAvailable: true,
+      quantity,
+      availableCount: quantity,
+      isAvailable: quantity > 0,
       createdAt: now,
       updatedAt: now,
     })
@@ -175,7 +179,7 @@ export class CirculationService {
       .get()
 
     if (!book) throw new Error('BOOK_NOT_FOUND')
-    if (!book.isAvailable) throw new Error('BOOK_NOT_AVAILABLE')
+    if (book.availableCount <= 0) throw new Error('BOOK_NOT_AVAILABLE')
 
     const library = await this.db.select().from(libraries).where(eq(libraries.id, libraryId)).get()
     const period = library?.settings.borrowingPeriodDays ?? DEFAULT_BORROW_DAYS
@@ -204,8 +208,12 @@ export class CirculationService {
     const now = new Date()
     const due = new Date(now.getTime() + period * 24 * 60 * 60 * 1000)
 
+    const nextAvailable = book.availableCount - 1
     await this.db.batch([
-      this.db.update(books).set({ isAvailable: false }).where(eq(books.id, bookId)),
+      this.db
+        .update(books)
+        .set({ availableCount: nextAvailable, isAvailable: nextAvailable > 0 })
+        .where(eq(books.id, bookId)),
       this.db.insert(borrowTransactions).values({
         id: crypto.randomUUID(),
         bookId,
@@ -243,12 +251,18 @@ export class CirculationService {
 
     if (!tx) throw new Error('INVALID_RETURN_REQUEST')
 
+    const book = await this.db.select().from(books).where(eq(books.id, tx.bookId)).get()
+    const nextAvailable = Math.min((book?.availableCount ?? 0) + 1, book?.quantity ?? 1)
+
     await this.db.batch([
       this.db
         .update(borrowTransactions)
         .set({ returnedAt: new Date().toISOString() })
         .where(eq(borrowTransactions.id, transactionId)),
-      this.db.update(books).set({ isAvailable: true }).where(eq(books.id, tx.bookId)),
+      this.db
+        .update(books)
+        .set({ availableCount: nextAvailable, isAvailable: nextAvailable > 0 })
+        .where(eq(books.id, tx.bookId)),
     ])
 
     return { success: true }

@@ -38,6 +38,7 @@ export const bookRouter = router({
         coverImageUrl: z.string().url().optional(),
         description: z.string().optional(),
         subjects: z.array(z.string()).optional(),
+        quantity: z.number().int().min(1).max(999).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {

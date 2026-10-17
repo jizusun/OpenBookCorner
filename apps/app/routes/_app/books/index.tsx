@@ -56,7 +56,11 @@ function CatalogPage() {
       if (prev) {
         queryClient.setQueryData<ListResult>(booksKey, {
           ...prev,
-          items: prev.items.map((b) => (b.id === vars.bookId ? { ...b, isAvailable: false } : b)),
+          items: prev.items.map((b) => {
+            if (b.id !== vars.bookId) return b
+            const availableCount = Math.max(0, (b.availableCount ?? 1) - 1)
+            return { ...b, availableCount, isAvailable: availableCount > 0 }
+          }),
         })
       }
       return { prev }

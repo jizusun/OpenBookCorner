@@ -10,6 +10,61 @@ const READER_A = 'reader-a'
 const READER_B = 'reader-b'
 const BOOK_A = 'book-a'
 
+// --- B3: multiple copies / available count ---
+describe('CirculationService — multiple copies (B3)', () => {
+  let mdb: Db
+  beforeEach(async () => {
+    mdb = await createTestDb()
+    await seedLibrary(mdb, LIB_A)
+    await seedUser(mdb, READER_A, LIB_A)
+    await seedUser(mdb, READER_B, LIB_A)
+  })
+
+  it('a 2-copy book stays borrowable after one borrow, with availableCount decremented', async () => {
+    await seedBook(mdb, 'multi', LIB_A, '9780000000002', 2)
+    const svc = new CirculationService(mdb)
+    await svc.borrow('multi', READER_A, LIB_A)
+
+    const book = await new BookService(mdb).getById('multi', LIB_A)
+    expect(book!.quantity).toBe(2)
+    expect(book!.availableCount).toBe(1)
+    expect(book!.isAvailable).toBe(true) // still 1 copy free
+
+    // a second reader can still borrow the last copy
+    await expect(svc.borrow('multi', READER_B, LIB_A)).resolves.toHaveProperty('dueDate')
+    const after = await new BookService(mdb).getById('multi', LIB_A)
+    expect(after!.availableCount).toBe(0)
+    expect(after!.isAvailable).toBe(false)
+  })
+
+  it('rejects borrowing when all copies are out (availableCount === 0)', async () => {
+    await seedBook(mdb, 'one', LIB_A, '9780000000003', 1)
+    const svc = new CirculationService(mdb)
+    await svc.borrow('one', READER_A, LIB_A)
+    await expect(svc.borrow('one', READER_B, LIB_A)).rejects.toThrow('BOOK_NOT_AVAILABLE')
+  })
+
+  it('returning a copy increments availableCount and makes it borrowable again', async () => {
+    await seedBook(mdb, 'r', LIB_A, '9780000000004', 1)
+    const svc = new CirculationService(mdb)
+    await svc.borrow('r', READER_A, LIB_A)
+    const txId = (await svc.myBooks(READER_A, LIB_A))[0]!.transactionId
+
+    await svc.returnBook(txId, READER_A, LIB_A)
+    const book = await new BookService(mdb).getById('r', LIB_A)
+    expect(book!.availableCount).toBe(1)
+    expect(book!.isAvailable).toBe(true)
+  })
+
+  it('listByLibrary exposes quantity + availableCount', async () => {
+    await seedBook(mdb, 'q', LIB_A, '9780000000005', 3)
+    const res = await new BookService(mdb).listByLibrary(LIB_A)
+    const item = res.items.find((b) => b.id === 'q')!
+    expect(item.quantity).toBe(3)
+    expect(item.availableCount).toBe(3)
+  })
+})
+
 let db: Db
 
 beforeEach(async () => {

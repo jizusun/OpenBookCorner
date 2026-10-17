@@ -36,6 +36,11 @@ export const books = sqliteTable('books', {
   libraryId: text('library_id')
     .notNull()
     .references(() => libraries.id),
+  // Multiple copies (B3). quantity = total copies; availableCount = how many are
+  // currently on the shelf. isAvailable is kept as a derived convenience
+  // (availableCount > 0) so existing reads keep working; services maintain it.
+  quantity: integer('quantity').notNull().default(1),
+  availableCount: integer('available_count').notNull().default(1),
   isAvailable: integer('is_available', { mode: 'boolean' }).notNull().default(true),
   createdAt: text('created_at').notNull().default('CURRENT_TIMESTAMP'),
   updatedAt: text('updated_at').notNull().default('CURRENT_TIMESTAMP'),
