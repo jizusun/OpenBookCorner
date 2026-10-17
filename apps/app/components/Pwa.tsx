@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { isLikelyOffline } from '@/lib/connectivity'
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>
@@ -41,15 +42,23 @@ export function Pwa() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return
-    setOffline(!navigator.onLine)
+    let cancelled = false
+    // Verify connectivity before showing the banner — navigator.onLine lies in
+    // WeChat's WebView (reports offline while online).
+    const check = async () => {
+      const off = await isLikelyOffline()
+      if (!cancelled) setOffline(off)
+    }
+    void check()
     const goOnline = () => setOffline(false)
-    const goOffline = () => setOffline(true)
+    const goOffline = () => void check()
     window.addEventListener('online', goOnline)
     window.addEventListener('offline', goOffline)
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').catch(() => {})
     }
     return () => {
+      cancelled = true
       window.removeEventListener('online', goOnline)
       window.removeEventListener('offline', goOffline)
     }
