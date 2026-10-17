@@ -20,7 +20,8 @@ export function circulationErrorMessage(
   for (const code of Object.keys(MESSAGES)) {
     if (raw.includes(code)) return MESSAGES[code] ?? fallback
   }
-  if (raw.toLowerCase().includes('offline')) {
+  // Genuine network failures (fetch rejected, aborted, DNS, etc.).
+  if (/offline|failed to fetch|load failed|networkerror|network request failed|aborted/i.test(raw)) {
     return 'You appear to be offline. Connect to the internet and try again.'
   }
   return fallback

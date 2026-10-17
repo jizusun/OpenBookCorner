@@ -32,10 +32,9 @@ function ScanToBorrowPage() {
   function submit(value: string) {
     const v = value.trim()
     if (!v) return
-    if (typeof navigator !== 'undefined' && !navigator.onLine) {
-      setResult({ kind: 'err', text: circulationErrorMessage(new Error('offline')) })
-      return
-    }
+    // No client-side navigator.onLine gate: it falsely reports offline inside
+    // WeChat's WebView. Let the request run; a genuine network failure is mapped
+    // to a friendly offline message by circulationErrorMessage in onError.
     setResult(null)
     borrow.mutate({ isbn: v })
   }

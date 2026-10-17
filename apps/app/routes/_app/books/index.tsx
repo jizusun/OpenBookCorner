@@ -49,9 +49,8 @@ function CatalogPage() {
   const borrow = useMutation({
     ...trpc.borrowing.borrow.mutationOptions(),
     onMutate: async (vars: { bookId: string }) => {
-      if (typeof navigator !== 'undefined' && !navigator.onLine) {
-        throw new Error('offline')
-      }
+      // No navigator.onLine gate (false offline in WeChat WebView); a real
+      // failure rolls back in onError with a friendly message.
       await queryClient.cancelQueries({ queryKey: booksKey })
       const prev = queryClient.getQueryData<ListResult>(booksKey)
       if (prev) {
