@@ -18,6 +18,7 @@
     "db:migrate:remote": "bun --cwd db migrate:remote",
     "db:seed:local": "bun --cwd db seed:local",
     "db:seed:remote": "bun --cwd db seed:remote",
+    "db:seed:users": "db/scripts/seed-users.sh",
     "deploy": "wrangler deploy -c apps/app/wrangler.jsonc",
     "preview": "wrangler preview -c apps/app/wrangler.jsonc"
   },

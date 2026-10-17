@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+# Seed the demo users (reader/admin/super) into a DEPLOYED OpenBookCorner D1.
+#
+# Why a script and not plain SQL: Better Auth stores a scrypt password hash in
+# the `account` table, so users must be created through the running Worker's
+# sign-up endpoint (not a hand-written INSERT). This script therefore:
+#   1. POSTs /api/auth/sign-up/email on the deployment (idempotent — re-runs are
+#      fine; an existing email just returns 4xx which we ignore), then
+#   2. sets each user's library_id + role directly in D1 via `cf d1 query`.
+#
+# It is primarily meant for PREVIEW deployments, whose isolated D1
+# (openbookcorner-preview) is NOT seeded with users by anything else. It is safe
+# to point at any environment, but DO NOT run it against production unless you
+# actually want demo accounts there.
+#
+# Usage:
+#   db/scripts/seed-users.sh <ORIGIN> <D1_DATABASE_ID> [LIBRARY_ID]
+#
+# Env it respects (so it works behind the WSL/mihomo proxy):
+#   HTTPS_PROXY / HTTP_PROXY ....... passed through to curl + cf
+#   CLOUDFLARE_ACCOUNT_ID ......... required by cf in non-interactive mode
+#   SEED_PASSWORD ................. demo password (default: password123)
+#
+# Example (current preview):
+#   export HTTPS_PROXY=http://127.0.0.1:7890 HTTP_PROXY=http://127.0.0.1:7890
+#   export CLOUDFLARE_ACCOUNT_ID=69f6e3b623318562cf2917e23251be5d
+#   db/scripts/seed-users.sh \
+#     https://feat-b3-multiple-copies.openbookcorner.jizu.dev \
+#     6d67a9a0-0ac1-4c50-bbef-6c035e3300a7
+set -euo pipefail
+
+ORIGIN="${1:?Usage: seed-users.sh <ORIGIN> <D1_DATABASE_ID> [LIBRARY_ID]}"
+D1_ID="${2:?Usage: seed-users.sh <ORIGIN> <D1_DATABASE_ID> [LIBRARY_ID]}"
+LIBRARY_ID="${3:-lib-demo-001}"
+PASSWORD="${SEED_PASSWORD:-password123}"
+
+# cf lives in the repo (installed via the project toolchain). Prefer a local
+# binary, fall back to PATH.
+CF="cf"
+
+echo "Seeding demo users into ${ORIGIN} (D1 ${D1_ID}, library ${LIBRARY_ID})"
+
+signup() {
+  local email="$1" name="$2"
+  local code
+  code=$(curl -s -o /dev/null -w "%{http_code}" \
+    -X POST "${ORIGIN}/api/auth/sign-up/email" \
+    -H "Origin: ${ORIGIN}" -H "Content-Type: application/json" \
+    -d "{\"email\":\"${email}\",\"password\":\"${PASSWORD}\",\"name\":\"${name}\"}")
+  # 200 = created; 4xx = already exists (idempotent) — both acceptable.
+  if [[ "$code" == "200" ]]; then
+    echo "  created ${email}"
+  elif [[ "$code" =~ ^4 ]]; then
+    echo "  ${email} already exists (skip)"
+  else
+    echo "  ERROR signing up ${email}: HTTP ${code}" >&2
+    exit 1
+  fi
+}
+
+signup "reader@demo.test" "Demo Reader"
+signup "admin@demo.test"  "Demo Admin"
+signup "super@demo.test"  "Demo Super Admin"
+
+echo "Attaching library + roles..."
+roles_sql="
+  UPDATE user SET library_id='${LIBRARY_ID}', role='library_admin'  WHERE email='admin@demo.test';
+  UPDATE user SET library_id='${LIBRARY_ID}', role='library_reader' WHERE email='reader@demo.test';
+  UPDATE user SET library_id='${LIBRARY_ID}', role='super_admin'    WHERE email='super@demo.test';
+"
+attempt=0
+until "$CF" d1 query "$D1_ID" --sql "$roles_sql" >/dev/null 2>&1; do
+  attempt=$((attempt + 1))
+  if [[ "$attempt" -ge 5 ]]; then
+    echo "  ERROR: cf d1 query failed after ${attempt} attempts (check HTTPS_PROXY / CLOUDFLARE_ACCOUNT_ID)" >&2
+    exit 1
+  fi
+  echo "  cf d1 query failed (attempt ${attempt}) — retrying in 3s..." >&2
+  sleep 3
+done
+
+echo "Done. Demo accounts (password: ${PASSWORD}):"
+echo "  reader@demo.test  (library_reader)"
+echo "  admin@demo.test   (library_admin)"
+echo "  super@demo.test   (super_admin)"

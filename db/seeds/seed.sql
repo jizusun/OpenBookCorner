@@ -22,3 +22,4 @@ VALUES
 -- Attach demo users to the library + roles (run AFTER they sign up).
 UPDATE user SET library_id = 'lib-demo-001', role = 'library_admin'  WHERE email = 'admin@demo.test';
 UPDATE user SET library_id = 'lib-demo-001', role = 'library_reader' WHERE email = 'reader@demo.test';
+UPDATE user SET library_id = 'lib-demo-001', role = 'super_admin'    WHERE email = 'super@demo.test';

@@ -50,6 +50,12 @@ Bun monorepo (workspaces: `apps/*`, `db`, `packages/*`):
 - Secret: `BETTER_AUTH_SECRET` on the API worker (`wrangler secret put`).
 - Deploy env is WSL + Windows mihomo proxy: route Node fetch through `HTTPS_PROXY=http://127.0.0.1:7890`.
   `cf` CLI is authenticated via OAuth for token minting; wrangler used for D1 + deploy.
+- **Preview demo users**: the isolated preview D1 (`openbookcorner-preview`) is NOT auto-seeded with
+  login accounts — only the local E2E D1 is (via `e2e/global-setup.ts`). After a preview deploys, seed
+  the demo users (reader/admin/super @demo.test, password `password123`) with:
+  `CLOUDFLARE_ACCOUNT_ID=… HTTPS_PROXY=http://127.0.0.1:7890 bun run db:seed:users <PREVIEW_ORIGIN> <PREVIEW_D1_ID>`
+  (idempotent; signs up via the deployed Worker then sets role+libraryId via `cf d1`). Preview D1 id =
+  `6d67a9a0-0ac1-4c50-bbef-6c035e3300a7`.
 
 
 ## Agent tooling available in this repo
