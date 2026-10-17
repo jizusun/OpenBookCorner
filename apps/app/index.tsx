@@ -22,6 +22,8 @@ declare module '@tanstack/react-router' {
 }
 
 const container = document.getElementById('root')!
+// Remove the instant inline loader (index.html) before React takes over the root.
+container.replaceChildren()
 createRoot(container).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>

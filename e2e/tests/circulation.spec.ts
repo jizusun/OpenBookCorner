@@ -64,6 +64,23 @@ test.describe('Theme (primary contrast — regression)', () => {
   })
 })
 
+test.describe('App shell', () => {
+  // Instant inline loader (index.html) must be in the first HTML so slow
+  // connections see something immediately, and React must replace it on mount.
+  test('serves an instant loader in the initial HTML', async ({ request }) => {
+    const res = await request.get('/')
+    const html = await res.text()
+    expect(html).toContain('id="app-loader"')
+    expect(html).toContain('obc-spinner')
+  })
+
+  test('loader is removed once the app mounts', async ({ page }) => {
+    await page.goto('/login', { waitUntil: 'domcontentloaded' })
+    await expect(page.getByRole('button', { name: 'Sign In' })).toBeVisible()
+    await expect(page.locator('#app-loader')).toHaveCount(0)
+  })
+})
+
 test.describe('Auth', () => {
   test('login page renders without the auth-client crash (regression)', async ({ page }) => {
     await page.goto('/login', { waitUntil: 'domcontentloaded' })
