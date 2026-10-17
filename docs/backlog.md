@@ -125,52 +125,61 @@ optimizations:
 
 ## Prioritized roadmap
 
-Ranked by **value × effort × dependency**. Each priority band is a shippable theme.
+Re-prioritized **by 番薯借阅's interface logic** (the source-rated UI spec above). Ordering
+follows the screens 番薯's real UI centers on, with **data-model prerequisites first**. Only
+**evidence-backed【官网确认/截图·视频可见】** behaviors are scheduled; 【惯例推断】 items are not.
 (Effort: S≈½–1 day, M≈2–4 days.)
 
-### P0 — Do now (core gaps that unblock the product's purpose)
-| Item | Rationale | Effort |
-|------|-----------|--------|
-| **B1 Chinese ISBN provider** (keyed, in resolver chain) | Confirmed prod gap (`resolvedBy: none` for CN ISBNs); 番薯's whole edge is its CN ISBN DB. Small, isolated, no-key-no-op. | S |
-| **B3 Multiple copies per book** | Foundational data-model fix; blocks realistic circulation, reservations (B13), and stocktaking (B5). Do before more circulation features. | M |
-| **B2 Scan-to-borrow / return** | 番薯's signature "手机运营书馆" UX; reuses the scanner we already have. | M |
+### ✅ Shipped since last re-prioritization
+- **B2 Scan-to-borrow by ISBN** · multi-provider ISBN metadata + R2 cover storage · overdue view
+  · library settings · feedback · **Admin / Reader / System view switcher** · **super-admin tenant
+  management** (partial R4) · catalog search/pagination/filters · My Books (default) · PWA + loader.
 
-### P1 — Next (circulation depth + engagement; most are existing specs)
-| Item | Rationale | Effort |
-|------|-----------|--------|
-| **B13 Reservations / holds** (预约) + 到馆通知 | High-demand borrower feature; depends on B3. | M |
-| **B4 Renewals / self-extension** (续借) | Quick win; `allowExtensions` already in settings. | S |
-| **R6 Ratings & reviews** (+ 书评 replies) | Engagement; builds on the detail page; strong demo. | M |
-| **R6 Book requests** (荐购) + 到馆提醒 | Direct 番薯 parity; grows the collection by demand. | M |
-| **B15 Borrowing history + holds lists** | Completes "My Books" (在借/预约/历史). | S |
+### P0 — Data model that unblocks 番薯's core screens (do first)
+| Item | 番薯 UI it unblocks | Effort |
+|------|--------------------|--------|
+| **B3 Multiple copies / 可借数** (`quantity` + `availableCount`, replace `isAvailable` bool) | Detail page's 馆藏数/可借数/在借状态; reservations (can only reserve when 0 available); stocktaking | M |
+| **B6 Shelf location (A01)** (per book/copy; show on detail + holds + catalog grouping) | Threads through **three** screens: detail, 预约卡片, admin 藏书 grouped by 书架 | S |
 
-### P2 — Then (automation, admin ops, tenant management)
-| Item | Rationale | Effort |
-|------|-----------|--------|
-| **R3 Email notifications + B16 reminders/一键催还** | Real automation (Cron + Cloudflare Email); 番薯 reminder matrix. | M |
-| **R4 Librarian role assignment** + membership flow (入馆申请/权限变更) | Multi-admin orgs; notification matrix. | M |
-| **B21 Batch admin operations** (批量转移书架/bulk edit) | Real 番薯 customer pain at scale. | S |
-| **B10 Admin analytics dashboard** | Operational insight (借阅趋势/热门书/活跃用户). | M |
-| **B11 Member self-registration & self-service** | Removes manual user seeding. | S |
-| **Cross-cutting polish** (toasts, loading/empty states, error boundaries) | Perceived quality; cheap. | S |
+### P1 — Reader "borrow-code + reserve" loop (番薯's signature reader UI)
+| Item | 番薯 UI evidence | Effort |
+|------|------------------|--------|
+| **B13 Reservations/holds** + **「距释放还有 X 天」** + 到馆通知 toggle | 【截图】"我→已预约图书"; detail 已借完→「到馆通知」 (needs B3) | M |
+| **B2+ 生成借书码** (reader shows code → admin scans; self-borrow path) | 【截图】"我→已预约→生成借书码"; 【官网】扫码自助 | M |
+| **B15 "我的" as lists** (我想读 / 在借 / 已归还 / 已预约) | 【截图】"我的" is clipboard-style lists | S |
+| **B4 续借 (renew)** | 【官网】续借; `allowExtensions` setting already exists, unused | S |
 
-### P3 — Later (nice-to-have, niche, or heavy infra)
-| Item | Rationale | Effort |
-|------|-----------|--------|
-| **B17 Activity feed** (馆内动态) | Community feel; after reviews/requests exist to populate it. | M |
-| **B18 Favorites + share** (poster/link) | Most valuable inside WeChat (Phase 2). | S |
-| **B5 Inventory stocktaking** / **B6 shelf location & multi-branch** | Larger libraries; needs B3 + location model. | M |
-| **B14 Order-mode & admin-proxy borrow** | Only if a tenant needs configurable flows. | M |
-| **B19 Library-defined categories** / **B20 onboarding wizard** | Admin convenience. | S |
-| **B8 Reading stats** / **B9 recommendations** / **B12 audit log** / **B7 fines** | Engagement/governance extras. | S–M |
-| **R4 Super-admin tenant dashboard** | Needed to scale to many tenants (currently manual seed). | M |
+### P2 — Admin "tool-backend" UI (番薯 management edition)
+| Item | 番薯 UI evidence | Effort |
+|------|------------------|--------|
+| **Scan-queue cataloging** (camera + 选分类 + 「已扫 N 本 / 结束录书」 continuous) | 【视频】录书核心页 = 扫码框 + 卡片队列 | M |
+| **B14 Admin proxy borrow/return in member detail** ("先找人→再扫书"; 还书 inline, not a page) | 【视频】成员→TA的借阅→还书/帮借 | M |
+| **R4+B11 Member management** (list / 邀请新成员 invite-code / 入馆审核 / 子管理员) | 【视频】成员页 | M |
+| **B16 一键催还** on the overdue list | 【视频】逾期名单 + 一键催还 | S |
+| **B21 Batch ops** (批量转移书架 / bulk edit) | 【官方反馈】real pain at scale (needs B3/B6) | S |
+| **B10 Analytics** (借阅趋势 / 热书榜 / 活跃用户) | 【官网】数据统计 | M |
 
-### Deferred — Phase 2 (WeChat / China), per ADR 0001
-WeChat OAuth login, `wx.scanCode` scanning, ICP filing + Tencent/CloudBase migration,
-Mini Program front end. Gated on the hosting decision — do not start until committed.
+### P3 — Community / discovery (番薯 reader "content flow")
+| Item | 番薯 UI evidence | Effort |
+|------|------------------|--------|
+| **R6 Reviews 书评** (+ 点赞/回复) | 【官网】detail 书评区 | M |
+| **R6 荐购 (purchase requests)** + 到馆通知 | 【官网】荐购清单 | M |
+| **B17 馆内动态 feed** / **B18 收藏·分享** / **B19 自定义分类** / **B20 onboarding wizard** | 【官网/视频】首页动态、收藏分享、自定义分类 | S–M |
+| **B8 reading stats / B9 recommendations / B12 audit log / B7 fines** | engagement/governance extras | S–M |
+| **B1 Chinese ISBN provider** / **B22 photo→AI vision** | CN metadata coverage (keep for when CN books are added) | S / M |
 
-> **Immediate recommendation:** ship **P0** as the next PR train (B1 → B3 → B2), since B3
-> unblocks B13/B5 and B1 is a fast, isolated win that fixes the CN-metadata gap you hit.
+### Explicitly NOT scheduled (番薯 official left blank — don't treat as fact)
+Bottom-tab names/order, back-arrow presence, book-detail cover layout, admin dashboard cards,
+color theme (we use **SAP Fiori**), any "+" FAB. We design these ourselves.
+
+### Deferred — Phase 2 (WeChat / China), per ADR 0001/0002
+WeChat OAuth, `wx.scanCode`, ICP filing + Tencent/CloudBase migration (also the only real fix
+for China latency — see above), Mini Program front end. Gated on the hosting decision.
+
+> **Immediate recommendation:** next PR train = **B3 (multiple copies) → B6 (shelf location)**,
+> the data-model foundation under 番薯's detail/reservation/catalog screens. Then P1 (holds +
+> 借书码). Build TDD: schema+service unit tests → component → E2E.
+
 
 ## Design note — B22: Photo → AI vision metadata fallback
 

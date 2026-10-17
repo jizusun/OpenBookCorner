@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 /** Environment contract for the OpenBookCorner API worker (Cloudflare D1). */
 export const envSchema = z.object({
-  ENVIRONMENT: z.enum(['production', 'staging', 'development']).default('development'),
+  ENVIRONMENT: z.enum(['production', 'staging', 'preview', 'development']).default('development'),
   APP_NAME: z.string().default('OpenBookCorner'),
   APP_ORIGIN: z.string().url(),
   BETTER_AUTH_SECRET: z.string().min(16),

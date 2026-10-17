@@ -32,12 +32,19 @@ worker.use(logger())
 
 // Initialize per-request db + auth from bindings (same as the former api worker).
 worker.use('/api/*', async (c, next) => {
+  const environment = c.env.ENVIRONMENT ?? 'development'
+  // Fail closed in production: never sign sessions with a public fallback secret.
+  // The dev fallback is ONLY used outside production (local dev / E2E).
+  if (environment === 'production' && !c.env.BETTER_AUTH_SECRET) {
+    return c.json({ error: 'Server misconfigured: BETTER_AUTH_SECRET is required' }, 500)
+  }
   const env: Env = {
     ...envSchema.parse({
-      ENVIRONMENT: c.env.ENVIRONMENT ?? 'development',
+      ENVIRONMENT: environment,
       APP_NAME: c.env.APP_NAME ?? 'OpenBookCorner',
       APP_ORIGIN: c.env.APP_ORIGIN ?? 'http://localhost:5173',
-      BETTER_AUTH_SECRET: c.env.BETTER_AUTH_SECRET ?? 'dev-secret-change-me-32chars-min!!',
+      BETTER_AUTH_SECRET:
+        c.env.BETTER_AUTH_SECRET ?? 'dev-only-insecure-secret-change-me-32chars',
     }),
     DB: c.env.DB,
     COVERS: c.env.COVERS,

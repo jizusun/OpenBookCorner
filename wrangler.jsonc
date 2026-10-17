@@ -38,22 +38,25 @@
   ],
 
   // Required for `wrangler preview` / Workers Builds preview builds. Reuses the
-  // same D1/R2 (shared demo data), ENVIRONMENT=development so Better Auth trusts
-  // the preview origin.
+  // Isolated preview resources: previews bind a SEPARATE D1 + R2 (never
+  // production data), per Copilot security review. ENVIRONMENT=preview so auth
+  // trusts localhost + our own *.openbookcorner.jizu.dev preview origins (NOT
+  // *.workers.dev). BETTER_AUTH_SECRET must be provided to previews via the
+  // Workers Builds preview env (no hardcoded fallback is used for a real deploy).
   "previews": {
     "vars": {
-      "ENVIRONMENT": "development",
-      "APP_NAME": "OpenBookCorner",
+      "ENVIRONMENT": "preview",
+      "APP_NAME": "OpenBookCorner (Preview)",
       "APP_ORIGIN": "https://openbookcorner.jizu.dev"
     },
     "d1_databases": [
       {
         "binding": "DB",
-        "database_name": "openbookcorner",
-        "database_id": "11371372-82fe-488e-b497-2e94518ce488"
+        "database_name": "openbookcorner-preview",
+        "database_id": "6d67a9a0-0ac1-4c50-bbef-6c035e3300a7"
       }
     ],
-    "r2_buckets": [{ "binding": "COVERS", "bucket_name": "openbookcorner-covers" }]
+    "r2_buckets": [{ "binding": "COVERS", "bucket_name": "openbookcorner-covers-preview" }]
   }
 
   // Workers Builds uses DEFAULT commands from Root "/": `bun run build` +
