@@ -149,6 +149,54 @@ describe('BookService (tenant scoping)', () => {
     expect(order[order.length - 1]).toBe(BOOK_A)
   })
 
+  it('sorts by title asc + filters by category / availability + exposes facets', async () => {
+    const now = new Date().toISOString()
+    const mk = async (
+      id: string,
+      opts: { title: string; category?: string; shelf?: string; available: number },
+    ) => {
+      await db.insert(books).values({
+        id,
+        isbn: `isbn-${id}`,
+        title: opts.title,
+        author: 'A',
+        libraryId: LIB_A,
+        quantity: 1,
+        availableCount: opts.available,
+        isAvailable: opts.available > 0,
+        category: opts.category ?? null,
+        shelfLocation: opts.shelf ?? null,
+        createdAt: now,
+        updatedAt: now,
+      })
+    }
+    await mk('b1', { title: 'Zebra', category: '英文原版', shelf: 'S1', available: 1 })
+    await mk('b2', { title: 'Apple', category: '英文原版', shelf: 'S2', available: 0 })
+    await mk('b3', { title: 'Mango', category: '未分类', shelf: 'S1', available: 1 })
+
+    const svc = new BookService(db)
+
+    // sort by title asc (ignore BOOK_A which has title 'Book book-a')
+    const sorted = await svc.listByLibrary(LIB_A, { sortBy: 'title', sortDir: 'asc' })
+    const titles = sorted.items.map((b) => b.title)
+    expect(titles.indexOf('Apple')).toBeLessThan(titles.indexOf('Mango'))
+    expect(titles.indexOf('Mango')).toBeLessThan(titles.indexOf('Zebra'))
+
+    // filter by category
+    const cat = await svc.listByLibrary(LIB_A, { category: '英文原版' })
+    expect(cat.items.map((b) => b.id).sort()).toEqual(['b1', 'b2'])
+
+    // filter by availability
+    const avail = await svc.listByLibrary(LIB_A, { availability: 'available' })
+    expect(avail.items.every((b) => b.availableCount > 0)).toBe(true)
+    expect(avail.items.map((b) => b.id)).not.toContain('b2')
+
+    // facets
+    const facets = await svc.listFacets(LIB_A)
+    expect(facets.categories).toEqual(expect.arrayContaining(['英文原版', '未分类']))
+    expect(facets.shelves).toEqual(expect.arrayContaining(['S1', 'S2']))
+  })
+
   it('does NOT leak books across tenants', async () => {
     const svc = new BookService(db)
     const booksB = await svc.listByLibrary(LIB_B)

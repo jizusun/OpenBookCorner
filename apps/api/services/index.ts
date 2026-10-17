@@ -17,25 +17,61 @@ export class BookService {
 
   async listByLibrary(
     libraryId: string,
-    opts: { search?: string; page?: number; limit?: number } = {},
+    opts: {
+      search?: string
+      page?: number
+      limit?: number
+      sortBy?: 'enteredAt' | 'title' | 'author' | 'available' | 'price'
+      sortDir?: 'asc' | 'desc'
+      category?: string
+      shelf?: string
+      availability?: 'all' | 'available' | 'borrowed'
+    } = {},
   ) {
     const page = Math.max(1, opts.page ?? 1)
-    const limit = Math.min(50, Math.max(1, opts.limit ?? 20))
+    const limit = Math.min(200, Math.max(1, opts.limit ?? 20))
     const offset = (page - 1) * limit
 
     const search = opts.search?.trim()
     const searchFilter = search
       ? or(like(books.title, `%${search}%`), like(books.author, `%${search}%`))
       : undefined
-    const where = and(eq(books.libraryId, libraryId), searchFilter)
+    const categoryFilter = opts.category ? eq(books.category, opts.category) : undefined
+    const shelfFilter = opts.shelf ? eq(books.shelfLocation, opts.shelf) : undefined
+    const availabilityFilter =
+      opts.availability === 'available'
+        ? sql`${books.availableCount} > 0`
+        : opts.availability === 'borrowed'
+          ? sql`${books.availableCount} = 0`
+          : undefined
+    const where = and(
+      eq(books.libraryId, libraryId),
+      searchFilter,
+      categoryFilter,
+      shelfFilter,
+      availabilityFilter,
+    )
+
+    // Sort column + direction. Default = 上架时间 (enteredAt) desc, nulls last.
+    const dir = opts.sortDir ?? 'desc'
+    const col =
+      opts.sortBy === 'title'
+        ? books.title
+        : opts.sortBy === 'author'
+          ? books.author
+          : opts.sortBy === 'available'
+            ? books.availableCount
+            : opts.sortBy === 'price'
+              ? books.price
+              : books.enteredAt
+    const dirExpr = dir === 'asc' ? sql`${col} asc` : sql`${col} desc`
+    const orderBy = [sql`${col} IS NULL`, dirExpr, desc(books.createdAt)]
 
     const items = await this.db
       .select()
       .from(books)
       .where(where)
-      // Default sort = 上架时间 (录入时间 / enteredAt) newest first; rows without
-      // an entered date sort last; createdAt breaks ties.
-      .orderBy(sql`${books.enteredAt} IS NULL`, desc(books.enteredAt), desc(books.createdAt))
+      .orderBy(...orderBy)
       .limit(limit)
       .offset(offset)
       .all()
@@ -48,6 +84,26 @@ export class BookService {
     const total = countRow?.count ?? 0
 
     return { items, total, page, limit, totalPages: Math.max(1, Math.ceil(total / limit)) }
+  }
+
+  /** Distinct categories + shelves for this library (for filter dropdowns). */
+  async listFacets(libraryId: string) {
+    const cats = await this.db
+      .selectDistinct({ v: books.category })
+      .from(books)
+      .where(eq(books.libraryId, libraryId))
+      .all()
+    const shelves = await this.db
+      .selectDistinct({ v: books.shelfLocation })
+      .from(books)
+      .where(eq(books.libraryId, libraryId))
+      .all()
+    const clean = (rows: { v: string | null }[]) =>
+      rows
+        .map((r) => r.v)
+        .filter((v): v is string => !!v && v.trim() !== '')
+        .sort()
+    return { categories: clean(cats), shelves: clean(shelves) }
   }
 
   async add(input: {

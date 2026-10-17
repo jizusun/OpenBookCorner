@@ -13,11 +13,19 @@ export const bookRouter = router({
         .object({
           search: z.string().optional(),
           page: z.number().int().min(1).optional(),
-          limit: z.number().int().min(1).max(50).optional(),
+          limit: z.number().int().min(1).max(200).optional(),
+          sortBy: z.enum(['enteredAt', 'title', 'author', 'available', 'price']).optional(),
+          sortDir: z.enum(['asc', 'desc']).optional(),
+          category: z.string().optional(),
+          shelf: z.string().optional(),
+          availability: z.enum(['all', 'available', 'borrowed']).optional(),
         })
         .optional(),
     )
     .query(({ ctx, input }) => new BookService(ctx.db).listByLibrary(ctx.libraryId, input ?? {})),
+
+  // Distinct categories + shelves for the catalog's filter dropdowns.
+  facets: tenantProcedure.query(({ ctx }) => new BookService(ctx.db).listFacets(ctx.libraryId)),
 
   get: tenantProcedure
     .input(z.object({ bookId: z.string().min(1) }))
