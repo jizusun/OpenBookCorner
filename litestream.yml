@@ -1,0 +1,17 @@
+# Litestream: continuously replicate the SQLite DB to S3-compatible storage.
+# Point `url` at your bucket (Cloudflare R2 / Backblaze B2 / MinIO / S3).
+# Credentials come from LITESTREAM_ACCESS_KEY_ID / LITESTREAM_SECRET_ACCESS_KEY
+# (set in .env). Restore:  litestream restore -o /data/obc.db <same url>
+dbs:
+  - path: /data/obc.db
+    replicas:
+      - type: s3
+        # e.g. for Cloudflare R2:
+        #   endpoint: https://<account>.r2.cloudflarestorage.com
+        #   bucket: openbookcorner-backup
+        #   path: obc.db
+        endpoint: ${LITESTREAM_ENDPOINT}
+        bucket: ${LITESTREAM_BUCKET}
+        path: obc.db
+        region: auto
+        force-path-style: true
