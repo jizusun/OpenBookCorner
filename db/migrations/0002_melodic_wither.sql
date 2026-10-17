@@ -62,14 +62,10 @@ CREATE TABLE `__new_borrow_transactions` (
 	`due_date` text NOT NULL,
 	`returned_at` text,
 	`source` text,
-	`raw` text,
-	FOREIGN KEY (`book_id`) REFERENCES `books`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`member_id`) REFERENCES `members`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`library_id`) REFERENCES `libraries`(`id`) ON UPDATE no action ON DELETE no action
+	`raw` text
 );
 --> statement-breakpoint
-INSERT INTO `__new_borrow_transactions`("id", "book_id", "user_id", "member_id", "library_id", "borrowed_at", "due_date", "returned_at", "source", "raw") SELECT "id", "book_id", "user_id", "member_id", "library_id", "borrowed_at", "due_date", "returned_at", "source", "raw" FROM `borrow_transactions`;--> statement-breakpoint
+INSERT INTO `__new_borrow_transactions`("id", "book_id", "user_id", "member_id", "library_id", "borrowed_at", "due_date", "returned_at", "source", "raw") SELECT "id", "book_id", "user_id", NULL, "library_id", "borrowed_at", "due_date", "returned_at", NULL, NULL FROM `borrow_transactions`;--> statement-breakpoint
 DROP TABLE `borrow_transactions`;--> statement-breakpoint
 ALTER TABLE `__new_borrow_transactions` RENAME TO `borrow_transactions`;--> statement-breakpoint
 PRAGMA foreign_keys=ON;--> statement-breakpoint

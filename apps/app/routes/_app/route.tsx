@@ -74,6 +74,7 @@ function AppLayout() {
           { to: '/admin/overdue', label: 'Overdue' },
           { to: '/admin/settings', label: 'Settings' },
           { to: '/admin/feedback', label: 'Feedback' },
+          { to: '/admin/import', label: 'Import' },
         ]
       : [
           { to: '/my-books', label: 'My Books' },

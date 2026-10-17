@@ -375,3 +375,12 @@ These evidence-backed behaviors become concrete items (feed into existing B#/R# 
 > These refine (not replace) the existing P0–P3 roadmap. Suggested near-term, evidence-backed slice:
 > **B3 (multiple copies)** → **B6 (shelf location)** → **B13 (holds + 借书码 + 距释放 X 天)** → **B2 (scan-to-borrow + borrow-code)**,
 > since copies+shelf-location underpin the reservation and catalog screens that 番薯's real UI centers on.
+
+## Follow-ups captured 2026-10-17 (live steering)
+
+- **Shelf management in tenant management**: surface/manage 书架 (shelf locations)
+  as part of tenant admin. The 番薯 import already preserves `books.shelfLocation`
+  (所属书架); build CRUD/listing + assign-to-shelf UI. Overlaps P0 B6 shelf location.
+- **Tenant login URL + branded login page**: super-admin UI exposes a per-tenant
+  login URL; the login page reads the tenant and displays the library NAME; tenant
+  admin + reader sign in there.
