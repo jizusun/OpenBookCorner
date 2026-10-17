@@ -119,3 +119,20 @@ export async function seedBook(
     updatedAt: new Date().toISOString(),
   })
 }
+
+export async function seedMember(
+  db: Database,
+  id: string,
+  libraryId: string,
+  name = `Member ${id}`,
+  role: 'library_admin' | 'library_reader' = 'library_reader',
+) {
+  await db.insert(schema.members).values({
+    id,
+    libraryId,
+    name,
+    role,
+    source: 'fanshu-import',
+    createdAt: new Date().toISOString(),
+  })
+}
