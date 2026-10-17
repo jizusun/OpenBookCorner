@@ -36,6 +36,54 @@ export interface FanshuSheets {
   purchaseRequests: Row[] // 荐购清单
 }
 
+// 番薯 sheet name → FanshuSheets key.
+const SHEET_MAP: Record<string, keyof FanshuSheets> = {
+  书籍清单: 'books',
+  存量明细: 'stock',
+  成员清单: 'members',
+  借阅清单: 'loans',
+  评论清单: 'reviews',
+  荐购清单: 'purchaseRequests',
+}
+
+/** Parse a 番薯 .xls/.xlsx workbook (bytes) into FanshuSheets. */
+export async function parseFanshuWorkbook(bytes: Uint8Array): Promise<FanshuSheets> {
+  // Lazy import so SheetJS only loads on the import path (keeps it out of the
+  // hot path of the Worker bundle for every request).
+  const XLSX = await import('xlsx')
+  const wb = XLSX.read(bytes, { type: 'array' })
+  const out: FanshuSheets = {
+    books: [], stock: [], members: [], loans: [], reviews: [], purchaseRequests: [],
+  }
+  for (const name of wb.SheetNames) {
+    const key = SHEET_MAP[name]
+    if (!key) continue
+    out[key] = XLSX.utils.sheet_to_json(wb.Sheets[name]!, { defval: '' }) as Row[]
+  }
+  return out
+}
+
+/**
+ * Fetch a 番薯 export from a URL and parse it. SSRF guard: https only, and the
+ * host must be a 番薯 CDN host (the export links are *.fanshujieyue.com). This
+ * runs admin-only, but we still refuse arbitrary/internal targets.
+ */
+export async function fetchFanshuWorkbook(url: string): Promise<FanshuSheets> {
+  let u: URL
+  try {
+    u = new URL(url)
+  } catch {
+    throw new Error('INVALID_URL')
+  }
+  if (u.protocol !== 'https:') throw new Error('URL_MUST_BE_HTTPS')
+  if (!/(^|\.)fanshujieyue\.com$/i.test(u.hostname)) throw new Error('URL_HOST_NOT_ALLOWED')
+  const res = await fetch(u.toString())
+  if (!res.ok) throw new Error(`DOWNLOAD_FAILED_${res.status}`)
+  const buf = await res.arrayBuffer()
+  if (buf.byteLength > 20 * 1024 * 1024) throw new Error('FILE_TOO_LARGE')
+  return parseFanshuWorkbook(new Uint8Array(buf))
+}
+
 export interface ImportCounts {
   books: number
   members: number
