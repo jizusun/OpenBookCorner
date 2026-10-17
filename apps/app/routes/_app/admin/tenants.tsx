@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { trpc, trpcClient } from '@/lib/trpc'
+import { trpc } from '@/lib/trpc'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -13,9 +13,8 @@ import { useToast } from '@/components/Toast'
 
 export const Route = createFileRoute('/_app/admin/tenants')({
   // Super-admin only.
-  beforeLoad: async () => {
-    const user = await trpcClient.auth.requireMe.query()
-    if (user.role !== 'super_admin') throw redirect({ to: '/books' })
+  beforeLoad: ({ context }) => {
+    if (context.user.role !== 'super_admin') throw redirect({ to: '/books' })
   },
   component: TenantsPage,
 })

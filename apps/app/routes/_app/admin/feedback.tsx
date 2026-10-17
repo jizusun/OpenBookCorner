@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { trpc, trpcClient } from '@/lib/trpc'
+import { trpc } from '@/lib/trpc'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -13,8 +13,8 @@ const CATEGORY_LABELS: Record<string, string> = {
 }
 
 export const Route = createFileRoute('/_app/admin/feedback')({
-  beforeLoad: async () => {
-    const user = await trpcClient.auth.requireMe.query()
+  beforeLoad: ({ context }) => {
+    const user = context.user
     if (user.role !== 'library_admin' && user.role !== 'super_admin') {
       throw redirect({ to: '/books' })
     }

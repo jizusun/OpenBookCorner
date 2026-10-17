@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { createFileRoute, Link, Outlet, redirect, useRouter } from '@tanstack/react-router'
 import { signOut } from '@/lib/auth-client'
-import { trpcClient } from '@/lib/trpc'
+import { ensureRequireMe } from '@/lib/trpc'
 import { Button } from '@/components/ui/button'
 import { FeedbackButton } from '@/components/FeedbackButton'
 import { useInstallPrompt } from '@/components/Pwa'
@@ -12,7 +12,7 @@ export const Route = createFileRoute('/_app')({
   // Server-validated auth: requireMe throws if unauthenticated.
   beforeLoad: async () => {
     try {
-      const user = await trpcClient.auth.requireMe.query()
+      const user = await ensureRequireMe()
       return { user }
     } catch {
       throw redirect({ to: '/login' })

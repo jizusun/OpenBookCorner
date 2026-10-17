@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { z } from 'zod'
-import { trpc, trpcClient } from '@/lib/trpc'
+import { trpc } from '@/lib/trpc'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -21,8 +21,8 @@ const searchSchema = z.object({
 export const Route = createFileRoute('/_app/admin/overdue')({
   validateSearch: searchSchema,
   // Admin-only route (UX guard; the server also enforces admin).
-  beforeLoad: async () => {
-    const user = await trpcClient.auth.requireMe.query()
+  beforeLoad: ({ context }) => {
+    const user = context.user
     if (user.role !== 'library_admin' && user.role !== 'super_admin') {
       throw redirect({ to: '/books' })
     }
