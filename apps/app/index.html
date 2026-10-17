@@ -6,6 +6,12 @@
     <meta name="theme-color" content="#0f172a" />
     <link rel="icon" href="/icon.svg" type="image/svg+xml" />
     <link rel="manifest" href="/manifest.webmanifest" />
+    <!-- Speed up the external Google Fonts fetch (slow from China): warm the
+         connections early. The loader itself uses system-ui, so first paint
+         never waits on fonts. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <title>OpenBookCorner</title>
     <script>
       (function () {
