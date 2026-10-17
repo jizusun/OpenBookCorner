@@ -2,9 +2,10 @@
 # Migrate + seed the LOCAL D1 (Miniflare) for E2E. Idempotent.
 set -euo pipefail
 
-# Apply migrations to the local D1 (wrangler reads apps/api/wrangler.jsonc).
-echo "y" | bunx wrangler d1 migrations apply openbookcorner --local >/dev/null 2>&1 || \
-  bunx wrangler d1 migrations apply openbookcorner --local >/dev/null 2>&1 || true
+# Apply migrations to the local D1 (wrangler reads apps/app/wrangler.jsonc).
+# Do NOT swallow failures — a broken migration must fail E2E loudly, not silently
+# leave the DB on an old schema (that previously hid a FK-constraint migration bug).
+echo "y" | bunx wrangler d1 migrations apply openbookcorner --local
 
 # Seed demo library + books (users are created via Better Auth in global-setup).
 bunx wrangler d1 execute openbookcorner --local --command "
