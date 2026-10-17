@@ -4,6 +4,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import { ToastProvider } from '@/components/Toast'
+import { RouteProgress } from '@/components/RouteProgress'
 import { queryClient } from '@/lib/query'
 import { routeTree } from '@/lib/routeTree.gen'
 
@@ -13,6 +14,12 @@ const router = createRouter({
   routeTree,
   context: { queryClient },
   defaultPreload: 'intent',
+  // Show the slim top progress bar during transitions, but only after 150ms so
+  // instant/preloaded navigations don't flash it. Keep it up at least 300ms to
+  // avoid a flicker when it does appear.
+  defaultPendingComponent: RouteProgress,
+  defaultPendingMs: 150,
+  defaultPendingMinMs: 300,
 })
 
 declare module '@tanstack/react-router' {
