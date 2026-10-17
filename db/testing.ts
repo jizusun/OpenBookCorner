@@ -58,6 +58,12 @@ export async function createTestDb(): Promise<Database> {
       author TEXT, publisher TEXT, requester_count INTEGER DEFAULT 1, requesters TEXT,
       source TEXT, raw TEXT, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
+    CREATE TABLE import_runs (
+      id TEXT PRIMARY KEY, library_id TEXT NOT NULL, source TEXT NOT NULL DEFAULT 'fanshu',
+      source_url TEXT, r2_key TEXT, file_name TEXT, ran_by_user_id TEXT,
+      status TEXT NOT NULL DEFAULT 'success', counts TEXT, error TEXT,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
     CREATE TABLE feedback (
       id TEXT PRIMARY KEY, library_id TEXT NOT NULL, user_id TEXT NOT NULL,
       category TEXT NOT NULL DEFAULT 'other', message TEXT NOT NULL,
