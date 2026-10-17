@@ -555,3 +555,46 @@ export class TenantAdminService {
     return { id: libraryId, isActive }
   }
 }
+
+
+/** Library members (番薯 成员) — tenant-scoped listing for the admin Members page. */
+export class MemberService {
+  constructor(private db: Database) {}
+
+  async listByLibrary(
+    libraryId: string,
+    opts: { search?: string; page?: number; limit?: number } = {},
+  ) {
+    const page = Math.max(1, opts.page ?? 1)
+    const limit = Math.min(200, Math.max(1, opts.limit ?? 50))
+    const offset = (page - 1) * limit
+
+    const search = opts.search?.trim()
+    const searchFilter = search
+      ? or(
+          like(members.name, `%${search}%`),
+          like(members.phone, `%${search}%`),
+          like(members.memberNo, `%${search}%`),
+        )
+      : undefined
+    const where = and(eq(members.libraryId, libraryId), searchFilter)
+
+    const items = await this.db
+      .select()
+      .from(members)
+      .where(where)
+      .orderBy(members.name)
+      .limit(limit)
+      .offset(offset)
+      .all()
+
+    const countRow = await this.db
+      .select({ count: sql<number>`count(*)` })
+      .from(members)
+      .where(where)
+      .get()
+    const total = countRow?.count ?? 0
+
+    return { items, total, page, limit, totalPages: Math.max(1, Math.ceil(total / limit)) }
+  }
+}
