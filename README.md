@@ -50,6 +50,10 @@ Built on **Cloudflare's edge platform** for maximum cost efficiency:
 
 **Perfect for small to medium libraries** - Most organizations can run OpenBookCorner **completely free** on Cloudflare's generous free tier. Only pay as you scale beyond the free limits.
 
+> **Prefer your own server?** You can also self-host on a small VPS or SBC with
+> Docker Compose (Bun + SQLite + Litestream backups) — great for low latency in
+> China and minimal cost. See [`docs/self-hosting.md`](docs/self-hosting.md).
+
 **Estimated Monthly Costs:**
 - **Small Library** (< 100 users): **$0/month**
 - **Medium Library** (100-500 users): **$5-15/month**

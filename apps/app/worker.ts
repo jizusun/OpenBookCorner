@@ -16,6 +16,7 @@ type CloudflareEnv = {
   DB: D1Database
   COVERS: R2Bucket
   APP_ORIGIN?: string
+  APP_ORIGINS?: string
   APP_NAME?: string
   BETTER_AUTH_SECRET?: string
   ENVIRONMENT?: string
@@ -43,18 +44,36 @@ worker.use('/api/*', async (c, next) => {
   if (requiresRealSecret && !c.env.BETTER_AUTH_SECRET) {
     return c.json({ error: 'Server misconfigured: BETTER_AUTH_SECRET is required' }, 500)
   }
+  // Resolve the effective public origin in production. The app can be fronted by
+  // more than one public domain at once — the global Cloudflare domain AND a
+  // China relay (Traefik) on a different domain. A single static APP_ORIGIN
+  // can't match both, which would break Better Auth cookies/CSRF for the
+  // relayed domain. So we trust an ALLOW-LIST (APP_ORIGINS, comma-separated):
+  // when a relay forwards `X-Forwarded-Origin` and it's in the list, use it;
+  // otherwise fall back to the configured APP_ORIGIN. We deliberately only honor
+  // a forwarded origin that is explicitly allow-listed — never an arbitrary
+  // header value — to avoid origin/CSRF spoofing (same reasoning as the
+  // trustedOrigins allow-list in createAuth).
+  const allowedOrigins = (c.env.APP_ORIGINS ?? '')
+    .split(',')
+    .map((o) => o.trim())
+    .filter(Boolean)
+  const forwardedOrigin = c.req.header('X-Forwarded-Origin')
+  const productionOrigin =
+    forwardedOrigin && allowedOrigins.includes(forwardedOrigin)
+      ? forwardedOrigin
+      : (c.env.APP_ORIGIN ?? 'https://openbookcorner.jizu.dev')
   const env: Env = {
     ...envSchema.parse({
       ENVIRONMENT: environment,
       APP_NAME: c.env.APP_NAME ?? 'OpenBookCorner',
+      APP_ORIGINS: c.env.APP_ORIGINS,
       // Preview URLs are per-PR (pr-N.openbookcorner.jizu.dev), so a static
       // APP_ORIGIN can't match. Derive it from the incoming request in preview
       // (and dev) so Better Auth's baseURL + cookies match the host the browser
-      // is actually on. Production uses the fixed configured origin.
-      APP_ORIGIN:
-        environment === 'production'
-          ? (c.env.APP_ORIGIN ?? 'https://openbookcorner.jizu.dev')
-          : new URL(c.req.url).origin,
+      // is actually on. Production uses the allow-listed origin resolved above
+      // (configured APP_ORIGIN, or a trusted forwarded relay origin).
+      APP_ORIGIN: environment === 'production' ? productionOrigin : new URL(c.req.url).origin,
       BETTER_AUTH_SECRET:
         c.env.BETTER_AUTH_SECRET ?? 'dev-only-insecure-secret-change-me-32chars',
     }),

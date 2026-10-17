@@ -1,0 +1,16 @@
+# Keep the Docker build context small + reproducible.
+node_modules
+**/node_modules
+**/dist
+db/dist
+apps/*/dist
+.git
+.github
+e2e/test-results
+e2e/playwright-report
+**/*.log
+.wrangler
+**/.wrangler
+coverage
+.DS_Store
+# the SPA is built inside the image, not copied from host
