@@ -11,4 +11,6 @@ export const envSchema = z.object({
 export type Env = z.infer<typeof envSchema> & {
   /** Cloudflare D1 binding (set in wrangler.jsonc). */
   DB: D1Database
+  /** Cloudflare R2 bucket for stored book cover images. */
+  COVERS: R2Bucket
 }

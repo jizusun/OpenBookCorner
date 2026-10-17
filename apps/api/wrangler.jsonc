@@ -17,5 +17,11 @@
       "database_id": "11371372-82fe-488e-b497-2e94518ce488",
       "migrations_dir": "../../db/migrations"
     }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "COVERS",
+      "bucket_name": "openbookcorner-covers"
+    }
   ]
 }

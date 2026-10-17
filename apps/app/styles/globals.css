@@ -161,14 +161,7 @@ body {
 }
 
 a {
-  color: var(--sap-blue);
-  text-decoration-color: color-mix(in oklab, var(--sap-blue) 40%, transparent);
-  text-decoration-thickness: 1px;
   text-underline-offset: 2px;
-}
-
-a:hover {
-  color: var(--sap-blue-dark);
 }
 
 code {
@@ -231,5 +224,14 @@ a {
   body {
     background-color: var(--background);
     color: var(--foreground);
+  }
+  /* Plain links are SAP blue. In @layer base so Tailwind utilities
+     (e.g. text-primary-foreground on button-styled <a>) always win. */
+  a {
+    color: var(--sap-blue);
+    text-decoration-color: color-mix(in oklab, var(--sap-blue) 40%, transparent);
+  }
+  a:hover {
+    color: var(--sap-blue-dark);
   }
 }
