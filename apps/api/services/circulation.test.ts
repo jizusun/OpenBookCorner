@@ -63,6 +63,41 @@ describe('CirculationService — multiple copies (B3)', () => {
     expect(item.quantity).toBe(3)
     expect(item.availableCount).toBe(3)
   })
+
+  it('two concurrent borrows of the last copy: exactly one succeeds, count never goes negative', async () => {
+    await seedBook(mdb, 'race', LIB_A, '9780000000006', 1)
+    const svc = new CirculationService(mdb)
+
+    const results = await Promise.allSettled([
+      svc.borrow('race', READER_A, LIB_A),
+      svc.borrow('race', READER_B, LIB_A),
+    ])
+    const fulfilled = results.filter((r) => r.status === 'fulfilled')
+    const rejected = results.filter((r) => r.status === 'rejected') as PromiseRejectedResult[]
+
+    expect(fulfilled).toHaveLength(1)
+    expect(rejected).toHaveLength(1)
+    expect(String(rejected[0].reason)).toContain('BOOK_NOT_AVAILABLE')
+
+    const book = await new BookService(mdb).getById('race', LIB_A)
+    expect(book!.availableCount).toBe(0) // never -1
+    expect(book!.isAvailable).toBe(false)
+  })
+
+  it('returning the same loan twice does not double-credit inventory', async () => {
+    await seedBook(mdb, 'dup', LIB_A, '9780000000007', 1)
+    const svc = new CirculationService(mdb)
+    await svc.borrow('dup', READER_A, LIB_A)
+    const txId = (await svc.myBooks(READER_A, LIB_A))[0]!.transactionId
+
+    await svc.returnBook(txId, READER_A, LIB_A)
+    // second return of the same (now-returned) loan must be rejected
+    await expect(svc.returnBook(txId, READER_A, LIB_A)).rejects.toThrow('INVALID_RETURN_REQUEST')
+
+    const book = await new BookService(mdb).getById('dup', LIB_A)
+    expect(book!.availableCount).toBe(1) // capped at quantity, not 2
+    expect(book!.quantity).toBe(1)
+  })
 })
 
 let db: Db

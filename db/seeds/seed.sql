@@ -20,6 +20,11 @@ VALUES
   ('book-003', '9780137081073', 'The Clean Coder', 'Robert C. Martin', 'Prentice Hall', 2011, 'lib-demo-001', 1, '2025-01-01T00:00:00.000Z', '2025-01-01T00:00:00.000Z');
 
 -- Attach demo users to the library + roles (run AFTER they sign up).
+-- NOTE: super_admin is intentionally NOT granted here. This seed can be run
+-- against the REMOTE database (db:seed:remote → wrangler d1 execute --remote),
+-- and granting a cross-library super-admin to a well-known demo email/password
+-- would be a serious privilege-escalation risk on a deployed environment.
+-- Super-admin for demo/preview is granted only by db/scripts/seed-users.sh
+-- (used by CI/preview seeding), never by this shared SQL seed.
 UPDATE user SET library_id = 'lib-demo-001', role = 'library_admin'  WHERE email = 'admin@demo.test';
 UPDATE user SET library_id = 'lib-demo-001', role = 'library_reader' WHERE email = 'reader@demo.test';
-UPDATE user SET library_id = 'lib-demo-001', role = 'super_admin'    WHERE email = 'super@demo.test';

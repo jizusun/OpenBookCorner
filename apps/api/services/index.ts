@@ -208,21 +208,31 @@ export class CirculationService {
     const now = new Date()
     const due = new Date(now.getTime() + period * 24 * 60 * 60 * 1000)
 
-    const nextAvailable = book.availableCount - 1
-    await this.db.batch([
-      this.db
-        .update(books)
-        .set({ availableCount: nextAvailable, isAvailable: nextAvailable > 0 })
-        .where(eq(books.id, bookId)),
-      this.db.insert(borrowTransactions).values({
-        id: crypto.randomUUID(),
-        bookId,
-        userId,
-        libraryId,
-        borrowedAt: now.toISOString(),
-        dueDate: due.toISOString(),
-      }),
-    ])
+    // Atomically claim a copy: the WHERE guard ensures a concurrent borrow that
+    // already took the last copy can't be overwritten (read-modify-write race).
+    // RETURNING tells us whether we actually acquired a copy.
+    const claimed = await this.db
+      .update(books)
+      .set({
+        availableCount: sql`${books.availableCount} - 1`,
+        isAvailable: sql`CASE WHEN ${books.availableCount} - 1 > 0 THEN 1 ELSE 0 END`,
+      })
+      .where(and(eq(books.id, bookId), sql`${books.availableCount} > 0`))
+      .returning({ availableCount: books.availableCount })
+      .all()
+
+    // No row updated → another request took the last copy between our read and
+    // this write. Treat as unavailable (do NOT create a loan).
+    if (claimed.length === 0) throw new Error('BOOK_NOT_AVAILABLE')
+
+    await this.db.insert(borrowTransactions).values({
+      id: crypto.randomUUID(),
+      bookId,
+      userId,
+      libraryId,
+      borrowedAt: now.toISOString(),
+      dueDate: due.toISOString(),
+    })
 
     return { dueDate: due.toISOString() }
   }
@@ -236,9 +246,12 @@ export class CirculationService {
   }
 
   async returnBook(transactionId: string, userId: string, libraryId: string) {
-    const tx = await this.db
-      .select()
-      .from(borrowTransactions)
+    // Guarded active→returned transition: only the request that flips a still-
+    // active loan proceeds. RETURNING confirms we won the transition, so a
+    // duplicate/concurrent return cannot credit inventory twice.
+    const returned = await this.db
+      .update(borrowTransactions)
+      .set({ returnedAt: new Date().toISOString() })
       .where(
         and(
           eq(borrowTransactions.id, transactionId),
@@ -247,23 +260,23 @@ export class CirculationService {
           isNull(borrowTransactions.returnedAt),
         ),
       )
-      .get()
+      .returning({ bookId: borrowTransactions.bookId })
+      .all()
 
-    if (!tx) throw new Error('INVALID_RETURN_REQUEST')
+    const row = returned[0]
+    if (!row) throw new Error('INVALID_RETURN_REQUEST')
+    const bookId = row.bookId
 
-    const book = await this.db.select().from(books).where(eq(books.id, tx.bookId)).get()
-    const nextAvailable = Math.min((book?.availableCount ?? 0) + 1, book?.quantity ?? 1)
-
-    await this.db.batch([
-      this.db
-        .update(borrowTransactions)
-        .set({ returnedAt: new Date().toISOString() })
-        .where(eq(borrowTransactions.id, transactionId)),
-      this.db
-        .update(books)
-        .set({ availableCount: nextAvailable, isAvailable: nextAvailable > 0 })
-        .where(eq(books.id, tx.bookId)),
-    ])
+    // Credit the copy back atomically, capped at quantity (MIN guards against a
+    // concurrent return pushing availableCount above the physical copy count).
+    await this.db
+      .update(books)
+      .set({
+        availableCount: sql`MIN(${books.availableCount} + 1, ${books.quantity})`,
+        isAvailable: sql`CASE WHEN MIN(${books.availableCount} + 1, ${books.quantity}) > 0 THEN 1 ELSE 0 END`,
+      })
+      .where(eq(books.id, bookId))
+      .run()
 
     return { success: true }
   }

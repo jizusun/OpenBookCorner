@@ -257,21 +257,35 @@ test.describe('Admin', () => {
     await page.getByRole('button', { name: 'Search' }).click()
     await page.getByRole('link', { name: unique }).click()
 
-    // 2 of 2 available, Borrow enabled.
-    await expect(page.getByText(/2 of 2/)).toBeVisible()
-    let borrowBtn = page.getByRole('button', { name: 'Borrow' })
-    await expect(borrowBtn).toBeEnabled()
-    await borrowBtn.click()
+    try {
+      // 2 of 2 available, Borrow enabled.
+      await expect(page.getByText(/2 of 2/)).toBeVisible()
+      let borrowBtn = page.getByRole('button', { name: 'Borrow' })
+      await expect(borrowBtn).toBeEnabled()
+      await borrowBtn.click()
 
-    // After one borrow: 1 of 2, still borrowable.
-    await expect(page.getByText(/1 of 2/)).toBeVisible()
-    borrowBtn = page.getByRole('button', { name: 'Borrow' })
-    await expect(borrowBtn).toBeEnabled()
-    await borrowBtn.click()
+      // After one borrow: 1 of 2, still borrowable.
+      await expect(page.getByText(/1 of 2/)).toBeVisible()
+      borrowBtn = page.getByRole('button', { name: 'Borrow' })
+      await expect(borrowBtn).toBeEnabled()
+      await borrowBtn.click()
 
-    // Last copy gone: all copies borrowed, Borrow disabled.
-    await expect(page.getByText(/All 2 copies borrowed/)).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Borrow' })).toBeDisabled()
+      // Last copy gone: all copies borrowed, Borrow disabled.
+      await expect(page.getByText(/All 2 copies borrowed/)).toBeVisible()
+      await expect(page.getByRole('button', { name: 'Borrow' })).toBeDisabled()
+    } finally {
+      // Return every copy this test borrowed so the shared demo account's
+      // borrow limit isn't exhausted across reruns (prepare-local.sh preserves
+      // data + global-setup reuses the demo users). Handles partial failures.
+      await page.getByRole('link', { name: 'My Books' }).first().click()
+      for (let i = 0; i < 2; i++) {
+        const returnBtn = page.getByRole('button', { name: 'Return' }).first()
+        if (await returnBtn.isVisible().catch(() => false)) {
+          await returnBtn.click().catch(() => {})
+          await page.getByText('Returned. Thanks!').waitFor({ state: 'visible' }).catch(() => {})
+        }
+      }
+    }
   })
 })
 
