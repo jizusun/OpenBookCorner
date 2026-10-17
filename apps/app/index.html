@@ -16,9 +16,60 @@
         } catch (e) {}
       })()
     </script>
+    <style>
+      /* Instant app-shell loader: inline so it paints before the JS/CSS bundle
+         downloads (matters on slow connections). React replaces #root on mount,
+         which removes it automatically. */
+      #app-loader {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        background: #ffffff;
+        color: #0a6ed1;
+        font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      }
+      html.dark #app-loader {
+        background: #12212e;
+        color: #7bb5f0;
+      }
+      #app-loader .obc-spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: obc-spin 0.7s linear infinite;
+        opacity: 0.9;
+      }
+      #app-loader .obc-brand {
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        opacity: 0.8;
+      }
+      @keyframes obc-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #app-loader .obc-spinner {
+          animation-duration: 2s;
+        }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div id="app-loader" role="status" aria-live="polite" aria-label="Loading OpenBookCorner">
+        <div class="obc-spinner"></div>
+        <div class="obc-brand">OpenBookCorner</div>
+      </div>
+    </div>
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>
