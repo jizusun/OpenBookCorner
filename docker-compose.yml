@@ -19,7 +19,6 @@ services:
       APP_ORIGIN: ${APP_ORIGIN:?set APP_ORIGIN, e.g. https://library.example.com}
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?set a 32+ char secret}
       DB_PATH: /data/obc.db
-      COVERS_DIR: /data/covers
       PORT: '3000'
     volumes:
       - data:/data

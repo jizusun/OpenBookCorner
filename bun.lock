@@ -36,6 +36,7 @@
       "dependencies": {
         "@libsql/client": "^0.18.0",
         "@obc/api": "workspace:*",
+        "@obc/db": "workspace:*",
         "@tanstack/react-query": "^5.62.0",
         "@tanstack/react-router": "^1.95.0",
         "@trpc/client": "^11.0.0",

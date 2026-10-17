@@ -1,12 +1,13 @@
-# Self-hosted OpenBookCorner — single Bun image serving the SPA + API.
-# Multi-stage: install deps + build the SPA, then a lean runtime that runs
-# apps/app/server.selfhost.ts (libsql SQLite + local-FS covers) with Bun.
+# Self-hosted OpenBookCorner — compiled single-binary image.
+# Build stage compiles the backend to ONE executable (`bun build --compile`,
+# using bun:sqlite so there are no external native .node files) and builds the
+# SPA. The runtime stage ships ONLY the binary + the static SPA on a tiny base,
+# so the image is far smaller than shipping node_modules.
 
 # ---------- build ----------
 FROM oven/bun:1.4.3-alpine AS build
 WORKDIR /app
 
-# Install workspace deps (lockfile-driven). Copy manifests first for caching.
 COPY package.json bun.lock ./
 COPY apps/app/package.json apps/app/
 COPY apps/api/package.json apps/api/
@@ -14,27 +15,27 @@ COPY db/package.json db/
 COPY e2e/package.json e2e/
 RUN bun install --frozen-lockfile
 
-# Copy source + build the SPA (dist/).
 COPY . .
-RUN bun --cwd apps/app generate-routes && bun --filter @obc/app build
+# Build the SPA, then compile the self-host server to a single executable.
+RUN bun --cwd apps/app generate-routes \
+ && bun --filter @obc/app build \
+ && bun build apps/app/server.selfhost.ts --compile --target bun --outfile /app/obc-selfhost
 
 # ---------- runtime ----------
-FROM oven/bun:1.4.3-alpine AS runtime
+# Distroless-ish small base. The compiled binary bundles the Bun runtime, so we
+# don't need Bun/Node installed here — just a libc + the binary + the SPA.
+FROM alpine:3.20 AS runtime
 WORKDIR /app
-ENV NODE_ENV=production \
-    ENVIRONMENT=production \
+RUN apk add --no-cache libstdc++ libgcc ca-certificates
+ENV ENVIRONMENT=production \
     DB_PATH=/data/obc.db \
-    COVERS_DIR=/data/covers \
+    DIST_DIR=/app/dist \
     PORT=3000
 
-# App needs: node_modules (workspace deps), the built SPA, server + reused
-# source (routers/services/schema are TS, run directly by Bun).
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/apps ./apps
-COPY --from=build /app/db ./db
-COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/obc-selfhost /app/obc-selfhost
+COPY --from=build /app/apps/app/dist /app/dist
 
 VOLUME /data
 EXPOSE 3000
-# Bun runs the TS entry directly (resolves workspace packages + TS at runtime).
-CMD ["bun", "run", "apps/app/server.selfhost.ts"]
+# The compiled binary serves the SPA from ./dist (relative to its own dir).
+CMD ["/app/obc-selfhost"]
