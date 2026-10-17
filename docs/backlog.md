@@ -102,6 +102,27 @@ How we compare to 番薯借阅's verified features (✅ have · 🟡 partial · 
 - ⬜ ICP filing + migrate interactive path/DB to in-China host (Tencent CloudBase)
 - ⬜ Possible WeChat Mini Program front end
 
+### China access latency — investigated 2026-10-17 (DEFERRED)
+Users report the site is slow from mainland China. Investigated "优选 IP (preferred-IP)"
+optimizations:
+- **Why slow:** Cloudflare's free network has no in-China PoPs, so CN traffic hits
+  overseas edges (US-west / SG). This is a cross-border link issue, not an app issue
+  (app-side already optimized: instant inline loader, non-blocking fonts, vendor chunk
+  splitting, route-transition progress bar, `intent` preload).
+- **Preferred-IP via hosts:** only works per-device; user has no PC (phone only), so can't
+  self-test or benefit at scale.
+- **Preferred-IP via Cloudflare for SaaS** (custom hostname + Workers fallback origin + a
+  DNS-only A record → preferred CF IP): the ONLY clean way to serve a preferred IP that
+  still routes to our Worker. BUT: (1) requires enabling **SSL for SaaS** on the `jizu.dev`
+  zone first — a Dashboard action, not doable via `cf`/API (zone returned `1456 … available
+  with SSL for SaaS`); (2) SaaS custom-hostname → fallback origin that is itself on Cloudflare
+  risks a **CF→CF double hop that can be *slower*** (community-reported); (3) requires ongoing
+  manual preferred-IP maintenance (IPs rotate). With no way to measure the gain first (no PC),
+  this is a likely-low/negative-ROI change — **deferred** per user ("暂缓").
+- **Real fix = this section's Phase 2:** ICP filing + in-China host/CDN (Tencent CloudBase).
+  That's the only reliably-effective path for China latency. Revisit preferred-IP only if a
+  China-network device can first measure a real speedup via a `hosts` override.
+
 ## Prioritized roadmap
 
 Ranked by **value × effort × dependency**. Each priority band is a shippable theme.
