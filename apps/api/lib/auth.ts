@@ -12,9 +12,12 @@ import type { Env } from './env'
  * organizations, passkeys, or OTP (dropped from the react-starter-kit baseline).
  */
 export function createAuth(db: Database, env: Env): Auth {
-  // Trust the configured origin in all environments; additionally trust localhost
-  // (dev/E2E) and Workers preview URLs (*.workers.dev) in non-production so a
-  // Workers Builds *preview* can complete auth on its generated preview origin.
+  // Origin/CSRF trust. ALWAYS trust the configured APP_ORIGIN. In non-production
+  // additionally trust localhost (dev/E2E) and our OWN preview subdomains
+  // (*.openbookcorner.jizu.dev — only we can deploy there). We deliberately do
+  // NOT trust *.workers.dev: anyone can deploy a Worker on *.workers.dev, so a
+  // broad wildcard there would let an attacker-controlled origin pass Better
+  // Auth's CSRF/origin check (flagged by Copilot review).
   const trustedOrigins =
     env.ENVIRONMENT === 'production'
       ? [env.APP_ORIGIN]
@@ -22,7 +25,6 @@ export function createAuth(db: Database, env: Env): Auth {
           env.APP_ORIGIN,
           'http://localhost:*',
           'http://127.0.0.1:*',
-          'https://*.workers.dev',
           'https://*.openbookcorner.jizu.dev',
         ]
 
