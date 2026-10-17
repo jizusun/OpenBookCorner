@@ -6,6 +6,16 @@ import { describe, it, expect, vi } from 'vitest'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ConfirmDialog, Modal } from '@/components/ui/modal'
 import { ToastProvider, useToast } from '@/components/Toast'
+import { RouteProgress } from '@/components/RouteProgress'
+
+describe('RouteProgress (transition indicator)', () => {
+  it('renders a slim top progress bar with a status role', () => {
+    render(<RouteProgress />)
+    const bar = screen.getByTestId('route-progress')
+    expect(bar).toBeInTheDocument()
+    expect(bar).toHaveAttribute('role', 'status')
+  })
+})
 
 describe('Modal (focus is not stolen while typing)', () => {
   // Regression: the feedback dialog became untypeable because the focus-trap
