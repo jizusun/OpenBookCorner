@@ -53,26 +53,26 @@ Bun monorepo (workspaces: `apps/*`, `db`, `packages/*`):
 - **Preview deploys (GitHub Actions + native Worker Previews, not Workers Builds)**: Workers Builds
   *preview* builds are DISABLED. Previews are deployed by `.github/workflows/preview.yml` on
   `pull_request` using native **Worker Previews** (`wrangler preview`) on the **SAME** `openbookcorner`
-  Worker — no dedicated preview Worker. Each PR gets an ISOLATED, PER-PR preview at
-  `https://pr-<N>.openbookcorner.jizu.dev` (custom-domain route `previews_enabled` in `wrangler.jsonc`;
-  covered by the `*.openbookcorner.jizu.dev` wildcard cert and trusted by Better Auth, so login works).
-  The `previews` block in `wrangler.jsonc` binds the isolated preview D1
+  Worker — no dedicated preview Worker. There is ONE SHARED preview named `preview` at
+  `https://preview.openbookcorner.jizu.dev` that ALL PRs deploy over (**last-deploy-wins** — the most
+  recent PR push becomes the live preview; this matches the single shared preview D1). The
+  custom-domain route `previews_enabled` in `wrangler.jsonc` is covered by the
+  `*.openbookcorner.jizu.dev` wildcard cert and trusted by Better Auth, so login works. The `previews`
+  block in `wrangler.jsonc` + `preview_database_id` on the `DB` binding bind the shared preview D1
   (`6d67a9a0-0ac1-4c50-bbef-6c035e3300a7`) + R2 (`openbookcorner-covers-preview`) — never production
-  data. The workflow: build SPA → `d1 migrations apply openbookcorner-preview --remote` →
-  `wrangler preview --name pr-<N> --secrets-file … --json` (the secret is scoped to the PREVIEW via
-  `--secrets-file`, NOT the production Worker) → seed demo users → comment the URL. A `cleanup` job
-  runs `wrangler preview delete` when the PR closes. Production still deploys via Workers Builds on
-  merge to `main`.
+  data. The workflow (serialized via `concurrency: preview-shared`): build SPA →
+  `d1 migrations apply DB --remote --preview` → `wrangler preview --name preview` → seed demo users →
+  comment the URL. Production still deploys via Workers Builds on merge to `main`.
   - Required repo secret: **`CLOUDFLARE_API_TOKEN`** (Account › Workers Scripts: Edit, D1: Edit,
     Workers R2 Storage: Edit, Account Settings: Read; Zone › Workers Routes: Edit). `CLOUDFLARE_ACCOUNT_ID`
     is a non-secret env. (Cloudflare does NOT support GitHub OIDC for wrangler deploys.) The deploy
-    uses `cloudflare/wrangler-action@v4` (`command: preview --name pr-<N>` + `gitHubToken` → a GitHub
+    uses `cloudflare/wrangler-action@v4` (`command: preview --name preview` + `gitHubToken` → a GitHub
     Deployment + the `preview-url` output).
-  - `BETTER_AUTH_SECRET` for previews is set ONCE in the **Previews base config**
-    (`wrangler preview base-config secret put BETTER_AUTH_SECRET`) and inherited by every preview — no
-    per-deploy secret handling. `ENVIRONMENT=preview` FAILS CLOSED on a missing `BETTER_AUTH_SECRET`
-    (internet-reachable host); the Worker derives `APP_ORIGIN` from the request in preview so the
-    dynamic `pr-<N>` host matches Better Auth's baseURL/cookies.
+  - `BETTER_AUTH_SECRET` for the preview is set ONCE in the **Previews base config**
+    (`wrangler preview base-config secret put BETTER_AUTH_SECRET`) and inherited — no per-deploy secret
+    handling. `ENVIRONMENT=preview` FAILS CLOSED on a missing `BETTER_AUTH_SECRET` (internet-reachable
+    host); the Worker derives `APP_ORIGIN` from the request in preview so the preview host matches
+    Better Auth's baseURL/cookies.
 - **Preview-user seeding** (reader/admin/super @demo.test, password `password123`):
   the CI step calls `db/scripts/seed-users.sh <PREVIEW_URL> <D1_ID>` (idempotent). Run it locally with:
   `CLOUDFLARE_ACCOUNT_ID=… HTTPS_PROXY=http://127.0.0.1:7890 bun run db:seed:users <ORIGIN> <PREVIEW_D1_ID>`

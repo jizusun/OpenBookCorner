@@ -1,26 +1,31 @@
 name: Preview
 
-# Per-PR preview of the SAME `openbookcorner` Worker via native Worker Previews
-# (`wrangler preview`). Each PR gets an isolated preview at
-# https://pr-<N>.openbookcorner.jizu.dev (custom-domain route previews_enabled in
+# SINGLE SHARED preview of the `openbookcorner` Worker via native Worker Previews
+# (`wrangler preview`). ALL PRs deploy over ONE preview named `preview` at
+# https://preview.openbookcorner.jizu.dev (custom-domain route previews_enabled in
 # wrangler.jsonc; covered by the *.openbookcorner.jizu.dev wildcard cert and
-# trusted by Better Auth, so login works). Previews bind the isolated preview
-# D1 + R2 from the `previews` block — never production data.
+# trusted by Better Auth, so login works). It binds the shared preview D1 + R2
+# from the `previews` block — never production data.
 #
-# Requires repo secrets:
-#   CLOUDFLARE_API_TOKEN        — Workers Scripts: Edit, D1: Edit, R2: Edit,
-#                                 Account Settings: Read, Zone Workers Routes: Edit
-# BETTER_AUTH_SECRET for previews is set ONCE in the Previews base config
-# (`wrangler preview base-config secret put BETTER_AUTH_SECRET`) and inherited by
-# every preview — no per-deploy secret handling needed.
-# CLOUDFLARE_ACCOUNT_ID is a non-secret env below.
+# Last-deploy-wins: the most recent PR push becomes THE preview. This matches the
+# shared preview database (all PRs already share one D1). Deploys are serialized
+# via concurrency so concurrent pushes don't race the shared Worker/DB.
+#
+# Requires repo secret:
+#   CLOUDFLARE_API_TOKEN — Workers Scripts: Edit, D1: Edit, R2: Edit,
+#                          Account Settings: Read, Zone Workers Routes: Edit
+# BETTER_AUTH_SECRET for the preview is set ONCE in the Previews base config
+# (`wrangler preview base-config secret put BETTER_AUTH_SECRET`) and inherited —
+# no per-deploy secret handling. CLOUDFLARE_ACCOUNT_ID is a non-secret env below.
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types: [opened, synchronize, reopened]
 
+# One shared preview → serialize all deploys (never run two at once); do not
+# cancel an in-flight deploy, let it finish before the next PR's push deploys.
 concurrency:
-  group: preview-${{ github.event.pull_request.number }}
+  group: preview-shared
   cancel-in-progress: false
 
 permissions:
@@ -31,13 +36,12 @@ permissions:
 env:
   CLOUDFLARE_ACCOUNT_ID: 69f6e3b623318562cf2917e23251be5d
   PREVIEW_D1_ID: 6d67a9a0-0ac1-4c50-bbef-6c035e3300a7
+  PREVIEW_NAME: preview
 
 jobs:
   preview:
     # Only run on same-repo PRs (secrets aren't available to forks anyway).
-    if: >-
-      github.event.action != 'closed' &&
-      github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -56,7 +60,7 @@ jobs:
       - name: Build SPA
         run: bun --cwd apps/app build
 
-      - name: Apply D1 migrations to the preview DB
+      - name: Apply D1 migrations to the shared preview DB
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -65,7 +69,7 @@ jobs:
           # Targets the preview D1 via `preview_database_id` on the DB binding.
           command: d1 migrations apply DB --remote --preview
 
-      - name: Deploy per-PR Preview (same Worker)
+      - name: Deploy the shared Preview (same Worker)
         id: preview
         uses: cloudflare/wrangler-action@v4
         with:
@@ -74,10 +78,9 @@ jobs:
           wranglerVersion: '4.151.1'
           # Creates a GitHub Deployment + exposes the preview-url output.
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          # BETTER_AUTH_SECRET is inherited from the Previews base config
-          # (set once via `wrangler preview base-config secret put`), so no
-          # per-deploy --secrets-file is needed.
-          command: preview --name pr-${{ github.event.pull_request.number }}
+          # BETTER_AUTH_SECRET is inherited from the Previews base config, so no
+          # per-deploy --secrets-file is needed. Fixed name → one shared preview.
+          command: preview --name preview
 
       - name: Seed demo users into the preview DB
         env:
@@ -98,17 +101,4 @@ jobs:
             --body "🚀 **Preview:** ${PREVIEW_URL}
 
           Demo accounts (password \`password123\`): \`reader@demo.test\`, \`admin@demo.test\`, \`super@demo.test\`.
-          Per-PR isolated preview of the \`openbookcorner\` Worker."
-
-  cleanup:
-    if: github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Delete the PR's Preview
-        uses: cloudflare/wrangler-action@v4
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          wranglerVersion: '4.151.1'
-          command: preview delete --name pr-${{ github.event.pull_request.number }} --skip-confirmation
+          Shared preview of the \`openbookcorner\` Worker — the latest PR push deploys here (last-deploy-wins)."
