@@ -67,6 +67,55 @@ describe('fanshu transforms', () => {
     expect(b.isAvailable).toBe(false)
   })
 
+  it('parses EVERY 书籍清单 column into a typed field', () => {
+    const row = {
+      标题: 'One Hundred Years of Solitude',
+      作者: 'Gabriel Garcia Marquez / Gregory Rabassa',
+      出版社: 'Penguin Classics',
+      ISBN: '9780141184999',
+      价格: '18.60',
+      价格单位: 'USD',
+      馆内编码: 'C-001',
+      所属分类: '未分类',
+      所属书架: '202007',
+      录入时间: '2020-07-09 17:45:08',
+      中图法分类号: 'I712',
+      已上架: '是',
+      译者: 'Gregory Rabassa',
+      出版时间: '2000-08-31',
+      字数: '0',
+      系列: 'Penguin Modern Classic',
+      页数: '422',
+    }
+    const [b] = transformBooks(input({ books: [row], stock: [] }))
+    expect(b.title).toBe('One Hundred Years of Solitude')
+    expect(b.author).toBe('Gabriel Garcia Marquez / Gregory Rabassa')
+    expect(b.publisher).toBe('Penguin Classics')
+    expect(b.isbn).toBe('9780141184999')
+    expect(b.price).toBe('18.60')
+    expect(b.priceUnit).toBe('USD')
+    expect(b.copyCode).toBe('C-001')
+    expect(b.category).toBe('未分类')
+    expect(b.shelfLocation).toBe('202007')
+    expect(b.enteredAt).toMatch(/^2020-07-09T/) // 录入时间 (上架/入库时间)
+    expect(b.cnLibraryClass).toBe('I712')
+    expect(b.translator).toBe('Gregory Rabassa')
+    expect(b.series).toBe('Penguin Modern Classic')
+    expect(b.pageCount).toBe(422)
+    // --- previously only in raw; now first-class typed fields ---
+    expect(b.isShelved).toBe(true) // 已上架 = 是
+    expect(b.publishedDate).toMatch(/^2000-08-31/) // 出版时间
+    expect(b.publishedYear).toBe(2000) // derived from 出版时间
+    expect(b.wordCount).toBe(0) // 字数
+  })
+
+  it('maps 已上架 否 → isShelved false', () => {
+    const [b] = transformBooks(
+      input({ books: [{ 标题: 'X', 作者: 'y', ISBN: '999', 已上架: '否' }], stock: [] }),
+    )
+    expect(b.isShelved).toBe(false)
+  })
+
   it('maps member roles and labels placeholders without dropping rows', () => {
     const members = [
       { 姓名: 'Mia', 成员权限: '馆长', 手机: '123', 会员号: 'I1' },

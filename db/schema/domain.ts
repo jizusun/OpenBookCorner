@@ -52,7 +52,10 @@ export const books = sqliteTable('books', {
   price: text('price'), // 价格 (string: mixed precision)
   priceUnit: text('price_unit'), // 价格单位 (USD/CNY/…)
   cnLibraryClass: text('cn_library_class'), // 中图法分类号
-  enteredAt: text('entered_at'), // 录入时间
+  enteredAt: text('entered_at'), // 录入时间 (上架/入库时间)
+  isShelved: integer('is_shelved', { mode: 'boolean' }), // 已上架 (是/否)
+  publishedDate: text('published_date'), // 出版时间 (full date string)
+  wordCount: integer('word_count'), // 字数
   source: text('source'), // provenance, e.g. 'fanshu-import'
   // Full original export row(s) for this book — guarantees zero field loss even
   // for columns we don't model as typed fields.
