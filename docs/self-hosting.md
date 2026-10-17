@@ -129,6 +129,69 @@ renders directly.
 > (the external URL is kept). The 番薯 **import** does not store covers, so
 > importing a library works fully self-hosted.
 
+## China relay in front of the Cloudflare Worker (Traefik)
+
+Instead of fully self-hosting, you can keep the app on the Cloudflare Worker and
+put a **Traefik relay on a China VPC in front of it** to cut China latency —
+while the global Cloudflare domain stays live at the same time. Two public
+domains front the **same** Worker:
+
+- `openbookcorner.jizu.dev` — direct to Cloudflare (global).
+- `cn.example.com` — browser → Traefik (China VPC) → Cloudflare Worker.
+
+Because the SPA calls the API same-origin (`/api/*`) and Traefik serves the whole
+app under one host, there's **no CORS and no `VITE_API_URL`** to change. The only
+real concern is that Better Auth's `baseURL`/cookies/CSRF must match the domain
+the browser is actually on — and a single static `APP_ORIGIN` can't match both
+domains. The Worker handles this with an **origin allow-list**:
+
+1. Set an allow-list on the Worker (comma-separated), e.g. in `wrangler.jsonc` `vars`:
+
+   ```jsonc
+   "vars": {
+     "ENVIRONMENT": "production",
+     "APP_ORIGIN": "https://openbookcorner.jizu.dev",
+     "APP_ORIGINS": "https://openbookcorner.jizu.dev,https://cn.example.com"
+   }
+   ```
+
+2. Have Traefik tell the Worker which allow-listed origin the browser used, via
+   `X-Forwarded-Origin`. Traefik must dial Cloudflare with the Worker's own host
+   (`passHostHeader: false`) so Cloudflare routes to the Worker:
+
+   ```yaml
+   # traefik-dynamic.yml  (file provider)
+   http:
+     middlewares:
+       obc-origin:
+         headers:
+           customRequestHeaders:
+             X-Forwarded-Origin: "https://cn.example.com"
+     routers:
+       obc:
+         rule: "Host(`cn.example.com`)"
+         entryPoints: [websecure]
+         service: cloudflare-worker
+         middlewares: [obc-origin]
+         tls: { certResolver: le }
+     services:
+       cloudflare-worker:
+         loadBalancer:
+           passHostHeader: false   # send the Worker its OWN host so CF routes it
+           servers:
+             - url: "https://openbookcorner.jizu.dev"
+   ```
+
+The Worker, in production, uses `X-Forwarded-Origin` **only if it's in
+`APP_ORIGINS`** (otherwise it falls back to `APP_ORIGIN`), and Better Auth trusts
+every origin in the list. An arbitrary/unlisted forwarded origin is ignored, so
+this can't be used to spoof the origin or bypass CSRF.
+
+> **Covers:** the relay only accelerates the Worker. Cover images come straight
+> from the R2 public CDN, so in China they bypass Traefik and may still be slow.
+> If China-fast covers matter, add a Traefik router that also proxies the cover
+> path through the VPC (or repoint cover URLs at `cn.example.com/covers/...`).
+
 ## Known limitations / roadmap
 
 - [ ] Auto-apply DB migrations on boot (currently a manual first-run step).
