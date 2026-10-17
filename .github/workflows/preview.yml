@@ -75,13 +75,17 @@ jobs:
           # --secrets-file (the Worker fails closed in preview without it). This
           # targets the preview deployment, NOT the production Worker.
           printf 'BETTER_AUTH_SECRET=%s\n' "$PREVIEW_BETTER_AUTH_SECRET" > /tmp/preview-secrets.env
-          output="$(bunx wrangler preview \
+          raw="$(bunx wrangler preview \
             --name "pr-${{ github.event.pull_request.number }}" \
             --secrets-file /tmp/preview-secrets.env \
             --json)"
           rm -f /tmp/preview-secrets.env
-          printf '%s\n' "$output"
-          preview_url="$(printf '%s' "$output" | jq -er '.preview.urls[0]')"
+          printf '%s\n' "$raw"
+          # wrangler prints a human banner before the JSON — slice from the first
+          # '{' so jq only sees the JSON object.
+          json="$(printf '%s' "$raw" | sed -n '/^{/,$p')"
+          preview_url="$(printf '%s' "$json" | jq -er '.preview.urls[0] // .preview_url // .url // .urls[0]')"
+          echo "Preview URL: $preview_url"
           echo "preview_url=$preview_url" >> "$GITHUB_OUTPUT"
 
       - name: Seed demo users into the preview DB
