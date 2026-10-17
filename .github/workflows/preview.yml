@@ -10,7 +10,9 @@ name: Preview
 # Requires repo secrets:
 #   CLOUDFLARE_API_TOKEN        — Workers Scripts: Edit, D1: Edit, R2: Edit,
 #                                 Account Settings: Read, Zone Workers Routes: Edit
-#   PREVIEW_BETTER_AUTH_SECRET  — session-signing secret for previews
+# BETTER_AUTH_SECRET for previews is set ONCE in the Previews base config
+# (`wrangler preview base-config secret put BETTER_AUTH_SECRET`) and inherited by
+# every preview — no per-deploy secret handling needed.
 # CLOUDFLARE_ACCOUNT_ID is a non-secret env below.
 
 on:
@@ -65,34 +67,23 @@ jobs:
 
       - name: Deploy per-PR Preview (same Worker)
         id: preview
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          PREVIEW_BETTER_AUTH_SECRET: ${{ secrets.PREVIEW_BETTER_AUTH_SECRET }}
-        run: |
-          set -o pipefail
-          # Provision the session-signing secret SCOPED TO THE PREVIEW via
-          # --secrets-file (the Worker fails closed in preview without it). This
-          # targets the preview deployment, NOT the production Worker.
-          printf 'BETTER_AUTH_SECRET=%s\n' "$PREVIEW_BETTER_AUTH_SECRET" > /tmp/preview-secrets.env
-          raw="$(bunx wrangler preview \
-            --name "pr-${{ github.event.pull_request.number }}" \
-            --secrets-file /tmp/preview-secrets.env \
-            --json)"
-          rm -f /tmp/preview-secrets.env
-          printf '%s\n' "$raw"
-          # wrangler prints a human banner before the JSON — slice from the first
-          # '{' so jq only sees the JSON object.
-          json="$(printf '%s' "$raw" | sed -n '/^{/,$p')"
-          preview_url="$(printf '%s' "$json" | jq -er '.preview.urls[0] // .preview_url // .url // .urls[0]')"
-          echo "Preview URL: $preview_url"
-          echo "preview_url=$preview_url" >> "$GITHUB_OUTPUT"
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '4.151.1'
+          # Creates a GitHub Deployment + exposes the preview-url output.
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          # BETTER_AUTH_SECRET is inherited from the Previews base config
+          # (set once via `wrangler preview base-config secret put`), so no
+          # per-deploy --secrets-file is needed.
+          command: preview --name pr-${{ github.event.pull_request.number }}
 
       - name: Seed demo users into the preview DB
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           SEED_D1_BINDING: DB
-          PREVIEW_URL: ${{ steps.preview.outputs.preview_url }}
+          PREVIEW_URL: ${{ steps.preview.outputs.preview-url }}
         run: |
           chmod +x db/scripts/seed-users.sh
           db/scripts/seed-users.sh "$PREVIEW_URL" "$PREVIEW_D1_ID"
@@ -100,7 +91,7 @@ jobs:
       - name: Comment the Preview URL
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PREVIEW_URL: ${{ steps.preview.outputs.preview_url }}
+          PREVIEW_URL: ${{ steps.preview.outputs.preview-url }}
         run: |
           gh pr comment "${{ github.event.pull_request.number }}" \
             --edit-last --create-if-none \
