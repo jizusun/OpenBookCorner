@@ -121,18 +121,86 @@ function BookDetailPage() {
             <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
               {book.publisher && (
                 <>
-                  <dt className="text-muted-foreground">Publisher</dt>
+                  <dt className="text-muted-foreground">出版社 Publisher</dt>
                   <dd>{book.publisher}</dd>
                 </>
               )}
-              {book.publishedYear && (
+              {book.translator && (
                 <>
-                  <dt className="text-muted-foreground">Published</dt>
-                  <dd>{book.publishedYear}</dd>
+                  <dt className="text-muted-foreground">译者 Translator</dt>
+                  <dd>{book.translator}</dd>
+                </>
+              )}
+              {(book.publishedDate || book.publishedYear) && (
+                <>
+                  <dt className="text-muted-foreground">出版时间 Published</dt>
+                  <dd>{book.publishedDate ?? book.publishedYear}</dd>
                 </>
               )}
               <dt className="text-muted-foreground">ISBN</dt>
               <dd>{book.isbn}</dd>
+              {book.category && (
+                <>
+                  <dt className="text-muted-foreground">所属分类 Category</dt>
+                  <dd>{book.category}</dd>
+                </>
+              )}
+              {book.shelfLocation && (
+                <>
+                  <dt className="text-muted-foreground">所属书架 Shelf</dt>
+                  <dd>{book.shelfLocation}</dd>
+                </>
+              )}
+              {book.copyCode && (
+                <>
+                  <dt className="text-muted-foreground">馆内编码 Code</dt>
+                  <dd>{book.copyCode}</dd>
+                </>
+              )}
+              {book.series && (
+                <>
+                  <dt className="text-muted-foreground">系列 Series</dt>
+                  <dd>{book.series}</dd>
+                </>
+              )}
+              {book.cnLibraryClass && (
+                <>
+                  <dt className="text-muted-foreground">中图法分类号 CLC</dt>
+                  <dd>{book.cnLibraryClass}</dd>
+                </>
+              )}
+              {book.pageCount != null && (
+                <>
+                  <dt className="text-muted-foreground">页数 Pages</dt>
+                  <dd>{book.pageCount}</dd>
+                </>
+              )}
+              {book.wordCount != null && (
+                <>
+                  <dt className="text-muted-foreground">字数 Words</dt>
+                  <dd>{book.wordCount}</dd>
+                </>
+              )}
+              {book.price && (
+                <>
+                  <dt className="text-muted-foreground">价格 Price</dt>
+                  <dd>
+                    {book.price} {book.priceUnit}
+                  </dd>
+                </>
+              )}
+              {book.isShelved != null && (
+                <>
+                  <dt className="text-muted-foreground">已上架 Shelved</dt>
+                  <dd>{book.isShelved ? '是' : '否'}</dd>
+                </>
+              )}
+              {book.enteredAt && (
+                <>
+                  <dt className="text-muted-foreground">上架时间 Entered</dt>
+                  <dd>{new Date(book.enteredAt).toLocaleString()}</dd>
+                </>
+              )}
             </dl>
 
             <div className="flex items-center gap-3">
@@ -206,6 +274,8 @@ function BookDetailPage() {
                 </p>
               </div>
             )}
+
+            <RawFields raw={book.raw} />
           </div>
         </CardContent>
       </Card>
@@ -221,5 +291,65 @@ function BookDetailPage() {
         onCancel={() => setConfirmOpen(false)}
       />
     </div>
+  )
+}
+
+
+/**
+ * Renders EVERY original source field for an imported book (zero-loss
+ * passthrough), so columns we don't surface as typed fields still appear.
+ * Imported books store raw as { books: Row[], stock: Row|null } (all physical
+ * copies for the ISBN + the stock row). Falls back to a flat object or renders
+ * nothing when there is no raw data (e.g. app-created books).
+ */
+function RawFields({ raw }: { raw: unknown }) {
+  if (!raw || typeof raw !== 'object') return null
+  const r = raw as { books?: Record<string, unknown>[]; stock?: Record<string, unknown> | null }
+  const rows: Record<string, unknown>[] = Array.isArray(r.books)
+    ? r.books
+    : [raw as Record<string, unknown>]
+  const entries = (obj: Record<string, unknown>) =>
+    Object.entries(obj).filter(([, v]) => v !== '' && v != null)
+  if (rows.length === 0) return null
+
+  return (
+    <details className="pt-2" data-testid="raw-fields">
+      <summary className="cursor-pointer text-sm font-semibold">
+        原始数据 / All source fields
+      </summary>
+      <div className="mt-2 space-y-3">
+        {rows.map((row, i) => (
+          <div key={i}>
+            {rows.length > 1 && (
+              <p className="text-xs text-muted-foreground">副本 Copy {i + 1}</p>
+            )}
+            <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0.5 text-xs">
+              {entries(row).map(([k, v]) => (
+                <RawRow key={k} label={k} value={v} />
+              ))}
+            </dl>
+          </div>
+        ))}
+        {r.stock && entries(r.stock).length > 0 && (
+          <div>
+            <p className="text-xs text-muted-foreground">存量明细 Stock</p>
+            <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0.5 text-xs">
+              {entries(r.stock).map(([k, v]) => (
+                <RawRow key={k} label={k} value={v} />
+              ))}
+            </dl>
+          </div>
+        )}
+      </div>
+    </details>
+  )
+}
+
+function RawRow({ label, value }: { label: string; value: unknown }) {
+  return (
+    <>
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd className="whitespace-pre-line break-words">{String(value)}</dd>
+    </>
   )
 }
