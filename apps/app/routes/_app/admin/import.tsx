@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { createFileRoute, redirect } from '@tanstack/react-router'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { trpc, trpcClient } from '@/lib/trpc'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -55,6 +55,7 @@ interface Counts {
 
 function ImportPage() {
   const queryClient = useQueryClient()
+  const { data: history } = useQuery(trpc.library.importHistory.queryOptions())
   const toast = useToast()
   const [fileName, setFileName] = useState<string | null>(null)
   const [sheets, setSheets] = useState<Sheets | null>(null)
@@ -119,11 +120,12 @@ function ImportPage() {
     setError(null)
     try {
       const res = sheets
-        ? await trpcClient.library.importFanshu.mutate({ sheets })
+        ? await trpcClient.library.importFanshu.mutate({ sheets, fileName: fileName ?? undefined })
         : await trpcClient.library.importFanshuFromUrl.mutate({ url: url.trim() })
       setResult(res)
       toast.success(`Imported ${res.books} books, ${res.members} members, ${res.loans} loans.`)
       await queryClient.invalidateQueries({ queryKey: trpc.book.list.queryKey() })
+      await queryClient.invalidateQueries({ queryKey: trpc.library.importHistory.queryKey() })
     } catch {
       setError('Import failed. Please try again.')
     } finally {
@@ -209,6 +211,52 @@ function ImportPage() {
           )}
         </CardContent>
       </Card>
+
+      {history && history.length > 0 && (
+        <Card data-testid="import-history">
+          <CardHeader>
+            <CardTitle>Import history</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Every import is recorded with its source and counts.
+            </p>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-3 text-sm">
+              {history.map((run) => {
+                const c = (run.counts ?? {}) as Record<string, number>
+                return (
+                  <li key={run.id} className="rounded-md border p-3">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium">
+                        {new Date(run.createdAt).toLocaleString()}
+                      </span>
+                      <span
+                        className={
+                          run.status === 'success' ? 'text-green-600' : 'text-destructive'
+                        }
+                      >
+                        {run.status}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-muted-foreground">
+                      {c.books ?? 0} books · {c.members ?? 0} members · {c.loans ?? 0} loans ·{' '}
+                      {c.reviews ?? 0} reviews · {c.purchaseRequests ?? 0} requests
+                    </p>
+                    {(run.sourceUrl || run.fileName) && (
+                      <p className="mt-1 break-all text-xs text-muted-foreground">
+                        来源: {run.sourceUrl ?? run.fileName}
+                      </p>
+                    )}
+                    {run.r2Key && (
+                      <p className="break-all text-xs text-muted-foreground">R2: {run.r2Key}</p>
+                    )}
+                  </li>
+                )
+              })}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }
