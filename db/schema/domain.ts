@@ -42,8 +42,89 @@ export const books = sqliteTable('books', {
   quantity: integer('quantity').notNull().default(1),
   availableCount: integer('available_count').notNull().default(1),
   isAvailable: integer('is_available', { mode: 'boolean' }).notNull().default(true),
+  // --- 番薯 import fields (nullable; preserved so no catalog data is lost) ---
+  copyCode: text('copy_code'), // 馆内编码
+  category: text('category'), // 所属分类
+  shelfLocation: text('shelf_location'), // 所属书架 (also backs B6 shelf location)
+  translator: text('translator'), // 译者
+  series: text('series'), // 系列
+  pageCount: integer('page_count'), // 页数
+  price: text('price'), // 价格 (string: mixed precision)
+  priceUnit: text('price_unit'), // 价格单位 (USD/CNY/…)
+  cnLibraryClass: text('cn_library_class'), // 中图法分类号
+  enteredAt: text('entered_at'), // 录入时间
+  source: text('source'), // provenance, e.g. 'fanshu-import'
+  // Full original export row(s) for this book — guarantees zero field loss even
+  // for columns we don't model as typed fields.
+  raw: text('raw', { mode: 'json' }).$type<Record<string, unknown>>(),
   createdAt: text('created_at').notNull().default('CURRENT_TIMESTAMP'),
   updatedAt: text('updated_at').notNull().default('CURRENT_TIMESTAMP'),
+})
+
+/**
+ * Library member record (番薯 "成员"). A borrowable identity that is NOT
+ * necessarily a login account — the 番薯 export has names/phones but no emails,
+ * so members can't become Better Auth users directly. A member MAY be linked to
+ * a real `user` later (userId). Loans reference a member (see borrowTransactions
+ * .memberId). `raw` preserves the complete original row (zero data loss).
+ */
+export const members = sqliteTable('members', {
+  id: text('id').primaryKey(),
+  libraryId: text('library_id')
+    .notNull()
+    .references(() => libraries.id),
+  name: text('name').notNull(),
+  role: text('role', { enum: ['library_admin', 'library_reader'] })
+    .notNull()
+    .default('library_reader'),
+  phone: text('phone'), // 手机
+  email: text('email'), // 邮箱 (usually empty from 番薯)
+  memberNo: text('member_no'), // 会员号
+  employeeNo: text('employee_no'), // 工号
+  studentNo: text('student_no'), // 学号
+  className: text('class_name'), // 班级
+  department: text('department'), // 部门
+  note: text('note'), // 备注1 / 备注2 (merged)
+  joinedAt: text('joined_at'), // 入馆日期
+  isPlaceholder: integer('is_placeholder', { mode: 'boolean' }).notNull().default(false),
+  userId: text('user_id').references(() => user.id), // linked login account, if any
+  source: text('source'), // 'fanshu-import'
+  raw: text('raw', { mode: 'json' }).$type<Record<string, unknown>>(),
+  createdAt: text('created_at').notNull().default('CURRENT_TIMESTAMP'),
+})
+
+/** Book reviews (番薯 评论清单). */
+export const reviews = sqliteTable('reviews', {
+  id: text('id').primaryKey(),
+  libraryId: text('library_id')
+    .notNull()
+    .references(() => libraries.id),
+  isbn: text('isbn'),
+  bookTitle: text('book_title'), // 书名
+  memberName: text('member_name'), // 用户馆内名称
+  nickname: text('nickname'), // 用户昵称 (e.g. 微信用户)
+  body: text('body').notNull(), // 评论
+  reviewedAt: text('reviewed_at'), // 评论创建时间
+  source: text('source'),
+  raw: text('raw', { mode: 'json' }).$type<Record<string, unknown>>(),
+  createdAt: text('created_at').notNull().default('CURRENT_TIMESTAMP'),
+})
+
+/** Purchase requests (番薯 荐购清单). */
+export const purchaseRequests = sqliteTable('purchase_requests', {
+  id: text('id').primaryKey(),
+  libraryId: text('library_id')
+    .notNull()
+    .references(() => libraries.id),
+  isbn: text('isbn'),
+  title: text('title').notNull(), // 书名
+  author: text('author'), // 作者
+  publisher: text('publisher'), // 出版社
+  requesterCount: integer('requester_count').default(1), // 荐购人数
+  requesters: text('requesters'), // 荐购人
+  source: text('source'),
+  raw: text('raw', { mode: 'json' }).$type<Record<string, unknown>>(),
+  createdAt: text('created_at').notNull().default('CURRENT_TIMESTAMP'),
 })
 
 export const borrowTransactions = sqliteTable('borrow_transactions', {
@@ -51,15 +132,18 @@ export const borrowTransactions = sqliteTable('borrow_transactions', {
   bookId: text('book_id')
     .notNull()
     .references(() => books.id),
-  userId: text('user_id')
-    .notNull()
-    .references(() => user.id),
+  // App-created loans reference a login `user`; imported 番薯 loans reference a
+  // `member` (no login account). Exactly one is set.
+  userId: text('user_id').references(() => user.id),
+  memberId: text('member_id').references(() => members.id),
   libraryId: text('library_id')
     .notNull()
     .references(() => libraries.id),
   borrowedAt: text('borrowed_at').notNull(),
   dueDate: text('due_date').notNull(),
   returnedAt: text('returned_at'),
+  source: text('source'), // 'fanshu-import' for imported history
+  raw: text('raw', { mode: 'json' }).$type<Record<string, unknown>>(),
 })
 
 export const feedback = sqliteTable('feedback', {
@@ -90,11 +174,21 @@ export const booksRelations = relations(books, ({ one, many }) => ({
   borrowTransactions: many(borrowTransactions),
 }))
 
+export const membersRelations = relations(members, ({ one, many }) => ({
+  library: one(libraries, { fields: [members.libraryId], references: [libraries.id] }),
+  user: one(user, { fields: [members.userId], references: [user.id] }),
+  borrowTransactions: many(borrowTransactions),
+}))
+
 export const borrowTransactionsRelations = relations(borrowTransactions, ({ one }) => ({
   book: one(books, { fields: [borrowTransactions.bookId], references: [books.id] }),
+  member: one(members, { fields: [borrowTransactions.memberId], references: [members.id] }),
 }))
 
 export type Library = typeof libraries.$inferSelect
 export type Book = typeof books.$inferSelect
+export type Member = typeof members.$inferSelect
+export type Review = typeof reviews.$inferSelect
+export type PurchaseRequest = typeof purchaseRequests.$inferSelect
 export type BorrowTransaction = typeof borrowTransactions.$inferSelect
 export type Feedback = typeof feedback.$inferSelect
