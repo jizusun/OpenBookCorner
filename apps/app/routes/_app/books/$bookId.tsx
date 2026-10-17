@@ -30,7 +30,7 @@ function BookDetailPage() {
   // Admin-only: who currently holds the book. Only query when admin + borrowed.
   const { data: borrower } = useQuery({
     ...trpc.book.borrower.queryOptions({ bookId }),
-    enabled: !!manageMode && !!book && !book.isAvailable,
+    enabled: !!manageMode && !!book && book.availableCount < book.quantity,
   })
 
   const borrow = useMutation({
@@ -136,13 +136,15 @@ function BookDetailPage() {
             </dl>
 
             <div className="flex items-center gap-3">
-              <Badge variant={book.isAvailable ? 'default' : 'secondary'}>
-                {book.isAvailable ? 'Available' : 'Borrowed'}
+              <Badge variant={book.availableCount > 0 ? 'default' : 'secondary'}>
+                {book.availableCount > 0
+                  ? `Available · ${book.availableCount} of ${book.quantity}`
+                  : `All ${book.quantity} copies borrowed`}
               </Badge>
               {!manageMode && (
                 <Button
                   size="sm"
-                  disabled={!book.isAvailable || borrow.isPending}
+                  disabled={book.availableCount <= 0 || borrow.isPending}
                   onClick={() => borrow.mutate({ bookId })}
                 >
                   {borrow.isPending ? 'Borrowing…' : 'Borrow'}
@@ -151,7 +153,7 @@ function BookDetailPage() {
             </div>
 
             {/* Admin: current borrower + due date */}
-            {manageMode && !book.isAvailable && borrower && (
+            {manageMode && book.availableCount < book.quantity && borrower && (
               <div
                 className="rounded-md border border-input bg-muted/40 px-3 py-2 text-sm"
                 data-testid="borrower-info"

@@ -8,6 +8,13 @@
       "when": 1792175869558,
       "tag": "0000_cold_red_wolf",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1792210644112,
+      "tag": "0001_fresh_jackal",
+      "breakpoints": true
     }
   ]
 }

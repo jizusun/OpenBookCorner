@@ -9,6 +9,8 @@ export interface BookCardBook {
   author: string
   isbn: string
   isAvailable: boolean
+  availableCount?: number
+  quantity?: number
   publisher?: string | null
   publishedYear?: number | null
   coverImageUrl?: string | null
@@ -23,6 +25,11 @@ interface BookCardProps {
 }
 
 export function BookCard({ book, onBorrow, pending, canBorrow = true }: BookCardProps) {
+  // Prefer the copy counts (B3); fall back to the isAvailable boolean for safety.
+  const available = book.availableCount ?? (book.isAvailable ? 1 : 0)
+  const total = book.quantity ?? 1
+  const hasCopies = total > 1 || book.availableCount != null
+
   return (
     <Card className="w-full">
       <CardContent className="flex gap-4 p-4">
@@ -56,15 +63,15 @@ export function BookCard({ book, onBorrow, pending, canBorrow = true }: BookCard
           <p className="text-xs text-muted-foreground">ISBN: {book.isbn}</p>
 
           <div className="mt-auto flex items-center justify-between pt-3">
-            <Badge variant={book.isAvailable ? 'default' : 'secondary'}>
-              {book.isAvailable ? 'Available' : 'Borrowed'}
+            <Badge variant={available > 0 ? 'default' : 'secondary'}>
+              {available > 0
+                ? hasCopies
+                  ? `Available · ${available} of ${total}`
+                  : 'Available'
+                : 'All copies borrowed'}
             </Badge>
             {canBorrow && (
-              <Button
-                size="sm"
-                disabled={!book.isAvailable || pending}
-                onClick={() => onBorrow(book.id)}
-              >
+              <Button size="sm" disabled={available <= 0 || pending} onClick={() => onBorrow(book.id)}>
                 Borrow
               </Button>
             )}

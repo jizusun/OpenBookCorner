@@ -59,10 +59,18 @@ describe('BookCard', () => {
   })
 
   // --- Negation ---
-  it('disables Borrow and shows Borrowed when unavailable', async () => {
-    renderCard({ ...availableBook, isAvailable: false })
+  it('disables Borrow and shows all-copies-borrowed when unavailable', async () => {
+    renderCard({ ...availableBook, isAvailable: false, availableCount: 0, quantity: 2 })
     expect(await screen.findByRole('button', { name: 'Borrow' })).toBeDisabled()
-    expect(screen.getByText('Borrowed')).toBeInTheDocument()
+    expect(screen.getByText(/All copies borrowed/i)).toBeInTheDocument()
+  })
+
+  it('shows "M of N available" for a multi-copy book and allows borrow', async () => {
+    const onBorrow = vi.fn()
+    renderCard({ ...availableBook, availableCount: 1, quantity: 3 }, onBorrow)
+    expect(await screen.findByText(/1 of 3/)).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Borrow' }))
+    expect(onBorrow).toHaveBeenCalledWith('1')
   })
 
   it('shows a "No cover" placeholder when no cover is provided', async () => {

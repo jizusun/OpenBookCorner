@@ -27,7 +27,9 @@ export async function createTestDb(): Promise<Database> {
     CREATE TABLE books (
       id TEXT PRIMARY KEY, isbn TEXT NOT NULL, title TEXT NOT NULL, author TEXT NOT NULL,
       publisher TEXT, published_year INTEGER, cover_image_url TEXT, description TEXT, subjects TEXT,
-      library_id TEXT NOT NULL, is_available INTEGER NOT NULL DEFAULT 1,
+      library_id TEXT NOT NULL,
+      quantity INTEGER NOT NULL DEFAULT 1, available_count INTEGER NOT NULL DEFAULT 1,
+      is_available INTEGER NOT NULL DEFAULT 1,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
     CREATE TABLE borrow_transactions (
@@ -76,14 +78,22 @@ export async function seedUser(db: Database, id: string, libraryId: string, role
   })
 }
 
-export async function seedBook(db: Database, id: string, libraryId: string, isbn = '9780000000001') {
+export async function seedBook(
+  db: Database,
+  id: string,
+  libraryId: string,
+  isbn = '9780000000001',
+  quantity = 1,
+) {
   await db.insert(schema.books).values({
     id,
     isbn,
     title: `Book ${id}`,
     author: 'Author',
     libraryId,
-    isAvailable: true,
+    quantity,
+    availableCount: quantity,
+    isAvailable: quantity > 0,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   })

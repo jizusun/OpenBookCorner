@@ -232,6 +232,47 @@ test.describe('Admin', () => {
     await page.getByRole('button', { name: 'Search' }).click()
     await expect(page.getByRole('link', { name: unique })).toBeVisible()
   })
+
+  test('multi-copy book stays borrowable until the last copy (B3)', async ({ page }) => {
+    // Admin adds a book with 2 copies.
+    await login(page, 'admin@demo.test', 'Library Catalog')
+    await page.getByRole('link', { name: 'Add Book' }).first().click()
+    await expect(page.getByRole('heading', { name: 'Add Book' })).toBeVisible()
+
+    const unique = `Multi Copy ${Date.now()}`
+    await page.getByLabel('ISBN').fill(`978${Date.now().toString().slice(-10)}`)
+    await page.getByLabel('Title').fill(unique)
+    await page.getByLabel('Author').fill('E2E Author')
+    await page.getByLabel(/Copies/i).fill('2')
+    await page.getByRole('button', { name: 'Add Book' }).click()
+    await expect(page.getByTestId('add-success')).toBeVisible()
+
+    // Switch to Reader view to borrow (admin cannot borrow in Admin view).
+    await page.getByTestId('view-switch').click() // Admin -> Reader
+    await expect(page.getByRole('heading', { name: 'My Books' })).toBeVisible()
+
+    // Find the new 2-copy book in the catalog and open its detail.
+    await page.getByRole('link', { name: 'Catalog' }).first().click()
+    await page.getByTestId('search-input').fill(unique)
+    await page.getByRole('button', { name: 'Search' }).click()
+    await page.getByRole('link', { name: unique }).click()
+
+    // 2 of 2 available, Borrow enabled.
+    await expect(page.getByText(/2 of 2/)).toBeVisible()
+    let borrowBtn = page.getByRole('button', { name: 'Borrow' })
+    await expect(borrowBtn).toBeEnabled()
+    await borrowBtn.click()
+
+    // After one borrow: 1 of 2, still borrowable.
+    await expect(page.getByText(/1 of 2/)).toBeVisible()
+    borrowBtn = page.getByRole('button', { name: 'Borrow' })
+    await expect(borrowBtn).toBeEnabled()
+    await borrowBtn.click()
+
+    // Last copy gone: all copies borrowed, Borrow disabled.
+    await expect(page.getByText(/All 2 copies borrowed/)).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Borrow' })).toBeDisabled()
+  })
 })
 
 test.describe('Super admin (tenant management)', () => {

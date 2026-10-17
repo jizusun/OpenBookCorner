@@ -19,6 +19,7 @@ function AddBookPage() {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [isbn, setIsbn] = useState('')
+  const [quantity, setQuantity] = useState('1')
   // Metadata captured from the Open Library lookup (saved with the book).
   const [meta, setMeta] = useState<{
     publisher?: string
@@ -82,6 +83,7 @@ function AddBookPage() {
         title: title.trim(),
         author: author.trim(),
         isbn: isbn.trim(),
+        quantity: Math.max(1, Number(quantity) || 1),
         publisher: meta.publisher,
         publishedYear: meta.publishedYear,
         coverImageUrl: meta.coverImageUrl,
@@ -94,6 +96,7 @@ function AddBookPage() {
       setTitle('')
       setAuthor('')
       setIsbn('')
+      setQuantity('1')
       setMeta({})
       setInfo(null)
     } catch (err) {
@@ -159,6 +162,17 @@ function AddBookPage() {
             <div className="space-y-2">
               <Label htmlFor="author">Author</Label>
               <Input id="author" value={author} onChange={(e) => setAuthor(e.target.value)} required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="quantity">Copies (册数)</Label>
+              <Input
+                id="quantity"
+                type="number"
+                min={1}
+                max={999}
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+              />
             </div>
 
             {error && <p className="text-sm text-destructive" data-testid="add-error">{error}</p>}
