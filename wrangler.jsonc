@@ -14,7 +14,13 @@
   "vars": {
     "ENVIRONMENT": "production",
     "APP_NAME": "OpenBookCorner",
-    "APP_ORIGIN": "https://openbookcorner.jizu.dev"
+    "APP_ORIGIN": "https://openbookcorner.jizu.dev",
+    // Allow-list of public origins that may front this Worker at once: the
+    // global Cloudflare domain AND the China relay (Traefik on qcloud) at
+    // obc.cloud.jizu.dev:666. The relay forwards X-Forwarded-Origin with the
+    // :666 origin; the Worker only honors forwarded origins in this list, and
+    // Better Auth trusts the whole list — so login works on both domains.
+    "APP_ORIGINS": "https://openbookcorner.jizu.dev,https://obc.cloud.jizu.dev:666"
   },
   "d1_databases": [
     {
@@ -48,7 +54,11 @@
   "previews": {
     "vars": {
       "ENVIRONMENT": "preview",
-      "APP_NAME": "OpenBookCorner (Preview)"
+      "APP_NAME": "OpenBookCorner (Preview)",
+      // Allow-listed relay origin for preview too: if a relay (Traefik) forwards
+      // X-Forwarded-Origin matching this list, the preview Worker + Better Auth
+      // honor it. The per-PR preview host itself is still request-derived.
+      "APP_ORIGINS": "https://obc.cloud.jizu.dev:666"
     },
     "d1_databases": [
       {
