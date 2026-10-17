@@ -98,9 +98,14 @@ roles_sql="
 
 run_roles() {
   if [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
-    # CI / token path: wrangler authenticates with CLOUDFLARE_API_TOKEN and
-    # addresses D1 by NAME (not id).
-    bunx wrangler d1 execute "$D1_NAME" --remote --command "$roles_sql" >/dev/null 2>&1
+    # CI / token path: wrangler authenticates with CLOUDFLARE_API_TOKEN.
+    # Prefer the DB binding + --preview (resolves the preview_database_id in
+    # wrangler.jsonc); fall back to addressing by name if SEED_D1_BINDING unset.
+    if [[ -n "${SEED_D1_BINDING:-}" ]]; then
+      bunx wrangler d1 execute "$SEED_D1_BINDING" --remote --preview --command "$roles_sql" >/dev/null 2>&1
+    else
+      bunx wrangler d1 execute "$D1_NAME" --remote --command "$roles_sql" >/dev/null 2>&1
+    fi
   else
     # Local path: cf uses interactive OAuth and addresses D1 by id.
     "$CF" d1 query "$D1_ID" --sql "$roles_sql" >/dev/null 2>&1
