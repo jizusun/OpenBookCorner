@@ -50,22 +50,39 @@ CF="cf"
 
 echo "Seeding demo users into ${ORIGIN} (D1 ${D1_ID}, library ${LIBRARY_ID})"
 
-signup() {
-  local email="$1" name="$2"
-  local code
-  code=$(curl -s -o /dev/null -w "%{http_code}" \
-    -X POST "${ORIGIN}/api/auth/sign-up/email" \
-    -H "Origin: ${ORIGIN}" -H "Content-Type: application/json" \
-    -d "{\"email\":\"${email}\",\"password\":\"${PASSWORD}\",\"name\":\"${name}\"}")
-  # 200 = created; 4xx = already exists (idempotent) — both acceptable.
-  if [[ "$code" == "200" ]]; then
-    echo "  created ${email}"
-  elif [[ "$code" =~ ^4 ]]; then
-    echo "  ${email} already exists (skip)"
-  else
-    echo "  ERROR signing up ${email}: HTTP ${code}" >&2
-    exit 1
+# Wait for the just-deployed Worker/custom-domain to be reachable (a brand-new
+# route can cold-start / propagate for a few seconds and 5xx the first requests).
+echo "Waiting for ${ORIGIN}/health ..."
+for i in $(seq 1 30); do
+  if [[ "$(curl -s -o /dev/null -w "%{http_code}" "${ORIGIN}/health")" == "200" ]]; then
+    echo "  health OK"
+    break
   fi
+  sleep 2
+done
+
+signup() {
+  local email="$1" name="$2" code attempt=0
+  while :; do
+    code=$(curl -s -o /dev/null -w "%{http_code}" \
+      -X POST "${ORIGIN}/api/auth/sign-up/email" \
+      -H "Origin: ${ORIGIN}" -H "Content-Type: application/json" \
+      -d "{\"email\":\"${email}\",\"password\":\"${PASSWORD}\",\"name\":\"${name}\"}")
+    # 200 = created; 4xx = already exists (idempotent) — both acceptable.
+    if [[ "$code" == "200" ]]; then
+      echo "  created ${email}"; return 0
+    elif [[ "$code" =~ ^4 ]]; then
+      echo "  ${email} already exists (skip)"; return 0
+    fi
+    # 5xx (or 000 network) — likely cold start / propagation; retry.
+    attempt=$((attempt + 1))
+    if [[ "$attempt" -ge 6 ]]; then
+      echo "  ERROR signing up ${email}: HTTP ${code} after ${attempt} attempts" >&2
+      return 1
+    fi
+    echo "  ${email}: HTTP ${code} (attempt ${attempt}) — retrying in 3s..." >&2
+    sleep 3
+  done
 }
 
 signup "reader@demo.test" "Demo Reader"
