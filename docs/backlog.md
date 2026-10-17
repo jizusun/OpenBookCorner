@@ -275,3 +275,73 @@ onto 番薔's reader/admin Mini Program separation. Alignment notes & gaps:
   closest to their SaaS console. Keep distinct from library-admin.
 - **Shelf location** (A01-style) recurs in both reader detail and admin cataloging → **B6** gains priority
   as it threads through several screens.
+
+
+---
+
+## 番薯借阅 — UI spec with source tiers (user-provided, 2026-10-17)
+
+> **Confidence tiers** — do not treat lower tiers as requirements:
+> - **【官网确认 / Official】** stated on the official/case site.
+> - **【截图·视频可见 / Observed】** visible in early real screenshots or demo videos.
+> - **【惯例推断 / Inferred】** standard Mini Program structure; **NOT fact** — do not write into specs.
+> No public pixel-level design exists; descriptions stop at "region + position + copy". Two Mini
+> Programs (reader + admin), NOT one app with tabs; web backend is auxiliary; phone-driven.
+
+### Reader app
+- **Home** — 【Official】 search by 书名/作者/ISBN; 馆内动态 as a feed (new books, reviews, 荐购, arrivals).
+  【Inferred】 top = library name; search bar on top; bottom tab bar (names unknown — do not hardcode).
+- **Book detail** — 【Official】 details, borrow status, **索书位置 (shelf location)**; "已借完" when out;
+  actions 预约 / 到馆通知 / 续借 / 书评 / 收藏 / 分享. 【Observed】 shows title, author, publisher,
+  **可借数量**, **书架位置 (e.g. A01)**.
+- **"我" → 已预约图书** — 【Observed, most reliable screen】 cards: 书名, 作者, 预约时间, **距释放还有 X 天**,
+  书架位置; a wide **「生成借书码」** button at the bottom; 「取消预约」 entry. Flow 【Official】:
+  take the book off the shelf → 我 → 已预约图书 → select (default all) → 生成借书码 → admin scans.
+- **My loans / history** — 【Official】 在借 / 预约 / 历史 as lists; 续借 button on active loans.
+- **Borrow happens via two paths** (NOT "tap Borrow on detail → instantly borrowed"):
+  A) 【Observed】 预约 → 生成借书码 → admin scans; B) 【Official】 现场扫码自助借还.
+
+### Admin app
+- **Switcher** — 【Observed】 switch library inside the Mini Program; admin vs user are separate; top shows current library name.
+- **Scan-to-catalog (core)** — 【Observed】 「扫码入书」 → camera → on scan: 「选择分类」, running count
+  ("扫码:(N)"), 「录入」 / 「结束录书」; stays in camera for continuous entry; returns to 藏书 list (count +1).
+  Picture-book libraries print spine labels/codes per book.
+- **Catalog list** — 【Observed】 total count; grouped by shelf ("书架2"); title + copy info per book.
+  【Official】 edit book info on mobile.
+- **Members** — 【Observed】 member count, 「邀请新成员」, member list (avatar/nickname) → 「TA的借阅」;
+  开通权限 / 分配管理员.
+- **Borrow/return** — 【Observed】 NOT a standalone page: member list → person → 「TA的借阅」 → 「还书」
+  (inline) / borrow-for-them → scan → confirm. 【Official】 admin proxy borrow/return, 线上寄送, 线下扫码.
+- **Stats** — 【Official】 borrow data, hot books, overdue. (chart style not published — don't hardcode.)
+
+### Must NOT write as fact (official left blank)
+Bottom-tab names/order; back-arrow presence; cover layout (left-img vs stacked); admin dashboard cards;
+color theme (white is a guess); any "+" FAB (that was fabricated, not 番薯); the PC backend's look.
+
+### Fidelity guidance for our PWA
+- **Must align (evidence-backed):** reader borrow goes via **预约 → 生成借书码** or **扫码自助** (two paths);
+  reservation cards show **距释放还有 X 天 + 书架位**; admin cataloging = camera + 选分类 + 结束录书;
+  **还书 lives inside member detail**, not a standalone page; members have **邀请新成员**.
+- **Free to design:** overall palette (we use SAP Fiori), tab copy, home feed layout, book-detail layout,
+  admin dashboard.
+- **Don't copy wrong:** not "reader taps Borrow → instantly borrowed" as the only model; not an app
+  (it's two Mini Programs); not PC-backend-driven (phone-driven).
+
+### Extracted must-align requirements → backlog mapping
+These evidence-backed behaviors become concrete items (feed into existing B#/R# where they fit):
+| Must-align behavior | Backlog item | Notes |
+|---|---|---|
+| **Reserve/hold** + "距释放还有 X 天" + arrival notify | **B13** (reservations/holds) | reservation card must show days-until-release + shelf loc |
+| **生成借书码 (borrow code)** reader self-borrow path | **B2** (scan-to-borrow) extend → add a reader **borrow-code** sub-flow (reader shows code, admin scans) |
+| **扫码自助借还** second path | **B2** | already planned |
+| **Shelf location (A01)** on detail + reservation + catalog grouping | **B6** (shelf location) | threads through reader detail, holds, admin catalog grouping |
+| **Scan-to-catalog UX**: camera + 选分类 + running count + 结束录书 (continuous) | **B21**/new **catalog scan-queue UX** | our Add Book is one-at-a-time; add a continuous scan queue |
+| **Catalog grouped by shelf** | **B6** |
+| **Admin proxy borrow/return inside member detail** ("find person → scan book") | **B14** (order/proxy modes) | 还书 is inline in member detail, not a page |
+| **Member management**: list, **邀请新成员** (invite code), 开通权限, 分配管理员 | **R4 + B11** | invite-code join flow |
+| **续借 (renew)** on active loans | **B4** | `allowExtensions` already in settings |
+| **Library-defined categories** (选分类 at catalog time) | **B19** |
+
+> These refine (not replace) the existing P0–P3 roadmap. Suggested near-term, evidence-backed slice:
+> **B3 (multiple copies)** → **B6 (shelf location)** → **B13 (holds + 借书码 + 距释放 X 天)** → **B2 (scan-to-borrow + borrow-code)**,
+> since copies+shelf-location underpin the reservation and catalog screens that 番薯's real UI centers on.
