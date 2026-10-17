@@ -21,6 +21,7 @@
       "binding": "DB",
       "database_name": "openbookcorner",
       "database_id": "11371372-82fe-488e-b497-2e94518ce488",
+      "preview_database_id": "6d67a9a0-0ac1-4c50-bbef-6c035e3300a7",
       "migrations_dir": "./db/migrations"
     }
   ],
@@ -37,17 +38,17 @@
     { "pattern": "openbookcorner.jizu.dev", "custom_domain": true, "previews_enabled": true }
   ],
 
-  // Required for `wrangler preview` / Workers Builds preview builds. Reuses the
-  // Isolated preview resources: previews bind a SEPARATE D1 + R2 (never
-  // production data), per Copilot security review. ENVIRONMENT=preview so auth
-  // trusts localhost + our own *.openbookcorner.jizu.dev preview origins (NOT
-  // *.workers.dev). BETTER_AUTH_SECRET must be provided to previews via the
-  // Workers Builds preview env (no hardcoded fallback is used for a real deploy).
+  // Required for `wrangler preview`. Previews run on the SAME Worker, bound to
+  // ISOLATED preview resources (separate D1 + R2 — never production data), per
+  // Copilot security review. ENVIRONMENT=preview so auth trusts localhost + our
+  // own *.openbookcorner.jizu.dev preview origins (NOT *.workers.dev). The
+  // per-PR preview host is pr-<n>.openbookcorner.jizu.dev; the Worker derives
+  // APP_ORIGIN from the request in preview, so no static origin is set here.
+  // BETTER_AUTH_SECRET is provided per-preview by the workflow (preview secret).
   "previews": {
     "vars": {
       "ENVIRONMENT": "preview",
-      "APP_NAME": "OpenBookCorner (Preview)",
-      "APP_ORIGIN": "https://openbookcorner.jizu.dev"
+      "APP_NAME": "OpenBookCorner (Preview)"
     },
     "d1_databases": [
       {

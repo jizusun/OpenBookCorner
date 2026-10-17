@@ -60,7 +60,8 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: '4.151.1'
-          command: d1 migrations apply openbookcorner-preview --remote
+          # Targets the preview D1 via `preview_database_id` on the DB binding.
+          command: d1 migrations apply DB --remote --preview
 
       - name: Deploy per-PR Preview (same Worker)
         id: preview
@@ -86,7 +87,7 @@ jobs:
       - name: Seed demo users into the preview DB
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          SEED_D1_NAME: openbookcorner-preview
+          SEED_D1_BINDING: DB
           PREVIEW_URL: ${{ steps.preview.outputs.preview_url }}
         run: |
           chmod +x db/scripts/seed-users.sh
