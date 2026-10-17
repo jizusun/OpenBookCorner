@@ -3,7 +3,7 @@ import { TRPCError } from '@trpc/server'
 
 import { adminProcedure, router, tenantProcedure } from '../lib/trpc'
 import { LibraryService } from '../services'
-import { FanshuImportService, previewFanshuImport } from '../services/fanshuImport'
+import { FanshuImportService, fetchFanshuWorkbook, previewFanshuImport } from '../services/fanshuImport'
 
 // A sheet is an array of row objects keyed by the 番薯 Chinese headers. We accept
 // unknown record shapes (transforms + raw JSON tolerate any columns) but cap
@@ -52,4 +52,15 @@ export const libraryRouter = router({
     .mutation(({ ctx, input }) =>
       new FanshuImportService(ctx.db).import(ctx.libraryId, input.sheets),
     ),
+
+  // Same as above, but the Worker fetches + parses the .xls from a 番薯 export
+  // URL (browser can't fetch it cross-origin). `preview: true` = counts only.
+  importFanshuFromUrl: adminProcedure
+    .input(z.object({ url: z.string().url(), preview: z.boolean().optional() }))
+    .mutation(async ({ ctx, input }) => {
+      const sheets = await fetchFanshuWorkbook(input.url)
+      return input.preview
+        ? previewFanshuImport(ctx.libraryId, sheets)
+        : new FanshuImportService(ctx.db).import(ctx.libraryId, sheets)
+    }),
 })

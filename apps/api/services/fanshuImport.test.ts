@@ -3,7 +3,7 @@ import { createTestDb, seedLibrary, type Db } from '@obc/db/testing'
 import { eq } from 'drizzle-orm'
 import { books, members, borrowTransactions, reviews, purchaseRequests } from '@obc/db'
 
-import { FanshuImportService, previewFanshuImport, type FanshuSheets } from './fanshuImport'
+import { FanshuImportService, previewFanshuImport, fetchFanshuWorkbook, type FanshuSheets } from './fanshuImport'
 
 const LIB = 'lib-sap'
 
@@ -81,5 +81,20 @@ describe('FanshuImportService', () => {
     expect((await db.select().from(books).where(eq(books.libraryId, LIB)))).toHaveLength(2)
     expect((await db.select().from(members).where(eq(members.libraryId, LIB)))).toHaveLength(2)
     expect((await db.select().from(borrowTransactions).where(eq(borrowTransactions.libraryId, LIB)))).toHaveLength(1)
+  })
+})
+
+describe('fetchFanshuWorkbook (SSRF guard)', () => {
+  it('rejects non-https URLs', async () => {
+    await expect(fetchFanshuWorkbook('http://cos1.fanshujieyue.com/x.xls')).rejects.toThrow('URL_MUST_BE_HTTPS')
+  })
+  it('rejects hosts outside fanshujieyue.com', async () => {
+    await expect(fetchFanshuWorkbook('https://evil.example.com/x.xls')).rejects.toThrow('URL_HOST_NOT_ALLOWED')
+    await expect(fetchFanshuWorkbook('https://169.254.169.254/x.xls')).rejects.toThrow('URL_HOST_NOT_ALLOWED')
+    // a lookalike host must not pass the suffix check
+    await expect(fetchFanshuWorkbook('https://fanshujieyue.com.evil.com/x.xls')).rejects.toThrow('URL_HOST_NOT_ALLOWED')
+  })
+  it('rejects a malformed URL', async () => {
+    await expect(fetchFanshuWorkbook('not a url')).rejects.toThrow('INVALID_URL')
   })
 })
