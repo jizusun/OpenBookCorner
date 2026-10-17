@@ -13,6 +13,7 @@
     "typecheck": "tsc --build"
   },
   "dependencies": {
+    "@libsql/client": "^0.18.0",
     "@obc/api": "workspace:*",
     "@tanstack/react-query": "^5.62.0",
     "@tanstack/react-router": "^1.95.0",
@@ -24,6 +25,7 @@
     "better-auth": "^1.2.8",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "drizzle-orm": "0.44.2",
     "hono": "^4.6.14",
     "lucide-react": "^0.469.0",
     "react": "^19.0.0",
