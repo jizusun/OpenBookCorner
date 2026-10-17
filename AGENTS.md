@@ -50,12 +50,26 @@ Bun monorepo (workspaces: `apps/*`, `db`, `packages/*`):
 - Secret: `BETTER_AUTH_SECRET` on the API worker (`wrangler secret put`).
 - Deploy env is WSL + Windows mihomo proxy: route Node fetch through `HTTPS_PROXY=http://127.0.0.1:7890`.
   `cf` CLI is authenticated via OAuth for token minting; wrangler used for D1 + deploy.
-- **Preview demo users**: the isolated preview D1 (`openbookcorner-preview`) is NOT auto-seeded with
-  login accounts — only the local E2E D1 is (via `e2e/global-setup.ts`). After a preview deploys, seed
-  the demo users (reader/admin/super @demo.test, password `password123`) with:
-  `CLOUDFLARE_ACCOUNT_ID=… HTTPS_PROXY=http://127.0.0.1:7890 bun run db:seed:users <PREVIEW_ORIGIN> <PREVIEW_D1_ID>`
-  (idempotent; signs up via the deployed Worker then sets role+libraryId via `cf d1`). Preview D1 id =
-  `6d67a9a0-0ac1-4c50-bbef-6c035e3300a7`.
+- **Preview deploys (GitHub Actions, not Workers Builds)**: Workers Builds *preview* builds are
+  DISABLED. Previews are deployed by `.github/workflows/preview.yml` on `pull_request`: it builds the
+  SPA, applies D1 migrations to the preview DB, deploys a **dedicated preview Worker**
+  (`openbookcorner-preview`, config `wrangler.preview.jsonc`) on the fixed host
+  `https://preview.openbookcorner.jizu.dev`, seeds demo users, and comments the URL on the PR.
+  It is a SINGLE shared preview environment for all PRs (bound to the isolated preview D1
+  `6d67a9a0-0ac1-4c50-bbef-6c035e3300a7` + R2 `openbookcorner-covers-preview`), not per-branch.
+  Production still deploys via Workers Builds on merge to `main`.
+  - Required repo secret: **`CLOUDFLARE_API_TOKEN`** scoped to: Account › **Workers Scripts: Edit**,
+    Account › **D1: Edit**, Account › **Workers R2 Storage: Edit**, Account › **Account Settings: Read**,
+    and Zone (openbookcorner.jizu.dev) › **Workers Routes: Edit** (for the custom-domain route).
+    `CLOUDFLARE_ACCOUNT_ID` is set as a non-secret env in the workflow. (Cloudflare does NOT support
+    GitHub OIDC for wrangler deploys, so a stored token is required.)
+  - The preview Worker uses `ENVIRONMENT=preview` → tolerates a missing `BETTER_AUTH_SECRET`
+    (deterministic dev fallback); production fails closed on a missing secret.
+- **Manual preview-user seeding** (reader/admin/super @demo.test, password `password123`):
+  the CI step calls `db/scripts/seed-users.sh <ORIGIN> <D1_ID>` (idempotent). Run it locally with:
+  `CLOUDFLARE_ACCOUNT_ID=… HTTPS_PROXY=http://127.0.0.1:7890 bun run db:seed:users <ORIGIN> <PREVIEW_D1_ID>`
+  (local path uses `cf d1 query`; when `CLOUDFLARE_API_TOKEN` is set it uses
+  `wrangler d1 execute $SEED_D1_NAME --remote`). Preview D1 id = `6d67a9a0-0ac1-4c50-bbef-6c035e3300a7`.
 
 
 ## Agent tooling available in this repo
