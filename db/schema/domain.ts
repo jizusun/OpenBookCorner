@@ -89,6 +89,14 @@ export const members = sqliteTable('members', {
   department: text('department'), // 部门
   note: text('note'), // 备注1 / 备注2 (merged)
   joinedAt: text('joined_at'), // 入馆日期
+  membershipPlan: text('membership_plan'), // 会员计划
+  memberStart: text('member_start'), // 会员起始日期
+  memberExpiry: text('member_expiry'), // 会员到期日期
+  borrowedCount: integer('borrowed_count'), // 在借数量
+  returnedCount: integer('returned_count'), // 已还数量
+  address: text('address'), // 地址
+  roomNo: text('room_no'), // 房号
+  age: integer('age'), // 年龄
   isPlaceholder: integer('is_placeholder', { mode: 'boolean' }).notNull().default(false),
   userId: text('user_id').references(() => user.id), // linked login account, if any
   source: text('source'), // 'fanshu-import'

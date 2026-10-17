@@ -116,6 +116,42 @@ describe('fanshu transforms', () => {
     expect(b.isShelved).toBe(false)
   })
 
+  it('parses EVERY 成员清单 column into a typed member field', () => {
+    const row = {
+      姓名: 'Mia Gong',
+      成员权限: '馆长',
+      会员计划: '借阅卡',
+      入馆日期: '2019-10-23 20:25:00',
+      会员起始日期: '2020-06-18 22:13:31',
+      会员到期日期: '2294-04-02 22:13:31',
+      在借数量: '2',
+      已还数量: '23',
+      手机: '18201976502',
+      邮箱: 'mia@example.com',
+      地址: 'Somewhere 1',
+      班级: 'Class A',
+      学号: 'S001',
+      部门: 'Eng',
+      工号: 'E001',
+      会员号: 'I332468',
+      房号: 'R12',
+      年龄: '30',
+      备注1: 'note one',
+      备注2: 'note two',
+    }
+    const [m] = transformMembers(input({ members: [row] }))
+    expect(m.membershipPlan).toBe('借阅卡')
+    expect(m.joinedAt).toMatch(/^2019-10-23T/)
+    expect(m.memberStart).toMatch(/^2020-06-18T/)
+    expect(m.memberExpiry).toMatch(/^2294-04-02T/)
+    expect(m.borrowedCount).toBe(2)
+    expect(m.returnedCount).toBe(23)
+    expect(m.address).toBe('Somewhere 1')
+    expect(m.roomNo).toBe('R12')
+    expect(m.age).toBe(30)
+    expect(m.note).toBe('note one | note two')
+  })
+
   it('maps member roles and labels placeholders without dropping rows', () => {
     const members = [
       { 姓名: 'Mia', 成员权限: '馆长', 手机: '123', 会员号: 'I1' },

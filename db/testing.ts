@@ -40,7 +40,10 @@ export async function createTestDb(): Promise<Database> {
       id TEXT PRIMARY KEY, library_id TEXT NOT NULL, name TEXT NOT NULL,
       role TEXT NOT NULL DEFAULT 'library_reader', phone TEXT, email TEXT,
       member_no TEXT, employee_no TEXT, student_no TEXT, class_name TEXT, department TEXT,
-      note TEXT, joined_at TEXT, is_placeholder INTEGER NOT NULL DEFAULT 0,
+      note TEXT, joined_at TEXT,
+      membership_plan TEXT, member_start TEXT, member_expiry TEXT,
+      borrowed_count INTEGER, returned_count INTEGER, address TEXT, room_no TEXT, age INTEGER,
+      is_placeholder INTEGER NOT NULL DEFAULT 0,
       user_id TEXT, source TEXT, raw TEXT,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
