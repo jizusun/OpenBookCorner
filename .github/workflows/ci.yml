@@ -27,13 +27,10 @@ jobs:
       - name: Generate route tree
         run: bun --cwd apps/app generate-routes
 
-      - name: Typecheck (db -> api -> app)
-        run: bun run typecheck
-
       - name: i18n catalogs in sync & fully translated
         run: |
-          # Re-extract against the source; the committed .po catalogs must not
-          # change (i.e. every <Trans>/t`` string is already extracted)...
+          # 1) Re-extract against the source; the committed .po catalogs must
+          #    not change (every <Trans>/t`` string must already be extracted).
           bun --cwd apps/app i18n:extract -- --clean
           if ! git diff --quiet -- 'apps/app/lib/i18n/locales/*.po'; then
             echo "::error::i18n catalogs are out of sync with the source."
@@ -41,8 +38,15 @@ jobs:
             git --no-pager diff --stat -- 'apps/app/lib/i18n/locales/*.po'
             exit 1
           fi
-          # ...and no locale may have missing translations.
+          # 2) Fail if any non-source locale has untranslated (empty) entries.
           bun --cwd apps/app run scripts/check-translations.ts
+          # 3) Compile the runtime catalogs (gitignored) so the typecheck/build
+          #    below can resolve ./locales/{en,zh}. --strict also fails on any
+          #    missing message (Lingui's built-in guard, belt-and-suspenders).
+          bun --cwd apps/app i18n:compile -- --strict
+
+      - name: Typecheck (db -> api -> app)
+        run: bun run typecheck
 
       - name: Unit & component tests
         run: |
