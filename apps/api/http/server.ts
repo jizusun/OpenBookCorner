@@ -1,19 +1,35 @@
 import { Hono } from 'hono'
 
 import type { BaseVars } from '../lib/mw'
+import { resolveTenantHost } from '../lib/tenant'
+import { TenantBrandingService } from '../services/branding'
 import { apiApp } from './app'
 
 /**
  * The full backend mounted by the Worker. Expects the Worker to have set
  * `db`, `auth`, and `env` on the context (BaseVars) before this runs.
  *
- * - /health              — liveness
- * - /api/auth/*          — Better Auth (sign-in/up/out/session)
- * - /api/*               — the typed hc API (apiApp): book/borrowing/library/…
- * - /covers/:key         — R2 cover images (same-origin, immutable cache)
+ * - /health                 — liveness
+ * - /api/public/branding    — UNAUTHENTICATED tenant login branding (safe fields)
+ * - /api/auth/*             — Better Auth (sign-in/up/out/session)
+ * - /api/*                  — the typed hc API (apiApp): book/borrowing/library/…
+ * - /covers/:key            — R2 cover images (same-origin, immutable cache)
  */
 export const serverApp = new Hono<{ Variables: BaseVars }>()
   .get('/health', (c) => c.json({ status: 'healthy', timestamp: new Date().toISOString() }))
+  // Public, pre-auth branding for the tenant login page. Resolve the tenant from
+  // an explicit ?slug=, else from the request Host subdomain. Returns null (200)
+  // for the apex / reserved / unknown host so the client shows the standard
+  // login. Safe fields only (TenantBrandingService); never sensitive data.
+  .get('/api/public/branding', async (c) => {
+    const env = c.get('env')
+    const base = env.TENANT_BASE_DOMAIN ?? new URL(env.APP_ORIGIN).hostname
+    const slug =
+      c.req.query('slug') ?? resolveTenantHost(c.req.header('host') ?? '', base) ?? undefined
+    if (!slug) return c.json(null)
+    const branding = await new TenantBrandingService(c.get('db')).getBySlug(slug)
+    return c.json(branding)
+  })
   .on(['GET', 'POST'], '/api/auth/*', (c) => c.get('auth').handler(c.req.raw))
   .route('/api', apiApp)
   .get('/covers/:key', async (c) => {
