@@ -575,7 +575,7 @@ msgid "Edit Book"
 msgstr "Edit Book"
 
 #: routes/_app/admin/members.$memberId.tsx:73
-#: routes/login.tsx:85
+#: routes/login.tsx:166
 msgid "Email"
 msgstr "Email"
 
@@ -697,7 +697,7 @@ msgstr "Joined"
 msgid "Joined date"
 msgstr "Joined date"
 
-#: routes/login.tsx:25
+#: routes/login.tsx:59
 msgid "Library Admin"
 msgstr "Library Admin"
 
@@ -714,7 +714,7 @@ msgstr "Library created."
 msgid "Library name"
 msgstr "Library name"
 
-#: routes/login.tsx:26
+#: routes/login.tsx:60
 msgid "Library Reader"
 msgstr "Library Reader"
 
@@ -876,7 +876,7 @@ msgstr "Overdue Books"
 msgid "Pages"
 msgstr "Pages"
 
-#: routes/login.tsx:96
+#: routes/login.tsx:177
 msgid "Password"
 msgstr "Password"
 
@@ -1060,11 +1060,12 @@ msgstr "Shelf"
 msgid "Shelved"
 msgstr "Shelved"
 
-#: routes/login.tsx:108
+#: routes/login.tsx:189
 msgid "Sign in"
 msgstr "Sign in"
 
-#: routes/login.tsx:77
+#: routes/login.tsx:37
+#: routes/login.tsx:48
 msgid "Sign in to your library"
 msgstr "Sign in to your library"
 
@@ -1077,7 +1078,7 @@ msgstr "Sign out"
 msgid "Signed in as {0}"
 msgstr "Signed in as {0}"
 
-#: routes/login.tsx:108
+#: routes/login.tsx:189
 msgid "Signing in…"
 msgstr "Signing in…"
 
@@ -1111,7 +1112,7 @@ msgstr "Student no."
 msgid "success"
 msgstr "success"
 
-#: routes/login.tsx:24
+#: routes/login.tsx:58
 msgid "Super Admin"
 msgstr "Super Admin"
 
@@ -1150,8 +1151,8 @@ msgstr "Tenants"
 msgid "Thanks for your feedback! 🎉"
 msgstr "Thanks for your feedback! 🎉"
 
-#: routes/login.tsx:42
-#: routes/login.tsx:64
+#: routes/login.tsx:120
+#: routes/login.tsx:143
 msgid "That email or password doesn’t match. Please try again."
 msgstr "That email or password doesn’t match. Please try again."
 
@@ -1189,7 +1190,7 @@ msgstr "Title"
 msgid "Translator"
 msgstr "Translator"
 
-#: routes/login.tsx:113
+#: routes/login.tsx:65
 msgid "Try a demo account — tap a role to fill it in"
 msgstr "Try a demo account — tap a role to fill it in"
 
@@ -1221,7 +1222,7 @@ msgstr "View in My Books"
 msgid "We could not process this return. It may already be returned."
 msgstr "We could not process this return. It may already be returned."
 
-#: routes/login.tsx:76
+#: routes/login.tsx:45
 msgid "Welcome back"
 msgstr "Welcome back"
 
