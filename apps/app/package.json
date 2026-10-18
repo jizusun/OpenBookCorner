@@ -11,6 +11,7 @@
     "generate-routes": "tsr generate",
     "i18n:extract": "lingui extract",
     "i18n:compile": "lingui compile --typescript",
+    "i18n:lint": "eslint --config eslint.config.js 'routes/**/*.{ts,tsx}' 'components/**/*.{ts,tsx}' 'lib/**/*.{ts,tsx}' 'index.tsx'",
     "i18n:check": "lingui extract --clean && bun run scripts/check-translations.ts",
     "test": "lingui compile --typescript && vitest run",
     "typecheck": "lingui compile --typescript && tsc --build"
@@ -52,9 +53,12 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9",
+    "eslint-plugin-lingui": "^0.16.0",
     "happy-dom": "^15.11.7",
     "jsdom": "^25",
     "tailwindcss": "^4.0.0",
+    "typescript-eslint": "^8",
     "vite": "^6.3.5",
     "wrangler": "^4.42.0"
   }
