@@ -5,6 +5,7 @@ import { z } from 'zod'
 import type { TenantVars } from '../lib/mw'
 import { admin, sessionAuth, tenant } from '../lib/mw'
 import { BookService } from '../services'
+import { AuditService } from '../services/audit'
 import { lookupBookMetadata } from '../services/bookMetadata'
 import { storeCoverImage } from '../services/covers'
 
@@ -67,9 +68,20 @@ export const bookApp = new Hono<{ Variables: TenantVars }>()
       const stored = await storeCoverImage(env.COVERS, coverImageUrl, input.isbn)
       if (stored) coverImageUrl = stored
     }
-    return c.json(
-      await new BookService(c.get('db')).add({ ...input, coverImageUrl, libraryId: c.get('libraryId') }),
-    )
+    const added = await new BookService(c.get('db')).add({
+      ...input,
+      coverImageUrl,
+      libraryId: c.get('libraryId'),
+    })
+    await new AuditService(c.get('db')).log({
+      actorUserId: c.get('user').id,
+      libraryId: c.get('libraryId'),
+      action: 'book.add',
+      targetType: 'book',
+      targetId: (added as { id?: string } | null)?.id ?? null,
+      metadata: { isbn: input.isbn, title: input.title, quantity: input.quantity ?? 1 },
+    })
+    return c.json(added)
   })
   .patch('/:bookId', admin, zValidator('json', updateBody.omit({ bookId: true })), async (c) => {
     const fields = c.req.valid('json')
@@ -80,9 +92,24 @@ export const bookApp = new Hono<{ Variables: TenantVars }>()
       description: fields.description ?? null,
     })
     if (!res.updated) return c.json({ error: 'BOOK_NOT_FOUND' }, 404)
+    await new AuditService(c.get('db')).log({
+      actorUserId: c.get('user').id,
+      libraryId: c.get('libraryId'),
+      action: 'book.update',
+      targetType: 'book',
+      targetId: c.req.param('bookId'),
+    })
     return c.json(res)
   })
-  .delete('/:bookId', admin, async (c) =>
-    c.json(await new BookService(c.get('db')).delete(c.req.param('bookId'), c.get('libraryId'))),
-  )
+  .delete('/:bookId', admin, async (c) => {
+    const res = await new BookService(c.get('db')).delete(c.req.param('bookId'), c.get('libraryId'))
+    await new AuditService(c.get('db')).log({
+      actorUserId: c.get('user').id,
+      libraryId: c.get('libraryId'),
+      action: 'book.delete',
+      targetType: 'book',
+      targetId: c.req.param('bookId'),
+    })
+    return c.json(res)
+  })
   .get('/lookup/:isbn', admin, async (c) => c.json(await lookupBookMetadata(c.req.param('isbn'))))

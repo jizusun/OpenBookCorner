@@ -5,6 +5,7 @@ import { z } from 'zod'
 import type { TenantVars } from '../lib/mw'
 import { admin, sessionAuth, tenant } from '../lib/mw'
 import { LibraryService } from '../services'
+import { AuditService } from '../services/audit'
 import {
   FanshuImportService,
   fetchFanshuWorkbook,
@@ -36,9 +37,20 @@ export const libraryApp = new Hono<{ Variables: TenantVars }>()
     if (!lib) return c.json({ error: 'LIBRARY_NOT_FOUND' }, 404)
     return c.json({ name: lib.name, emailDomains: lib.emailDomains, settings: lib.settings })
   })
-  .put('/settings', admin, zValidator('json', updateSettingsBody), async (c) =>
-    c.json(await new LibraryService(c.get('db')).updateSettings(c.get('libraryId'), c.req.valid('json'))),
-  )
+  .put('/settings', admin, zValidator('json', updateSettingsBody), async (c) => {
+    const res = await new LibraryService(c.get('db')).updateSettings(
+      c.get('libraryId'),
+      c.req.valid('json'),
+    )
+    await new AuditService(c.get('db')).log({
+      actorUserId: c.get('user').id,
+      libraryId: c.get('libraryId'),
+      action: 'library.updateSettings',
+      targetType: 'library',
+      targetId: c.get('libraryId'),
+    })
+    return c.json(res)
+  })
   .post('/import/preview', admin, zValidator('json', z.object({ sheets: fanshuSheets })), async (c) =>
     c.json(await previewFanshuImport(c.get('libraryId'), c.req.valid('json').sheets)),
   )
@@ -77,4 +89,7 @@ export const libraryApp = new Hono<{ Variables: TenantVars }>()
   )
   .get('/import/history', admin, async (c) =>
     c.json(await new FanshuImportService(c.get('db')).listRuns(c.get('libraryId'))),
+  )
+  .get('/audit', admin, async (c) =>
+    c.json(await new AuditService(c.get('db')).listByLibrary(c.get('libraryId'))),
   )
