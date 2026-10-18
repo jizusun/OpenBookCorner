@@ -5,6 +5,7 @@ import { trpc, trpcClient } from '@/lib/trpc'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/components/Toast'
+import { useI18n } from '@/lib/i18n'
 
 export const Route = createFileRoute('/_app/admin/import')({
   beforeLoad: ({ context }) => {
@@ -57,6 +58,7 @@ function ImportPage() {
   const queryClient = useQueryClient()
   const { data: history } = useQuery(trpc.library.importHistory.queryOptions())
   const toast = useToast()
+  const { t } = useI18n()
   const [fileName, setFileName] = useState<string | null>(null)
   const [sheets, setSheets] = useState<Sheets | null>(null)
   const [counts, setCounts] = useState<Counts | null>(null)
@@ -80,7 +82,7 @@ function ImportPage() {
       setCounts(preview)
       setSheets(null) // signals the commit path to use the URL, not parsed sheets
     } catch {
-      setError('Could not fetch that URL. Paste a 番薯借阅 export link (https://…fanshujieyue.com/….xls).')
+      setError(t('import.error.url'))
     } finally {
       setBusy(false)
     }
@@ -109,7 +111,7 @@ function ImportPage() {
       const preview = await trpcClient.library.importFanshuPreview.mutate({ sheets: parsed })
       setCounts(preview)
     } catch {
-      setError('Could not read this file. Make sure it is a 番薯借阅 Excel export (.xls/.xlsx).')
+      setError(t('import.error.file'))
     } finally {
       setBusy(false)
     }
@@ -123,11 +125,11 @@ function ImportPage() {
         ? await trpcClient.library.importFanshu.mutate({ sheets, fileName: fileName ?? undefined })
         : await trpcClient.library.importFanshuFromUrl.mutate({ url: url.trim() })
       setResult(res)
-      toast.success(`Imported ${res.books} books, ${res.members} members, ${res.loans} loans.`)
+      toast.success(t('import.successToast', { books: res.books, members: res.members, loans: res.loans }))
       await queryClient.invalidateQueries({ queryKey: trpc.book.list.queryKey() })
       await queryClient.invalidateQueries({ queryKey: trpc.library.importHistory.queryKey() })
     } catch {
-      setError('Import failed. Please try again.')
+      setError(t('import.error.failed'))
     } finally {
       setBusy(false)
     }
@@ -135,14 +137,12 @@ function ImportPage() {
 
   return (
     <div className="mx-auto max-w-lg space-y-4">
-      <h1 className="text-2xl font-bold">Import from 番薯借阅</h1>
+      <h1 className="text-2xl font-bold">{t('import.title')}</h1>
       <Card>
         <CardHeader>
-          <CardTitle>Upload export</CardTitle>
+          <CardTitle>{t('import.uploadTitle')}</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Upload the 番薯借阅 Excel export (.xls). Books, members, loans, reviews and
-            purchase requests are imported into this library. Re-importing updates
-            existing rows (safe to run again).
+            {t('import.uploadDesc')}
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -155,57 +155,56 @@ function ImportPage() {
           />
 
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span className="h-px flex-1 bg-border" /> or paste a link <span className="h-px flex-1 bg-border" />
+            <span className="h-px flex-1 bg-border" /> {t('import.orPasteLink')} <span className="h-px flex-1 bg-border" />
           </div>
 
           <div className="flex gap-2">
             <input
               type="url"
               inputMode="url"
-              placeholder="https://…fanshujieyue.com/…/librarydata_….xls"
+              placeholder={t('import.urlPlaceholder')}
               data-testid="import-url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               className="flex-1 rounded-md border px-2 py-1 text-sm"
             />
             <Button type="button" variant="outline" onClick={handleUrlImport} disabled={busy || !url.trim()}>
-              Fetch
+              {t('import.fetch')}
             </Button>
           </div>
-          {busy && !result && <p className="text-sm text-muted-foreground">Working…</p>}
+          {busy && !result && <p className="text-sm text-muted-foreground">{t('import.working')}</p>}
           {error && <p className="text-sm text-destructive" data-testid="import-error">{error}</p>}
 
           {counts && !result && (
             <div className="rounded-md border p-3 text-sm" data-testid="import-preview">
-              <p className="font-medium">Preview — {fileName}</p>
+              <p className="font-medium">{t('import.previewTitle', { fileName: fileName ?? '' })}</p>
               <ul className="mt-1 space-y-0.5 text-muted-foreground">
-                <li>{counts.books} books</li>
-                <li>{counts.members} members</li>
-                <li>{counts.loans} loans</li>
-                <li>{counts.reviews} reviews</li>
-                <li>{counts.purchaseRequests} purchase requests</li>
+                <li>{t('import.books', { count: counts.books })}</li>
+                <li>{t('import.members', { count: counts.members })}</li>
+                <li>{t('import.loans', { count: counts.loans })}</li>
+                <li>{t('import.reviews', { count: counts.reviews })}</li>
+                <li>{t('import.purchaseRequests', { count: counts.purchaseRequests })}</li>
                 {(counts.orphanLoans.noMember > 0 || counts.orphanLoans.noBook > 0) && (
                   <li className="text-amber-600">
-                    {counts.orphanLoans.noMember + counts.orphanLoans.noBook} loans skipped
-                    (unmatched member/book)
+                    {t('import.loansSkipped', { count: counts.orphanLoans.noMember + counts.orphanLoans.noBook })}
                   </li>
                 )}
               </ul>
               <Button className="mt-3" onClick={handleImport} disabled={busy}>
-                {busy ? 'Importing…' : 'Import'}
+                {busy ? t('import.importing') : t('import.import')}
               </Button>
             </div>
           )}
 
           {result && (
             <div className="rounded-md border p-3 text-sm" data-testid="import-result">
-              <p className="font-medium text-green-600">Imported successfully</p>
+              <p className="font-medium text-green-600">{t('import.successTitle')}</p>
               <ul className="mt-1 space-y-0.5 text-muted-foreground">
-                <li>{result.books} books</li>
-                <li>{result.members} members</li>
-                <li>{result.loans} loans</li>
-                <li>{result.reviews} reviews</li>
-                <li>{result.purchaseRequests} purchase requests</li>
+                <li>{t('import.books', { count: result.books })}</li>
+                <li>{t('import.members', { count: result.members })}</li>
+                <li>{t('import.loans', { count: result.loans })}</li>
+                <li>{t('import.reviews', { count: result.reviews })}</li>
+                <li>{t('import.purchaseRequests', { count: result.purchaseRequests })}</li>
               </ul>
             </div>
           )}
@@ -215,9 +214,9 @@ function ImportPage() {
       {history && history.length > 0 && (
         <Card data-testid="import-history">
           <CardHeader>
-            <CardTitle>Import history</CardTitle>
+            <CardTitle>{t('import.historyTitle')}</CardTitle>
             <p className="text-sm text-muted-foreground">
-              Every import is recorded with its source and counts.
+              {t('import.historyDesc')}
             </p>
           </CardHeader>
           <CardContent>
@@ -235,20 +234,27 @@ function ImportPage() {
                           run.status === 'success' ? 'text-green-600' : 'text-destructive'
                         }
                       >
-                        {run.status}
+                        {run.status === 'success'
+                          ? t('import.historyStatus.success')
+                          : t('import.historyStatus.failed')}
                       </span>
                     </div>
                     <p className="mt-1 text-muted-foreground">
-                      {c.books ?? 0} books · {c.members ?? 0} members · {c.loans ?? 0} loans ·{' '}
-                      {c.reviews ?? 0} reviews · {c.purchaseRequests ?? 0} requests
+                      {t('import.historyCounts', {
+                        books: c.books ?? 0,
+                        members: c.members ?? 0,
+                        loans: c.loans ?? 0,
+                        reviews: c.reviews ?? 0,
+                        requests: c.purchaseRequests ?? 0,
+                      })}
                     </p>
                     {(run.sourceUrl || run.fileName) && (
                       <p className="mt-1 break-all text-xs text-muted-foreground">
-                        来源: {run.sourceUrl ?? run.fileName}
+                        {t('import.source', { source: run.sourceUrl ?? run.fileName ?? '' })}
                       </p>
                     )}
                     {run.r2Key && (
-                      <p className="break-all text-xs text-muted-foreground">R2: {run.r2Key}</p>
+                      <p className="break-all text-xs text-muted-foreground">{t('import.r2', { key: run.r2Key })}</p>
                     )}
                   </li>
                 )

@@ -6,12 +6,13 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useI18n } from '@/lib/i18n'
 
 const RANGES = [
-  { value: 'all', label: 'All' },
-  { value: '1-7', label: '1–7 days' },
-  { value: '8-14', label: '8–14 days' },
-  { value: '15+', label: '15+ days' },
+  { value: 'all', labelKey: 'overdue.range.all' },
+  { value: '1-7', labelKey: 'overdue.range.1-7' },
+  { value: '8-14', labelKey: 'overdue.range.8-14' },
+  { value: '15+', labelKey: 'overdue.range.15+' },
 ] as const
 
 const searchSchema = z.object({
@@ -34,6 +35,7 @@ function OverduePage() {
   const { range } = Route.useSearch()
   const navigate = Route.useNavigate()
   const active = range ?? 'all'
+  const { t } = useI18n()
 
   const { data: items, isLoading } = useQuery(
     trpc.borrowing.listOverdue.queryOptions({ range: active }),
@@ -41,7 +43,7 @@ function OverduePage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Overdue Books</h1>
+      <h1 className="text-2xl font-bold">{t('overdue.title')}</h1>
 
       <div className="flex flex-wrap gap-2" data-testid="overdue-filters">
         {RANGES.map((r) => (
@@ -51,7 +53,7 @@ function OverduePage() {
             variant={active === r.value ? 'default' : 'outline'}
             onClick={() => navigate({ search: { range: r.value === 'all' ? undefined : r.value } })}
           >
-            {r.label}
+            {t(r.labelKey)}
           </Button>
         ))}
       </div>
@@ -67,8 +69,8 @@ function OverduePage() {
         <EmptyState
           data-testid="overdue-empty"
           icon="✅"
-          title="No overdue books in this range"
-          description="Nothing needs chasing right now."
+          title={t('overdue.empty.title')}
+          description={t('overdue.empty.description')}
         />
       )}
 
@@ -77,10 +79,10 @@ function OverduePage() {
           <table className="w-full text-sm" data-testid="overdue-table">
             <thead className="bg-muted/50 text-left">
               <tr>
-                <th className="p-3">Book</th>
-                <th className="p-3">Borrower</th>
-                <th className="p-3">Due date</th>
-                <th className="p-3">Days overdue</th>
+                <th className="p-3">{t('overdue.col.book')}</th>
+                <th className="p-3">{t('overdue.col.borrower')}</th>
+                <th className="p-3">{t('overdue.col.dueDate')}</th>
+                <th className="p-3">{t('overdue.col.daysOverdue')}</th>
               </tr>
             </thead>
             <tbody>
@@ -88,7 +90,7 @@ function OverduePage() {
                 <tr key={item.transactionId} className="border-t">
                   <td className="p-3">
                     <div className="font-medium">{item.title}</div>
-                    <div className="text-xs text-muted-foreground">by {item.author}</div>
+                    <div className="text-xs text-muted-foreground">{t('overdue.byAuthor', { author: item.author })}</div>
                   </td>
                   <td className="p-3">
                     <div>{item.borrowerName}</div>
@@ -101,7 +103,7 @@ function OverduePage() {
                   </td>
                   <td className="p-3">{new Date(item.dueDate).toLocaleDateString()}</td>
                   <td className="p-3">
-                    <Badge variant="destructive">{item.daysOverdue}d</Badge>
+                    <Badge variant="destructive">{t('overdue.days', { count: item.daysOverdue })}</Badge>
                   </td>
                 </tr>
               ))}

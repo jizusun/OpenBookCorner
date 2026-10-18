@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { useI18n } from '@/lib/i18n'
 
 interface IsbnScannerProps {
   onDetected: (isbn: string) => void
@@ -33,6 +34,7 @@ const isIsbnLike = (v: string) => /^\d{13}$/.test(v) || /^\d{8}$/.test(v)
  * fallback on the Scan / Add pages.
  */
 export function IsbnScanner({ onDetected, onClose }: IsbnScannerProps) {
+  const { t } = useI18n()
   const videoRef = useRef<HTMLVideoElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const rafRef = useRef<number | null>(null)
@@ -52,7 +54,7 @@ export function IsbnScanner({ onDetected, onClose }: IsbnScannerProps) {
         video: { facingMode: 'environment' },
       })
       if (cancelled) {
-        stream.getTracks().forEach((t) => t.stop())
+        stream.getTracks().forEach((track) => track.stop())
         return
       }
       streamRef.current = stream
@@ -100,7 +102,7 @@ export function IsbnScanner({ onDetected, onClose }: IsbnScannerProps) {
 
     async function start() {
       if (typeof navigator === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
-        setError('Camera is not available. Enter the ISBN manually.')
+        setError(t('scanner.error.unavailable'))
         return
       }
       try {
@@ -112,11 +114,11 @@ export function IsbnScanner({ onDetected, onClose }: IsbnScannerProps) {
       } catch (e) {
         const name = (e as { name?: string } | null)?.name
         if (name === 'NotAllowedError' || name === 'SecurityError') {
-          setError('Camera permission denied. Allow camera access or enter the ISBN manually.')
+          setError(t('scanner.error.denied'))
         } else if (name === 'NotFoundError') {
-          setError('No camera found. Enter the ISBN manually.')
+          setError(t('scanner.error.noCamera'))
         } else {
-          setError('Could not start the scanner. Enter the ISBN manually.')
+          setError(t('scanner.error.start'))
         }
       }
     }
@@ -126,9 +128,9 @@ export function IsbnScanner({ onDetected, onClose }: IsbnScannerProps) {
       cancelled = true
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
       zxingControlsRef.current?.stop()
-      streamRef.current?.getTracks().forEach((t) => t.stop())
+      streamRef.current?.getTracks().forEach((track) => track.stop())
     }
-  }, [onDetected])
+  }, [onDetected, t])
 
   return (
     <div className="space-y-3 rounded-md border p-3">
@@ -141,7 +143,7 @@ export function IsbnScanner({ onDetected, onClose }: IsbnScannerProps) {
       )}
       <div className="flex justify-end">
         <Button type="button" variant="outline" size="sm" onClick={onClose}>
-          Cancel scan
+          {t('scanner.cancel')}
         </Button>
       </div>
     </div>

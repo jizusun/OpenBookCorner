@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
+import { useI18n } from '@/lib/i18n'
 
 /**
  * Reusable "paged list → infinite scroll" primitive shared by the catalog and
@@ -43,6 +44,7 @@ export function LoadMoreSentinel({
   isFetchingNextPage: boolean
   fetchNextPage: () => void
 }) {
+  const { t } = useI18n()
   const ref = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
     const el = ref.current
@@ -58,7 +60,7 @@ export function LoadMoreSentinel({
   return (
     <div ref={ref} className="flex justify-center py-4" data-testid="load-more">
       <Button variant="outline" size="sm" disabled={isFetchingNextPage} onClick={fetchNextPage}>
-        {isFetchingNextPage ? '加载中…' : '加载更多'}
+        {isFetchingNextPage ? t('list.loadingMore') : t('list.loadMore')}
       </Button>
     </div>
   )

@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/components/Toast'
+import { useI18n } from '@/lib/i18n'
 
 export const Route = createFileRoute('/_app/admin/settings')({
   beforeLoad: ({ context }) => {
@@ -21,6 +22,7 @@ export const Route = createFileRoute('/_app/admin/settings')({
 function SettingsPage() {
   const queryClient = useQueryClient()
   const toast = useToast()
+  const { t } = useI18n()
 
   const { data: lib, isLoading } = useQuery(trpc.library.settings.queryOptions())
 
@@ -66,34 +68,34 @@ function SettingsPage() {
       })
       await queryClient.invalidateQueries({ queryKey: trpc.library.settings.queryKey() })
       setSaved(true)
-      toast.success('Settings saved.')
+      toast.success(t('settings.savedToast'))
     } catch {
-      setError('Could not save settings. Check the values and try again.')
+      setError(t('settings.error'))
     } finally {
       setPending(false)
     }
   }
 
-  if (isLoading || !current) return <p className="text-muted-foreground">Loading…</p>
+  if (isLoading || !current) return <p className="text-muted-foreground">{t('settings.loading')}</p>
 
   return (
     <div className="mx-auto max-w-lg space-y-4">
-      <h1 className="text-2xl font-bold">Library Settings</h1>
+      <h1 className="text-2xl font-bold">{t('settings.title')}</h1>
       <Card>
         <CardHeader>
-          <CardTitle>Configuration</CardTitle>
+          <CardTitle>{t('settings.configuration')}</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Email domains: {lib?.emailDomains.join(', ')}
+            {t('settings.emailDomains', { domains: lib?.emailDomains.join(', ') ?? '' })}
           </p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4" data-testid="settings-form">
             <div className="space-y-2">
-              <Label htmlFor="name">Library name</Label>
+              <Label htmlFor="name">{t('settings.name')}</Label>
               <Input id="name" value={current.name} onChange={(e) => set('name', e.target.value)} required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="borrowingPeriodDays">Borrowing period (days)</Label>
+              <Label htmlFor="borrowingPeriodDays">{t('settings.borrowingPeriod')}</Label>
               <Input
                 id="borrowingPeriodDays"
                 type="number"
@@ -105,7 +107,7 @@ function SettingsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="maxBooksPerReader">Max books per reader</Label>
+              <Label htmlFor="maxBooksPerReader">{t('settings.maxBooks')}</Label>
               <Input
                 id="maxBooksPerReader"
                 type="number"
@@ -122,12 +124,12 @@ function SettingsPage() {
                 checked={current.allowExtensions}
                 onChange={(e) => set('allowExtensions', e.target.checked)}
               />
-              Allow renewals/extensions
+              {t('settings.allowExtensions')}
             </label>
             {error && <p className="text-sm text-destructive">{error}</p>}
-            {saved && <p className="text-sm text-green-600" data-testid="settings-saved">Settings saved.</p>}
+            {saved && <p className="text-sm text-green-600" data-testid="settings-saved">{t('settings.savedInline')}</p>}
             <Button type="submit" disabled={pending}>
-              {pending ? 'Saving…' : 'Save settings'}
+              {pending ? t('settings.saving') : t('settings.save')}
             </Button>
           </form>
         </CardContent>

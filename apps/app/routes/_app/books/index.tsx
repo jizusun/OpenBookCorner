@@ -8,6 +8,7 @@ import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { circulationErrorMessage } from '@/lib/errors'
 import { useToast } from '@/components/Toast'
+import { useI18n } from '@/lib/i18n'
 import { BookListSkeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
 import { useInfiniteList, LoadMoreSentinel } from '@/components/InfiniteList'
@@ -38,6 +39,7 @@ function CatalogPage() {
   const navigate = useNavigate({ from: Route.fullPath })
   const queryClient = useQueryClient()
   const toast = useToast()
+  const { t } = useI18n()
 
   const [term, setTerm] = useState(q ?? '')
 
@@ -67,8 +69,8 @@ function CatalogPage() {
 
   const borrow = useMutation({
     ...trpc.borrowing.borrow.mutationOptions(),
-    onSuccess: () => toast.success('Borrowed — see it in "My Books".'),
-    onError: (e) => toast.error(circulationErrorMessage(e)),
+    onSuccess: () => toast.success(t('book.borrowedToast')),
+    onError: (e) => toast.error(circulationErrorMessage(e, t)),
     onSettled: () => {
       void infinite.refetch()
       queryClient.invalidateQueries({ queryKey: trpc.borrowing.myBooks.queryKey() })
@@ -86,42 +88,42 @@ function CatalogPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Library Catalog</h1>
+        <h1 className="text-2xl font-bold">{t('catalog.title')}</h1>
         {manageMode && (
           <Link to="/books/add" className={buttonVariants({ size: 'sm' })}>
-            Add Book
+            {t('catalog.addBook')}
           </Link>
         )}
       </div>
 
       <form onSubmit={submitSearch} className="flex gap-2" data-testid="search-form">
         <Input
-          placeholder="Search by title or author…"
+          placeholder={t('catalog.searchPlaceholder')}
           value={term}
           onChange={(e) => setTerm(e.target.value)}
           data-testid="search-input"
-          aria-label="Search by title or author"
+          aria-label={t('catalog.searchAria')}
         />
         <Button type="submit" variant="outline">
-          Search
+          {t('common.search')}
         </Button>
       </form>
 
       {/* Sort + filter controls */}
       <div className="flex flex-wrap items-center gap-2 text-sm" data-testid="catalog-controls">
         <label className="flex items-center gap-1">
-          <span className="text-muted-foreground">排序</span>
+          <span className="text-muted-foreground">{t('catalog.sort')}</span>
           <select
             className="rounded-md border px-2 py-1"
             data-testid="sort-select"
             value={sort ?? 'enteredAt'}
             onChange={(e) => setParam('sort', e.target.value === 'enteredAt' ? undefined : e.target.value)}
           >
-            <option value="enteredAt">上架时间</option>
-            <option value="title">书名</option>
-            <option value="author">作者</option>
-            <option value="available">可借数量</option>
-            <option value="price">价格</option>
+            <option value="enteredAt">{t('catalog.sort.enteredAt')}</option>
+            <option value="title">{t('catalog.sort.title')}</option>
+            <option value="author">{t('catalog.sort.author')}</option>
+            <option value="available">{t('catalog.sort.available')}</option>
+            <option value="price">{t('catalog.sort.price')}</option>
           </select>
         </label>
         <select
@@ -130,8 +132,8 @@ function CatalogPage() {
           value={dir ?? 'desc'}
           onChange={(e) => setParam('dir', e.target.value === 'desc' ? undefined : e.target.value)}
         >
-          <option value="desc">降序</option>
-          <option value="asc">升序</option>
+          <option value="desc">{t('catalog.sort.desc')}</option>
+          <option value="asc">{t('catalog.sort.asc')}</option>
         </select>
         <select
           className="rounded-md border px-2 py-1"
@@ -139,9 +141,9 @@ function CatalogPage() {
           value={avail ?? 'all'}
           onChange={(e) => setParam('avail', e.target.value === 'all' ? undefined : e.target.value)}
         >
-          <option value="all">全部</option>
-          <option value="available">可借</option>
-          <option value="borrowed">已借出</option>
+          <option value="all">{t('catalog.filter.allAvailability')}</option>
+          <option value="available">{t('catalog.filter.available')}</option>
+          <option value="borrowed">{t('catalog.filter.borrowed')}</option>
         </select>
         {facets && facets.categories.length > 0 && (
           <select
@@ -150,7 +152,7 @@ function CatalogPage() {
             value={category ?? ''}
             onChange={(e) => setParam('category', e.target.value || undefined)}
           >
-            <option value="">全部分类</option>
+            <option value="">{t('catalog.filter.allCategories')}</option>
             {facets.categories.map((c) => (
               <option key={c} value={c}>
                 {c}
@@ -165,7 +167,7 @@ function CatalogPage() {
             value={shelf ?? ''}
             onChange={(e) => setParam('shelf', e.target.value || undefined)}
           >
-            <option value="">全部书架</option>
+            <option value="">{t('catalog.filter.allShelves')}</option>
             {facets.shelves.map((s) => (
               <option key={s} value={s}>
                 {s}
@@ -175,7 +177,7 @@ function CatalogPage() {
         )}
         {!infinite.isLoading && (
           <span className="text-xs text-muted-foreground" data-testid="result-count">
-            共 {total} 本
+            {t('catalog.total', { count: total })}
           </span>
         )}
       </div>
@@ -186,16 +188,12 @@ function CatalogPage() {
         <EmptyState
           data-testid="no-books"
           icon="📚"
-          title={q ? 'No books match your search' : 'No books match the current filters'}
-          description={
-            manageMode
-              ? 'Add a book or adjust the filters.'
-              : 'Try adjusting the search or filters.'
-          }
+          title={q ? t('catalog.empty.searchTitle') : t('catalog.empty.filterTitle')}
+          description={manageMode ? t('catalog.empty.adminDesc') : t('catalog.empty.readerDesc')}
           action={
             manageMode ? (
               <Link to="/books/add" className={buttonVariants({ size: 'sm' })}>
-                Add Book
+                {t('catalog.addBook')}
               </Link>
             ) : undefined
           }

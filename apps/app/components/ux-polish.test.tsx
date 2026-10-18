@@ -7,10 +7,15 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { ConfirmDialog, Modal } from '@/components/ui/modal'
 import { ToastProvider, useToast } from '@/components/Toast'
 import { RouteProgress } from '@/components/RouteProgress'
+import { I18nProvider } from '@/lib/i18n'
 
 describe('RouteProgress (transition indicator)', () => {
   it('renders a slim top progress bar with a status role', () => {
-    render(<RouteProgress />)
+    render(
+      <I18nProvider>
+        <RouteProgress />
+      </I18nProvider>,
+    )
     const bar = screen.getByTestId('route-progress')
     expect(bar).toBeInTheDocument()
     expect(bar).toHaveAttribute('role', 'status')
@@ -109,9 +114,11 @@ describe('Toast', () => {
     vi.useFakeTimers()
     try {
       render(
-        <ToastProvider>
-          <Trigger />
-        </ToastProvider>,
+        <I18nProvider>
+          <ToastProvider>
+            <Trigger />
+          </ToastProvider>
+        </I18nProvider>,
       )
       act(() => {
         fireEvent.click(screen.getByRole('button', { name: 'fire' }))

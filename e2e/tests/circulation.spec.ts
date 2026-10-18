@@ -85,7 +85,7 @@ test.describe('Auth', () => {
   test('login page renders without the auth-client crash (regression)', async ({ page }) => {
     await page.goto('/login', { waitUntil: 'domcontentloaded' })
     await expect(page.getByRole('button', { name: 'Sign In' })).toBeVisible()
-    await expect(page.getByText('Library Access')).toBeVisible()
+    await expect(page.getByText('Welcome back')).toBeVisible()
     await expect(page.getByText(/Something went wrong/i)).toHaveCount(0)
     await expect(page.getByText(/Invalid base URL/i)).toHaveCount(0)
   })
@@ -95,7 +95,7 @@ test.describe('Auth', () => {
     await page.getByLabel('Email').fill('reader@demo.test')
     await page.getByLabel('Password').fill('wrongpassword')
     await page.getByRole('button', { name: 'Sign In' }).click()
-    await expect(page.getByText('Invalid email or password')).toBeVisible()
+    await expect(page.getByText(/doesn.t match|Invalid email or password/i)).toBeVisible()
   })
 
   test('unauthenticated visit redirects to login', async ({ page }) => {
@@ -128,7 +128,7 @@ test.describe('Circulation (reader)', () => {
     const returnBtn = page.getByRole('button', { name: 'Return' }).first()
     await expect(returnBtn).toBeVisible()
     await returnBtn.click()
-    await expect(page.getByText('Returned. Thanks!')).toBeVisible()
+    await expect(page.getByText(/Returned\b/i)).toBeVisible()
   })
 
   test('scan-to-borrow by typing an ISBN', async ({ page }) => {
@@ -282,7 +282,7 @@ test.describe('Admin', () => {
         const returnBtn = page.getByRole('button', { name: 'Return' }).first()
         if (await returnBtn.isVisible().catch(() => false)) {
           await returnBtn.click().catch(() => {})
-          await page.getByText('Returned. Thanks!').waitFor({ state: 'visible' }).catch(() => {})
+          await page.getByText(/Returned\b/i).waitFor({ state: 'visible' }).catch(() => {})
         }
       }
     }
