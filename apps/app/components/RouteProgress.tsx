@@ -5,11 +5,14 @@
  * responsive without a jarring full-screen flash. Content skeletons then take
  * over once the route mounts.
  */
+import { useI18n } from '@/lib/i18n'
+
 export function RouteProgress() {
+  const { t } = useI18n()
   return (
     <div
       role="status"
-      aria-label="Loading"
+      aria-label={t('common.loadingAria')}
       className="pointer-events-none fixed inset-x-0 top-0 z-[70] h-0.5 overflow-hidden bg-primary/20"
       data-testid="route-progress"
     >

@@ -20,6 +20,19 @@ export default defineConfig({
   use: {
     baseURL: `http://localhost:${PORT}`,
     trace: 'on-first-retry',
+    // The app defaults to Chinese and reads its locale from localStorage
+    // ('obc-locale'). The E2E assertions are written against the English UI, so
+    // seed the English locale for the test origin before the app boots. Keeps
+    // the suite independent of the default-locale choice.
+    storageState: {
+      cookies: [],
+      origins: [
+        {
+          origin: `http://localhost:${PORT}`,
+          localStorage: [{ name: 'obc-locale', value: 'en' }],
+        },
+      ],
+    },
   },
   projects: [{ name: 'chromium', use: { browserName: 'chromium' } }],
   webServer: {

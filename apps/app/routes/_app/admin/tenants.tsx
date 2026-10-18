@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useToast } from '@/components/Toast'
+import { useI18n } from '@/lib/i18n'
 
 export const Route = createFileRoute('/_app/admin/tenants')({
   // Super-admin only.
@@ -22,6 +23,7 @@ export const Route = createFileRoute('/_app/admin/tenants')({
 function TenantsPage() {
   const queryClient = useQueryClient()
   const toast = useToast()
+  const { t } = useI18n()
   const { data: tenants, isLoading } = useQuery(trpc.tenant.list.queryOptions())
 
   const [name, setName] = useState('')
@@ -30,18 +32,18 @@ function TenantsPage() {
   const create = useMutation({
     ...trpc.tenant.create.mutationOptions(),
     onSuccess: () => {
-      toast.success('Library created.')
+      toast.success(t('tenants.createdToast'))
       setName('')
       setDomains('')
       queryClient.invalidateQueries({ queryKey: trpc.tenant.list.queryKey() })
     },
-    onError: () => toast.error('Could not create the library.'),
+    onError: () => toast.error(t('tenants.createError')),
   })
 
   const toggle = useMutation({
     ...trpc.tenant.setActive.mutationOptions(),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: trpc.tenant.list.queryKey() }),
-    onError: () => toast.error('Could not update the library.'),
+    onError: () => toast.error(t('tenants.updateError')),
   })
 
   function submit(e: React.FormEvent) {
@@ -57,34 +59,34 @@ function TenantsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Tenants</h1>
+        <h1 className="text-2xl font-bold">{t('tenants.title')}</h1>
         <p className="text-sm text-muted-foreground">
-          Manage libraries across the system (super admin).
+          {t('tenants.subtitle')}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Create a library</CardTitle>
+          <CardTitle>{t('tenants.create')}</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={submit} className="space-y-4" data-testid="create-tenant-form">
             <div className="space-y-2">
-              <Label htmlFor="t-name">Library name</Label>
+              <Label htmlFor="t-name">{t('tenants.name')}</Label>
               <Input id="t-name" value={name} onChange={(e) => setName(e.target.value)} required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="t-domains">Email domains (comma-separated)</Label>
+              <Label htmlFor="t-domains">{t('tenants.emailDomains')}</Label>
               <Input
                 id="t-domains"
                 value={domains}
                 onChange={(e) => setDomains(e.target.value)}
-                placeholder="@acme.com, @acme.io"
+                placeholder={t('tenants.emailDomainsPlaceholder')}
                 required
               />
             </div>
             <Button type="submit" disabled={create.isPending}>
-              {create.isPending ? 'Creating…' : 'Create library'}
+              {create.isPending ? t('tenants.creating') : t('tenants.createSubmit')}
             </Button>
           </form>
         </CardContent>
@@ -98,31 +100,35 @@ function TenantsPage() {
       )}
 
       {!isLoading && tenants && tenants.length === 0 && (
-        <EmptyState icon="🏛️" title="No libraries yet" description="Create the first one above." />
+        <EmptyState icon="🏛️" title={t('tenants.empty.title')} description={t('tenants.empty.description')} />
       )}
 
       <div className="grid gap-3" data-testid="tenant-list">
-        {tenants?.map((t) => (
-          <Card key={t.id}>
+        {tenants?.map((tenant) => (
+          <Card key={tenant.id}>
             <CardContent className="flex items-center justify-between gap-4 p-4">
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold">{t.name}</span>
-                  <Badge variant={t.isActive ? 'default' : 'secondary'}>
-                    {t.isActive ? 'Active' : 'Inactive'}
+                  <span className="font-semibold">{tenant.name}</span>
+                  <Badge variant={tenant.isActive ? 'default' : 'secondary'}>
+                    {tenant.isActive ? t('tenants.active') : t('tenants.inactive')}
                   </Badge>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {t.emailDomains.join(', ')} · {t.bookCount} books · {t.memberCount} members
+                  {t('tenants.summary', {
+                    domains: tenant.emailDomains.join(', '),
+                    books: tenant.bookCount,
+                    members: tenant.memberCount,
+                  })}
                 </p>
               </div>
               <Button
                 size="sm"
                 variant="outline"
                 disabled={toggle.isPending}
-                onClick={() => toggle.mutate({ libraryId: t.id, isActive: !t.isActive })}
+                onClick={() => toggle.mutate({ libraryId: tenant.id, isActive: !tenant.isActive })}
               >
-                {t.isActive ? 'Deactivate' : 'Activate'}
+                {tenant.isActive ? t('tenants.deactivate') : t('tenants.activate')}
               </Button>
             </CardContent>
           </Card>

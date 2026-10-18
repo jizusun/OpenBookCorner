@@ -4,12 +4,13 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Modal } from '@/components/ui/modal'
 import { useToast } from '@/components/Toast'
+import { useI18n } from '@/lib/i18n'
 
 const CATEGORIES = [
-  { value: 'feature_request', label: 'Feature request' },
-  { value: 'book_suggestion', label: 'Book suggestion' },
-  { value: 'bug', label: 'Bug report' },
-  { value: 'other', label: 'Other' },
+  { value: 'feature_request', labelKey: 'feedback.category.feature_request' },
+  { value: 'book_suggestion', labelKey: 'feedback.category.book_suggestion' },
+  { value: 'bug', labelKey: 'feedback.category.bug' },
+  { value: 'other', labelKey: 'feedback.category.other' },
 ] as const
 
 type Category = (typeof CATEGORIES)[number]['value']
@@ -17,6 +18,7 @@ type Category = (typeof CATEGORIES)[number]['value']
 /** Floating "Feedback" button + accessible modal to collect what users want. */
 export function FeedbackButton() {
   const toast = useToast()
+  const { t } = useI18n()
   const [open, setOpen] = useState(false)
   const [category, setCategory] = useState<Category>('feature_request')
   const [message, setMessage] = useState('')
@@ -32,9 +34,9 @@ export function FeedbackButton() {
       await trpcClient.feedback.submit.mutate({ category, message: message.trim() })
       setMessage('')
       setOpen(false)
-      toast.success('Thanks for your feedback! 🎉')
+      toast.success(t('feedback.thanksToast'))
     } catch {
-      setError('Could not send feedback. Please try again.')
+      setError(t('feedback.error'))
     } finally {
       setPending(false)
     }
@@ -51,22 +53,22 @@ export function FeedbackButton() {
         type="button"
         onClick={() => setOpen(true)}
         data-testid="feedback-button"
-        aria-label="Send feedback"
+        aria-label={t('feedback.send')}
         className="fixed bottom-4 left-4 z-50 flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-lg hover:bg-primary/90"
       >
-        <span aria-hidden>💬</span> Feedback
+        <span aria-hidden>💬</span> {t('feedback.button')}
       </button>
 
-      <Modal open={open} onClose={close} ariaLabel="Send feedback">
+      <Modal open={open} onClose={close} ariaLabel={t('feedback.send')}>
         <form onSubmit={handleSubmit} className="space-y-4" data-testid="feedback-form">
           <div>
-            <h2 className="text-lg font-semibold">Send feedback</h2>
+            <h2 className="text-lg font-semibold">{t('feedback.send')}</h2>
             <p className="text-sm text-muted-foreground">
-              Tell us what you'd like — features, books to add, or problems.
+              {t('feedback.intro')}
             </p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="fb-category">Type</Label>
+            <Label htmlFor="fb-category">{t('feedback.type')}</Label>
             <select
               id="fb-category"
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -75,19 +77,19 @@ export function FeedbackButton() {
             >
               {CATEGORIES.map((c) => (
                 <option key={c.value} value={c.value}>
-                  {c.label}
+                  {t(c.labelKey)}
                 </option>
               ))}
             </select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="fb-message">Your feedback</Label>
+            <Label htmlFor="fb-message">{t('feedback.message')}</Label>
             <textarea
               id="fb-message"
               className="flex min-h-28 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="e.g. Please add the ability to reserve a borrowed book…"
+              placeholder={t('feedback.messagePlaceholder')}
               aria-describedby={error ? 'fb-error' : undefined}
               aria-invalid={error ? true : undefined}
               required
@@ -100,10 +102,10 @@ export function FeedbackButton() {
           )}
           <div className="flex gap-2">
             <Button type="submit" disabled={pending || !message.trim()}>
-              {pending ? 'Sending…' : 'Send'}
+              {pending ? t('feedback.sending') : t('feedback.submit')}
             </Button>
             <Button type="button" variant="ghost" onClick={close}>
-              Cancel
+              {t('feedback.cancel')}
             </Button>
           </div>
         </form>

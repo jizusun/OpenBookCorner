@@ -74,7 +74,7 @@ function MyBooksPage() {
     onSuccess: () => toast.success(t('myBooks.returned')),
     onError: (e, _vars, ctx) => {
       if (ctx?.prev) queryClient.setQueryData(myBooksKey, ctx.prev)
-      toast.error(circulationErrorMessage(e))
+      toast.error(circulationErrorMessage(e, t))
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: myBooksKey })

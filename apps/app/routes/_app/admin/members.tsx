@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { useInfiniteList, LoadMoreSentinel } from '@/components/InfiniteList'
+import { useI18n } from '@/lib/i18n'
 
 const searchSchema = z.object({
   q: z.string().optional(),
@@ -34,6 +35,7 @@ function MembersPage() {
   const { q, sort, dir, role, plan } = Route.useSearch()
   const navigate = Route.useNavigate()
   const [term, setTerm] = useState(q ?? '')
+  const { t } = useI18n()
 
   const { data: facets } = useQuery(trpc.member.facets.queryOptions())
 
@@ -53,38 +55,38 @@ function MembersPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">成员 Members</h1>
+        <h1 className="text-2xl font-bold">{t('members.title')}</h1>
         {!infinite.isLoading && (
-          <span className="text-sm text-muted-foreground">共 {infinite.total} 位</span>
+          <span className="text-sm text-muted-foreground">{t('members.total', { count: infinite.total })}</span>
         )}
       </div>
 
       <form onSubmit={submit} className="flex gap-2" data-testid="member-search-form">
         <Input
-          placeholder="按姓名 / 手机 / 会员号搜索…"
+          placeholder={t('members.searchPlaceholder')}
           value={term}
           onChange={(e) => setTerm(e.target.value)}
           data-testid="member-search-input"
-          aria-label="Search members"
+          aria-label={t('members.searchAria')}
         />
         <Button type="submit" variant="outline">
-          Search
+          {t('common.search')}
         </Button>
       </form>
 
       <div className="flex flex-wrap items-center gap-2 text-sm" data-testid="member-controls">
         <label className="flex items-center gap-1">
-          <span className="text-muted-foreground">排序</span>
+          <span className="text-muted-foreground">{t('members.sort')}</span>
           <select
             className="rounded-md border px-2 py-1"
             data-testid="member-sort-select"
             value={sort ?? 'name'}
             onChange={(e) => setParam('sort', e.target.value === 'name' ? undefined : e.target.value)}
           >
-            <option value="name">姓名</option>
-            <option value="joinedAt">入馆日期</option>
-            <option value="borrowedCount">在借数量</option>
-            <option value="memberExpiry">到期日期</option>
+            <option value="name">{t('members.sort.name')}</option>
+            <option value="joinedAt">{t('members.sort.joinedAt')}</option>
+            <option value="borrowedCount">{t('members.sort.borrowedCount')}</option>
+            <option value="memberExpiry">{t('members.sort.memberExpiry')}</option>
           </select>
         </label>
         <select
@@ -93,8 +95,8 @@ function MembersPage() {
           value={dir ?? 'asc'}
           onChange={(e) => setParam('dir', e.target.value === 'asc' ? undefined : e.target.value)}
         >
-          <option value="asc">升序</option>
-          <option value="desc">降序</option>
+          <option value="asc">{t('members.sort.asc')}</option>
+          <option value="desc">{t('members.sort.desc')}</option>
         </select>
         <select
           className="rounded-md border px-2 py-1"
@@ -102,9 +104,9 @@ function MembersPage() {
           value={role ?? ''}
           onChange={(e) => setParam('role', e.target.value || undefined)}
         >
-          <option value="">全部权限</option>
-          <option value="library_admin">管理员</option>
-          <option value="library_reader">普通成员</option>
+          <option value="">{t('members.filter.allRoles')}</option>
+          <option value="library_admin">{t('members.role.admin')}</option>
+          <option value="library_reader">{t('members.role.reader')}</option>
         </select>
         {facets && facets.plans.length > 0 && (
           <select
@@ -113,7 +115,7 @@ function MembersPage() {
             value={plan ?? ''}
             onChange={(e) => setParam('plan', e.target.value || undefined)}
           >
-            <option value="">全部会员计划</option>
+            <option value="">{t('members.filter.allPlans')}</option>
             {facets.plans.map((p) => (
               <option key={p} value={p}>
                 {p}
@@ -123,10 +125,10 @@ function MembersPage() {
         )}
       </div>
 
-      {infinite.isLoading && <p className="text-muted-foreground">Loading…</p>}
+      {infinite.isLoading && <p className="text-muted-foreground">{t('common.loading')}</p>}
 
       {!infinite.isLoading && items.length === 0 && (
-        <EmptyState icon="👥" title="没有成员" description="导入 番薯 数据或调整搜索/筛选。" />
+        <EmptyState icon="👥" title={t('members.empty.title')} description={t('members.empty.description')} />
       )}
 
       {items.length > 0 && (
@@ -134,13 +136,13 @@ function MembersPage() {
           <table className="w-full text-sm">
             <thead className="bg-muted/50 text-left text-muted-foreground">
               <tr>
-                <th className="px-3 py-2">姓名</th>
-                <th className="px-3 py-2">权限</th>
-                <th className="px-3 py-2">手机</th>
-                <th className="px-3 py-2">会员号</th>
-                <th className="px-3 py-2">在借</th>
-                <th className="px-3 py-2">已还</th>
-                <th className="px-3 py-2">到期</th>
+                <th className="px-3 py-2">{t('members.col.name')}</th>
+                <th className="px-3 py-2">{t('members.col.role')}</th>
+                <th className="px-3 py-2">{t('members.col.phone')}</th>
+                <th className="px-3 py-2">{t('members.col.memberNo')}</th>
+                <th className="px-3 py-2">{t('members.col.borrowed')}</th>
+                <th className="px-3 py-2">{t('members.col.returned')}</th>
+                <th className="px-3 py-2">{t('members.col.expiry')}</th>
               </tr>
             </thead>
             <tbody>
@@ -156,11 +158,11 @@ function MembersPage() {
                     </Link>
                     {m.isPlaceholder && (
                       <Badge variant="outline" className="ml-2 text-[10px]">
-                        placeholder
+                        {t('members.placeholder')}
                       </Badge>
                     )}
                   </td>
-                  <td className="px-3 py-2">{m.role === 'library_admin' ? '管理员' : '普通成员'}</td>
+                  <td className="px-3 py-2">{m.role === 'library_admin' ? t('members.role.admin') : t('members.role.reader')}</td>
                   <td className="px-3 py-2">{m.phone ?? '—'}</td>
                   <td className="px-3 py-2">{m.memberNo ?? '—'}</td>
                   <td className="px-3 py-2">{m.borrowedCount ?? 0}</td>

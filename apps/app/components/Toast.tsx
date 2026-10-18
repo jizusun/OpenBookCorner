@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
+import { useI18n } from '@/lib/i18n'
 
 type ToastKind = 'success' | 'error' | 'info'
 interface Toast {
@@ -18,6 +19,7 @@ const ToastContext = createContext<ToastContextValue | null>(null)
 let nextId = 1
 
 export function ToastProvider({ children }: { children: ReactNode }) {
+  const { t } = useI18n()
   const [toasts, setToasts] = useState<Toast[]>([])
 
   const remove = useCallback((id: number) => {
@@ -41,7 +43,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       <div
         className="pointer-events-none fixed top-3 right-3 z-[60] flex w-[min(92vw,22rem)] flex-col gap-2"
         role="region"
-        aria-label="Notifications"
+        aria-label={t('common.notifications')}
       >
         {toasts.map((t) => (
           <ToastItem key={t.id} toast={t} onDismiss={() => remove(t.id)} />
@@ -52,6 +54,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 }
 
 function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }) {
+  const { t } = useI18n()
   useEffect(() => {
     const timer = setTimeout(onDismiss, toast.kind === 'error' ? 6000 : 3500)
     return () => clearTimeout(timer)
@@ -73,7 +76,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
       <span>{toast.message}</span>
       <button
         type="button"
-        aria-label="Dismiss"
+        aria-label={t('common.dismiss')}
         onClick={onDismiss}
         className="shrink-0 opacity-60 hover:opacity-100"
       >

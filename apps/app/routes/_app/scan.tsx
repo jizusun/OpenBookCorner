@@ -8,11 +8,13 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { circulationErrorMessage } from '@/lib/errors'
+import { useI18n } from '@/lib/i18n'
 
 export const Route = createFileRoute('/_app/scan')({ component: ScanToBorrowPage })
 
 function ScanToBorrowPage() {
   const queryClient = useQueryClient()
+  const { t } = useI18n()
   const [scanning, setScanning] = useState(false)
   const [isbn, setIsbn] = useState('')
   const [result, setResult] = useState<
@@ -26,7 +28,7 @@ function ScanToBorrowPage() {
       queryClient.invalidateQueries({ queryKey: trpc.book.list.queryKey() })
       queryClient.invalidateQueries({ queryKey: trpc.borrowing.myBooks.queryKey() })
     },
-    onError: (e) => setResult({ kind: 'err', text: circulationErrorMessage(e) }),
+    onError: (e) => setResult({ kind: 'err', text: circulationErrorMessage(e, t) }),
   })
 
   function submit(value: string) {
@@ -47,18 +49,16 @@ function ScanToBorrowPage() {
 
   return (
     <div className="mx-auto max-w-lg space-y-4">
-      <h1 className="text-2xl font-bold">Scan to Borrow</h1>
-      <p className="text-sm text-muted-foreground">
-        Scan a book's barcode (or type its ISBN) to borrow it instantly.
-      </p>
+      <h1 className="text-2xl font-bold">{t('scan.title')}</h1>
+      <p className="text-sm text-muted-foreground">{t('scan.subtitle')}</p>
 
       <Card>
         <CardHeader>
-          <CardTitle>Borrow by ISBN</CardTitle>
+          <CardTitle>{t('scan.cardTitle')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
-            <Label htmlFor="scan-isbn">ISBN</Label>
+            <Label htmlFor="scan-isbn">{t('scan.isbn')}</Label>
             <Button
               type="button"
               variant="outline"
@@ -66,7 +66,7 @@ function ScanToBorrowPage() {
               onClick={() => setScanning((s) => !s)}
               data-testid="scan-toggle"
             >
-              {scanning ? 'Close scanner' : 'Scan barcode'}
+              {scanning ? t('scan.closeScanner') : t('scan.scanBarcode')}
             </Button>
           </div>
 
@@ -83,10 +83,10 @@ function ScanToBorrowPage() {
               id="scan-isbn"
               value={isbn}
               onChange={(e) => setIsbn(e.target.value)}
-              placeholder="e.g. 9780132350884"
+              placeholder={t('scan.placeholder')}
             />
             <Button type="submit" disabled={borrow.isPending || !isbn.trim()}>
-              {borrow.isPending ? 'Borrowing…' : 'Borrow'}
+              {borrow.isPending ? t('scan.borrowing') : t('scan.borrow')}
             </Button>
           </form>
 
@@ -95,10 +95,11 @@ function ScanToBorrowPage() {
               data-testid="scan-success"
               className="rounded-md border border-green-200 bg-green-50 px-3 py-3 text-sm text-green-800"
             >
-              Borrowed <strong>{result.title}</strong> — due{' '}
-              {new Date(result.dueDate).toLocaleDateString()}.{' '}
+              {t('scan.borrowedPrefix')}
+              <strong>{result.title}</strong>
+              {t('scan.borrowedDue', { date: new Date(result.dueDate).toLocaleDateString() })}{' '}
               <Link to="/my-books" className="underline">
-                View in My Books
+                {t('scan.viewInMyBooks')}
               </Link>
             </div>
           )}
