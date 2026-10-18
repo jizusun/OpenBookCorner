@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { useInfiniteQuery } from '@tanstack/react-query'
+import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query'
 import { Trans } from '@lingui/react/macro'
 import { Button } from '@/components/ui/button'
 
@@ -25,6 +25,10 @@ export function useInfiniteList<T>(
     initialPageParam: 1,
     queryFn: ({ pageParam }) => fetchPage(pageParam),
     getNextPageParam: (last) => (last.page < last.totalPages ? last.page + 1 : undefined),
+    // Keep the previous results visible while a new filter/sort/search set loads,
+    // so changing a control dims-in-place instead of blanking the list — a key
+    // perceived-performance win on slow networks.
+    placeholderData: keepPreviousData,
   })
   const items: T[] = query.data?.pages.flatMap((p) => p.items) ?? []
   const total = query.data?.pages[0]?.total ?? 0
