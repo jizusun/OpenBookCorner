@@ -47,11 +47,10 @@ infrastructure is **already in place** (verified against zone `jizu.dev`,
 The only new Cloudflare change is a **Worker route** `*.openbookcorner.jizu.dev/*`
 → the `openbookcorner` Worker.
 
-> **China relay caveat.** The Traefik relay (`obc.cloud.jizu.dev:666`, see the
-> relay work) currently fronts a single host. To accelerate tenant subdomains in
-> China it needs a **wildcard Traefik router** + the existing `*.cloud.jizu.dev`
-> wildcard cert. This is a **follow-up**, tracked below — it does not block the
-> Cloudflare-side rollout.
+> **China relay interaction.** The Traefik relay (`obc.cloud.jizu.dev:666`)
+> fronts the Worker to cut China latency. Per-tenant subdomains change what the
+> relay must forward and trust — this is now a **first-class part of the design**
+> (see §7: "China relay + proxy/port support"), not an afterthought.
 
 ### 2. Tenant resolution: from the `Host` header, in the Worker
 
@@ -136,7 +135,63 @@ Better Auth cookies are per-host. Per-subdomain cookies are the **safer default*
 (a session on `acme.` is not valid on `beta.`), reinforcing isolation. We do NOT
 set a parent-domain cookie. `APP_ORIGIN` is derived from the request Host (as in
 preview) so Better Auth's `baseURL`/cookies match the tenant host. This composes
-with the existing `APP_ORIGINS` allow-list used for the China relay.
+with the existing `APP_ORIGINS` allow-list used for the China relay (see §7).
+
+### 7. China relay + proxy/port support (first-class)
+
+A **Traefik relay on a China VPC** (`qcloud`, host `obc.cloud.jizu.dev`, HTTPS on
+**port `:666`**) reverse-proxies to the Cloudflare Worker to cut China latency.
+Because the relay presents a **different public origin** (a different host *and a
+non-standard port*) than the one Cloudflare routes by, the Worker must be told
+the browser-facing origin explicitly, or Better Auth's `baseURL`/cookies/CSRF
+will not match the host the browser is on and **login breaks**.
+
+This is solved by a small, security-reviewed mechanism (supersedes the stale
+PR #9 implementation, which predates the Hono-`hc` rewrite and no longer merges):
+
+**a) Origin allow-list, not origin trust.** The Worker reads an `APP_ORIGINS`
+env var (comma-separated allow-list of every public origin that may legitimately
+front the Worker), e.g.:
+
+```
+APP_ORIGIN  = https://openbookcorner.jizu.dev
+APP_ORIGINS = https://openbookcorner.jizu.dev,https://obc.cloud.jizu.dev:666
+```
+
+**b) Relay forwards its browser-facing origin.** Traefik injects
+`X-Forwarded-Origin: https://obc.cloud.jizu.dev:666` and dials Cloudflare with
+`passHostHeader: false` (so Cloudflare still routes by the Worker's own host).
+
+**c) Worker honors it ONLY if allow-listed.** The Worker uses
+`X-Forwarded-Origin` as the effective `APP_ORIGIN` **only when it appears in
+`APP_ORIGINS`**; otherwise it falls back to the configured origin. An
+arbitrary/unlisted forwarded origin is ignored — no origin/CSRF spoofing. Better
+Auth's `trustedOrigins` is the full `APP_ORIGINS` list. This holds in both
+production and preview (so the relay can point at either).
+
+**Port `:666` is part of the contract.** The browser `Origin` header includes
+the non-standard port, so every value above MUST carry `:666` byte-for-byte
+(`APP_ORIGINS` entry, the `X-Forwarded-Origin` Traefik sends, and Better Auth's
+trusted origin). A mismatch on the port alone fails CSRF.
+
+**How this extends to per-tenant subdomains.** With subdomains, the relay must
+front `‹slug›.openbookcorner.jizu.dev` too. Two options:
+
+| Option | Relay change | APP_ORIGINS | Notes |
+| --- | --- | --- | --- |
+| **Per-tenant relay host** (`‹slug›.cloud.jizu.dev:666`) | one Traefik router per tenant | one entry per tenant origin | precise but O(tenants) config |
+| **Wildcard relay** (`*.obc.cloud.jizu.dev:666` or path) | one wildcard Traefik router + `*.cloud.jizu.dev` cert (already held) | a wildcard/allow-pattern | scales to all tenants; preferred |
+
+Because a static comma list can't scale to many tenants, the allow-list check
+SHOULD be generalized to **match a trusted suffix pattern** (e.g.
+`*.openbookcorner.jizu.dev` and the relay's `*.cloud.jizu.dev:666`) rather than
+exact strings — still an allow-list (closed set of trusted suffixes/ports),
+never raw header trust. Reserved-subdomain exclusion (§2) still applies.
+
+**Covers caveat (unchanged).** The relay accelerates the Worker only; R2 cover
+images come direct from Cloudflare's CDN and may be slow/blocked in China. If
+China-fast covers matter, proxy `/covers/*` through the relay too (or serve
+covers from the relayed origin). Out of scope for this ADR; noted for ops.
 
 ## Security requirements (non-negotiable)
 
@@ -151,6 +206,12 @@ with the existing `APP_ORIGINS` allow-list used for the China relay.
    serving one tenant's data to another — "the leak I almost shipped".)
 5. Cross-tenant / super-admin paths MUST have tests (reject a foreign-tenant user
    on a tenant subdomain; redirect a super admin; reserved-slug resolution).
+6. **Proxy/origin trust is an allow-list, never raw header trust.** The Worker
+   honors `X-Forwarded-Origin` (from the China relay) ONLY when it matches the
+   `APP_ORIGINS` allow-list (exact strings or trusted suffix+port patterns);
+   anything else falls back to the configured origin. The `:666` port is part of
+   the matched origin. Tests MUST cover: allow-listed forwarded origin accepted;
+   unlisted/spoofed forwarded origin ignored (falls back, no CSRF bypass).
 
 ## Consequences
 
@@ -160,15 +221,18 @@ with the existing `APP_ORIGINS` allow-list used for the China relay.
   Worker route.
 - Isolation model is unchanged and actually reinforced (per-host cookies + an
   extra subdomain guard on top of `libraryId` scoping).
+- The relay/proxy origin handling is designed in (§7), so China-accelerated
+  tenant subdomains have a defined, testable path — not an afterthought.
 
 **Negative / costs**
 - New **unauthenticated** surface (branding endpoint) → must be minimal, safe,
   rate-limited.
 - New **cross-cutting invariant** (tenant in every cache key) → easy to regress;
   needs tests and review discipline.
-- **China relay** needs a wildcard Traefik router to cover tenant subdomains
-  (follow-up).
-- Slightly more login-flow complexity (apex vs tenant host; super-admin redirect).
+- **China relay** needs a wildcard Traefik router + a suffix/port allow-list to
+  cover tenant subdomains (§7) — more relay config than a single host.
+- Slightly more login-flow complexity (apex vs tenant host; super-admin redirect;
+  relay-forwarded origin).
 
 ## Rollout plan
 
@@ -178,12 +242,19 @@ with the existing `APP_ORIGINS` allow-list used for the China relay.
    set slug + branding (super-admin only, slug validation + uniqueness).
 3. Worker: Host→tenant resolution + reserved-slug list; add the
    `*.openbookcorner.jizu.dev/*` Worker route; `APP_ORIGIN` already Host-derived.
-4. Frontend: branded login by host; apex = standard login; post-auth tenant-match
+4. **Proxy/origin support (§7), re-implemented against current main (Hono `hc`):**
+   `APP_ORIGINS` allow-list in `env.ts`; Worker honors allow-listed
+   `X-Forwarded-Origin` (incl. `:666`); Better Auth `trustedOrigins` = the list;
+   generalize to a trusted suffix+port pattern for wildcard subdomains. (This
+   supersedes the stale PR #9, which no longer merges after the hc rewrite.)
+5. Frontend: branded login by host; apex = standard login; post-auth tenant-match
    guard; super-admin → apex redirect; tenant in all query keys.
-5. Tests: cross-tenant rejection, super-admin redirect, reserved-slug resolution,
-   branding endpoint safe-fields + rate-limit.
-6. China relay: wildcard Traefik router + `*.cloud.jizu.dev` cert (separate PR).
-7. Impersonation (if desired): separate audited, read-only, time-boxed feature.
+6. Tests: cross-tenant rejection, super-admin redirect, reserved-slug resolution,
+   branding endpoint safe-fields + rate-limit, **allow-listed vs spoofed
+   forwarded-origin**.
+7. Relay ops: wildcard Traefik router + `*.cloud.jizu.dev` cert +
+   `X-Forwarded-Origin` middleware (configuration, separate from the app PR).
+8. Impersonation (if desired): separate audited, read-only, time-boxed feature.
 
 ## Alternatives considered
 
