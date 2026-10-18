@@ -13,6 +13,9 @@
     "typecheck": "tsc --build"
   },
   "dependencies": {
+    "@lingui/core": "^5",
+    "@lingui/message-utils": "^5",
+    "@lingui/react": "^5",
     "@obc/api": "workspace:*",
     "@tanstack/react-query": "^5.62.0",
     "@tanstack/react-router": "^1.95.0",

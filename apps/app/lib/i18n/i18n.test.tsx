@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
-import { describe, it, expect, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { render, screen, waitFor, cleanup } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { i18n } from '@lingui/core'
 
 import { I18nProvider, useI18n } from './index'
 
@@ -30,6 +31,12 @@ describe('i18n', () => {
   beforeEach(() => {
     localStorage.clear()
     document.documentElement.lang = ''
+    // Reset the shared Lingui singleton to the default locale between tests so
+    // activation state doesn't leak across cases.
+    i18n.activate('zh')
+  })
+  afterEach(() => {
+    cleanup()
   })
 
   it('defaults to Chinese', () => {
