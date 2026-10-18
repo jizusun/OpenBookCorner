@@ -6,13 +6,23 @@ import { Hono } from 'hono'
 import { createMiddleware } from 'hono/factory'
 import { logger } from 'hono/logger'
 
-import { type BaseVars, createAuth, createDb, envSchema, type Env, serverApp } from '@obc/api'
+import {
+  type BaseVars,
+  createAuth,
+  createDb,
+  envSchema,
+  type Env,
+  parseOriginPatterns,
+  resolveEffectiveOrigin,
+  serverApp,
+} from '@obc/api'
 
 type CloudflareEnv = {
   ASSETS: Fetcher
   DB: D1Database
   COVERS: R2Bucket
   APP_ORIGIN?: string
+  APP_ORIGINS?: string
   APP_NAME?: string
   BETTER_AUTH_SECRET?: string
   ENVIRONMENT?: string
@@ -42,10 +52,19 @@ const setup = createMiddleware<{ Bindings: CloudflareEnv; Variables: BaseVars }>
         // Preview URLs are per-PR, so a static APP_ORIGIN can't match. Derive it
         // from the incoming request in preview/dev so Better Auth's baseURL +
         // cookies match the browser host. Production uses the configured origin.
-        APP_ORIGIN:
+        // Behind the China relay (ADR 0003 §7), the relay forwards its
+        // browser-facing origin via X-Forwarded-Origin; we honor it ONLY when it
+        // matches the APP_ORIGINS allow-list (resolveEffectiveOrigin), otherwise
+        // we fall back to the configured/derived origin — a spoof degrades to
+        // "normal origin", never a CSRF/origin bypass.
+        APP_ORIGIN: resolveEffectiveOrigin(
           environment === 'production'
             ? (c.env.APP_ORIGIN ?? 'https://openbookcorner.jizu.dev')
             : new URL(c.req.url).origin,
+          c.req.header('x-forwarded-origin') ?? undefined,
+          parseOriginPatterns(c.env.APP_ORIGINS),
+        ),
+        APP_ORIGINS: c.env.APP_ORIGINS,
         BETTER_AUTH_SECRET:
           c.env.BETTER_AUTH_SECRET ?? 'dev-only-insecure-secret-change-me-32chars',
       }),
