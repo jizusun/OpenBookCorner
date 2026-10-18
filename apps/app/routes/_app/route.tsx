@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button'
 import { FeedbackButton } from '@/components/FeedbackButton'
 import { useInstallPrompt } from '@/components/Pwa'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { LanguageToggle } from '@/components/LanguageToggle'
+import { useI18n, type MessageKey } from '@/lib/i18n'
 import { setViewMode, useViewMode } from '@/lib/view-mode'
 
 export const Route = createFileRoute('/_app')({
@@ -24,12 +26,13 @@ export const Route = createFileRoute('/_app')({
 
 interface NavItem {
   to: string
-  label: string
+  labelKey: MessageKey
 }
 
 function AppLayout() {
   const { user } = Route.useRouteContext()
   const router = useRouter()
+  const { t } = useI18n()
   const isSuperAdmin = user.role === 'super_admin'
   const isAdmin = user.role === 'library_admin' || user.role === 'super_admin'
   const storedView = useViewMode()
@@ -71,25 +74,32 @@ function AppLayout() {
         : 'admin'
 
   const navItems: NavItem[] = inSystemView
-    ? [{ to: '/admin/tenants', label: 'Tenants' }]
+    ? [{ to: '/admin/tenants', labelKey: 'nav.tenants' }]
     : inAdminView
       ? [
-          { to: '/books', label: 'Catalog' },
-          { to: '/admin/members', label: 'Members' },
-          { to: '/admin/overdue', label: 'Overdue' },
-          { to: '/admin/settings', label: 'Settings' },
-          { to: '/admin/feedback', label: 'Feedback' },
-          { to: '/admin/import', label: 'Import' },
+          { to: '/books', labelKey: 'nav.catalog' },
+          { to: '/admin/members', labelKey: 'nav.members' },
+          { to: '/admin/overdue', labelKey: 'nav.overdue' },
+          { to: '/admin/settings', labelKey: 'nav.settings' },
+          { to: '/admin/feedback', labelKey: 'nav.feedback' },
+          { to: '/admin/import', labelKey: 'nav.import' },
         ]
       : [
-          { to: '/my-books', label: 'My Books' },
-          { to: '/scan', label: 'Scan' },
-          { to: '/books', label: 'Catalog' },
+          { to: '/my-books', labelKey: 'nav.myBooks' },
+          { to: '/scan', labelKey: 'nav.scan' },
+          { to: '/books', labelKey: 'nav.catalog' },
         ]
 
   const home = inSystemView ? '/admin/tenants' : inAdminView ? '/books' : '/my-books'
-  const viewLabel = inSystemView ? 'System view' : inAdminView ? 'Admin view' : 'Reader view'
-  const nextLabel = nextView === 'system' ? 'System' : nextView === 'admin' ? 'Admin' : 'Reader'
+  const viewLabel = inSystemView
+    ? t('view.system')
+    : inAdminView
+      ? t('view.admin')
+      : t('view.reader')
+  const nextLabelText =
+    nextView === 'system' ? t('view.system') : nextView === 'admin' ? t('view.admin') : t('view.reader')
+  const nextSwitchLabel =
+    nextView === 'system' ? t('view.toSystem') : nextView === 'admin' ? t('view.toAdmin') : t('view.toReader')
 
   const viewSwitcher = isAdmin ? (
     <Button
@@ -97,9 +107,9 @@ function AppLayout() {
       variant="outline"
       onClick={() => switchView(nextView)}
       data-testid="view-switch"
-      title={`Switch to ${nextLabel} view`}
+      title={t('view.switchTo', { view: nextLabelText })}
     >
-      → {nextLabel} view
+      {nextSwitchLabel}
     </Button>
   ) : null
 
@@ -112,7 +122,7 @@ function AppLayout() {
         className="rounded-md px-2 py-1 hover:bg-accent"
         activeProps={{ className: 'rounded-md px-2 py-1 bg-accent font-semibold' }}
       >
-        {item.label}
+        {t(item.labelKey)}
       </Link>
     ))
 
@@ -125,7 +135,7 @@ function AppLayout() {
               size="sm"
               variant="ghost"
               className="px-2 sm:hidden"
-              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              aria-label={menuOpen ? t('common.closeMenu') : t('common.openMenu')}
               aria-expanded={menuOpen}
               aria-controls="mobile-nav"
               onClick={() => setMenuOpen((o) => !o)}
@@ -135,7 +145,7 @@ function AppLayout() {
               </span>
             </Button>
             <Link to={home} className="font-semibold">
-              OpenBookCorner
+              {t('common.appName')}
             </Link>
             <nav className="hidden items-center gap-1 text-sm sm:flex">{navLinks()}</nav>
           </div>
@@ -147,6 +157,7 @@ function AppLayout() {
               </span>
             )}
             <span className="hidden sm:inline">{viewSwitcher}</span>
+            <LanguageToggle />
             <ThemeToggle />
             {canInstall && (
               <Button
@@ -156,12 +167,12 @@ function AppLayout() {
                 data-testid="install-button"
                 className="hidden sm:inline-flex"
               >
-                Install app
+                {t('common.installApp')}
               </Button>
             )}
             <span className="hidden text-muted-foreground sm:inline">{user.name}</span>
             <Button size="sm" variant="outline" onClick={handleLogout}>
-              Sign out
+              {t('common.signOut')}
             </Button>
           </div>
         </div>
@@ -173,7 +184,9 @@ function AppLayout() {
           >
             {navLinks(() => setMenuOpen(false))}
             {isAdmin && <div className="pt-2">{viewSwitcher}</div>}
-            <span className="pt-2 text-muted-foreground">Signed in as {user.name}</span>
+            <span className="pt-2 text-muted-foreground">
+              {t('common.signedInAs', { name: user.name })}
+            </span>
           </nav>
         )}
       </header>
