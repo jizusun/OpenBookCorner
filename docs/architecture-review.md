@@ -87,53 +87,62 @@ Every service takes `private db: Database` in its constructor and is instantiate
 ## 4. Findings & recommendations
 
 Ordered by impact. Severity: 🔴 high · 🟡 medium · 🟢 low/nit.
+Status: ✅ fixed in this PR · ⏭️ follow-up.
 
-### 🟡 F1 — Design docs describe a DDD system that was not built
+### 🟡 F1 — Design docs describe a DDD system that was not built ⏭️
 `.kiro/steering/design.md` specifies rich aggregates (`Library`, `Book`, `BorrowTransaction` with behavior), value objects (`ISBN`, `BookInventory`), domain events, repository interfaces, and a Result pattern. **None of this exists.** The implementation is transaction-script / table-module: Drizzle row types (`Book = typeof books.$inferSelect`) flow around as plain data and services issue SQL directly.
 
 This is a reasonable pragmatic choice for the current scale — but the docs are now misleading for anyone onboarding. **Recommendation:** either (a) demote the DDD content in `design.md` to an explicit "aspirational / future" section and document the actual transaction-script approach as the current reality, or (b) commit to extracting the highest-value domain invariants (borrowing rules, inventory accounting) into a thin domain module. Prefer (a) now; revisit (b) if the circulation rules keep growing.
 
-### 🟡 F2 — Inconsistent error handling across the transport boundary
+### 🟡 F2 — Inconsistent error handling across the transport boundary ✅ fixed
 Services signal failure with bare string-coded errors, e.g. `throw new Error('BOOK_NOT_AVAILABLE')` / `'BOOK_CURRENTLY_BORROWED'` (`services/index.ts`). Routers translate these inconsistently:
 
 - `book.update` maps a not-found result to a typed `TRPCError({ code: 'NOT_FOUND' })` (`routers/book.ts:81-84`).
 - `book.remove` lets the service's string `Error` propagate untranslated (`routers/book.ts`).
 
-So two mutations on the same router surface failures differently (one as a structured tRPC error with a code, one as a generic 500-ish internal error). **Recommendation:** standardize. Introduce a small typed error (e.g. a `DomainError` carrying a stable `code`) or a `Result<T, Code>` return, and map it to `TRPCError` in one shared helper so every router behaves identically. This also makes the client's error handling (`apps/app/lib/errors.ts`) deterministic.
+So two mutations on the same router surface failures differently (one as a structured tRPC error with a code, one as a generic 500-ish internal error).
 
-### 🟡 F3 — Business orchestration leaking into a router
-`book.add` performs the R2 cover-persist side effect inline before delegating to the service (`routers/book.ts:52-63`): it calls `storeCoverImage`, rewrites `coverImageUrl`, then calls `BookService.add`. Transport code should not orchestrate storage. **Recommendation:** move the cover-persist step into `BookService.add` (inject the R2 bucket, or pass it through), leaving the router to validate + delegate only.
+**Resolution:** Added a typed `DomainError` (stable `code`) plus `toTRPCError` / `mapDomainErrors` helpers in `apps/api/lib/errors.ts`. Services now throw `DomainError('CODE')`; `book.update`/`book.remove` and the circulation router (`borrow`, `borrowByIsbn`, `return`) all route through `mapDomainErrors`, so every domain failure surfaces as a `TRPCError` with a mapped code (`NOT_FOUND` / `CONFLICT` / `BAD_REQUEST`). The code string is preserved as the error message, so the SPA's substring matching in `apps/app/lib/errors.ts` keeps working unchanged.
 
-### 🟡 F4 — `services/index.ts` is a 645-line module holding six services
+### 🟡 F3 — Business orchestration leaking into a router ✅ fixed
+`book.add` performed the R2 cover-persist side effect inline before delegating to the service (`routers/book.ts:52-63`): it called `storeCoverImage`, rewrote `coverImageUrl`, then called `BookService.add`. Transport code should not orchestrate storage.
+
+**Resolution:** `BookService.add` now accepts an optional `covers?: R2Bucket` and performs the cover-persist step internally. The router just validates and delegates (`new BookService(ctx.db).add({ ...input, libraryId, covers: ctx.env.COVERS })`).
+
+### 🟡 F4 — `services/index.ts` is a 645-line module holding six services ⏭️
 `BookService`, `CirculationService`, `LibraryService`, `FeedbackService`, `TenantAdminService`, `MemberService` all live in one file. This hurts navigability and cohesion. **Recommendation:** split into `services/book.ts`, `services/circulation.ts`, etc., and keep `services/index.ts` as a barrel re-export. (The free-function services like `covers.ts`/`openLibrary.ts` are already separate — align the classes with that.)
 
-### 🟡 F5 — Test harness duplicates schema DDL by hand (drift risk)
+### 🟡 F5 — Test harness duplicates schema DDL by hand (drift risk) ⏭️
 `db/testing.ts:18-78` hand-writes `CREATE TABLE` DDL mirroring `db/schema/domain.ts` rather than deriving from Drizzle migrations. Any schema change must be manually mirrored here, and the sql.js tables carry none of the `references()` FK constraints. **Recommendation:** generate the test DDL from the Drizzle schema (or apply the migration files to the in-memory DB) so the harness can never silently drift from production schema.
 
-### 🟢 F6 — Contained type-safety casts for D1 `.batch()`
+### 🟢 F6 — Contained type-safety casts for D1 `.batch()` ⏭️
 `insertChunked` casts to call D1's `.batch()` (`services/fanshuImport.ts:109-110`), and the same shim is re-created in `db/testing.ts:80-85`; `createDb` also casts (`lib/db.ts:6`). These are documented and contained (not leaking into domain types), but they're the one place `any`-style escapes live outside tests. **Recommendation:** wrap D1 `.batch()` behind one typed helper in `@obc/db` and have both the worker and the test harness use it, removing the duplicated casts.
 
-### 🟢 F7 — Schema timestamp inconsistency
+### 🟢 F7 — Schema timestamp inconsistency ⏭️
 Auth tables use `integer timestamp` (`schema/auth.ts`), domain tables use `text` columns defaulting to the literal string `'CURRENT_TIMESTAMP'` with ISO strings set manually in services (`schema/domain.ts`). Mixed representations complicate cross-table reasoning and querying. **Recommendation:** pick one timestamp representation for domain tables (ISO text is fine) and ensure the default is applied by the DB or always by a shared helper, not ad hoc per service.
 
-### 🟢 F8 — Minor pagination default inconsistency
-`BookService.listByLibrary` defaults `limit` to 20 while `MemberService.listByLibrary` defaults to 50 (both cap at 200). **Recommendation:** align defaults or centralize a pagination default constant.
+### 🟢 F8 — Minor pagination default inconsistency ✅ fixed
+`BookService.listByLibrary` defaulted `limit` to 20 while `MemberService.listByLibrary` defaulted to 50 (both cap at 200).
 
-### 🟢 F9 — Silent error swallowing in cover storage
-`storeCoverImage` swallows all failures to `null` by design (`covers.ts`). Acceptable for a non-critical path, but it's invisible in production. **Recommendation:** log a warning (structured) on failure so cover-storage regressions are observable.
+**Resolution:** Introduced shared `DEFAULT_PAGE_SIZE` (20) and `MAX_PAGE_SIZE` (200) constants in `services/index.ts`; both listings now use them.
 
-### 🟢 F10 — Docs reference non-existent `packages/*`
+### 🟢 F9 — Silent error swallowing in cover storage ✅ fixed
+`storeCoverImage` swallowed all failures to `null` by design (`covers.ts`). Acceptable for a non-critical path, but invisible in production.
+
+**Resolution:** The `catch` now emits a structured `console.warn('storeCoverImage failed', { sourceUrl, isbn, error })` before returning `null`, so cover-storage regressions are observable without blocking the add.
+
+### 🟢 F10 — Docs reference non-existent `packages/*` ⏭️
 See §2 note. Reconcile `AGENTS.md` / steering with the real workspace layout.
 
 ---
 
 ## 5. Suggested sequencing
 
-1. **Quick wins (low risk):** F2 (shared error→TRPCError helper), F3 (move cover persist into service), F8/F9/F10 (defaults, logging, doc fix).
-2. **Maintainability (medium):** F4 (split `services/index.ts`), F6 (single typed `.batch()` helper), F5 (generate test DDL from schema).
-3. **Strategic (discuss first):** F1 (reconcile DDD docs vs. transaction-script reality), F7 (timestamp normalization — needs a migration).
+1. **Quick wins (low risk):** ✅ F2 (shared error→TRPCError helper), ✅ F3 (move cover persist into service), ✅ F8/F9 (defaults, logging); ⏭️ F10 (doc fix).
+2. **Maintainability (medium):** ⏭️ F4 (split `services/index.ts`), F6 (single typed `.batch()` helper), F5 (generate test DDL from schema).
+3. **Strategic (discuss first):** ⏭️ F1 (reconcile DDD docs vs. transaction-script reality), F7 (timestamp normalization — needs a migration).
 
-None of these are blockers; the architecture is sound and the tenant-isolation story is strong. The list is about keeping the codebase legible and consistent as it grows.
+F2, F3, F8, and F9 are implemented in this PR (all 76 API/db tests pass; the touched files typecheck and lint clean). The remaining items are documented follow-ups — F4/F5/F6/F7 are mechanical but larger, and F1 is a decision rather than a code change.
 
 ---
 
