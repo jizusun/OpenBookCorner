@@ -3,7 +3,7 @@ import { Hono } from 'hono'
 import { z } from 'zod'
 
 import type { TenantVars } from '../lib/mw'
-import { admin, sessionAuth, tenant } from '../lib/mw'
+import { admin, sessionAuth, tenant, tenantHostGuard } from '../lib/mw'
 import { LibraryService } from '../services'
 import { AuditService } from '../services/audit'
 import {
@@ -31,7 +31,7 @@ const updateSettingsBody = z.object({
 
 /** Library settings + 番薯 import. Settings read = member; writes = admin. */
 export const libraryApp = new Hono<{ Variables: TenantVars }>()
-  .use(sessionAuth, tenant)
+  .use(sessionAuth, tenantHostGuard, tenant)
   .get('/settings', async (c) => {
     const lib = await new LibraryService(c.get('db')).get(c.get('libraryId'))
     if (!lib) return c.json({ error: 'LIBRARY_NOT_FOUND' }, 404)

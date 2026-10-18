@@ -3,7 +3,7 @@ import { Hono } from 'hono'
 import { z } from 'zod'
 
 import type { TenantVars } from '../lib/mw'
-import { admin, sessionAuth, tenant } from '../lib/mw'
+import { admin, sessionAuth, tenant, tenantHostGuard } from '../lib/mw'
 import { MemberService } from '../services'
 
 const listQuery = z.object({
@@ -18,7 +18,7 @@ const listQuery = z.object({
 
 /** Admin-only library members (番薯 成员). Tenant-scoped. */
 export const memberApp = new Hono<{ Variables: TenantVars }>()
-  .use(sessionAuth, tenant, admin)
+  .use(sessionAuth, tenantHostGuard, tenant, admin)
   .get('/', zValidator('query', listQuery), async (c) =>
     c.json(await new MemberService(c.get('db')).listByLibrary(c.get('libraryId'), c.req.valid('query'))),
   )

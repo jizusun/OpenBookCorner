@@ -3,7 +3,7 @@ import { Hono } from 'hono'
 import { z } from 'zod'
 
 import type { TenantVars } from '../lib/mw'
-import { admin, sessionAuth, tenant } from '../lib/mw'
+import { admin, sessionAuth, tenant, tenantHostGuard } from '../lib/mw'
 import { BookService } from '../services'
 import { AuditService } from '../services/audit'
 import { lookupBookMetadata } from '../services/bookMetadata'
@@ -48,7 +48,7 @@ const updateBody = z.object({
  * client input. Guards are attached at the sub-app level below.
  */
 export const bookApp = new Hono<{ Variables: TenantVars }>()
-  .use(sessionAuth, tenant)
+  .use(sessionAuth, tenantHostGuard, tenant)
   .get('/', zValidator('query', listQuery), async (c) =>
     c.json(await new BookService(c.get('db')).listByLibrary(c.get('libraryId'), c.req.valid('query'))),
   )

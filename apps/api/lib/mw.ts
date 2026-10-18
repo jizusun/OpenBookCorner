@@ -1,8 +1,12 @@
+import { eq } from 'drizzle-orm'
 import { createMiddleware } from 'hono/factory'
+
+import { libraries } from '@obc/db'
 
 import type { Auth, AuthSession, AuthUser } from './auth'
 import type { Database } from '@obc/db'
 import type { Env } from './env'
+import { resolveTenantHost } from './tenant'
 
 /**
  * Variables available on EVERY request (set by the Worker before routing):
@@ -84,6 +88,52 @@ export const superAdmin = createMiddleware<{ Variables: AuthedVars }>(async (c, 
   const user = c.get('user')
   if (user.role !== 'super_admin') {
     return c.json({ error: 'SUPER_ADMIN_REQUIRED' }, 403)
+  }
+  await next()
+})
+
+/**
+ * Per-tenant subdomain enforcement (ADR 0003 §3/§5). Runs AFTER `sessionAuth`
+ * (needs the verified `user`), BEFORE `tenant`. It uses the request Host — which
+ * is branding + the *expected* tenant, NEVER the source of truth — to add a
+ * guard on top of the session-derived isolation:
+ *
+ *  - apex / reserved / foreign host → NO tenant constraint (normal guards run).
+ *  - super_admin on a tenant host  → 409 REDIRECT_TO_APEX. Super admins belong
+ *    to no single tenant; tenant subdomains are members-only. The frontend reads
+ *    this code and redirects the super admin to the apex (never a silent
+ *    cross-tenant login — ADR 0003 §5).
+ *  - any other user whose session `libraryId` !== the host tenant's library
+ *    (including an unknown/inactive slug) → 403 WRONG_TENANT.
+ *
+ * `user.libraryId` from the session remains the ONLY isolation source of truth;
+ * this guard can reject but never widen access.
+ */
+export const tenantHostGuard = createMiddleware<{ Variables: AuthedVars }>(async (c, next) => {
+  const baseDomain = new URL(c.get('env').APP_ORIGIN).hostname
+  const host = c.req.header('host') ?? new URL(c.req.url).host
+  const slug = resolveTenantHost(host, baseDomain)
+  if (!slug) {
+    // Apex / reserved / foreign host: no subdomain constraint.
+    await next()
+    return
+  }
+
+  const user = c.get('user')
+  if (user.role === 'super_admin') {
+    // Members-only host: signal the frontend to send the super admin to the apex.
+    return c.json({ error: 'REDIRECT_TO_APEX' }, 409)
+  }
+
+  // Resolve the host's tenant and require the session user to belong to it.
+  const lib = await c
+    .get('db')
+    .select({ id: libraries.id })
+    .from(libraries)
+    .where(eq(libraries.slug, slug))
+    .get()
+  if (!lib || user.libraryId !== lib.id) {
+    return c.json({ error: 'WRONG_TENANT' }, 403)
   }
   await next()
 })

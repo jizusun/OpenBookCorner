@@ -3,7 +3,7 @@ import { Hono } from 'hono'
 import { z } from 'zod'
 
 import type { TenantVars } from '../lib/mw'
-import { admin, sessionAuth, tenant } from '../lib/mw'
+import { admin, sessionAuth, tenant, tenantHostGuard } from '../lib/mw'
 import { FeedbackService } from '../services'
 
 const submitBody = z.object({
@@ -13,7 +13,7 @@ const submitBody = z.object({
 
 /** Feedback: any member can submit; admin can list. Tenant-scoped. */
 export const feedbackApp = new Hono<{ Variables: TenantVars }>()
-  .use(sessionAuth, tenant)
+  .use(sessionAuth, tenantHostGuard, tenant)
   .post('/', zValidator('json', submitBody), async (c) =>
     c.json(
       await new FeedbackService(c.get('db')).submit({
