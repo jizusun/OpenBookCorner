@@ -19,6 +19,12 @@ export const libraries = sqliteTable('libraries', {
   emailDomains: text('email_domains', { mode: 'json' }).$type<string[]>().notNull(),
   settings: text('settings', { mode: 'json' }).$type<LibrarySettings>().notNull(),
   isActive: integer('is_active', { mode: 'boolean' }).notNull().default(true),
+  // Per-tenant subdomain + branding (ADR 0003). `slug` is the subdomain label
+  // (unique); branding fields feed the pre-auth customized login page.
+  slug: text('slug').unique(),
+  logoUrl: text('logo_url'),
+  brandColor: text('brand_color'),
+  loginWelcome: text('login_welcome'),
   createdAt: text('created_at').notNull().default('CURRENT_TIMESTAMP'),
   updatedAt: text('updated_at').notNull().default('CURRENT_TIMESTAMP'),
 })
