@@ -45,6 +45,9 @@ jobs:
           #    missing message (Lingui's built-in guard, belt-and-suspenders).
           bun --cwd apps/app i18n:compile -- --strict
 
+      - name: i18n lint (Lingui macro rules)
+        run: bun --cwd apps/app i18n:lint
+
       - name: Typecheck (db -> api -> app)
         run: bun run typecheck
 
