@@ -110,7 +110,8 @@ export const superAdmin = createMiddleware<{ Variables: AuthedVars }>(async (c, 
  * this guard can reject but never widen access.
  */
 export const tenantHostGuard = createMiddleware<{ Variables: AuthedVars }>(async (c, next) => {
-  const baseDomain = new URL(c.get('env').APP_ORIGIN).hostname
+  const env = c.get('env')
+  const baseDomain = env.TENANT_BASE_DOMAIN ?? new URL(env.APP_ORIGIN).hostname
   const host = c.req.header('host') ?? new URL(c.req.url).host
   const slug = resolveTenantHost(host, baseDomain)
   if (!slug) {

@@ -11,6 +11,14 @@ export const envSchema = z.object({
    * suffix+port patterns by `parseOriginPatterns`. Empty ⇒ only APP_ORIGIN.
    */
   APP_ORIGINS: z.string().optional(),
+  /**
+   * The base domain under which tenant subdomains live (ADR 0003), e.g.
+   * `openbookcorner.jizu.dev` ⇒ `acme.openbookcorner.jizu.dev`. Decoupled from
+   * APP_ORIGIN so previews can run on a SEPARATE domain without the preview host
+   * being parsed as a tenant (and vice-versa). Defaults to the APP_ORIGIN host
+   * when unset.
+   */
+  TENANT_BASE_DOMAIN: z.string().optional(),
   BETTER_AUTH_SECRET: z.string().min(16),
 })
 

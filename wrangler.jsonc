@@ -48,7 +48,16 @@
   "previews": {
     "vars": {
       "ENVIRONMENT": "preview",
-      "APP_NAME": "OpenBookCorner (Preview)"
+      "APP_NAME": "OpenBookCorner (Preview)",
+      // Preview tenant namespace is DECOUPLED from production (ADR 0003): on a
+      // preview deploy the tenant base domain is the preview domain itself, so
+      // the preview host is never parsed as a production tenant, and real test
+      // tenants can live under the preview domain. INFRA TODO to fully separate
+      // the preview domain: provision a wildcard cert + route for the preview
+      // base (a two-level wildcard like *.preview.openbookcorner.jizu.dev is NOT
+      // covered by the existing *.openbookcorner.jizu.dev cert). Until then the
+      // shared preview stays at preview.openbookcorner.jizu.dev (reserved word).
+      "TENANT_BASE_DOMAIN": "preview.openbookcorner.jizu.dev"
     },
     "d1_databases": [
       {
