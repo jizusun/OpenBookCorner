@@ -191,6 +191,25 @@ export const feedback = sqliteTable('feedback', {
   createdAt: text('created_at').notNull().default('CURRENT_TIMESTAMP'),
 })
 
+/**
+ * Append-only audit log of privileged actions (ADR 0004 Part A). Written
+ * server-side at the guard/service layer — never from the client. `actorUserId`
+ * is ALWAYS the real user; `onBehalfOfUserId` is set only during impersonation.
+ * `libraryId` is the tenant scope (null for cross-tenant/system ops, e.g. tenant
+ * create). Reads are tenant-scoped. Rows are never updated or deleted.
+ */
+export const auditLogs = sqliteTable('audit_logs', {
+  id: text('id').primaryKey(),
+  actorUserId: text('actor_user_id').notNull(),
+  onBehalfOfUserId: text('on_behalf_of_user_id'),
+  libraryId: text('library_id'),
+  action: text('action').notNull(),
+  targetType: text('target_type'),
+  targetId: text('target_id'),
+  metadata: text('metadata', { mode: 'json' }).$type<Record<string, unknown>>(),
+  createdAt: text('created_at').notNull().default('CURRENT_TIMESTAMP'),
+})
+
 // --- Relations ---
 export const librariesRelations = relations(libraries, ({ many }) => ({
   books: many(books),
@@ -220,3 +239,4 @@ export type PurchaseRequest = typeof purchaseRequests.$inferSelect
 export type BorrowTransaction = typeof borrowTransactions.$inferSelect
 export type Feedback = typeof feedback.$inferSelect
 export type ImportRun = typeof importRuns.$inferSelect
+export type AuditLog = typeof auditLogs.$inferSelect
