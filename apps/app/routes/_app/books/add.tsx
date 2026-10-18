@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
-import { trpc, trpcClient } from '@/lib/trpc'
+import { api } from '@/lib/api'
 import { IsbnScanner } from '@/components/barcode/IsbnScanner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -45,7 +45,7 @@ function AddBookPage() {
     setError(null)
     setInfo(null)
     try {
-      const m = await trpcClient.book.lookupIsbn.query({ isbn: value })
+      const m = await api.book.lookupIsbn.query({ isbn: value })
       if (m) {
         if (m.title) setTitle(m.title)
         if (m.author) setAuthor(m.author)
@@ -81,7 +81,7 @@ function AddBookPage() {
     setSuccess(null)
     setPending(true)
     try {
-      await trpcClient.book.add.mutate({
+      await api.book.add.mutate({
         title: title.trim(),
         author: author.trim(),
         isbn: isbn.trim(),
@@ -92,7 +92,7 @@ function AddBookPage() {
         description: meta.description,
         subjects: meta.subjects,
       })
-      await queryClient.invalidateQueries({ queryKey: trpc.book.list.queryKey() })
+      await queryClient.invalidateQueries({ queryKey: api.book.list.queryKey() })
       setSuccess(t`“${title.trim()}” added to the catalog.`)
       toast.success(t`“${title.trim()}” added to the catalog.`)
       setTitle('')

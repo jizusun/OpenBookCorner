@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { Trans } from '@lingui/react/macro'
-import { trpc } from '@/lib/trpc'
+import { api } from '@/lib/api'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -32,7 +32,7 @@ export const Route = createFileRoute('/_app/admin/feedback')({
 })
 
 function FeedbackPage() {
-  const { data: items, isLoading } = useQuery(trpc.feedback.list.queryOptions())
+  const { data: items, isLoading } = useQuery(api.feedback.list.queryOptions())
 
   return (
     <div className="space-y-4">

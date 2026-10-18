@@ -2,7 +2,7 @@ import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { z } from 'zod'
 import { Trans } from '@lingui/react/macro'
-import { trpc } from '@/lib/trpc'
+import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -45,7 +45,7 @@ function OverduePage() {
   const active = range ?? 'all'
 
   const { data: items, isLoading } = useQuery(
-    trpc.borrowing.listOverdue.queryOptions({ range: active }),
+    api.borrowing.listOverdue.queryOptions({ range: active }),
   )
 
   return (

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Trans, Plural, useLingui } from '@lingui/react/macro'
-import { trpc, trpcClient } from '@/lib/trpc'
+import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/components/Toast'
@@ -56,7 +56,7 @@ interface Counts {
 
 function ImportPage() {
   const queryClient = useQueryClient()
-  const { data: history } = useQuery(trpc.library.importHistory.queryOptions())
+  const { data: history } = useQuery(api.library.importHistory.queryOptions())
   const toast = useToast()
   const { t } = useLingui()
   const [fileName, setFileName] = useState<string | null>(null)
@@ -78,7 +78,7 @@ function ImportPage() {
     try {
       // The Worker fetches + parses the URL (the browser can't fetch it
       // cross-origin). Preview first, then the admin confirms with Import.
-      const preview = await trpcClient.library.importFanshuFromUrl.mutate({ url: u, preview: true })
+      const preview = await api.library.importFanshuFromUrl.mutate({ url: u, preview: true })
       setCounts(preview)
       setSheets(null) // signals the commit path to use the URL, not parsed sheets
     } catch {
@@ -108,7 +108,7 @@ function ImportPage() {
         parsed[key] = XLSX.utils.sheet_to_json(wb.Sheets[name]!, { defval: '' }) as Row[]
       }
       setSheets(parsed)
-      const preview = await trpcClient.library.importFanshuPreview.mutate({ sheets: parsed })
+      const preview = await api.library.importFanshuPreview.mutate({ sheets: parsed })
       setCounts(preview)
     } catch {
       setError(t`Could not read this file. Make sure it is a 番薯借阅 Excel export (.xls/.xlsx).`)
@@ -122,12 +122,12 @@ function ImportPage() {
     setError(null)
     try {
       const res = sheets
-        ? await trpcClient.library.importFanshu.mutate({ sheets, fileName: fileName ?? undefined })
-        : await trpcClient.library.importFanshuFromUrl.mutate({ url: url.trim() })
+        ? await api.library.importFanshu.mutate({ sheets, fileName: fileName ?? undefined })
+        : await api.library.importFanshuFromUrl.mutate({ url: url.trim() })
       setResult(res)
       toast.success(t`Imported ${res.books} books, ${res.members} members, ${res.loans} loans.`)
-      await queryClient.invalidateQueries({ queryKey: trpc.book.list.queryKey() })
-      await queryClient.invalidateQueries({ queryKey: trpc.library.importHistory.queryKey() })
+      await queryClient.invalidateQueries({ queryKey: api.book.list.queryKey() })
+      await queryClient.invalidateQueries({ queryKey: api.library.importHistory.queryKey() })
     } catch {
       setError(t`Import failed. Please try again.`)
     } finally {

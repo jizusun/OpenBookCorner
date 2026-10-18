@@ -3,7 +3,7 @@ import { createFileRoute, redirect, Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { z } from 'zod'
 import { Trans, Plural, useLingui } from '@lingui/react/macro'
-import { trpc, trpcClient } from '@/lib/trpc'
+import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -29,7 +29,7 @@ export const Route = createFileRoute('/_app/admin/members')({
 })
 
 const PAGE_SIZE = 50
-type Member = Awaited<ReturnType<typeof trpcClient.member.list.query>>['items'][number]
+type Member = Awaited<ReturnType<typeof api.member.list.query>>['items'][number]
 
 function MembersPage() {
   const { q, sort, dir, role, plan } = Route.useSearch()
@@ -37,11 +37,11 @@ function MembersPage() {
   const [term, setTerm] = useState(q ?? '')
   const { t } = useLingui()
 
-  const { data: facets } = useQuery(trpc.member.facets.queryOptions())
+  const { data: facets } = useQuery(api.member.facets.queryOptions())
 
   const baseInput = { search: q, limit: PAGE_SIZE, sortBy: sort, sortDir: dir, role, plan }
   const infinite = useInfiniteList<Member>(['member.list.infinite', baseInput], (page) =>
-    trpcClient.member.list.query({ ...baseInput, page }),
+    api.member.list.query({ ...baseInput, page }),
   )
   const items = infinite.items
 

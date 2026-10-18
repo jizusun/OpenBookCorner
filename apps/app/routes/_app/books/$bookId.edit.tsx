@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { trpc, trpcClient } from '@/lib/trpc'
+import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -26,7 +26,7 @@ function EditBookPage() {
   const toast = useToast()
   const { t } = useLingui()
 
-  const { data: book, isLoading } = useQuery(trpc.book.get.queryOptions({ bookId }))
+  const { data: book, isLoading } = useQuery(api.book.get.queryOptions({ bookId }))
 
   const [form, setForm] = useState<null | {
     title: string
@@ -64,7 +64,7 @@ function EditBookPage() {
     setError(null)
     setPending(true)
     try {
-      await trpcClient.book.update.mutate({
+      await api.book.update.mutate({
         bookId,
         title: current.title.trim(),
         author: current.author.trim(),
@@ -73,8 +73,8 @@ function EditBookPage() {
         publishedYear: current.publishedYear ? Number(current.publishedYear) : undefined,
         description: current.description.trim() || undefined,
       })
-      await queryClient.invalidateQueries({ queryKey: trpc.book.get.queryKey({ bookId }) })
-      await queryClient.invalidateQueries({ queryKey: trpc.book.list.queryKey() })
+      await queryClient.invalidateQueries({ queryKey: api.book.get.queryKey({ bookId }) })
+      await queryClient.invalidateQueries({ queryKey: api.book.list.queryKey() })
       toast.success(t`Changes saved.`)
       await navigate({ to: '/books/$bookId', params: { bookId } })
     } catch {
