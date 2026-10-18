@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Trans, useLingui } from '@lingui/react/macro'
-import { trpc, trpcClient } from '@/lib/trpc'
+import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -24,7 +24,7 @@ function SettingsPage() {
   const toast = useToast()
   const { t } = useLingui()
 
-  const { data: lib, isLoading } = useQuery(trpc.library.settings.queryOptions())
+  const { data: lib, isLoading } = useQuery(api.library.settings.queryOptions())
 
   const [form, setForm] = useState<null | {
     name: string
@@ -60,13 +60,13 @@ function SettingsPage() {
     setSaved(false)
     setPending(true)
     try {
-      await trpcClient.library.updateSettings.mutate({
+      await api.library.updateSettings.mutate({
         name: current.name.trim(),
         borrowingPeriodDays: Number(current.borrowingPeriodDays),
         maxBooksPerReader: Number(current.maxBooksPerReader),
         allowExtensions: current.allowExtensions,
       })
-      await queryClient.invalidateQueries({ queryKey: trpc.library.settings.queryKey() })
+      await queryClient.invalidateQueries({ queryKey: api.library.settings.queryKey() })
       setSaved(true)
       toast.success(t`Settings saved.`)
     } catch {

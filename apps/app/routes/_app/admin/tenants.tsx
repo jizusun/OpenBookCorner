@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Trans, useLingui } from '@lingui/react/macro'
-import { trpc } from '@/lib/trpc'
+import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -24,25 +24,25 @@ function TenantsPage() {
   const queryClient = useQueryClient()
   const toast = useToast()
   const { t } = useLingui()
-  const { data: tenants, isLoading } = useQuery(trpc.tenant.list.queryOptions())
+  const { data: tenants, isLoading } = useQuery(api.tenant.list.queryOptions())
 
   const [name, setName] = useState('')
   const [domains, setDomains] = useState('')
 
   const create = useMutation({
-    ...trpc.tenant.create.mutationOptions(),
+    ...api.tenant.create.mutationOptions(),
     onSuccess: () => {
       toast.success(t`Library created.`)
       setName('')
       setDomains('')
-      queryClient.invalidateQueries({ queryKey: trpc.tenant.list.queryKey() })
+      queryClient.invalidateQueries({ queryKey: api.tenant.list.queryKey() })
     },
     onError: () => toast.error(t`Could not create the library.`),
   })
 
   const toggle = useMutation({
-    ...trpc.tenant.setActive.mutationOptions(),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: trpc.tenant.list.queryKey() }),
+    ...api.tenant.setActive.mutationOptions(),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: api.tenant.list.queryKey() }),
     onError: () => toast.error(t`Could not update the library.`),
   })
 

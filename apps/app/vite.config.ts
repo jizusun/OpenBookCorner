@@ -36,7 +36,7 @@ export default defineConfig({
           if (id.includes('@zxing')) return
           if (/[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/.test(id)) return 'react'
           if (id.includes('@tanstack')) return 'tanstack'
-          if (id.includes('@trpc') || id.includes('better-auth')) return 'api'
+          if (id.includes('hono') || id.includes('better-auth')) return 'api'
           if (id.includes('zod')) return 'zod'
           return 'vendor'
         },

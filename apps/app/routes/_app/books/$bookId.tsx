@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { trpc } from '@/lib/trpc'
+import { api } from '@/lib/api'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
@@ -21,39 +21,39 @@ function BookDetailPage() {
   const toast = useToast()
   const { t } = useLingui()
 
-  const { data: user } = useQuery(trpc.auth.me.queryOptions())
+  const { data: user } = useQuery(api.auth.me.queryOptions())
   const isAdmin = user?.role === 'library_admin' || user?.role === 'super_admin'
   const viewMode = useViewMode()
   // Manage mode = admin in Admin view: show Edit/Delete + borrower, hide Borrow.
   const manageMode = isAdmin && viewMode === 'admin'
 
-  const { data: book, isLoading } = useQuery(trpc.book.get.queryOptions({ bookId }))
+  const { data: book, isLoading } = useQuery(api.book.get.queryOptions({ bookId }))
 
   // Admin-only: who currently holds the book. Only query when admin + borrowed.
   const { data: borrower } = useQuery({
-    ...trpc.book.borrower.queryOptions({ bookId }),
+    ...api.book.borrower.queryOptions({ bookId }),
     enabled: !!manageMode && !!book && book.availableCount < book.quantity,
   })
 
   const borrow = useMutation({
-    ...trpc.borrowing.borrow.mutationOptions(),
+    ...api.borrowing.borrow.mutationOptions(),
     onSuccess: () => toast.success(t`Borrowed — see it in “My Books”.`),
     onError: (e) => toast.error(circulationErrorMessage(e)),
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: trpc.book.get.queryKey({ bookId }) })
-      queryClient.invalidateQueries({ queryKey: trpc.book.borrower.queryKey({ bookId }) })
-      queryClient.invalidateQueries({ queryKey: trpc.book.list.queryKey() })
-      queryClient.invalidateQueries({ queryKey: trpc.borrowing.myBooks.queryKey() })
+      queryClient.invalidateQueries({ queryKey: api.book.get.queryKey({ bookId }) })
+      queryClient.invalidateQueries({ queryKey: api.book.borrower.queryKey({ bookId }) })
+      queryClient.invalidateQueries({ queryKey: api.book.list.queryKey() })
+      queryClient.invalidateQueries({ queryKey: api.borrowing.myBooks.queryKey() })
     },
   })
 
   const [confirmOpen, setConfirmOpen] = useState(false)
   const remove = useMutation({
-    ...trpc.book.remove.mutationOptions(),
+    ...api.book.remove.mutationOptions(),
     onSuccess: async () => {
       setConfirmOpen(false)
       toast.success(t`Book deleted.`)
-      await queryClient.invalidateQueries({ queryKey: trpc.book.list.queryKey() })
+      await queryClient.invalidateQueries({ queryKey: api.book.list.queryKey() })
       await navigate({ to: '/books' })
     },
     onError: (e) => {

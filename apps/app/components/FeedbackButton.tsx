@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Trans, useLingui } from '@lingui/react/macro'
-import { trpcClient } from '@/lib/trpc'
+import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Modal } from '@/components/ui/modal'
@@ -46,7 +46,7 @@ export function FeedbackButton() {
     setPending(true)
     setError(null)
     try {
-      await trpcClient.feedback.submit.mutate({ category, message: message.trim() })
+      await api.feedback.submit.mutate({ category, message: message.trim() })
       setMessage('')
       setOpen(false)
       toast.success(t`Thanks for your feedback! 🎉`)

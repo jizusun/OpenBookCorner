@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { trpc, trpcClient } from '@/lib/trpc'
+import { api } from '@/lib/api'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -37,22 +37,22 @@ function DueLabel({ dueDate }: { dueDate: string }) {
   return <Plural value={diffDays} one="Due in # day" other="Due in # days" />
 }
 
-type MyBookItem = Awaited<ReturnType<typeof trpcClient.borrowing.myBooks.query>>[number]
+type MyBookItem = Awaited<ReturnType<typeof api.borrowing.myBooks.query>>[number]
 
 function MyBooksPage() {
   const queryClient = useQueryClient()
   const toast = useToast()
   const { t } = useLingui()
-  const myBooksKey = trpc.borrowing.myBooks.queryKey()
+  const myBooksKey = api.borrowing.myBooks.queryKey()
 
   const { data: items, isLoading, isFetching } = useQuery({
-    ...trpc.borrowing.myBooks.queryOptions(),
+    ...api.borrowing.myBooks.queryOptions(),
     refetchOnMount: 'always',
     staleTime: 0,
   })
 
   const doReturn = useMutation({
-    ...trpc.borrowing.return.mutationOptions(),
+    ...api.borrowing.return.mutationOptions(),
     onMutate: async (vars: { transactionId: string }) => {
       await queryClient.cancelQueries({ queryKey: myBooksKey })
       const prev = queryClient.getQueryData<MyBookItem[]>(myBooksKey)
@@ -71,7 +71,7 @@ function MyBooksPage() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: myBooksKey })
-      queryClient.invalidateQueries({ queryKey: trpc.book.list.queryKey() })
+      queryClient.invalidateQueries({ queryKey: api.book.list.queryKey() })
     },
   })
 

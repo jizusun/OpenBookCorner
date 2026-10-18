@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { createFileRoute, Link, Outlet, redirect, useRouter } from '@tanstack/react-router'
 import { signOut } from '@/lib/auth-client'
-import { ensureRequireMe } from '@/lib/trpc'
+import { ensureRequireMe } from '@/lib/api'
 import { queryClient } from '@/lib/query'
 import { Button } from '@/components/ui/button'
 import { FeedbackButton } from '@/components/FeedbackButton'

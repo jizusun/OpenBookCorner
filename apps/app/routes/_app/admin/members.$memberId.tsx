@@ -1,7 +1,7 @@
 import { createFileRoute, redirect, Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { Trans, useLingui } from '@lingui/react/macro'
-import { trpc } from '@/lib/trpc'
+import { api } from '@/lib/api'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -27,7 +27,7 @@ function Row({ label, value }: { label: string; value: unknown }) {
 
 function MemberDetailPage() {
   const { memberId } = Route.useParams()
-  const { data: m, isLoading } = useQuery(trpc.member.get.queryOptions({ memberId }))
+  const { data: m, isLoading } = useQuery(api.member.get.queryOptions({ memberId }))
   const { t } = useLingui()
 
   if (isLoading) return <Skeleton className="h-40 w-full" />

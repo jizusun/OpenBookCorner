@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { z } from 'zod'
-import { trpc, trpcClient } from '@/lib/trpc'
+import { api } from '@/lib/api'
 import { BookCard } from '@/components/books/BookCard'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -32,7 +32,7 @@ export const Route = createFileRoute('/_app/books/')({
 })
 
 const PAGE_SIZE = 24
-type Book = Awaited<ReturnType<typeof trpcClient.book.list.query>>['items'][number]
+type Book = Awaited<ReturnType<typeof api.book.list.query>>['items'][number]
 
 function CatalogPage() {
   const { q, sort, dir, category, shelf, avail } = Route.useSearch()
@@ -43,12 +43,12 @@ function CatalogPage() {
 
   const [term, setTerm] = useState(q ?? '')
 
-  const { data: user } = useQuery(trpc.auth.me.queryOptions())
+  const { data: user } = useQuery(api.auth.me.queryOptions())
   const isAdmin = user?.role === 'library_admin' || user?.role === 'super_admin'
   const viewMode = useViewMode()
   const manageMode = isAdmin && viewMode === 'admin'
 
-  const { data: facets } = useQuery(trpc.book.facets.queryOptions())
+  const { data: facets } = useQuery(api.book.facets.queryOptions())
 
   // Server-side sort + filter, infinite scroll by page.
   const baseInput = {
@@ -61,19 +61,19 @@ function CatalogPage() {
     availability: avail,
   }
   const infinite = useInfiniteList(['book.list.infinite', baseInput], (page) =>
-    trpcClient.book.list.query({ ...baseInput, page }),
+    api.book.list.query({ ...baseInput, page }),
   )
 
   const items: Book[] = infinite.items
   const total = infinite.total
 
   const borrow = useMutation({
-    ...trpc.borrowing.borrow.mutationOptions(),
+    ...api.borrowing.borrow.mutationOptions(),
     onSuccess: () => toast.success(t`Borrowed — see it in “My Books”.`),
     onError: (e) => toast.error(circulationErrorMessage(e)),
     onSettled: () => {
       void infinite.refetch()
-      queryClient.invalidateQueries({ queryKey: trpc.borrowing.myBooks.queryKey() })
+      queryClient.invalidateQueries({ queryKey: api.borrowing.myBooks.queryKey() })
     },
   })
 

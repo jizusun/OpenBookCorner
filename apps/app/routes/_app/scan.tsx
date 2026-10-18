@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { trpc } from '@/lib/trpc'
+import { api } from '@/lib/api'
 import { IsbnScanner } from '@/components/barcode/IsbnScanner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -22,11 +22,11 @@ function ScanToBorrowPage() {
   >(null)
 
   const borrow = useMutation({
-    ...trpc.borrowing.borrowByIsbn.mutationOptions(),
+    ...api.borrowing.borrowByIsbn.mutationOptions(),
     onSuccess: (res) => {
       setResult({ kind: 'ok', title: res.title, dueDate: res.dueDate })
-      queryClient.invalidateQueries({ queryKey: trpc.book.list.queryKey() })
-      queryClient.invalidateQueries({ queryKey: trpc.borrowing.myBooks.queryKey() })
+      queryClient.invalidateQueries({ queryKey: api.book.list.queryKey() })
+      queryClient.invalidateQueries({ queryKey: api.borrowing.myBooks.queryKey() })
     },
     onError: (e) => setResult({ kind: 'err', text: circulationErrorMessage(e) }),
   })
