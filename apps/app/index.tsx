@@ -5,6 +5,7 @@ import { createRoot } from 'react-dom/client'
 
 import { ToastProvider } from '@/components/Toast'
 import { RouteProgress } from '@/components/RouteProgress'
+import { I18nProvider } from '@/lib/i18n'
 import { queryClient } from '@/lib/query'
 import { routeTree } from '@/lib/routeTree.gen'
 
@@ -34,9 +35,11 @@ container.replaceChildren()
 createRoot(container).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <ToastProvider>
-        <RouterProvider router={router} />
-      </ToastProvider>
+      <I18nProvider>
+        <ToastProvider>
+          <RouterProvider router={router} />
+        </ToastProvider>
+      </I18nProvider>
     </QueryClientProvider>
   </StrictMode>,
 )
