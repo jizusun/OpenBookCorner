@@ -1,15 +1,13 @@
 /**
- * Single full-stack Worker: serves the built SPA static assets AND runs the
- * Hono/tRPC + Better Auth backend in the same process (no service binding).
+ * Single full-stack Worker (no HTTP framework).
  *
- * Consolidating into one Worker means a Workers Builds *preview* of this Worker
- * runs the actual backend code too — so a PR that changes Hono/tRPC is reflected
- * in its preview URL (not just frontend changes).
+ * Serves the built SPA static assets AND runs the tRPC + Better Auth backend in
+ * the same process. A plain `fetch` handler dispatches the four API concerns via
+ * `handleApiRequest` (Better Auth, tRPC, /health, /covers) and falls through to
+ * the SPA assets for everything else. There is no Hono, no CORS (same-origin
+ * single Worker), and no service binding.
  */
-import { Hono } from 'hono'
-import { logger } from 'hono/logger'
-
-import { app as apiApp, createAuth, createDb, envSchema, type Env } from '@obc/api'
+import { createAuth, createDb, envSchema, handleApiRequest, type Env } from '@obc/api'
 
 type CloudflareEnv = {
   ASSETS: Fetcher
@@ -21,66 +19,62 @@ type CloudflareEnv = {
   ENVIRONMENT?: string
 }
 
-type Vars = {
-  db: ReturnType<typeof createDb>
-  auth: ReturnType<typeof createAuth>
-}
-
-const worker = new Hono<{ Bindings: CloudflareEnv; Variables: Vars }>()
-
-worker.use(logger())
-
-// Initialize per-request db + auth from bindings (same as the former api worker).
-worker.use('/api/*', async (c, next) => {
-  const environment = c.env.ENVIRONMENT ?? 'development'
-  // Fail closed in production: never sign sessions with a public fallback secret.
-  // Fail closed on any internet-reachable deployment: production AND preview are
-  // publicly reachable, so a missing BETTER_AUTH_SECRET must NOT silently fall
-  // back to the public dev constant (that would let anyone forge session
-  // cookies, including admin/super-admin). The dev fallback is ONLY for local
-  // dev / E2E (development).
-  const requiresRealSecret = environment === 'production' || environment === 'preview'
-  if (requiresRealSecret && !c.env.BETTER_AUTH_SECRET) {
-    return c.json({ error: 'Server misconfigured: BETTER_AUTH_SECRET is required' }, 500)
-  }
-  const env: Env = {
+/** Build the parsed, validated per-request Env from the raw Cloudflare bindings. */
+function resolveEnv(cfEnv: CloudflareEnv, req: Request): Env {
+  const environment = cfEnv.ENVIRONMENT ?? 'development'
+  return {
     ...envSchema.parse({
       ENVIRONMENT: environment,
-      APP_NAME: c.env.APP_NAME ?? 'OpenBookCorner',
+      APP_NAME: cfEnv.APP_NAME ?? 'OpenBookCorner',
       // Preview URLs are per-PR (pr-N.openbookcorner.jizu.dev), so a static
       // APP_ORIGIN can't match. Derive it from the incoming request in preview
       // (and dev) so Better Auth's baseURL + cookies match the host the browser
       // is actually on. Production uses the fixed configured origin.
       APP_ORIGIN:
         environment === 'production'
-          ? (c.env.APP_ORIGIN ?? 'https://openbookcorner.jizu.dev')
-          : new URL(c.req.url).origin,
+          ? (cfEnv.APP_ORIGIN ?? 'https://openbookcorner.jizu.dev')
+          : new URL(req.url).origin,
       BETTER_AUTH_SECRET:
-        c.env.BETTER_AUTH_SECRET ?? 'dev-only-insecure-secret-change-me-32chars',
+        cfEnv.BETTER_AUTH_SECRET ?? 'dev-only-insecure-secret-change-me-32chars',
     }),
-    DB: c.env.DB,
-    COVERS: c.env.COVERS,
+    DB: cfEnv.DB,
+    COVERS: cfEnv.COVERS,
   }
-  const db = createDb(c.env.DB)
-  c.set('db', db)
-  c.set('auth', createAuth(db, env))
-  Object.assign(c.env, env)
-  await next()
-})
-// /covers/* also needs the bindings (served by the Hono app from R2).
-worker.use('/covers/*', async (c, next) => {
-  Object.assign(c.env, {
-    ENVIRONMENT: c.env.ENVIRONMENT ?? 'production',
-    APP_NAME: c.env.APP_NAME ?? 'OpenBookCorner',
-    APP_ORIGIN: c.env.APP_ORIGIN ?? 'https://openbookcorner.jizu.dev',
-  })
-  await next()
-})
+}
 
-// Backend routes (tRPC at /api/trpc, Better Auth at /api/auth/*, /covers/:key, /health).
-worker.route('/', apiApp)
+export default {
+  async fetch(req: Request, cfEnv: CloudflareEnv): Promise<Response> {
+    const url = new URL(req.url)
+    const isApi =
+      url.pathname === '/health' ||
+      url.pathname.startsWith('/api/') ||
+      url.pathname.startsWith('/covers/')
 
-// Everything else → SPA assets (not_found_handling serves index.html for client routes).
-worker.all('*', (c) => c.env.ASSETS.fetch(c.req.raw))
+    if (isApi) {
+      const environment = cfEnv.ENVIRONMENT ?? 'development'
+      // Fail closed on any internet-reachable deployment: production AND preview
+      // are publicly reachable, so a missing BETTER_AUTH_SECRET must NOT silently
+      // fall back to the public dev constant (that would let anyone forge session
+      // cookies, including admin/super-admin). The dev fallback is ONLY for local
+      // dev / E2E (development).
+      const requiresRealSecret = environment === 'production' || environment === 'preview'
+      if (requiresRealSecret && !cfEnv.BETTER_AUTH_SECRET) {
+        return Response.json(
+          { error: 'Server misconfigured: BETTER_AUTH_SECRET is required' },
+          { status: 500 },
+        )
+      }
 
-export default worker
+      const env = resolveEnv(cfEnv, req)
+      const db = createDb(cfEnv.DB)
+      const auth = createAuth(db, env)
+
+      const res = await handleApiRequest(req, { db, auth, env })
+      if (res) return res
+    }
+
+    // Everything else → SPA assets (not_found_handling serves index.html for
+    // client-side routes).
+    return cfEnv.ASSETS.fetch(req)
+  },
+}
