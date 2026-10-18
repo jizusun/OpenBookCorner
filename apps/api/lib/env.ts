@@ -5,6 +5,12 @@ export const envSchema = z.object({
   ENVIRONMENT: z.enum(['production', 'staging', 'preview', 'development']).default('development'),
   APP_NAME: z.string().default('OpenBookCorner'),
   APP_ORIGIN: z.string().url(),
+  /**
+   * Optional comma-separated allow-list of every public origin that may front
+   * the Worker (ADR 0003 §7), e.g. the China relay on :666. Parsed into
+   * suffix+port patterns by `parseOriginPatterns`. Empty ⇒ only APP_ORIGIN.
+   */
+  APP_ORIGINS: z.string().optional(),
   BETTER_AUTH_SECRET: z.string().min(16),
 })
 
