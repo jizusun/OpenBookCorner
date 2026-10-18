@@ -188,6 +188,40 @@ SHOULD be generalized to **match a trusted suffix pattern** (e.g.
 exact strings — still an allow-list (closed set of trusted suffixes/ports),
 never raw header trust. Reserved-subdomain exclusion (§2) still applies.
 
+**Matching MUST be anchored URL parsing, never substring.** `X-Forwarded-Origin`
+is attacker-controllable (the Worker is directly reachable at
+`openbookcorner.jizu.dev`, so a client can bypass the relay and forge the
+header). Parse the value with `new URL()` and verify **(a)** scheme is `https`,
+**(b)** host is the apex OR ends with a trusted dot-suffix (`.openbookcorner.jizu.dev`),
+and **(c)** port matches exactly (incl. the relay's `:666`). Do NOT use
+`includes()`/`startsWith()`. Named bypasses the check MUST reject:
+
+| Forged value | Why it must fail |
+| --- | --- |
+| `https://evil-openbookcorner.jizu.dev` | suffix confusion (no dot boundary) |
+| `https://openbookcorner.jizu.dev.evil.com` | trusted string as a prefix of a longer host |
+| `https://obc.cloud.jizu.dev:6666` / `:80` | wrong port (port not matched exactly) |
+| `http://openbookcorner.jizu.dev:666` | wrong scheme |
+| `https://openbookcorner.jizu.dev@evil.com` | userinfo trick |
+
+On any non-match the Worker uses the configured `APP_ORIGIN` (fallback), never
+the forwarded value — so a spoof degrades to "normal origin", never to CSRF
+bypass.
+
+**Optional defense-in-depth — relay shared secret.** Because origin trust rests
+solely on the allow-list, an optional hardening is for Traefik to add a secret
+header (e.g. `X-Relay-Token: <random>`) that the Worker verifies before honoring
+`X-Forwarded-Origin`. This ties "this request really came via our relay" to a
+secret, not just to a well-formed header. Not required for correctness (the
+allow-list already blocks spoofed origins) but recommended if the relay path
+carries elevated trust later.
+
+**Transport.** Traefik terminates TLS on `:666` and MUST re-dial Cloudflare over
+HTTPS with the Worker's real SNI/host (`passHostHeader:false`); never disable
+upstream cert verification (would expose session cookies on the middle hop). The
+relay upstream MUST stay pinned to the fixed Worker hostname — never derived from
+request input (SSRF/open-proxy risk).
+
 **Covers caveat (unchanged).** The relay accelerates the Worker only; R2 cover
 images come direct from Cloudflare's CDN and may be slow/blocked in China. If
 China-fast covers matter, proxy `/covers/*` through the relay too (or serve
