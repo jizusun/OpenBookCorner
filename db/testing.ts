@@ -16,6 +16,7 @@ export async function createTestDb(): Promise<Database> {
     CREATE TABLE libraries (
       id TEXT PRIMARY KEY, name TEXT NOT NULL, email_domains TEXT NOT NULL,
       settings TEXT NOT NULL, is_active INTEGER NOT NULL DEFAULT 1,
+      slug TEXT UNIQUE, logo_url TEXT, brand_color TEXT, login_welcome TEXT,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
     CREATE TABLE user (
