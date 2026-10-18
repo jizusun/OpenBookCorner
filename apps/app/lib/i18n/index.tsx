@@ -1,24 +1,26 @@
 import { i18n } from '@lingui/core'
-import { compileMessage } from '@lingui/message-utils/compileMessage'
 import { I18nProvider as LinguiProvider, useLingui } from '@lingui/react'
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
 
-import { zh, type MessageKey, type Messages } from './zh'
+import { messages as zhMessages } from './locales/zh'
+import type { MessageKey, Messages } from './zh'
 
 // Re-export the key/type surface so consumers import from the i18n barrel
 // rather than reaching into the (swappable) default-locale module.
 export type { MessageKey, Messages } from './zh'
 
 /**
- * i18n powered by LinguiJS (ICU MessageFormat runtime, ~2 kB).
+ * i18n powered by LinguiJS with PRECOMPILED catalogs (ICU parser dropped from
+ * the production bundle — Lingui's recommended approach).
  *
- * - Chinese is the DEFAULT and is bundled (loaded synchronously at module init).
- * - English is LAZY-LOADED via a dynamic `import()` the first time it's
- *   selected, so default (Chinese) users never pay for its catalog.
+ * - Source dictionaries live in `zh.ts` / `en.ts` (plain `{ key: ICU-string }`
+ *   maps, our explicit key namespace). A build step (`scripts/compile-catalogs.ts`,
+ *   wired into `build`) precompiles them into `locales/{locale}.ts` token-array
+ *   catalogs that Lingui runs directly with no runtime parser.
+ * - Chinese is the DEFAULT and bundled; English is LAZY-LOADED via a dynamic
+ *   `import()` of its precompiled catalog the first time it's selected.
  * - The chosen locale is persisted in localStorage and restored on load.
- * - Messages use our explicit key namespace (e.g. `login.title`) as the Lingui
- *   message id, so call sites keep calling `t('login.title')`. Interpolation
- *   (`{name}`) and plurals go through Lingui's ICU engine.
+ * - Call sites keep calling `t('login.title')` / `t('x', { count })`.
  *
  * Usage:
  *   const { t, locale, setLocale } = useI18n()
@@ -33,20 +35,16 @@ const STORAGE_KEY = 'obc-locale'
 /** The translate function signature, exported for components that pass `t` around. */
 export type TranslateFn = (key: MessageKey, vars?: Record<string, string | number>) => string
 
-// Bundle the default (Chinese) catalog synchronously so first paint is correct.
-// Our catalogs are plain `{ key: ICU-string }` maps (not precompiled), so we
-// install Lingui's message compiler. Lingui only auto-installs it outside
-// production, so this is REQUIRED for interpolation/plurals to work in the
-// production build.
-i18n.setMessagesCompiler(compileMessage)
-i18n.load('zh', zh as Record<string, string>)
+// Bundle the default (Chinese) precompiled catalog synchronously so first paint
+// is correct. No `setMessagesCompiler` — catalogs are already compiled.
+i18n.load('zh', zhMessages)
 
 /** Lazy catalog loaders. `zh` is already bundled. */
 const LOADERS: Record<Locale, (() => Promise<void>) | null> = {
   zh: null,
   en: async () => {
-    const { default: en } = await import('./en')
-    i18n.load('en', en as Record<string, string>)
+    const { messages } = await import('./locales/en')
+    i18n.load('en', messages)
   },
 }
 

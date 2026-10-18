@@ -35,7 +35,6 @@
       "version": "0.0.0",
       "dependencies": {
         "@lingui/core": "^5",
-        "@lingui/message-utils": "^5",
         "@lingui/react": "^5",
         "@obc/api": "workspace:*",
         "@tanstack/react-query": "^5.62.0",
@@ -58,6 +57,7 @@
       },
       "devDependencies": {
         "@cloudflare/workers-types": "^4.20250109.0",
+        "@lingui/message-utils": "^5",
         "@tailwindcss/vite": "^4.0.0",
         "@tanstack/router-cli": "^1.95.0",
         "@tanstack/router-plugin": "^1.95.0",
