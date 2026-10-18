@@ -30,6 +30,20 @@ jobs:
       - name: Typecheck (db -> api -> app)
         run: bun run typecheck
 
+      - name: i18n catalogs in sync & fully translated
+        run: |
+          # Re-extract against the source; the committed .po catalogs must not
+          # change (i.e. every <Trans>/t`` string is already extracted)...
+          bun --cwd apps/app i18n:extract -- --clean
+          if ! git diff --quiet -- 'apps/app/lib/i18n/locales/*.po'; then
+            echo "::error::i18n catalogs are out of sync with the source."
+            echo "Run 'bun --cwd apps/app i18n:extract' and commit the updated .po files."
+            git --no-pager diff --stat -- 'apps/app/lib/i18n/locales/*.po'
+            exit 1
+          fi
+          # ...and no locale may have missing translations.
+          bun --cwd apps/app run scripts/check-translations.ts
+
       - name: Unit & component tests
         run: |
           bun run test
