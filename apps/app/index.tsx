@@ -15,11 +15,14 @@ const router = createRouter({
   routeTree,
   context: { queryClient },
   defaultPreload: 'intent',
-  // Show the slim top progress bar during transitions, but only after 150ms so
-  // instant/preloaded navigations don't flash it. Keep it up at least 300ms to
-  // avoid a flicker when it does appear.
+  // Loading UX: skeletons are the PRIMARY loading language (per-route
+  // pendingComponent shows the destination's shape). RouteProgress is a subtle
+  // secondary accent — kept indeterminate (NOT a fake percent, which NN/g warns
+  // is overkill/stressful in the 2–10s band). Acknowledge a click almost
+  // instantly (30ms) so navigation never feels ignored on slow networks, but
+  // keep it visible ≥300ms once shown to avoid flicker on fast/preloaded nav.
   defaultPendingComponent: RouteProgress,
-  defaultPendingMs: 150,
+  defaultPendingMs: 30,
   defaultPendingMinMs: 300,
 })
 
