@@ -7,6 +7,7 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { ConfirmDialog, Modal } from '@/components/ui/modal'
 import { ToastProvider, useToast } from '@/components/Toast'
 import { RouteProgress } from '@/components/RouteProgress'
+import { SlowHint } from '@/components/ui/skeleton'
 import { I18nProvider } from '@/lib/i18n'
 
 describe('RouteProgress (transition indicator)', () => {
@@ -19,6 +20,48 @@ describe('RouteProgress (transition indicator)', () => {
     const bar = screen.getByTestId('route-progress')
     expect(bar).toBeInTheDocument()
     expect(bar).toHaveAttribute('role', 'status')
+  })
+})
+
+describe('SlowHint (delayed slow-network reassurance)', () => {
+  it('is hidden before the delay and revealed after it', () => {
+    vi.useFakeTimers()
+    try {
+      render(
+        <I18nProvider>
+          <SlowHint delayMs={1500} />
+        </I18nProvider>,
+      )
+      // Nothing shown for a fast load (before the threshold).
+      expect(screen.queryByTestId('slow-hint')).not.toBeInTheDocument()
+      act(() => {
+        vi.advanceTimersByTime(1600)
+      })
+      const hint = screen.getByTestId('slow-hint')
+      expect(hint).toBeInTheDocument()
+      // Polite live region so screen readers announce it without stealing focus.
+      expect(hint).toHaveAttribute('role', 'status')
+      expect(hint).toHaveAttribute('aria-live', 'polite')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('renders custom children when provided', () => {
+    vi.useFakeTimers()
+    try {
+      render(
+        <I18nProvider>
+          <SlowHint delayMs={100}>Custom wait message</SlowHint>
+        </I18nProvider>,
+      )
+      act(() => {
+        vi.advanceTimersByTime(200)
+      })
+      expect(screen.getByText('Custom wait message')).toBeInTheDocument()
+    } finally {
+      vi.useRealTimers()
+    }
   })
 })
 
