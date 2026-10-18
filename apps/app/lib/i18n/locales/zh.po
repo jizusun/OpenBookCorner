@@ -575,7 +575,7 @@ msgid "Edit Book"
 msgstr "编辑图书"
 
 #: routes/_app/admin/members.$memberId.tsx:73
-#: routes/login.tsx:85
+#: routes/login.tsx:166
 msgid "Email"
 msgstr "邮箱"
 
@@ -697,7 +697,7 @@ msgstr "入馆日期"
 msgid "Joined date"
 msgstr "入馆日期"
 
-#: routes/login.tsx:25
+#: routes/login.tsx:59
 msgid "Library Admin"
 msgstr "图书馆管理员"
 
@@ -714,7 +714,7 @@ msgstr "图书馆已创建。"
 msgid "Library name"
 msgstr "图书馆名称"
 
-#: routes/login.tsx:26
+#: routes/login.tsx:60
 msgid "Library Reader"
 msgstr "图书馆读者"
 
@@ -876,7 +876,7 @@ msgstr "逾期图书"
 msgid "Pages"
 msgstr "页数"
 
-#: routes/login.tsx:96
+#: routes/login.tsx:177
 msgid "Password"
 msgstr "密码"
 
@@ -1060,11 +1060,12 @@ msgstr "所属书架"
 msgid "Shelved"
 msgstr "是否上架"
 
-#: routes/login.tsx:108
+#: routes/login.tsx:189
 msgid "Sign in"
 msgstr "登录"
 
-#: routes/login.tsx:77
+#: routes/login.tsx:37
+#: routes/login.tsx:48
 msgid "Sign in to your library"
 msgstr "登录你的图书馆"
 
@@ -1077,7 +1078,7 @@ msgstr "退出登录"
 msgid "Signed in as {0}"
 msgstr "已登录：{0}"
 
-#: routes/login.tsx:108
+#: routes/login.tsx:189
 msgid "Signing in…"
 msgstr "登录中…"
 
@@ -1111,7 +1112,7 @@ msgstr "学号"
 msgid "success"
 msgstr "成功"
 
-#: routes/login.tsx:24
+#: routes/login.tsx:58
 msgid "Super Admin"
 msgstr "超级管理员"
 
@@ -1150,8 +1151,8 @@ msgstr "租户"
 msgid "Thanks for your feedback! 🎉"
 msgstr "感谢你的反馈！🎉"
 
-#: routes/login.tsx:42
-#: routes/login.tsx:64
+#: routes/login.tsx:120
+#: routes/login.tsx:143
 msgid "That email or password doesn’t match. Please try again."
 msgstr "邮箱或密码不正确，请重试。"
 
@@ -1189,7 +1190,7 @@ msgstr "书名"
 msgid "Translator"
 msgstr "译者"
 
-#: routes/login.tsx:113
+#: routes/login.tsx:65
 msgid "Try a demo account — tap a role to fill it in"
 msgstr "试用演示账号——点击任一角色即可自动填写"
 
@@ -1221,7 +1222,7 @@ msgstr "在「我的借阅」中查看"
 msgid "We could not process this return. It may already be returned."
 msgstr "无法处理这次归还，可能已经还过了。"
 
-#: routes/login.tsx:76
+#: routes/login.tsx:45
 msgid "Welcome back"
 msgstr "欢迎回来"
 
