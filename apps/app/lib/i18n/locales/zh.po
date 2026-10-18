@@ -1,0 +1,1266 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-10-18 18:23+0800\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: zh\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#. placeholder {0}: new Date(borrower.dueDate).toLocaleDateString()
+#: routes/_app/books/$bookId.tsx:235
+msgid " · due {0}"
+msgstr " · 应还 {0}"
+
+#. placeholder {0}: f.submitterName
+#. placeholder {1}: f.submitterEmail
+#: routes/_app/admin/feedback.tsx:74
+msgid "— {0} ({1})"
+msgstr "— {0}（{1}）"
+
+#. placeholder {0}: title.trim()
+#: routes/_app/books/add.tsx:96
+#: routes/_app/books/add.tsx:97
+msgid "“{0}” added to the catalog."
+msgstr "《{0}》已加入书目。"
+
+#. placeholder {0}: counts.books
+#. placeholder {0}: result.books
+#: routes/_app/admin/import.tsx:202
+#: routes/_app/admin/import.tsx:243
+msgid "{0, plural, one {# book} other {# books}}"
+msgstr "{0, plural, other {# 本图书}}"
+
+#. placeholder {0}: counts.orphanLoans.noMember + counts.orphanLoans.noBook
+#: routes/_app/admin/import.tsx:222
+msgid "{0, plural, one {# loan skipped (unmatched member/book)} other {# loans skipped (unmatched member/book)}}"
+msgstr "{0, plural, other {# 条借阅已跳过（成员/图书未匹配）}}"
+
+#. placeholder {0}: counts.loans
+#. placeholder {0}: result.loans
+#: routes/_app/admin/import.tsx:208
+#: routes/_app/admin/import.tsx:249
+msgid "{0, plural, one {# loan} other {# loans}}"
+msgstr "{0, plural, other {# 条借阅}}"
+
+#. placeholder {0}: counts.members
+#. placeholder {0}: infinite.total
+#. placeholder {0}: result.members
+#: routes/_app/admin/import.tsx:205
+#: routes/_app/admin/import.tsx:246
+#: routes/_app/admin/members.tsx:63
+msgid "{0, plural, one {# member} other {# members}}"
+msgstr "{0, plural, other {# 位成员}}"
+
+#. placeholder {0}: counts.purchaseRequests
+#. placeholder {0}: result.purchaseRequests
+#: routes/_app/admin/import.tsx:214
+#: routes/_app/admin/import.tsx:255
+msgid "{0, plural, one {# purchase request} other {# purchase requests}}"
+msgstr "{0, plural, other {# 条荐购}}"
+
+#. placeholder {0}: counts.reviews
+#. placeholder {0}: result.reviews
+#: routes/_app/admin/import.tsx:211
+#: routes/_app/admin/import.tsx:252
+msgid "{0, plural, one {# review} other {# reviews}}"
+msgstr "{0, plural, other {# 条评论}}"
+
+#. placeholder {0}: tenant.emailDomains.join(', ')
+#. placeholder {1}: tenant.bookCount
+#. placeholder {2}: tenant.memberCount
+#: routes/_app/admin/tenants.tsx:130
+msgid "{0} · {1} books · {2} members"
+msgstr "{0} · {1} 本图书 · {2} 位成员"
+
+#. placeholder {0}: c.books ?? 0
+#. placeholder {1}: c.members ?? 0
+#. placeholder {2}: c.loans ?? 0
+#. placeholder {3}: c.reviews ?? 0
+#. placeholder {4}: c.purchaseRequests ?? 0
+#: routes/_app/admin/import.tsx:296
+msgid "{0} books · {1} members · {2} loans · {3} reviews · {4} requests"
+msgstr "{0} 本图书 · {1} 位成员 · {2} 条借阅 · {3} 条评论 · {4} 条荐购"
+
+#. placeholder {0}: items.length
+#: routes/_app/my-books.tsx:85
+msgid "{0} borrowed"
+msgstr "已借 {0} 本"
+
+#. placeholder {0}: item.daysOverdue
+#: routes/_app/admin/overdue.tsx:126
+msgid "{0}d"
+msgstr "{0} 天"
+
+#: routes/_app/my-books.tsx:37
+msgid "{diffDays, plural, one {Due in # day} other {Due in # days}}"
+msgstr "{diffDays, plural, other {还有 # 天到期}}"
+
+#: routes/_app/my-books.tsx:87
+msgid "{dueSoon} due soon"
+msgstr "{dueSoon} 本即将到期"
+
+#: routes/_app/my-books.tsx:34
+msgid "{n, plural, one {Overdue by # day} other {Overdue by # days}}"
+msgstr "{n, plural, other {逾期 # 天}}"
+
+#: routes/_app/my-books.tsx:86
+msgid "{overdue} overdue"
+msgstr "{overdue} 本逾期"
+
+#: routes/_app/books/index.tsx:180
+msgid "{total} books"
+msgstr "共 {total} 本"
+
+#: routes/_app/admin/tenants.tsx:92
+msgid "@acme.com, @acme.io"
+msgstr "@acme.com, @acme.io"
+
+#: routes/_app/books/$bookId.tsx:99
+msgid "← Back to catalog"
+msgstr "← 返回书目"
+
+#: routes/_app/admin/members.$memberId.tsx:41
+#: routes/_app/admin/members.$memberId.tsx:53
+msgid "← Back to members"
+msgstr "← 返回成员列表"
+
+#: routes/_app/route.tsx:102
+msgid "→ Admin view"
+msgstr "→ 管理视图"
+
+#: routes/_app/route.tsx:102
+msgid "→ Reader view"
+msgstr "→ 读者视图"
+
+#: routes/_app/route.tsx:102
+msgid "→ System view"
+msgstr "→ 系统视图"
+
+#: routes/_app/admin/overdue.tsx:18
+msgid "1–7 days"
+msgstr "1–7 天"
+
+#: routes/_app/admin/overdue.tsx:22
+msgid "15+ days"
+msgstr "15 天以上"
+
+#: routes/_app/admin/overdue.tsx:20
+msgid "8–14 days"
+msgstr "8–14 天"
+
+#: routes/_app/admin/tenants.tsx:142
+msgid "Activate"
+msgstr "启用"
+
+#: routes/_app/admin/tenants.tsx:126
+msgid "Active"
+msgstr "已启用"
+
+#: routes/_app/books/index.tsx:192
+msgid "Add a book or adjust the filters."
+msgstr "添加一本图书，或调整筛选条件。"
+
+#: routes/_app/books/add.tsx:118
+#: routes/_app/books/add.tsx:187
+#: routes/_app/books/index.tsx:94
+#: routes/_app/books/index.tsx:196
+msgid "Add Book"
+msgstr "添加图书"
+
+#: routes/_app/books/add.tsx:187
+msgid "Adding…"
+msgstr "添加中…"
+
+#: routes/_app/admin/members.$memberId.tsx:78
+msgid "Address"
+msgstr "地址"
+
+#: routes/_app/admin/members.$memberId.tsx:61
+#: routes/_app/admin/members.tsx:114
+#: routes/_app/admin/members.tsx:193
+msgid "Admin"
+msgstr "管理员"
+
+#: routes/_app/route.tsx:97
+#: routes/_app/route.tsx:100
+msgid "Admin view"
+msgstr "管理视图"
+
+#: routes/_app/admin/members.$memberId.tsx:80
+msgid "Age"
+msgstr "年龄"
+
+#: routes/_app/admin/overdue.tsx:16
+#: routes/_app/books/index.tsx:144
+msgid "All"
+msgstr "全部"
+
+#. placeholder {0}: book.quantity
+#: routes/_app/books/$bookId.tsx:212
+msgid "All {0} copies borrowed"
+msgstr "{0} 本全部借出"
+
+#: routes/_app/books/index.tsx:155
+msgid "All categories"
+msgstr "全部分类"
+
+#: components/books/BookCard.tsx:76
+msgid "All copies borrowed"
+msgstr "全部借出"
+
+#: routes/_app/admin/members.tsx:124
+msgid "All plans"
+msgstr "全部会员计划"
+
+#: routes/_app/admin/members.tsx:113
+msgid "All roles"
+msgstr "全部权限"
+
+#: routes/_app/books/index.tsx:170
+msgid "All shelves"
+msgstr "全部书架"
+
+#: routes/_app/admin/members.$memberId.tsx:92
+#: routes/_app/books/$bookId.tsx:319
+msgid "All source fields"
+msgstr "原始数据 / 全部字段"
+
+#: routes/_app/admin/settings.tsx:142
+msgid "Allow renewals/extensions"
+msgstr "允许续借"
+
+#: routes/_app/admin/members.tsx:104
+#: routes/_app/books/index.tsx:136
+msgid "Ascending"
+msgstr "升序"
+
+#: routes/_app/books/$bookId.edit.tsx:103
+#: routes/_app/books/add.tsx:165
+#: routes/_app/books/index.tsx:124
+msgid "Author"
+msgstr "作者"
+
+#: routes/_app/books/index.tsx:125
+msgid "Availability"
+msgstr "可借数量"
+
+#: components/books/BookCard.tsx:73
+#: routes/_app/books/index.tsx:145
+msgid "Available"
+msgstr "可借"
+
+#. placeholder {0}: book.availableCount
+#. placeholder {1}: book.quantity
+#: routes/_app/books/$bookId.tsx:211
+msgid "Available · {0} of {1}"
+msgstr "可借 · {0}/{1}"
+
+#: components/books/BookCard.tsx:71
+msgid "Available · {available} of {total}"
+msgstr "可借 · {available}/{total}"
+
+#: routes/_app/books/$bookId.tsx:90
+#: routes/_app/books/add.tsx:120
+msgid "Back to catalog"
+msgstr "返回书目"
+
+#: routes/_app/admin/overdue.tsx:92
+msgid "Book"
+msgstr "图书"
+
+#: routes/_app/books/$bookId.tsx:55
+msgid "Book deleted."
+msgstr "图书已删除。"
+
+#: routes/_app/books/add.tsx:126
+msgid "Book details"
+msgstr "图书信息"
+
+#: routes/_app/books/$bookId.tsx:88
+msgid "Book not found."
+msgstr "未找到该图书。"
+
+#: components/FeedbackButton.tsx:35
+#: routes/_app/admin/feedback.tsx:14
+msgid "Book suggestion"
+msgstr "荐书"
+
+#: routes/_app/admin/members.$memberId.tsx:81
+#: routes/_app/admin/members.tsx:94
+msgid "Books out"
+msgstr "在借数量"
+
+#: components/books/BookCard.tsx:81
+#: routes/_app/books/$bookId.tsx:220
+#: routes/_app/scan.tsx:89
+msgid "Borrow"
+msgstr "借阅"
+
+#: routes/_app/scan.tsx:57
+msgid "Borrow by ISBN"
+msgstr "按 ISBN 借书"
+
+#: routes/_app/books/index.tsx:146
+msgid "Borrowed"
+msgstr "已借出"
+
+#: routes/_app/books/$bookId.tsx:40
+#: routes/_app/books/index.tsx:72
+msgid "Borrowed — see it in “My Books”."
+msgstr "借阅成功，可在「我的借阅」中查看。"
+
+#. placeholder {0}: new Date(item.borrowedAt).toLocaleDateString()
+#: routes/_app/my-books.tsx:168
+msgid "Borrowed {0}"
+msgstr "借出 {0}"
+
+#. placeholder {0}: result.title
+#. placeholder {1}: new Date(result.dueDate).toLocaleDateString()
+#: routes/_app/scan.tsx:98
+msgid "Borrowed <0>{0}</0> — due {1}"
+msgstr "已借阅 <0>{0}</0> — 应还 {1}"
+
+#: routes/_app/books/$bookId.tsx:231
+msgid "Borrowed by "
+msgstr "借阅人："
+
+#: routes/_app/admin/overdue.tsx:95
+msgid "Borrower"
+msgstr "借阅人"
+
+#: routes/_app/admin/settings.tsx:110
+msgid "Borrowing period (days)"
+msgstr "借阅期限（天）"
+
+#: routes/_app/books/$bookId.tsx:220
+#: routes/_app/scan.tsx:89
+msgid "Borrowing…"
+msgstr "借阅中…"
+
+#: routes/_app/my-books.tsx:100
+#: routes/_app/my-books.tsx:129
+msgid "Browse catalog"
+msgstr "浏览书目"
+
+#: routes/_app/admin/feedback.tsx:16
+msgid "Bug"
+msgstr "问题反馈"
+
+#: components/FeedbackButton.tsx:37
+msgid "Bug report"
+msgstr "问题反馈"
+
+#. placeholder {0}: book.author
+#. placeholder {0}: item.author
+#: components/books/BookCard.tsx:59
+#: routes/_app/admin/overdue.tsx:111
+#: routes/_app/books/$bookId.tsx:120
+#: routes/_app/my-books.tsx:165
+msgid "by {0}"
+msgstr "作者：{0}"
+
+#: components/barcode/IsbnScanner.tsx:105
+msgid "Camera is not available. Enter the ISBN manually."
+msgstr "无法使用摄像头，请手动输入 ISBN。"
+
+#: components/barcode/IsbnScanner.tsx:117
+msgid "Camera permission denied. Allow camera access or enter the ISBN manually."
+msgstr "摄像头权限被拒绝，请允许访问或手动输入 ISBN。"
+
+#: components/FeedbackButton.tsx:123
+#: routes/_app/books/$bookId.edit.tsx:142
+msgid "Cancel"
+msgstr "取消"
+
+#: components/barcode/IsbnScanner.tsx:146
+msgid "Cancel scan"
+msgstr "取消扫描"
+
+#: routes/_app/route.tsx:80
+#: routes/_app/route.tsx:90
+msgid "Catalog"
+msgstr "书目"
+
+#: routes/_app/books/$bookId.tsx:146
+msgid "Category"
+msgstr "所属分类"
+
+#: routes/_app/books/$bookId.edit.tsx:78
+msgid "Changes saved."
+msgstr "修改已保存。"
+
+#: routes/_app/admin/members.$memberId.tsx:76
+msgid "Class"
+msgstr "班级"
+
+#: routes/_app/books/$bookId.tsx:170
+msgid "CLC"
+msgstr "中图法分类号"
+
+#: routes/_app/route.tsx:138
+msgid "Close menu"
+msgstr "收起菜单"
+
+#: routes/_app/books/add.tsx:143
+#: routes/_app/scan.tsx:69
+msgid "Close scanner"
+msgstr "关闭扫描"
+
+#: routes/_app/books/$bookId.tsx:158
+msgid "Code"
+msgstr "馆内编码"
+
+#: routes/_app/admin/settings.tsx:94
+msgid "Configuration"
+msgstr "基本配置"
+
+#: routes/_app/books/add.tsx:169
+msgid "Copies"
+msgstr "册数"
+
+#. placeholder {0}: i + 1
+#: routes/_app/books/$bookId.tsx:325
+msgid "Copy {0}"
+msgstr "副本 {0}"
+
+#: routes/_app/books/add.tsx:108
+msgid "Could not add the book. Please check the fields and try again."
+msgstr "添加失败，请检查填写内容后重试。"
+
+#: routes/_app/admin/tenants.tsx:40
+msgid "Could not create the library."
+msgstr "创建图书馆失败。"
+
+#: routes/_app/books/$bookId.tsx:64
+msgid "Could not delete the book."
+msgstr "删除失败，请重试。"
+
+#: routes/_app/admin/import.tsx:85
+msgid "Could not fetch that URL. Paste a 番薯借阅 export link (https://…fanshujieyue.com/….xls)."
+msgstr "无法获取该链接，请粘贴番薯借阅的导出链接（https://…fanshujieyue.com/….xls）。"
+
+#: routes/_app/admin/import.tsx:114
+msgid "Could not read this file. Make sure it is a 番薯借阅 Excel export (.xls/.xlsx)."
+msgstr "无法读取该文件，请确认是番薯借阅的 Excel 导出文件（.xls/.xlsx）。"
+
+#: routes/_app/books/$bookId.edit.tsx:81
+msgid "Could not save changes. Please try again."
+msgstr "保存失败，请重试。"
+
+#: routes/_app/admin/settings.tsx:73
+msgid "Could not save settings. Check the values and try again."
+msgstr "保存失败，请检查数值后重试。"
+
+#: components/FeedbackButton.tsx:54
+msgid "Could not send feedback. Please try again."
+msgstr "发送失败，请重试。"
+
+#: components/barcode/IsbnScanner.tsx:121
+msgid "Could not start the scanner. Enter the ISBN manually."
+msgstr "扫描无法启动，请手动输入 ISBN。"
+
+#: routes/_app/admin/tenants.tsx:46
+msgid "Could not update the library."
+msgstr "更新图书馆失败。"
+
+#. placeholder {0}: book.title
+#. placeholder {0}: item.title
+#: components/books/BookCard.tsx:41
+#: routes/_app/books/$bookId.tsx:107
+#: routes/_app/my-books.tsx:147
+msgid "Cover of {0}"
+msgstr "《{0}》封面"
+
+#: routes/_app/admin/tenants.tsx:73
+msgid "Create a library"
+msgstr "创建图书馆"
+
+#: routes/_app/admin/tenants.tsx:97
+msgid "Create library"
+msgstr "创建图书馆"
+
+#: routes/_app/admin/tenants.tsx:114
+msgid "Create the first one above."
+msgstr "在上方创建第一个图书馆。"
+
+#: routes/_app/admin/tenants.tsx:97
+msgid "Creating…"
+msgstr "创建中…"
+
+#: components/ThemeToggle.tsx:65
+msgid "Dark mode"
+msgstr "深色模式"
+
+#: routes/_app/books/index.tsx:122
+msgid "Date added"
+msgstr "上架时间"
+
+#: routes/_app/admin/overdue.tsx:101
+msgid "Days overdue"
+msgstr "逾期天数"
+
+#: routes/_app/admin/tenants.tsx:142
+msgid "Deactivate"
+msgstr "停用"
+
+#: routes/_app/books/$bookId.tsx:255
+#: routes/_app/books/$bookId.tsx:288
+msgid "Delete"
+msgstr "删除"
+
+#: routes/_app/books/$bookId.tsx:286
+msgid "Delete this book?"
+msgstr "确定删除这本书吗？"
+
+#: routes/_app/books/$bookId.tsx:255
+msgid "Deleting…"
+msgstr "删除中…"
+
+#: routes/_app/admin/members.$memberId.tsx:77
+msgid "Department"
+msgstr "部门"
+
+#: routes/_app/admin/members.tsx:105
+#: routes/_app/books/index.tsx:135
+msgid "Descending"
+msgstr "降序"
+
+#: routes/_app/books/$bookId.edit.tsx:124
+#: routes/_app/books/$bookId.tsx:272
+msgid "Description"
+msgstr "简介"
+
+#: routes/_app/books/add.tsx:59
+msgid "Details auto-filled from Open Library. You can edit the title/author before saving."
+msgstr "已从 Open Library 自动填写，保存前可修改书名/作者。"
+
+#: components/Toast.tsx:79
+msgid "Dismiss"
+msgstr "关闭"
+
+#. placeholder {0}: new Date(item.dueDate).toLocaleDateString()
+#: routes/_app/my-books.tsx:169
+msgid "Due {0}"
+msgstr "应还 {0}"
+
+#: routes/_app/admin/overdue.tsx:98
+msgid "Due date"
+msgstr "应还日期"
+
+#: routes/_app/my-books.tsx:36
+msgid "Due today"
+msgstr "今天到期"
+
+#: routes/_app/scan.tsx:86
+msgid "e.g. 9780132350884"
+msgstr "例如 9780132350884"
+
+#: components/FeedbackButton.tsx:107
+msgid "e.g. Please add the ability to reserve a borrowed book…"
+msgstr "例如：希望能预约已被借走的书…"
+
+#: routes/_app/books/$bookId.tsx:247
+msgid "Edit"
+msgstr "编辑"
+
+#: routes/_app/books/$bookId.edit.tsx:91
+msgid "Edit Book"
+msgstr "编辑图书"
+
+#: routes/_app/admin/members.$memberId.tsx:72
+#: routes/login.tsx:85
+msgid "Email"
+msgstr "邮箱"
+
+#: routes/_app/admin/tenants.tsx:86
+msgid "Email domains (comma-separated)"
+msgstr "邮箱域名（用逗号分隔）"
+
+#. placeholder {0}: lib?.emailDomains.join(', ') ?? ''
+#: routes/_app/admin/settings.tsx:97
+msgid "Email domains: {0}"
+msgstr "邮箱域名：{0}"
+
+#: routes/_app/admin/members.$memberId.tsx:74
+msgid "Employee no."
+msgstr "工号"
+
+#: routes/_app/books/$bookId.tsx:202
+msgid "Entered"
+msgstr "上架时间"
+
+#: routes/_app/admin/import.tsx:274
+msgid "Every import is recorded with its source and counts."
+msgstr "每次导入都会记录来源和数量。"
+
+#: routes/_app/admin/members.tsx:172
+msgid "Expiry"
+msgstr "到期"
+
+#: routes/_app/admin/members.tsx:95
+msgid "Expiry date"
+msgstr "到期日期"
+
+#: routes/_app/admin/import.tsx:292
+msgid "failed"
+msgstr "失败"
+
+#: components/FeedbackButton.tsx:33
+#: routes/_app/admin/feedback.tsx:12
+msgid "Feature request"
+msgstr "功能建议"
+
+#: components/FeedbackButton.tsx:74
+#: routes/_app/route.tsx:84
+msgid "Feedback"
+msgstr "反馈"
+
+#: routes/_app/admin/import.tsx:181
+msgid "Fetch"
+msgstr "获取"
+
+#: routes/_app/admin/import.tsx:174
+msgid "https://…fanshujieyue.com/…/librarydata_….xls"
+msgstr "https://…fanshujieyue.com/…/librarydata_….xls"
+
+#: routes/_app/admin/import.tsx:231
+#: routes/_app/route.tsx:85
+msgid "Import"
+msgstr "导入"
+
+#: routes/_app/admin/import.tsx:132
+msgid "Import failed. Please try again."
+msgstr "导入失败，请重试。"
+
+#: routes/_app/admin/import.tsx:141
+msgid "Import from 番薯借阅"
+msgstr "从番薯借阅导入"
+
+#: routes/_app/admin/import.tsx:271
+msgid "Import history"
+msgstr "导入历史"
+
+#: routes/_app/admin/members.tsx:144
+msgid "Import 番薯 data or adjust the search/filters."
+msgstr "导入番薯数据，或调整搜索/筛选条件。"
+
+#. placeholder {0}: res.books
+#. placeholder {1}: res.members
+#. placeholder {2}: res.loans
+#: routes/_app/admin/import.tsx:128
+msgid "Imported {0} books, {1} members, {2} loans."
+msgstr "已导入 {0} 本图书、{1} 位成员、{2} 条借阅。"
+
+#: routes/_app/admin/import.tsx:239
+msgid "Imported successfully"
+msgstr "导入成功"
+
+#: routes/_app/admin/import.tsx:231
+msgid "Importing…"
+msgstr "导入中…"
+
+#: routes/_app/admin/tenants.tsx:126
+msgid "Inactive"
+msgstr "已停用"
+
+#: routes/_app/route.tsx:170
+msgid "Install app"
+msgstr "安装应用"
+
+#: routes/_app/books/$bookId.edit.tsx:107
+#: routes/_app/books/add.tsx:135
+#: routes/_app/scan.tsx:61
+msgid "ISBN"
+msgstr "ISBN"
+
+#: routes/_app/books/add.tsx:62
+msgid "ISBN not found online. Enter the title and author manually."
+msgstr "网上未找到该 ISBN，请手动填写书名和作者。"
+
+#. placeholder {0}: book.isbn
+#: components/books/BookCard.tsx:65
+msgid "ISBN: {0}"
+msgstr "ISBN：{0}"
+
+#: routes/_app/admin/members.$memberId.tsx:83
+msgid "Joined"
+msgstr "入馆日期"
+
+#: routes/_app/admin/members.tsx:93
+msgid "Joined date"
+msgstr "入馆日期"
+
+#: routes/login.tsx:25
+msgid "Library Admin"
+msgstr "图书馆管理员"
+
+#: routes/_app/books/index.tsx:91
+msgid "Library Catalog"
+msgstr "图书馆书目"
+
+#: routes/_app/admin/tenants.tsx:35
+msgid "Library created."
+msgstr "图书馆已创建。"
+
+#: routes/_app/admin/settings.tsx:104
+#: routes/_app/admin/tenants.tsx:80
+msgid "Library name"
+msgstr "图书馆名称"
+
+#: routes/login.tsx:26
+msgid "Library Reader"
+msgstr "图书馆读者"
+
+#: routes/_app/admin/settings.tsx:89
+msgid "Library Settings"
+msgstr "图书馆设置"
+
+#: components/ThemeToggle.tsx:65
+msgid "Light mode"
+msgstr "浅色模式"
+
+#: components/InfiniteList.tsx:62
+msgid "Load more"
+msgstr "加载更多"
+
+#: components/RouteProgress.tsx:15
+msgid "Loading"
+msgstr "加载中"
+
+#: components/InfiniteList.tsx:62
+#: routes/_app/admin/members.tsx:136
+#: routes/_app/admin/settings.tsx:82
+#: routes/_app/books/$bookId.edit.tsx:87
+msgid "Loading…"
+msgstr "加载中…"
+
+#: routes/_app/books/add.tsx:156
+msgid "Looking up ISBN…"
+msgstr "正在查询 ISBN…"
+
+#: routes/_app/books/add.tsx:66
+msgid "Lookup failed. Enter the title and author manually."
+msgstr "查询失败，请手动填写书名和作者。"
+
+#: routes/_app/admin/tenants.tsx:66
+msgid "Manage libraries across the system (super admin)."
+msgstr "管理系统内的所有图书馆（超级管理员）。"
+
+#: routes/_app/admin/settings.tsx:124
+msgid "Max books per reader"
+msgstr "每位读者最多可借"
+
+#: routes/_app/admin/members.$memberId.tsx:70
+#: routes/_app/admin/members.tsx:163
+msgid "Member no."
+msgstr "会员号"
+
+#: routes/_app/admin/members.$memberId.tsx:38
+msgid "Member not found."
+msgstr "未找到该成员。"
+
+#: routes/_app/admin/members.$memberId.tsx:84
+msgid "Member since"
+msgstr "会员起始"
+
+#: routes/_app/admin/members.$memberId.tsx:85
+msgid "Member until"
+msgstr "会员到期"
+
+#: routes/_app/admin/members.tsx:59
+#: routes/_app/route.tsx:81
+msgid "Members"
+msgstr "成员"
+
+#: routes/_app/my-books.tsx:94
+#: routes/_app/route.tsx:88
+msgid "My Books"
+msgstr "我的借阅"
+
+#: routes/_app/admin/members.tsx:92
+#: routes/_app/admin/members.tsx:154
+msgid "Name"
+msgstr "姓名"
+
+#: routes/_app/books/$bookId.tsx:197
+msgid "No"
+msgstr "否"
+
+#: routes/_app/my-books.tsx:121
+msgid "No books borrowed yet"
+msgstr "还没有借阅任何书籍"
+
+#: routes/_app/books/index.tsx:191
+msgid "No books match the current filters"
+msgstr "没有符合筛选条件的图书"
+
+#: routes/_app/books/index.tsx:191
+msgid "No books match your search"
+msgstr "没有找到匹配的图书"
+
+#: components/barcode/IsbnScanner.tsx:119
+msgid "No camera found. Enter the ISBN manually."
+msgstr "未找到摄像头，请手动输入 ISBN。"
+
+#: components/books/BookCard.tsx:47
+#: routes/_app/books/$bookId.tsx:113
+#: routes/_app/my-books.tsx:153
+msgid "No cover"
+msgstr "暂无封面"
+
+#: routes/_app/admin/feedback.tsx:56
+msgid "No feedback yet"
+msgstr "暂无反馈"
+
+#: routes/_app/admin/tenants.tsx:113
+msgid "No libraries yet"
+msgstr "还没有图书馆"
+
+#: routes/_app/admin/members.tsx:143
+msgid "No members yet"
+msgstr "暂无成员"
+
+#: routes/_app/admin/overdue.tsx:81
+msgid "No overdue books in this range"
+msgstr "该区间没有逾期图书"
+
+#: routes/_app/admin/members.$memberId.tsx:86
+msgid "Note"
+msgstr "备注"
+
+#: routes/_app/admin/overdue.tsx:82
+msgid "Nothing needs chasing right now."
+msgstr "目前没有需要催还的图书。"
+
+#: components/Toast.tsx:46
+msgid "Notifications"
+msgstr "通知"
+
+#: routes/_app/route.tsx:138
+msgid "Open menu"
+msgstr "打开菜单"
+
+#: routes/_app/route.tsx:148
+msgid "OpenBookCorner"
+msgstr "开卷角"
+
+#: routes/_app/admin/import.tsx:166
+msgid "or paste a link"
+msgstr "或粘贴链接"
+
+#: components/FeedbackButton.tsx:39
+#: routes/_app/admin/feedback.tsx:18
+msgid "Other"
+msgstr "其他"
+
+#: routes/_app/admin/members.tsx:166
+msgid "Out"
+msgstr "在借"
+
+#: routes/_app/route.tsx:82
+msgid "Overdue"
+msgstr "逾期"
+
+#: routes/_app/admin/overdue.tsx:54
+msgid "Overdue Books"
+msgstr "逾期图书"
+
+#: routes/_app/books/$bookId.tsx:176
+msgid "Pages"
+msgstr "页数"
+
+#: routes/login.tsx:96
+msgid "Password"
+msgstr "密码"
+
+#: routes/_app/admin/members.$memberId.tsx:71
+#: routes/_app/admin/members.tsx:160
+msgid "Phone"
+msgstr "手机"
+
+#: routes/_app/admin/members.$memberId.tsx:64
+#: routes/_app/admin/members.tsx:189
+msgid "placeholder"
+msgstr "占位"
+
+#: routes/_app/admin/members.$memberId.tsx:73
+msgid "Plan"
+msgstr "会员计划"
+
+#. placeholder {0}: fileName ?? ''
+#: routes/_app/admin/import.tsx:198
+msgid "Preview — {0}"
+msgstr "预览 — {0}"
+
+#: routes/_app/books/$bookId.tsx:188
+#: routes/_app/books/index.tsx:126
+msgid "Price"
+msgstr "价格"
+
+#: routes/_app/books/$bookId.tsx:138
+msgid "Published"
+msgstr "出版时间"
+
+#: routes/_app/books/$bookId.edit.tsx:115
+msgid "Published year"
+msgstr "出版年份"
+
+#: routes/_app/books/$bookId.edit.tsx:111
+#: routes/_app/books/$bookId.tsx:126
+msgid "Publisher"
+msgstr "出版社"
+
+#. placeholder {0}: run.r2Key
+#: routes/_app/admin/import.tsx:308
+msgid "R2: {0}"
+msgstr "R2：{0}"
+
+#: routes/_app/admin/members.$memberId.tsx:61
+#: routes/_app/admin/members.tsx:115
+#: routes/_app/admin/members.tsx:193
+msgid "Reader"
+msgstr "普通成员"
+
+#: routes/_app/route.tsx:98
+#: routes/_app/route.tsx:100
+msgid "Reader view"
+msgstr "读者视图"
+
+#: routes/_app/my-books.tsx:179
+msgid "Return"
+msgstr "归还"
+
+#: routes/_app/admin/members.$memberId.tsx:82
+#: routes/_app/admin/members.tsx:169
+msgid "Returned"
+msgstr "已还数量"
+
+#: routes/_app/my-books.tsx:67
+msgid "Returned — thanks!"
+msgstr "已归还，谢谢！"
+
+#: routes/_app/my-books.tsx:179
+msgid "Returning…"
+msgstr "归还中…"
+
+#: routes/_app/admin/members.tsx:157
+msgid "Role"
+msgstr "权限"
+
+#: routes/_app/admin/members.$memberId.tsx:79
+msgid "Room"
+msgstr "房号"
+
+#: routes/_app/books/$bookId.edit.tsx:135
+msgid "Save changes"
+msgstr "保存修改"
+
+#: routes/_app/admin/settings.tsx:151
+msgid "Save settings"
+msgstr "保存设置"
+
+#: routes/_app/admin/settings.tsx:151
+#: routes/_app/books/$bookId.edit.tsx:135
+msgid "Saving…"
+msgstr "保存中…"
+
+#: routes/_app/route.tsx:89
+msgid "Scan"
+msgstr "扫码"
+
+#: routes/_app/scan.tsx:53
+msgid "Scan a book’s barcode (or type its ISBN) to borrow it instantly."
+msgstr "扫描书籍条形码（或输入 ISBN）即可快速借阅。"
+
+#: routes/_app/my-books.tsx:122
+msgid "Scan a book’s barcode to borrow it, or browse the catalog."
+msgstr "扫一扫书上的条形码即可借阅，或先浏览书目。"
+
+#: routes/_app/books/add.tsx:128
+msgid "Scan an ISBN to auto-fill, or enter details manually."
+msgstr "扫描 ISBN 自动填写，也可手动录入。"
+
+#: routes/_app/scan.tsx:69
+msgid "Scan barcode"
+msgstr "扫描条形码"
+
+#: routes/_app/books/add.tsx:143
+msgid "Scan ISBN"
+msgstr "扫描 ISBN"
+
+#: routes/_app/my-books.tsx:97
+#: routes/_app/my-books.tsx:126
+msgid "Scan to borrow"
+msgstr "扫码借书"
+
+#: routes/_app/scan.tsx:52
+msgid "Scan to Borrow"
+msgstr "扫码借书"
+
+#: routes/_app/admin/members.tsx:77
+#: routes/_app/books/index.tsx:108
+msgid "Search"
+msgstr "搜索"
+
+#: routes/_app/admin/members.tsx:70
+msgid "Search by name / phone / member no…"
+msgstr "按姓名 / 手机 / 会员号搜索…"
+
+#: routes/_app/books/index.tsx:105
+msgid "Search by title or author"
+msgstr "按书名或作者搜索"
+
+#: routes/_app/books/index.tsx:101
+msgid "Search by title or author…"
+msgstr "按书名或作者搜索…"
+
+#: routes/_app/admin/members.tsx:74
+msgid "Search members"
+msgstr "搜索成员"
+
+#: components/FeedbackButton.tsx:120
+msgid "Send"
+msgstr "发送"
+
+#: components/FeedbackButton.tsx:71
+#: components/FeedbackButton.tsx:77
+#: components/FeedbackButton.tsx:80
+msgid "Send feedback"
+msgstr "发送反馈"
+
+#: components/FeedbackButton.tsx:120
+msgid "Sending…"
+msgstr "发送中…"
+
+#: routes/_app/books/$bookId.tsx:164
+msgid "Series"
+msgstr "系列"
+
+#: routes/_app/route.tsx:83
+msgid "Settings"
+msgstr "设置"
+
+#: routes/_app/admin/settings.tsx:71
+#: routes/_app/admin/settings.tsx:147
+msgid "Settings saved."
+msgstr "设置已保存。"
+
+#: routes/_app/books/$bookId.tsx:152
+msgid "Shelf"
+msgstr "所属书架"
+
+#: routes/_app/books/$bookId.tsx:196
+msgid "Shelved"
+msgstr "是否上架"
+
+#: routes/login.tsx:108
+msgid "Sign in"
+msgstr "登录"
+
+#: routes/login.tsx:77
+msgid "Sign in to your library"
+msgstr "登录你的图书馆"
+
+#: routes/_app/route.tsx:175
+msgid "Sign out"
+msgstr "退出登录"
+
+#. placeholder {0}: user.name
+#: routes/_app/route.tsx:188
+msgid "Signed in as {0}"
+msgstr "已登录：{0}"
+
+#: routes/login.tsx:108
+msgid "Signing in…"
+msgstr "登录中…"
+
+#: lib/errors.ts:20
+msgid "Something went wrong. Please try again."
+msgstr "出了点问题，请重试。"
+
+#: routes/_app/admin/members.tsx:84
+#: routes/_app/books/index.tsx:115
+msgid "Sort"
+msgstr "排序"
+
+#. placeholder {0}: run.sourceUrl ?? run.fileName ?? ''
+#: routes/_app/admin/import.tsx:303
+msgid "Source: {0}"
+msgstr "来源：{0}"
+
+#: routes/_app/books/$bookId.tsx:336
+msgid "Stock"
+msgstr "存量明细"
+
+#: routes/_app/admin/members.$memberId.tsx:75
+msgid "Student no."
+msgstr "学号"
+
+#: routes/_app/admin/import.tsx:292
+msgid "success"
+msgstr "成功"
+
+#: routes/login.tsx:24
+msgid "Super Admin"
+msgstr "超级管理员"
+
+#: components/LanguageToggle.tsx:21
+#: components/LanguageToggle.tsx:22
+msgid "Switch language"
+msgstr "切换语言"
+
+#: routes/_app/route.tsx:110
+msgid "Switch to {nextLabelText} view"
+msgstr "切换到{nextLabelText}"
+
+#: components/ThemeToggle.tsx:64
+msgid "Switch to dark mode"
+msgstr "切换到深色模式"
+
+#: components/ThemeToggle.tsx:64
+msgid "Switch to light mode"
+msgstr "切换到浅色模式"
+
+#: routes/_app/route.tsx:95
+#: routes/_app/route.tsx:100
+msgid "System view"
+msgstr "系统视图"
+
+#: components/FeedbackButton.tsx:82
+msgid "Tell us what you’d like — features, books to add, or problems."
+msgstr "告诉我们你的想法——想要的功能、想加的书，或遇到的问题。"
+
+#: routes/_app/admin/tenants.tsx:63
+#: routes/_app/route.tsx:77
+msgid "Tenants"
+msgstr "租户"
+
+#: components/FeedbackButton.tsx:52
+msgid "Thanks for your feedback! 🎉"
+msgstr "感谢你的反馈！🎉"
+
+#: routes/login.tsx:42
+#: routes/login.tsx:64
+msgid "That email or password doesn’t match. Please try again."
+msgstr "邮箱或密码不正确，请重试。"
+
+#: lib/errors.ts:10
+msgid "This book could not be found."
+msgstr "找不到这本书。"
+
+#: lib/errors.ts:16
+msgid "This book is currently borrowed and cannot be changed until it is returned."
+msgstr "这本书正在借出中，归还后才能修改。"
+
+#: routes/_app/books/$bookId.tsx:63
+msgid "This book is currently borrowed and cannot be deleted until it is returned."
+msgstr "该图书正在借出中，归还后才能删除。"
+
+#: lib/errors.ts:12
+msgid "This book is currently borrowed by someone else."
+msgstr "这本书已被他人借走。"
+
+#: lib/errors.ts:11
+msgid "This book is not in your library’s catalog yet. Ask a librarian to add it."
+msgstr "这本书还不在你图书馆的书目里，请联系管理员添加。"
+
+#: routes/_app/books/$bookId.tsx:287
+msgid "This removes the book from the catalog and cannot be undone."
+msgstr "将把该图书从书目中移除，且无法撤销。"
+
+#: routes/_app/books/$bookId.edit.tsx:99
+#: routes/_app/books/add.tsx:161
+#: routes/_app/books/index.tsx:123
+msgid "Title"
+msgstr "书名"
+
+#: routes/_app/books/$bookId.tsx:132
+msgid "Translator"
+msgstr "译者"
+
+#: routes/login.tsx:113
+msgid "Try a demo account — tap a role to fill it in"
+msgstr "试用演示账号——点击任一角色即可自动填写"
+
+#: routes/_app/books/index.tsx:192
+msgid "Try adjusting the search or filters."
+msgstr "换个关键词或筛选条件试试。"
+
+#: components/FeedbackButton.tsx:86
+msgid "Type"
+msgstr "类型"
+
+#: routes/_app/admin/import.tsx:146
+msgid "Upload export"
+msgstr "上传导出文件"
+
+#: routes/_app/admin/import.tsx:149
+msgid "Upload the 番薯借阅 Excel export (.xls). Books, members, loans, reviews and purchase requests are imported into this library. Re-importing updates existing rows (safe to run again)."
+msgstr "上传番薯借阅的 Excel 导出文件（.xls）。图书、成员、借阅、评论和荐购记录都会导入到本图书馆。重复导入会更新已有记录（可安全重复运行）。"
+
+#: routes/_app/admin/feedback.tsx:40
+msgid "User Feedback"
+msgstr "用户反馈"
+
+#: routes/_app/scan.tsx:103
+msgid "View in My Books"
+msgstr "在「我的借阅」中查看"
+
+#: lib/errors.ts:15
+msgid "We could not process this return. It may already be returned."
+msgstr "无法处理这次归还，可能已经还过了。"
+
+#: routes/login.tsx:76
+msgid "Welcome back"
+msgstr "欢迎回来"
+
+#: routes/_app/admin/feedback.tsx:43
+msgid "What readers are asking for — use this to prioritize features."
+msgstr "读者的需求与建议，可据此排定功能优先级。"
+
+#: routes/_app/admin/feedback.tsx:57
+msgid "When readers send feedback, it will show up here."
+msgstr "读者提交反馈后，会显示在这里。"
+
+#: routes/_app/books/$bookId.tsx:182
+msgid "Words"
+msgstr "字数"
+
+#: routes/_app/admin/import.tsx:186
+msgid "Working…"
+msgstr "处理中…"
+
+#: routes/_app/books/$bookId.tsx:197
+msgid "Yes"
+msgstr "是"
+
+#: lib/errors.ts:19
+msgid "You appear to be offline. Connect to the internet and try again."
+msgstr "你似乎已离线，请连接网络后重试。"
+
+#: components/Pwa.tsx:74
+msgid "You are offline — showing cached data. Borrowing requires a connection."
+msgstr "当前离线，显示的是缓存数据。借书需要联网。"
+
+#: routes/_app/books/add.tsx:107
+msgid "You do not have permission to add books."
+msgstr "你没有添加图书的权限。"
+
+#: lib/errors.ts:14
+msgid "You have an overdue book. Please return it before borrowing more."
+msgstr "你有逾期未还的书，请先归还再借阅。"
+
+#: lib/errors.ts:13
+msgid "You've reached your borrowing limit. Return a book before borrowing another."
+msgstr "你已达到借阅上限，先还一本再借吧。"
+
+#: components/FeedbackButton.tsx:101
+msgid "Your feedback"
+msgstr "你的反馈"

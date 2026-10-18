@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { trpc, trpcClient } from '@/lib/trpc'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/components/Toast'
-import { useI18n } from '@/lib/i18n'
 
 export const Route = createFileRoute('/_app/admin/settings')({
   beforeLoad: ({ context }) => {
@@ -22,7 +22,7 @@ export const Route = createFileRoute('/_app/admin/settings')({
 function SettingsPage() {
   const queryClient = useQueryClient()
   const toast = useToast()
-  const { t } = useI18n()
+  const { t } = useLingui()
 
   const { data: lib, isLoading } = useQuery(trpc.library.settings.queryOptions())
 
@@ -68,34 +68,47 @@ function SettingsPage() {
       })
       await queryClient.invalidateQueries({ queryKey: trpc.library.settings.queryKey() })
       setSaved(true)
-      toast.success(t('settings.savedToast'))
+      toast.success(t`Settings saved.`)
     } catch {
-      setError(t('settings.error'))
+      setError(t`Could not save settings. Check the values and try again.`)
     } finally {
       setPending(false)
     }
   }
 
-  if (isLoading || !current) return <p className="text-muted-foreground">{t('settings.loading')}</p>
+  if (isLoading || !current)
+    return (
+      <p className="text-muted-foreground">
+        <Trans>Loading…</Trans>
+      </p>
+    )
 
   return (
     <div className="mx-auto max-w-lg space-y-4">
-      <h1 className="text-2xl font-bold">{t('settings.title')}</h1>
+      <h1 className="text-2xl font-bold">
+        <Trans>Library Settings</Trans>
+      </h1>
       <Card>
         <CardHeader>
-          <CardTitle>{t('settings.configuration')}</CardTitle>
+          <CardTitle>
+            <Trans>Configuration</Trans>
+          </CardTitle>
           <p className="text-sm text-muted-foreground">
-            {t('settings.emailDomains', { domains: lib?.emailDomains.join(', ') ?? '' })}
+            <Trans>Email domains: {lib?.emailDomains.join(', ') ?? ''}</Trans>
           </p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4" data-testid="settings-form">
             <div className="space-y-2">
-              <Label htmlFor="name">{t('settings.name')}</Label>
+              <Label htmlFor="name">
+                <Trans>Library name</Trans>
+              </Label>
               <Input id="name" value={current.name} onChange={(e) => set('name', e.target.value)} required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="borrowingPeriodDays">{t('settings.borrowingPeriod')}</Label>
+              <Label htmlFor="borrowingPeriodDays">
+                <Trans>Borrowing period (days)</Trans>
+              </Label>
               <Input
                 id="borrowingPeriodDays"
                 type="number"
@@ -107,7 +120,9 @@ function SettingsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="maxBooksPerReader">{t('settings.maxBooks')}</Label>
+              <Label htmlFor="maxBooksPerReader">
+                <Trans>Max books per reader</Trans>
+              </Label>
               <Input
                 id="maxBooksPerReader"
                 type="number"
@@ -124,12 +139,16 @@ function SettingsPage() {
                 checked={current.allowExtensions}
                 onChange={(e) => set('allowExtensions', e.target.checked)}
               />
-              {t('settings.allowExtensions')}
+              <Trans>Allow renewals/extensions</Trans>
             </label>
             {error && <p className="text-sm text-destructive">{error}</p>}
-            {saved && <p className="text-sm text-green-600" data-testid="settings-saved">{t('settings.savedInline')}</p>}
+            {saved && (
+              <p className="text-sm text-green-600" data-testid="settings-saved">
+                <Trans>Settings saved.</Trans>
+              </p>
+            )}
             <Button type="submit" disabled={pending}>
-              {pending ? t('settings.saving') : t('settings.save')}
+              {pending ? <Trans>Saving…</Trans> : <Trans>Save settings</Trans>}
             </Button>
           </form>
         </CardContent>

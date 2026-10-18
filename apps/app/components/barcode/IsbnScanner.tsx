@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { Button } from '@/components/ui/button'
-import { useI18n } from '@/lib/i18n'
 
 interface IsbnScannerProps {
   onDetected: (isbn: string) => void
@@ -34,7 +34,7 @@ const isIsbnLike = (v: string) => /^\d{13}$/.test(v) || /^\d{8}$/.test(v)
  * fallback on the Scan / Add pages.
  */
 export function IsbnScanner({ onDetected, onClose }: IsbnScannerProps) {
-  const { t } = useI18n()
+  const { t } = useLingui()
   const videoRef = useRef<HTMLVideoElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const rafRef = useRef<number | null>(null)
@@ -102,7 +102,7 @@ export function IsbnScanner({ onDetected, onClose }: IsbnScannerProps) {
 
     async function start() {
       if (typeof navigator === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
-        setError(t('scanner.error.unavailable'))
+        setError(t`Camera is not available. Enter the ISBN manually.`)
         return
       }
       try {
@@ -114,11 +114,11 @@ export function IsbnScanner({ onDetected, onClose }: IsbnScannerProps) {
       } catch (e) {
         const name = (e as { name?: string } | null)?.name
         if (name === 'NotAllowedError' || name === 'SecurityError') {
-          setError(t('scanner.error.denied'))
+          setError(t`Camera permission denied. Allow camera access or enter the ISBN manually.`)
         } else if (name === 'NotFoundError') {
-          setError(t('scanner.error.noCamera'))
+          setError(t`No camera found. Enter the ISBN manually.`)
         } else {
-          setError(t('scanner.error.start'))
+          setError(t`Could not start the scanner. Enter the ISBN manually.`)
         }
       }
     }
@@ -143,7 +143,7 @@ export function IsbnScanner({ onDetected, onClose }: IsbnScannerProps) {
       )}
       <div className="flex justify-end">
         <Button type="button" variant="outline" size="sm" onClick={onClose}>
-          {t('scanner.cancel')}
+          <Trans>Cancel scan</Trans>
         </Button>
       </div>
     </div>

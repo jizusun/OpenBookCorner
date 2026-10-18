@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
-import { useI18n } from '@/lib/i18n'
+import { useLingui } from '@lingui/react/macro'
 
 type ToastKind = 'success' | 'error' | 'info'
 interface Toast {
@@ -19,16 +19,16 @@ const ToastContext = createContext<ToastContextValue | null>(null)
 let nextId = 1
 
 export function ToastProvider({ children }: { children: ReactNode }) {
-  const { t } = useI18n()
+  const { t } = useLingui()
   const [toasts, setToasts] = useState<Toast[]>([])
 
   const remove = useCallback((id: number) => {
-    setToasts((t) => t.filter((x) => x.id !== id))
+    setToasts((prev) => prev.filter((x) => x.id !== id))
   }, [])
 
   const toast = useCallback((message: string, kind: ToastKind = 'info') => {
     const id = nextId++
-    setToasts((t) => [...t, { id, kind, message }])
+    setToasts((prev) => [...prev, { id, kind, message }])
   }, [])
 
   const value: ToastContextValue = {
@@ -43,10 +43,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       <div
         className="pointer-events-none fixed top-3 right-3 z-[60] flex w-[min(92vw,22rem)] flex-col gap-2"
         role="region"
-        aria-label={t('common.notifications')}
+        aria-label={t`Notifications`}
       >
-        {toasts.map((t) => (
-          <ToastItem key={t.id} toast={t} onDismiss={() => remove(t.id)} />
+        {toasts.map((item) => (
+          <ToastItem key={item.id} toast={item} onDismiss={() => remove(item.id)} />
         ))}
       </div>
     </ToastContext.Provider>
@@ -54,7 +54,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 }
 
 function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }) {
-  const { t } = useI18n()
+  const { t } = useLingui()
   useEffect(() => {
     const timer = setTimeout(onDismiss, toast.kind === 'error' ? 6000 : 3500)
     return () => clearTimeout(timer)
@@ -76,7 +76,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
       <span>{toast.message}</span>
       <button
         type="button"
-        aria-label={t('common.dismiss')}
+        aria-label={t`Dismiss`}
         onClick={onDismiss}
         className="shrink-0 opacity-60 hover:opacity-100"
       >

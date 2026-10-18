@@ -4,14 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "bun run compile-catalogs && vite",
-    "build": "bun run compile-catalogs && tsr generate && vite build",
+    "dev": "vite",
+    "build": "lingui compile --typescript && tsr generate && vite build",
     "preview": "vite preview",
     "deploy": "wrangler deploy",
     "generate-routes": "tsr generate",
-    "compile-catalogs": "bun run scripts/compile-catalogs.ts",
-    "test": "bun run compile-catalogs && vitest run",
-    "typecheck": "bun run compile-catalogs && tsc --build"
+    "i18n:extract": "lingui extract",
+    "i18n:compile": "lingui compile --typescript",
+    "test": "lingui compile --typescript && vitest run",
+    "typecheck": "lingui compile --typescript && tsc --build"
   },
   "dependencies": {
     "@lingui/core": "^5",
@@ -37,7 +38,10 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250109.0",
-    "@lingui/message-utils": "^5",
+    "@lingui/babel-plugin-lingui-macro": "^5",
+    "@lingui/cli": "^5",
+    "@lingui/conf": "^5",
+    "@lingui/vite-plugin": "^5",
     "@tailwindcss/vite": "^4.0.0",
     "@tanstack/router-cli": "^1.95.0",
     "@tanstack/router-plugin": "^1.95.0",

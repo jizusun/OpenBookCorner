@@ -2,49 +2,36 @@ import { i18n } from '@lingui/core'
 import { I18nProvider as LinguiProvider, useLingui } from '@lingui/react'
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
 
-import { messages as zhMessages } from './locales/zh'
-import type { MessageKey, Messages } from './zh'
-
-// Re-export the key/type surface so consumers import from the i18n barrel
-// rather than reaching into the (swappable) default-locale module.
-export type { MessageKey, Messages } from './zh'
-
 /**
- * i18n powered by LinguiJS with PRECOMPILED catalogs (ICU parser dropped from
- * the production bundle — Lingui's recommended approach).
+ * i18n via LinguiJS — macro + extract/compile workflow.
  *
- * - Source dictionaries live in `zh.ts` / `en.ts` (plain `{ key: ICU-string }`
- *   maps, our explicit key namespace). A build step (`scripts/compile-catalogs.ts`,
- *   wired into `build`) precompiles them into `locales/{locale}.ts` token-array
- *   catalogs that Lingui runs directly with no runtime parser.
- * - Chinese is the DEFAULT and bundled; English is LAZY-LOADED via a dynamic
- *   `import()` of its precompiled catalog the first time it's selected.
+ * - SOURCE locale is `en`: UI text is authored inline with Lingui macros
+ *   (`<Trans>…</Trans>`, `` t`…` ``). `lingui extract` collects messages into
+ *   PO catalogs (lib/i18n/locales/{en,zh}.po); `lingui compile` emits the
+ *   runtime catalogs imported below.
+ * - English is bundled (it's the source/base). Chinese is LAZY-LOADED via a
+ *   dynamic `import()` of its compiled catalog the first time it's selected.
  * - The chosen locale is persisted in localStorage and restored on load.
- * - Call sites keep calling `t('login.title')` / `t('x', { count })`.
  *
- * Usage:
- *   const { t, locale, setLocale } = useI18n()
- *   t('login.title')
- *   t('common.signedInAs', { name: user.name })
+ * For UI text use the macros directly (`<Trans>` / `useLingui().t`). This module
+ * only owns provider setup + locale switching/persistence.
  */
+
+import { messages as enMessages } from './locales/en'
 
 export type Locale = 'en' | 'zh'
 
 const STORAGE_KEY = 'obc-locale'
 
-/** The translate function signature, exported for components that pass `t` around. */
-export type TranslateFn = (key: MessageKey, vars?: Record<string, string | number>) => string
+// Bundle the source (English) catalog synchronously so first paint is correct.
+i18n.load('en', enMessages)
 
-// Bundle the default (Chinese) precompiled catalog synchronously so first paint
-// is correct. No `setMessagesCompiler` — catalogs are already compiled.
-i18n.load('zh', zhMessages)
-
-/** Lazy catalog loaders. `zh` is already bundled. */
+/** Lazy catalog loaders. `en` is the bundled source. */
 const LOADERS: Record<Locale, (() => Promise<void>) | null> = {
-  zh: null,
-  en: async () => {
-    const { messages } = await import('./locales/en')
-    i18n.load('en', messages)
+  en: null,
+  zh: async () => {
+    const { messages } = await import('./locales/zh')
+    i18n.load('zh', messages)
   },
 }
 
@@ -56,40 +43,33 @@ async function activateLocale(locale: Locale): Promise<void> {
   if (typeof document !== 'undefined') document.documentElement.lang = locale
 }
 
-/** Read the persisted locale, defaulting to Chinese. */
+/** Read the persisted locale, defaulting to Chinese (the product default). */
 function readStoredLocale(): Locale {
   if (typeof localStorage === 'undefined') return 'zh'
   const v = localStorage.getItem(STORAGE_KEY)
   return v === 'en' ? 'en' : 'zh'
 }
 
-// Activate the stored (or default) locale once at module load so i18n is ready
-// before the first render. zh is synchronous; a stored `en` loads async and
-// flips over when ready (the provider re-renders on activation).
+// Activate the stored (or default) locale at module load so i18n is ready before
+// first render. `en` is synchronous; the default `zh` loads async and flips over
+// when ready (the provider re-renders on activation).
 const initialLocale = readStoredLocale()
-i18n.activate('zh')
-if (initialLocale !== 'zh') void activateLocale(initialLocale)
+i18n.activate('en')
+if (initialLocale !== 'en') void activateLocale(initialLocale)
 
 export function I18nProvider({ children }: { children: ReactNode }) {
   return <LinguiProvider i18n={i18n}>{children}</LinguiProvider>
 }
 
-interface I18nContextValue {
-  locale: Locale
-  /** Translate a key, falling back to the key when a message is missing. */
-  t: TranslateFn
-  /** Switch locale; lazy-loads the catalog if needed, then persists the choice. */
-  setLocale: (locale: Locale) => void
-}
-
-export function useI18n(): I18nContextValue {
-  // `useLingui` re-renders this hook's consumers whenever the active locale
-  // changes (Lingui tracks activation), so `locale`/`t` stay in sync.
+/**
+ * Locale controller for the language toggle + anything that needs the active
+ * locale. For translating UI TEXT, prefer the Lingui macros directly
+ * (`<Trans>`, `useLingui().t`), not this hook.
+ */
+export function useLocale(): { locale: Locale; setLocale: (l: Locale) => void } {
   const { i18n: active } = useLingui()
   const [locale, setLocaleState] = useState<Locale>(() => (active.locale as Locale) || 'zh')
 
-  // Keep local state aligned with Lingui's active locale (e.g. after an async
-  // English catalog finishes loading at boot).
   useEffect(() => {
     if (active.locale && active.locale !== locale) setLocaleState(active.locale as Locale)
   }, [active.locale, locale])
@@ -103,10 +83,5 @@ export function useI18n(): I18nContextValue {
     void activateLocale(next).then(() => setLocaleState(next))
   }, [])
 
-  const t = useCallback<TranslateFn>(
-    (key, vars) => active._(key, vars),
-    [active],
-  )
-
-  return { locale, t, setLocale }
+  return { locale, setLocale }
 }

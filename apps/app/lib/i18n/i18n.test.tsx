@@ -3,16 +3,21 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { render, screen, waitFor, cleanup } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { i18n } from '@lingui/core'
+import { Trans, useLingui } from '@lingui/react/macro'
 
-import { I18nProvider, useI18n } from './index'
+import { I18nProvider, useLocale } from './index'
+import { messages as zhMessages } from './locales/zh'
 
 function Probe() {
-  const { t, locale, setLocale } = useI18n()
+  const { t } = useLingui()
+  const { locale, setLocale } = useLocale()
   return (
     <div>
       <span data-testid="locale">{locale}</span>
-      <span data-testid="title">{t('login.title')}</span>
-      <span data-testid="greeting">{t('common.signedInAs', { name: 'Ada' })}</span>
+      <span data-testid="title">
+        <Trans>Welcome back</Trans>
+      </span>
+      <span data-testid="greeting">{t`Signed in as ${'Ada'}`}</span>
       <button onClick={() => setLocale('en')}>en</button>
       <button onClick={() => setLocale('zh')}>zh</button>
     </div>
@@ -31,8 +36,10 @@ describe('i18n', () => {
   beforeEach(() => {
     localStorage.clear()
     document.documentElement.lang = ''
-    // Reset the shared Lingui singleton to the default locale between tests so
-    // activation state doesn't leak across cases.
+    // Load the zh catalog + reset the shared Lingui singleton to the default
+    // locale between tests so activation state doesn't leak across cases.
+    // (The provider lazy-loads zh on switch; tests preload it for determinism.)
+    i18n.load('zh', zhMessages)
     i18n.activate('zh')
   })
   afterEach(() => {
@@ -50,14 +57,12 @@ describe('i18n', () => {
     expect(screen.getByTestId('greeting')).toHaveTextContent('已登录：Ada')
   })
 
-  it('lazy-loads the English dictionary when switching to en', async () => {
+  it('lazy-loads the English catalog when switching to en', async () => {
     renderProbe()
     await userEvent.click(screen.getByText('en'))
     await waitFor(() => expect(screen.getByTestId('title')).toHaveTextContent('Welcome back'))
     expect(screen.getByTestId('locale')).toHaveTextContent('en')
-    // Interpolation still works in the loaded locale.
     expect(screen.getByTestId('greeting')).toHaveTextContent('Signed in as Ada')
-    // The <html lang> attribute tracks the active locale.
     expect(document.documentElement.lang).toBe('en')
   })
 
@@ -68,7 +73,6 @@ describe('i18n', () => {
     expect(localStorage.getItem('obc-locale')).toBe('en')
     unmount()
 
-    // Fresh mount should restore en from storage and lazy-load it again.
     renderProbe()
     await waitFor(() => expect(screen.getByTestId('title')).toHaveTextContent('Welcome back'))
   })

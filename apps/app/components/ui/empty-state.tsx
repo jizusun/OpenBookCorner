@@ -4,8 +4,8 @@ import { Card, CardContent } from '@/components/ui/card'
 interface EmptyStateProps {
   /** Decorative emoji/icon shown above the title. */
   icon?: ReactNode
-  title: string
-  description?: string
+  title: ReactNode
+  description?: ReactNode
   /** Optional call-to-action (e.g. a Link styled as a button). */
   action?: ReactNode
   'data-testid'?: string

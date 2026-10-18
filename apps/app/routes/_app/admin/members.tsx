@@ -2,13 +2,13 @@ import { useState } from 'react'
 import { createFileRoute, redirect, Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { z } from 'zod'
+import { Trans, Plural, useLingui } from '@lingui/react/macro'
 import { trpc, trpcClient } from '@/lib/trpc'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { useInfiniteList, LoadMoreSentinel } from '@/components/InfiniteList'
-import { useI18n } from '@/lib/i18n'
 
 const searchSchema = z.object({
   q: z.string().optional(),
@@ -35,7 +35,7 @@ function MembersPage() {
   const { q, sort, dir, role, plan } = Route.useSearch()
   const navigate = Route.useNavigate()
   const [term, setTerm] = useState(q ?? '')
-  const { t } = useI18n()
+  const { t } = useLingui()
 
   const { data: facets } = useQuery(trpc.member.facets.queryOptions())
 
@@ -55,38 +55,44 @@ function MembersPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{t('members.title')}</h1>
+        <h1 className="text-2xl font-bold">
+          <Trans>Members</Trans>
+        </h1>
         {!infinite.isLoading && (
-          <span className="text-sm text-muted-foreground">{t('members.total', { count: infinite.total })}</span>
+          <span className="text-sm text-muted-foreground">
+            <Plural value={infinite.total} one="# member" other="# members" />
+          </span>
         )}
       </div>
 
       <form onSubmit={submit} className="flex gap-2" data-testid="member-search-form">
         <Input
-          placeholder={t('members.searchPlaceholder')}
+          placeholder={t`Search by name / phone / member no…`}
           value={term}
           onChange={(e) => setTerm(e.target.value)}
           data-testid="member-search-input"
-          aria-label={t('members.searchAria')}
+          aria-label={t`Search members`}
         />
         <Button type="submit" variant="outline">
-          {t('common.search')}
+          <Trans>Search</Trans>
         </Button>
       </form>
 
       <div className="flex flex-wrap items-center gap-2 text-sm" data-testid="member-controls">
         <label className="flex items-center gap-1">
-          <span className="text-muted-foreground">{t('members.sort')}</span>
+          <span className="text-muted-foreground">
+            <Trans>Sort</Trans>
+          </span>
           <select
             className="rounded-md border px-2 py-1"
             data-testid="member-sort-select"
             value={sort ?? 'name'}
             onChange={(e) => setParam('sort', e.target.value === 'name' ? undefined : e.target.value)}
           >
-            <option value="name">{t('members.sort.name')}</option>
-            <option value="joinedAt">{t('members.sort.joinedAt')}</option>
-            <option value="borrowedCount">{t('members.sort.borrowedCount')}</option>
-            <option value="memberExpiry">{t('members.sort.memberExpiry')}</option>
+            <option value="name">{t`Name`}</option>
+            <option value="joinedAt">{t`Joined date`}</option>
+            <option value="borrowedCount">{t`Books out`}</option>
+            <option value="memberExpiry">{t`Expiry date`}</option>
           </select>
         </label>
         <select
@@ -95,8 +101,8 @@ function MembersPage() {
           value={dir ?? 'asc'}
           onChange={(e) => setParam('dir', e.target.value === 'asc' ? undefined : e.target.value)}
         >
-          <option value="asc">{t('members.sort.asc')}</option>
-          <option value="desc">{t('members.sort.desc')}</option>
+          <option value="asc">{t`Ascending`}</option>
+          <option value="desc">{t`Descending`}</option>
         </select>
         <select
           className="rounded-md border px-2 py-1"
@@ -104,9 +110,9 @@ function MembersPage() {
           value={role ?? ''}
           onChange={(e) => setParam('role', e.target.value || undefined)}
         >
-          <option value="">{t('members.filter.allRoles')}</option>
-          <option value="library_admin">{t('members.role.admin')}</option>
-          <option value="library_reader">{t('members.role.reader')}</option>
+          <option value="">{t`All roles`}</option>
+          <option value="library_admin">{t`Admin`}</option>
+          <option value="library_reader">{t`Reader`}</option>
         </select>
         {facets && facets.plans.length > 0 && (
           <select
@@ -115,7 +121,7 @@ function MembersPage() {
             value={plan ?? ''}
             onChange={(e) => setParam('plan', e.target.value || undefined)}
           >
-            <option value="">{t('members.filter.allPlans')}</option>
+            <option value="">{t`All plans`}</option>
             {facets.plans.map((p) => (
               <option key={p} value={p}>
                 {p}
@@ -125,10 +131,18 @@ function MembersPage() {
         )}
       </div>
 
-      {infinite.isLoading && <p className="text-muted-foreground">{t('common.loading')}</p>}
+      {infinite.isLoading && (
+        <p className="text-muted-foreground">
+          <Trans>Loading…</Trans>
+        </p>
+      )}
 
       {!infinite.isLoading && items.length === 0 && (
-        <EmptyState icon="👥" title={t('members.empty.title')} description={t('members.empty.description')} />
+        <EmptyState
+          icon="👥"
+          title={<Trans>No members yet</Trans>}
+          description={<Trans>Import 番薯 data or adjust the search/filters.</Trans>}
+        />
       )}
 
       {items.length > 0 && (
@@ -136,13 +150,27 @@ function MembersPage() {
           <table className="w-full text-sm">
             <thead className="bg-muted/50 text-left text-muted-foreground">
               <tr>
-                <th className="px-3 py-2">{t('members.col.name')}</th>
-                <th className="px-3 py-2">{t('members.col.role')}</th>
-                <th className="px-3 py-2">{t('members.col.phone')}</th>
-                <th className="px-3 py-2">{t('members.col.memberNo')}</th>
-                <th className="px-3 py-2">{t('members.col.borrowed')}</th>
-                <th className="px-3 py-2">{t('members.col.returned')}</th>
-                <th className="px-3 py-2">{t('members.col.expiry')}</th>
+                <th className="px-3 py-2">
+                  <Trans>Name</Trans>
+                </th>
+                <th className="px-3 py-2">
+                  <Trans>Role</Trans>
+                </th>
+                <th className="px-3 py-2">
+                  <Trans>Phone</Trans>
+                </th>
+                <th className="px-3 py-2">
+                  <Trans>Member no.</Trans>
+                </th>
+                <th className="px-3 py-2">
+                  <Trans>Out</Trans>
+                </th>
+                <th className="px-3 py-2">
+                  <Trans>Returned</Trans>
+                </th>
+                <th className="px-3 py-2">
+                  <Trans>Expiry</Trans>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -158,11 +186,11 @@ function MembersPage() {
                     </Link>
                     {m.isPlaceholder && (
                       <Badge variant="outline" className="ml-2 text-[10px]">
-                        {t('members.placeholder')}
+                        {t`placeholder`}
                       </Badge>
                     )}
                   </td>
-                  <td className="px-3 py-2">{m.role === 'library_admin' ? t('members.role.admin') : t('members.role.reader')}</td>
+                  <td className="px-3 py-2">{m.role === 'library_admin' ? t`Admin` : t`Reader`}</td>
                   <td className="px-3 py-2">{m.phone ?? '—'}</td>
                   <td className="px-3 py-2">{m.memberNo ?? '—'}</td>
                   <td className="px-3 py-2">{m.borrowedCount ?? 0}</td>

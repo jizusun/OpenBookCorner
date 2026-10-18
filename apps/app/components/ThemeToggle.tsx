@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useLingui } from '@lingui/react/macro'
 import { Button } from '@/components/ui/button'
 
 type Theme = 'light' | 'dark'
@@ -32,6 +33,7 @@ function applyTheme(theme: Theme) {
 
 /** Light/dark toggle that persists the user's choice in localStorage. */
 export function ThemeToggle() {
+  const { t } = useLingui()
   const [theme, setTheme] = useState<Theme>('light')
 
   // Sync initial state from the DOM class the init script already applied.
@@ -59,8 +61,8 @@ export function ThemeToggle() {
       size="sm"
       variant="ghost"
       onClick={toggle}
-      aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-      title={isDark ? 'Light mode' : 'Dark mode'}
+      aria-label={isDark ? t`Switch to light mode` : t`Switch to dark mode`}
+      title={isDark ? t`Light mode` : t`Dark mode`}
       data-testid="theme-toggle"
     >
       <span aria-hidden>{isDark ? '☀️' : '🌙'}</span>

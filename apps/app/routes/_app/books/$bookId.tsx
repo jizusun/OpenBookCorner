@@ -10,7 +10,7 @@ import { ConfirmDialog } from '@/components/ui/modal'
 import { circulationErrorMessage } from '@/lib/errors'
 import { useToast } from '@/components/Toast'
 import { useViewMode } from '@/lib/view-mode'
-import { useI18n } from '@/lib/i18n'
+import { Trans, useLingui } from '@lingui/react/macro'
 
 export const Route = createFileRoute('/_app/books/$bookId')({ component: BookDetailPage })
 
@@ -19,7 +19,7 @@ function BookDetailPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const toast = useToast()
-  const { t } = useI18n()
+  const { t } = useLingui()
 
   const { data: user } = useQuery(trpc.auth.me.queryOptions())
   const isAdmin = user?.role === 'library_admin' || user?.role === 'super_admin'
@@ -37,8 +37,8 @@ function BookDetailPage() {
 
   const borrow = useMutation({
     ...trpc.borrowing.borrow.mutationOptions(),
-    onSuccess: () => toast.success(t('book.borrowedToast')),
-    onError: (e) => toast.error(circulationErrorMessage(e, t)),
+    onSuccess: () => toast.success(t`Borrowed — see it in “My Books”.`),
+    onError: (e) => toast.error(circulationErrorMessage(e)),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: trpc.book.get.queryKey({ bookId }) })
       queryClient.invalidateQueries({ queryKey: trpc.book.borrower.queryKey({ bookId }) })
@@ -52,7 +52,7 @@ function BookDetailPage() {
     ...trpc.book.remove.mutationOptions(),
     onSuccess: async () => {
       setConfirmOpen(false)
-      toast.success(t('bookDetail.deletedToast'))
+      toast.success(t`Book deleted.`)
       await queryClient.invalidateQueries({ queryKey: trpc.book.list.queryKey() })
       await navigate({ to: '/books' })
     },
@@ -60,8 +60,8 @@ function BookDetailPage() {
       setConfirmOpen(false)
       toast.error(
         e instanceof Error && e.message.includes('BORROWED')
-          ? t('bookDetail.deleteBorrowedError')
-          : t('bookDetail.deleteError'),
+          ? t`This book is currently borrowed and cannot be deleted until it is returned.`
+          : t`Could not delete the book.`,
       )
     },
   })
@@ -85,9 +85,9 @@ function BookDetailPage() {
   if (!book) {
     return (
       <div className="space-y-3">
-        <p className="text-muted-foreground">{t('bookDetail.notFound')}</p>
+        <p className="text-muted-foreground"><Trans>Book not found.</Trans></p>
         <Link to="/books" className="text-primary underline">
-          {t('addBook.backToCatalog')}
+          <Trans>Back to catalog</Trans>
         </Link>
       </div>
     )
@@ -96,7 +96,7 @@ function BookDetailPage() {
   return (
     <div className="space-y-4">
       <Link to="/books" className="text-sm text-primary underline">
-        {t('common.backToCatalog')}
+        <Trans>← Back to catalog</Trans>
       </Link>
 
       <Card>
@@ -104,38 +104,38 @@ function BookDetailPage() {
           {book.coverImageUrl ? (
             <img
               src={book.coverImageUrl}
-              alt={t('bookDetail.coverAlt', { title: book.title })}
+              alt={t`Cover of ${book.title}`}
               className="h-56 w-40 shrink-0 self-center rounded object-cover shadow sm:self-start"
               loading="lazy"
             />
           ) : (
             <div className="flex h-56 w-40 shrink-0 items-center justify-center self-center rounded bg-muted text-sm text-muted-foreground sm:self-start">
-              {t('myBooks.noCover')}
+              <Trans>No cover</Trans>
             </div>
           )}
 
           <div className="flex-1 space-y-3">
             <div>
               <h1 className="text-2xl font-bold">{book.title}</h1>
-              <p className="text-muted-foreground">{t('bookDetail.byAuthor', { author: book.author })}</p>
+              <p className="text-muted-foreground"><Trans>by {book.author}</Trans></p>
             </div>
 
             <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
               {book.publisher && (
                 <>
-                  <dt className="text-muted-foreground">{t('bookDetail.publisher')}</dt>
+                  <dt className="text-muted-foreground"><Trans>Publisher</Trans></dt>
                   <dd>{book.publisher}</dd>
                 </>
               )}
               {book.translator && (
                 <>
-                  <dt className="text-muted-foreground">{t('bookDetail.translator')}</dt>
+                  <dt className="text-muted-foreground"><Trans>Translator</Trans></dt>
                   <dd>{book.translator}</dd>
                 </>
               )}
               {(book.publishedDate || book.publishedYear) && (
                 <>
-                  <dt className="text-muted-foreground">{t('bookDetail.published')}</dt>
+                  <dt className="text-muted-foreground"><Trans>Published</Trans></dt>
                   <dd>{book.publishedDate ?? book.publishedYear}</dd>
                 </>
               )}
@@ -143,49 +143,49 @@ function BookDetailPage() {
               <dd>{book.isbn}</dd>
               {book.category && (
                 <>
-                  <dt className="text-muted-foreground">{t('bookDetail.category')}</dt>
+                  <dt className="text-muted-foreground"><Trans>Category</Trans></dt>
                   <dd>{book.category}</dd>
                 </>
               )}
               {book.shelfLocation && (
                 <>
-                  <dt className="text-muted-foreground">{t('bookDetail.shelf')}</dt>
+                  <dt className="text-muted-foreground"><Trans>Shelf</Trans></dt>
                   <dd>{book.shelfLocation}</dd>
                 </>
               )}
               {book.copyCode && (
                 <>
-                  <dt className="text-muted-foreground">{t('bookDetail.code')}</dt>
+                  <dt className="text-muted-foreground"><Trans>Code</Trans></dt>
                   <dd>{book.copyCode}</dd>
                 </>
               )}
               {book.series && (
                 <>
-                  <dt className="text-muted-foreground">{t('bookDetail.series')}</dt>
+                  <dt className="text-muted-foreground"><Trans>Series</Trans></dt>
                   <dd>{book.series}</dd>
                 </>
               )}
               {book.cnLibraryClass && (
                 <>
-                  <dt className="text-muted-foreground">{t('bookDetail.clc')}</dt>
+                  <dt className="text-muted-foreground"><Trans>CLC</Trans></dt>
                   <dd>{book.cnLibraryClass}</dd>
                 </>
               )}
               {book.pageCount != null && (
                 <>
-                  <dt className="text-muted-foreground">{t('bookDetail.pages')}</dt>
+                  <dt className="text-muted-foreground"><Trans>Pages</Trans></dt>
                   <dd>{book.pageCount}</dd>
                 </>
               )}
               {book.wordCount != null && (
                 <>
-                  <dt className="text-muted-foreground">{t('bookDetail.words')}</dt>
+                  <dt className="text-muted-foreground"><Trans>Words</Trans></dt>
                   <dd>{book.wordCount}</dd>
                 </>
               )}
               {book.price && (
                 <>
-                  <dt className="text-muted-foreground">{t('bookDetail.price')}</dt>
+                  <dt className="text-muted-foreground"><Trans>Price</Trans></dt>
                   <dd>
                     {book.price} {book.priceUnit}
                   </dd>
@@ -193,13 +193,13 @@ function BookDetailPage() {
               )}
               {book.isShelved != null && (
                 <>
-                  <dt className="text-muted-foreground">{t('bookDetail.shelved')}</dt>
-                  <dd>{book.isShelved ? t('bookDetail.yes') : t('bookDetail.no')}</dd>
+                  <dt className="text-muted-foreground"><Trans>Shelved</Trans></dt>
+                  <dd>{book.isShelved ? <Trans>Yes</Trans> : <Trans>No</Trans>}</dd>
                 </>
               )}
               {book.enteredAt && (
                 <>
-                  <dt className="text-muted-foreground">{t('bookDetail.entered')}</dt>
+                  <dt className="text-muted-foreground"><Trans>Entered</Trans></dt>
                   <dd>{new Date(book.enteredAt).toLocaleString()}</dd>
                 </>
               )}
@@ -208,8 +208,8 @@ function BookDetailPage() {
             <div className="flex items-center gap-3">
               <Badge variant={book.availableCount > 0 ? 'default' : 'secondary'}>
                 {book.availableCount > 0
-                  ? t('bookDetail.availableOf', { available: book.availableCount, total: book.quantity })
-                  : t('bookDetail.allBorrowed', { total: book.quantity })}
+                  ? <Trans>Available · {book.availableCount} of {book.quantity}</Trans>
+                  : <Trans>All {book.quantity} copies borrowed</Trans>}
               </Badge>
               {!manageMode && (
                 <Button
@@ -217,7 +217,7 @@ function BookDetailPage() {
                   disabled={book.availableCount <= 0 || borrow.isPending}
                   onClick={() => borrow.mutate({ bookId })}
                 >
-                  {borrow.isPending ? t('book.borrowing') : t('book.borrow')}
+                  {borrow.isPending ? <Trans>Borrowing…</Trans> : <Trans>Borrow</Trans>}
                 </Button>
               )}
             </div>
@@ -228,11 +228,11 @@ function BookDetailPage() {
                 className="rounded-md border border-input bg-muted/40 px-3 py-2 text-sm"
                 data-testid="borrower-info"
               >
-                <span className="text-muted-foreground">{t('bookDetail.borrowedBy')}</span>
+                <span className="text-muted-foreground"><Trans>Borrowed by </Trans></span>
                 <span className="font-medium">{borrower.borrowerName}</span>
                 <span className="text-muted-foreground"> ({borrower.borrowerEmail})</span>
                 <span className="text-muted-foreground">
-                  {t('bookDetail.dueSuffix', { date: new Date(borrower.dueDate).toLocaleDateString() })}
+                  <Trans> · due {new Date(borrower.dueDate).toLocaleDateString()}</Trans>
                 </span>
               </div>
             )}
@@ -244,7 +244,7 @@ function BookDetailPage() {
                   params={{ bookId }}
                   className={buttonVariants({ variant: 'outline', size: 'sm' })}
                 >
-                  {t('common.edit')}
+                  <Trans>Edit</Trans>
                 </Link>
                 <Button
                   size="sm"
@@ -252,7 +252,7 @@ function BookDetailPage() {
                   disabled={remove.isPending}
                   onClick={() => setConfirmOpen(true)}
                 >
-                  {remove.isPending ? t('common.deleting') : t('common.delete')}
+                  {remove.isPending ? <Trans>Deleting…</Trans> : <Trans>Delete</Trans>}
                 </Button>
               </div>
             )}
@@ -269,7 +269,7 @@ function BookDetailPage() {
 
             {book.description && (
               <div className="pt-2">
-                <h2 className="mb-1 font-semibold">{t('bookDetail.description')}</h2>
+                <h2 className="mb-1 font-semibold"><Trans>Description</Trans></h2>
                 <p className="whitespace-pre-line text-sm text-muted-foreground">
                   {book.description}
                 </p>
@@ -283,9 +283,9 @@ function BookDetailPage() {
 
       <ConfirmDialog
         open={confirmOpen}
-        title={t('bookDetail.deleteConfirmTitle')}
-        description={t('bookDetail.deleteConfirmDesc')}
-        confirmLabel={t('common.delete')}
+        title={t`Delete this book?`}
+        description={t`This removes the book from the catalog and cannot be undone.`}
+        confirmLabel={t`Delete`}
         destructive
         pending={remove.isPending}
         onConfirm={() => remove.mutate({ bookId })}
@@ -304,7 +304,6 @@ function BookDetailPage() {
  * nothing when there is no raw data (e.g. app-created books).
  */
 function RawFields({ raw }: { raw: unknown }) {
-  const { t } = useI18n()
   if (!raw || typeof raw !== 'object') return null
   const r = raw as { books?: Record<string, unknown>[]; stock?: Record<string, unknown> | null }
   const rows: Record<string, unknown>[] = Array.isArray(r.books)
@@ -317,13 +316,13 @@ function RawFields({ raw }: { raw: unknown }) {
   return (
     <details className="pt-2" data-testid="raw-fields">
       <summary className="cursor-pointer text-sm font-semibold">
-        {t('bookDetail.rawFields')}
+        <Trans>All source fields</Trans>
       </summary>
       <div className="mt-2 space-y-3">
         {rows.map((row, i) => (
           <div key={i}>
             {rows.length > 1 && (
-              <p className="text-xs text-muted-foreground">{t('bookDetail.copyN', { n: i + 1 })}</p>
+              <p className="text-xs text-muted-foreground"><Trans>Copy {i + 1}</Trans></p>
             )}
             <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0.5 text-xs">
               {entries(row).map(([k, v]) => (
@@ -334,7 +333,7 @@ function RawFields({ raw }: { raw: unknown }) {
         ))}
         {r.stock && entries(r.stock).length > 0 && (
           <div>
-            <p className="text-xs text-muted-foreground">{t('bookDetail.stock')}</p>
+            <p className="text-xs text-muted-foreground"><Trans>Stock</Trans></p>
             <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0.5 text-xs">
               {entries(r.stock).map(([k, v]) => (
                 <RawRow key={k} label={k} value={v} />
