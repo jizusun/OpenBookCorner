@@ -72,6 +72,11 @@ export async function createTestDb(): Promise<Database> {
       category TEXT NOT NULL DEFAULT 'other', message TEXT NOT NULL,
       status TEXT NOT NULL DEFAULT 'new', created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
+    CREATE TABLE audit_logs (
+      id TEXT PRIMARY KEY, actor_user_id TEXT NOT NULL, on_behalf_of_user_id TEXT,
+      library_id TEXT, action TEXT NOT NULL, target_type TEXT, target_id TEXT,
+      metadata TEXT, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
   `)
   const db = drizzle(sqlite, { schema }) as unknown as Database
 
