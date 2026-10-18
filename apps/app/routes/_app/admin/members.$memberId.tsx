@@ -4,9 +4,10 @@ import { Trans, useLingui } from '@lingui/react/macro'
 import { api } from '@/lib/api'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Skeleton, DetailPageSkeleton } from '@/components/ui/skeleton'
 
 export const Route = createFileRoute('/_app/admin/members/$memberId')({
+  pendingComponent: () => <DetailPageSkeleton />,
   beforeLoad: ({ context }) => {
     if (context.user.role !== 'library_admin' && context.user.role !== 'super_admin') {
       throw redirect({ to: '/books' })

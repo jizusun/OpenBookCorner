@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { ListPageSkeleton } from '@/components/ui/skeleton'
 import { createFileRoute, redirect, Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { z } from 'zod'
@@ -19,6 +20,7 @@ const searchSchema = z.object({
 })
 
 export const Route = createFileRoute('/_app/admin/members')({
+  pendingComponent: () => <ListPageSkeleton />,
   validateSearch: searchSchema,
   beforeLoad: ({ context }) => {
     if (context.user.role !== 'library_admin' && context.user.role !== 'super_admin') {

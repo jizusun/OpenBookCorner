@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { FormPageSkeleton } from '@/components/ui/skeleton'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Trans, useLingui } from '@lingui/react/macro'
@@ -10,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/components/Toast'
 
 export const Route = createFileRoute('/_app/admin/settings')({
+  pendingComponent: () => <FormPageSkeleton />,
   beforeLoad: ({ context }) => {
     const user = context.user
     if (user.role !== 'library_admin' && user.role !== 'super_admin') {

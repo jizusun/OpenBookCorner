@@ -5,14 +5,14 @@ import { api } from '@/lib/api'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Skeleton, DetailPageSkeleton } from '@/components/ui/skeleton'
 import { ConfirmDialog } from '@/components/ui/modal'
 import { circulationErrorMessage } from '@/lib/errors'
 import { useToast } from '@/components/Toast'
 import { useViewMode } from '@/lib/view-mode'
 import { Trans, useLingui } from '@lingui/react/macro'
 
-export const Route = createFileRoute('/_app/books/$bookId')({ component: BookDetailPage })
+export const Route = createFileRoute('/_app/books/$bookId')({ component: BookDetailPage, pendingComponent: () => <DetailPageSkeleton /> })
 
 function BookDetailPage() {
   const { bookId } = Route.useParams()

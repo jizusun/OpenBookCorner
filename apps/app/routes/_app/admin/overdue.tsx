@@ -6,7 +6,7 @@ import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Skeleton, ListPageSkeleton } from '@/components/ui/skeleton'
 
 const RANGES = ['all', '1-7', '8-14', '15+'] as const
 
@@ -28,6 +28,7 @@ const searchSchema = z.object({
 })
 
 export const Route = createFileRoute('/_app/admin/overdue')({
+  pendingComponent: () => <ListPageSkeleton />,
   validateSearch: searchSchema,
   // Admin-only route (UX guard; the server also enforces admin).
   beforeLoad: ({ context }) => {

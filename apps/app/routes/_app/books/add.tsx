@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { FormPageSkeleton } from '@/components/ui/skeleton'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api'
@@ -10,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/components/Toast'
 import { Trans, useLingui } from '@lingui/react/macro'
 
-export const Route = createFileRoute('/_app/books/add')({ component: AddBookPage })
+export const Route = createFileRoute('/_app/books/add')({ component: AddBookPage, pendingComponent: () => <FormPageSkeleton /> })
 
 function AddBookPage() {
   const navigate = useNavigate()
