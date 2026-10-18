@@ -48,8 +48,14 @@ export async function storeCoverImage(
     const body = await res.arrayBuffer()
     await r2.put(key, body, { httpMetadata: { contentType } })
     return `/covers/${key}`
-  } catch {
+  } catch (err) {
     // Network / R2 failure: don't block the add — caller keeps the external URL.
+    // Log so cover-storage regressions are observable (not silently swallowed).
+    console.warn('storeCoverImage failed', {
+      sourceUrl,
+      isbn,
+      error: err instanceof Error ? err.message : String(err),
+    })
     return null
   }
 }

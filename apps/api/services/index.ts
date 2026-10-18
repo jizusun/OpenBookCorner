@@ -10,7 +10,14 @@ import {
   type LibrarySettings,
 } from '@obc/db'
 
+import { DomainError } from '../lib/errors'
+import { storeCoverImage } from './covers'
+
 const DEFAULT_BORROW_DAYS = 14
+/** Shared default page size for tenant-scoped listings. */
+const DEFAULT_PAGE_SIZE = 20
+/** Hard cap on page size regardless of requested `limit`. */
+const MAX_PAGE_SIZE = 200
 
 export class BookService {
   constructor(private db: Database) {}
@@ -29,7 +36,7 @@ export class BookService {
     } = {},
   ) {
     const page = Math.max(1, opts.page ?? 1)
-    const limit = Math.min(200, Math.max(1, opts.limit ?? 20))
+    const limit = Math.min(MAX_PAGE_SIZE, Math.max(1, opts.limit ?? DEFAULT_PAGE_SIZE))
     const offset = (page - 1) * limit
 
     const search = opts.search?.trim()
@@ -117,10 +124,23 @@ export class BookService {
     description?: string
     subjects?: string[]
     quantity?: number
+    /**
+     * Optional R2 bucket. When provided and a cover URL is present, the image
+     * is persisted to R2 and the stored same-origin path is used instead of the
+     * external URL (falling back to the external URL if storage fails).
+     */
+    covers?: R2Bucket
   }) {
     const id = crypto.randomUUID()
     const now = new Date().toISOString()
     const quantity = Math.max(1, input.quantity ?? 1)
+
+    let coverImageUrl = input.coverImageUrl ?? null
+    if (coverImageUrl && input.covers) {
+      const stored = await storeCoverImage(input.covers, coverImageUrl, input.isbn)
+      if (stored) coverImageUrl = stored
+    }
+
     await this.db.insert(books).values({
       id,
       isbn: input.isbn,
@@ -128,7 +148,7 @@ export class BookService {
       author: input.author,
       publisher: input.publisher ?? null,
       publishedYear: input.publishedYear ?? null,
-      coverImageUrl: input.coverImageUrl ?? null,
+      coverImageUrl,
       description: input.description ?? null,
       subjects: input.subjects ?? null,
       libraryId: input.libraryId,
@@ -211,7 +231,7 @@ export class BookService {
 
   async delete(bookId: string, libraryId: string) {
     const existing = await this.getById(bookId, libraryId)
-    if (!existing) throw new Error('BOOK_NOT_FOUND')
+    if (!existing) throw new DomainError('BOOK_NOT_FOUND')
 
     const activeBorrow = await this.db
       .select({ id: borrowTransactions.id })
@@ -224,7 +244,7 @@ export class BookService {
         ),
       )
       .get()
-    if (activeBorrow) throw new Error('BOOK_CURRENTLY_BORROWED')
+    if (activeBorrow) throw new DomainError('BOOK_CURRENTLY_BORROWED')
 
     await this.db.delete(books).where(and(eq(books.id, bookId), eq(books.libraryId, libraryId)))
     return { deleted: true }
@@ -241,8 +261,8 @@ export class CirculationService {
       .where(and(eq(books.id, bookId), eq(books.libraryId, libraryId)))
       .get()
 
-    if (!book) throw new Error('BOOK_NOT_FOUND')
-    if (book.availableCount <= 0) throw new Error('BOOK_NOT_AVAILABLE')
+    if (!book) throw new DomainError('BOOK_NOT_FOUND')
+    if (book.availableCount <= 0) throw new DomainError('BOOK_NOT_AVAILABLE')
 
     const library = await this.db.select().from(libraries).where(eq(libraries.id, libraryId)).get()
     const period = library?.settings.borrowingPeriodDays ?? DEFAULT_BORROW_DAYS
@@ -262,10 +282,10 @@ export class CirculationService {
 
     const nowMs = Date.now()
     if (activeLoans.some((l) => new Date(l.dueDate).getTime() < nowMs)) {
-      throw new Error('HAS_OVERDUE_BOOKS')
+      throw new DomainError('HAS_OVERDUE_BOOKS')
     }
     if (activeLoans.length >= maxBooks) {
-      throw new Error('BORROW_LIMIT_REACHED')
+      throw new DomainError('BORROW_LIMIT_REACHED')
     }
 
     const now = new Date()
@@ -303,7 +323,7 @@ export class CirculationService {
   async borrowByIsbn(isbn: string, userId: string, libraryId: string) {
     const bookSvc = new BookService(this.db)
     const book = await bookSvc.findByIsbn(isbn, libraryId)
-    if (!book) throw new Error('BOOK_NOT_IN_LIBRARY')
+    if (!book) throw new DomainError('BOOK_NOT_IN_LIBRARY')
     const res = await this.borrow(book.id, userId, libraryId)
     return { bookId: book.id, title: book.title, dueDate: res.dueDate }
   }
@@ -327,7 +347,7 @@ export class CirculationService {
       .all()
 
     const row = returned[0]
-    if (!row) throw new Error('INVALID_RETURN_REQUEST')
+    if (!row) throw new DomainError('INVALID_RETURN_REQUEST')
     const bookId = row.bookId
 
     // Credit the copy back atomically, capped at quantity (MIN guards against a
@@ -436,7 +456,7 @@ export class LibraryService {
     },
   ) {
     const lib = await this.get(libraryId)
-    if (!lib) throw new Error('LIBRARY_NOT_FOUND')
+    if (!lib) throw new DomainError('LIBRARY_NOT_FOUND')
 
     const settings: LibrarySettings = {
       borrowingPeriodDays: input.borrowingPeriodDays ?? lib.settings.borrowingPeriodDays,
@@ -574,7 +594,7 @@ export class MemberService {
     } = {},
   ) {
     const page = Math.max(1, opts.page ?? 1)
-    const limit = Math.min(200, Math.max(1, opts.limit ?? 50))
+    const limit = Math.min(MAX_PAGE_SIZE, Math.max(1, opts.limit ?? DEFAULT_PAGE_SIZE))
     const offset = (page - 1) * limit
 
     const search = opts.search?.trim()
