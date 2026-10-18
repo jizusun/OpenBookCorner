@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/components/Toast'
-import { useI18n } from '@/lib/i18n'
+import { Trans, useLingui } from '@lingui/react/macro'
 
 export const Route = createFileRoute('/_app/books/$bookId/edit')({
   beforeLoad: ({ context }) => {
@@ -24,7 +24,7 @@ function EditBookPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const toast = useToast()
-  const { t } = useI18n()
+  const { t } = useLingui()
 
   const { data: book, isLoading } = useQuery(trpc.book.get.queryOptions({ bookId }))
 
@@ -75,20 +75,20 @@ function EditBookPage() {
       })
       await queryClient.invalidateQueries({ queryKey: trpc.book.get.queryKey({ bookId }) })
       await queryClient.invalidateQueries({ queryKey: trpc.book.list.queryKey() })
-      toast.success(t('editBook.savedToast'))
+      toast.success(t`Changes saved.`)
       await navigate({ to: '/books/$bookId', params: { bookId } })
     } catch {
-      setError(t('editBook.error'))
+      setError(t`Could not save changes. Please try again.`)
     } finally {
       setPending(false)
     }
   }
 
-  if (isLoading || !current) return <p className="text-muted-foreground">{t('editBook.loading')}</p>
+  if (isLoading || !current) return <p className="text-muted-foreground"><Trans>Loading…</Trans></p>
 
   return (
     <div className="mx-auto max-w-lg space-y-4">
-      <h1 className="text-2xl font-bold">{t('editBook.title')}</h1>
+      <h1 className="text-2xl font-bold"><Trans>Edit Book</Trans></h1>
       <Card>
         <CardHeader>
           <CardTitle>{book?.title}</CardTitle>
@@ -96,23 +96,23 @@ function EditBookPage() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4" data-testid="edit-book-form">
             <div className="space-y-2">
-              <Label htmlFor="title">{t('editBook.titleField')}</Label>
+              <Label htmlFor="title"><Trans>Title</Trans></Label>
               <Input id="title" value={current.title} onChange={(e) => set('title', e.target.value)} required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="author">{t('editBook.author')}</Label>
+              <Label htmlFor="author"><Trans>Author</Trans></Label>
               <Input id="author" value={current.author} onChange={(e) => set('author', e.target.value)} required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="isbn">{t('editBook.isbn')}</Label>
+              <Label htmlFor="isbn"><Trans>ISBN</Trans></Label>
               <Input id="isbn" value={current.isbn} onChange={(e) => set('isbn', e.target.value)} required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="publisher">{t('editBook.publisher')}</Label>
+              <Label htmlFor="publisher"><Trans>Publisher</Trans></Label>
               <Input id="publisher" value={current.publisher} onChange={(e) => set('publisher', e.target.value)} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="publishedYear">{t('editBook.publishedYear')}</Label>
+              <Label htmlFor="publishedYear"><Trans>Published year</Trans></Label>
               <Input
                 id="publishedYear"
                 type="number"
@@ -121,7 +121,7 @@ function EditBookPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="description">{t('editBook.description')}</Label>
+              <Label htmlFor="description"><Trans>Description</Trans></Label>
               <textarea
                 id="description"
                 className="flex min-h-24 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -132,14 +132,14 @@ function EditBookPage() {
             {error && <p className="text-sm text-destructive">{error}</p>}
             <div className="flex gap-2">
               <Button type="submit" disabled={pending}>
-                {pending ? t('editBook.saving') : t('editBook.save')}
+                {pending ? <Trans>Saving…</Trans> : <Trans>Save changes</Trans>}
               </Button>
               <Button
                 type="button"
                 variant="ghost"
                 onClick={() => navigate({ to: '/books/$bookId', params: { bookId } })}
               >
-                {t('common.cancel')}
+                <Trans>Cancel</Trans>
               </Button>
             </div>
           </form>

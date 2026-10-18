@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/components/Toast'
-import { useI18n } from '@/lib/i18n'
+import { Trans, useLingui } from '@lingui/react/macro'
 
 export const Route = createFileRoute('/_app/books/add')({ component: AddBookPage })
 
@@ -16,7 +16,7 @@ function AddBookPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const toast = useToast()
-  const { t } = useI18n()
+  const { t } = useLingui()
 
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
@@ -56,14 +56,14 @@ function AddBookPage() {
           description: m.description,
           subjects: m.subjects,
         })
-        setInfo(t('addBook.info.autofilled'))
+        setInfo(t`Details auto-filled from Open Library. You can edit the title/author before saving.`)
       } else {
         setMeta({})
-        setInfo(t('addBook.info.notFound'))
+        setInfo(t`ISBN not found online. Enter the title and author manually.`)
       }
     } catch {
       setMeta({})
-      setInfo(t('addBook.info.lookupFailed'))
+      setInfo(t`Lookup failed. Enter the title and author manually.`)
     } finally {
       setLooking(false)
     }
@@ -93,8 +93,8 @@ function AddBookPage() {
         subjects: meta.subjects,
       })
       await queryClient.invalidateQueries({ queryKey: trpc.book.list.queryKey() })
-      setSuccess(t('addBook.addedToast', { title: title.trim() }))
-      toast.success(t('addBook.addedToast', { title: title.trim() }))
+      setSuccess(t`“${title.trim()}” added to the catalog.`)
+      toast.success(t`“${title.trim()}” added to the catalog.`)
       setTitle('')
       setAuthor('')
       setIsbn('')
@@ -104,8 +104,8 @@ function AddBookPage() {
     } catch (err) {
       setError(
         err instanceof Error && err.message.includes('permission')
-          ? t('addBook.error.permission')
-          : t('addBook.error.generic'),
+          ? t`You do not have permission to add books.`
+          : t`Could not add the book. Please check the fields and try again.`,
       )
     } finally {
       setPending(false)
@@ -115,24 +115,24 @@ function AddBookPage() {
   return (
     <div className="mx-auto max-w-lg space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{t('addBook.title')}</h1>
+        <h1 className="text-2xl font-bold"><Trans>Add Book</Trans></h1>
         <Button variant="ghost" size="sm" onClick={() => navigate({ to: '/books' })}>
-          {t('addBook.backToCatalog')}
+          <Trans>Back to catalog</Trans>
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>{t('addBook.details')}</CardTitle>
+          <CardTitle><Trans>Book details</Trans></CardTitle>
           <p className="text-sm text-muted-foreground">
-            {t('addBook.hint')}
+            <Trans>Scan an ISBN to auto-fill, or enter details manually.</Trans>
           </p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4" data-testid="add-book-form">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="isbn">{t('addBook.isbn')}</Label>
+                <Label htmlFor="isbn"><Trans>ISBN</Trans></Label>
                 <Button
                   type="button"
                   variant="outline"
@@ -140,7 +140,7 @@ function AddBookPage() {
                   onClick={() => setScanning((s) => !s)}
                   data-testid="scan-toggle"
                 >
-                  {scanning ? t('addBook.closeScanner') : t('addBook.scanIsbn')}
+                  {scanning ? <Trans>Close scanner</Trans> : <Trans>Scan ISBN</Trans>}
                 </Button>
               </div>
               <Input
@@ -153,20 +153,20 @@ function AddBookPage() {
               {scanning && (
                 <IsbnScanner onDetected={handleScanned} onClose={() => setScanning(false)} />
               )}
-              {looking && <p className="text-xs text-muted-foreground">{t('addBook.lookingUp')}</p>}
+              {looking && <p className="text-xs text-muted-foreground"><Trans>Looking up ISBN…</Trans></p>}
               {info && <p className="text-xs text-muted-foreground" data-testid="lookup-info">{info}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="title">{t('addBook.titleField')}</Label>
+              <Label htmlFor="title"><Trans>Title</Trans></Label>
               <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="author">{t('addBook.author')}</Label>
+              <Label htmlFor="author"><Trans>Author</Trans></Label>
               <Input id="author" value={author} onChange={(e) => setAuthor(e.target.value)} required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="quantity">{t('addBook.copies')}</Label>
+              <Label htmlFor="quantity"><Trans>Copies</Trans></Label>
               <Input
                 id="quantity"
                 type="number"
@@ -184,7 +184,7 @@ function AddBookPage() {
               </p>
             )}
             <Button type="submit" className="w-full" disabled={pending}>
-              {pending ? t('addBook.adding') : t('addBook.submit')}
+              {pending ? <Trans>Adding…</Trans> : <Trans>Add Book</Trans>}
             </Button>
           </form>
         </CardContent>

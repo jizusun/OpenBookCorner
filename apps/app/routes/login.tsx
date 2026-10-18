@@ -3,7 +3,7 @@ import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { signIn } from '@/lib/auth-client'
 import { queryClient } from '@/lib/query'
 import { setViewMode } from '@/lib/view-mode'
-import { useI18n } from '@/lib/i18n'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -14,16 +14,16 @@ export const Route = createFileRoute('/login')({ component: LoginPage })
 
 function LoginPage() {
   const router = useRouter()
-  const { t } = useI18n()
+  const { t } = useLingui()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
 
   const demoAccounts = [
-    { roleKey: 'login.role.superAdmin', email: 'super@demo.test', password: 'password123' },
-    { roleKey: 'login.role.libraryAdmin', email: 'admin@demo.test', password: 'password123' },
-    { roleKey: 'login.role.libraryReader', email: 'reader@demo.test', password: 'password123' },
+    { role: t`Super Admin`, email: 'super@demo.test', password: 'password123' },
+    { role: t`Library Admin`, email: 'admin@demo.test', password: 'password123' },
+    { role: t`Library Reader`, email: 'reader@demo.test', password: 'password123' },
   ] as const
 
   function fillDemo(demo: { email: string; password: string }) {
@@ -39,7 +39,7 @@ function LoginPage() {
     try {
       const res = await signIn.email({ email, password })
       if (res.error) {
-        setError(t('login.invalid'))
+        setError(t`That email or password doesn’t match. Please try again.`)
         return
       }
       // Clear any cached queries from a PREVIOUS session before routing. Without
@@ -61,7 +61,7 @@ function LoginPage() {
         await router.navigate({ to: '/my-books' })
       }
     } catch {
-      setError(t('login.invalid'))
+      setError(t`That email or password doesn’t match. Please try again.`)
     } finally {
       setPending(false)
     }
@@ -73,8 +73,8 @@ function LoginPage() {
         <CardHeader>
           <div className="flex items-start justify-between gap-2">
             <div>
-              <CardTitle>{t('login.title')}</CardTitle>
-              <p className="text-sm text-muted-foreground">{t('login.subtitle')}</p>
+              <CardTitle><Trans>Welcome back</Trans></CardTitle>
+              <p className="text-sm text-muted-foreground"><Trans>Sign in to your library</Trans></p>
             </div>
             <LanguageToggle />
           </div>
@@ -82,7 +82,7 @@ function LoginPage() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">{t('login.email')}</Label>
+              <Label htmlFor="email"><Trans>Email</Trans></Label>
               <Input
                 id="email"
                 type="email"
@@ -93,7 +93,7 @@ function LoginPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">{t('login.password')}</Label>
+              <Label htmlFor="password"><Trans>Password</Trans></Label>
               <Input
                 id="password"
                 type="password"
@@ -105,12 +105,12 @@ function LoginPage() {
             </div>
             {error && <p className="text-sm text-destructive">{error}</p>}
             <Button type="submit" className="w-full" disabled={pending}>
-              {pending ? t('login.signingIn') : t('login.signIn')}
+              {pending ? <Trans>Signing in…</Trans> : <Trans>Sign in</Trans>}
             </Button>
           </form>
 
           <div className="mt-6 rounded-md border border-dashed p-4">
-            <p className="text-xs font-medium text-muted-foreground">{t('login.demoHint')}</p>
+            <p className="text-xs font-medium text-muted-foreground"><Trans>Try a demo account — tap a role to fill it in</Trans></p>
             <div className="mt-3 space-y-2">
               {demoAccounts.map((demo) => (
                 <button
@@ -119,7 +119,7 @@ function LoginPage() {
                   onClick={() => fillDemo(demo)}
                   className="flex w-full items-center justify-between rounded-md border bg-muted/40 px-3 py-2 text-left text-sm transition-colors hover:bg-muted"
                 >
-                  <span className="font-medium">{t(demo.roleKey)}</span>
+                  <span className="font-medium">{demo.role}</span>
                   <span className="text-xs text-muted-foreground">
                     {demo.email} · {demo.password}
                   </span>

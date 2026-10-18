@@ -11,8 +11,9 @@ dist/
 # generated
 **/routeTree.gen.ts
 
-# Generated Lingui catalogs (precompiled from lib/i18n/{zh,en}.ts at build time)
-apps/app/lib/i18n/locales/
+# Lingui: track .po source catalogs, ignore compiled runtime catalogs
+apps/app/lib/i18n/locales/*.ts
+apps/app/lib/i18n/locales/*.js
 **/worker-configuration.d.ts
 **/*.tsbuildinfo
 

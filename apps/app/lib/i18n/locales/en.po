@@ -1,0 +1,1266 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-10-18 18:23+0800\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: en\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#. placeholder {0}: new Date(borrower.dueDate).toLocaleDateString()
+#: routes/_app/books/$bookId.tsx:235
+msgid " · due {0}"
+msgstr " · due {0}"
+
+#. placeholder {0}: f.submitterName
+#. placeholder {1}: f.submitterEmail
+#: routes/_app/admin/feedback.tsx:74
+msgid "— {0} ({1})"
+msgstr "— {0} ({1})"
+
+#. placeholder {0}: title.trim()
+#: routes/_app/books/add.tsx:96
+#: routes/_app/books/add.tsx:97
+msgid "“{0}” added to the catalog."
+msgstr "“{0}” added to the catalog."
+
+#. placeholder {0}: counts.books
+#. placeholder {0}: result.books
+#: routes/_app/admin/import.tsx:202
+#: routes/_app/admin/import.tsx:243
+msgid "{0, plural, one {# book} other {# books}}"
+msgstr "{0, plural, one {# book} other {# books}}"
+
+#. placeholder {0}: counts.orphanLoans.noMember + counts.orphanLoans.noBook
+#: routes/_app/admin/import.tsx:222
+msgid "{0, plural, one {# loan skipped (unmatched member/book)} other {# loans skipped (unmatched member/book)}}"
+msgstr "{0, plural, one {# loan skipped (unmatched member/book)} other {# loans skipped (unmatched member/book)}}"
+
+#. placeholder {0}: counts.loans
+#. placeholder {0}: result.loans
+#: routes/_app/admin/import.tsx:208
+#: routes/_app/admin/import.tsx:249
+msgid "{0, plural, one {# loan} other {# loans}}"
+msgstr "{0, plural, one {# loan} other {# loans}}"
+
+#. placeholder {0}: counts.members
+#. placeholder {0}: infinite.total
+#. placeholder {0}: result.members
+#: routes/_app/admin/import.tsx:205
+#: routes/_app/admin/import.tsx:246
+#: routes/_app/admin/members.tsx:63
+msgid "{0, plural, one {# member} other {# members}}"
+msgstr "{0, plural, one {# member} other {# members}}"
+
+#. placeholder {0}: counts.purchaseRequests
+#. placeholder {0}: result.purchaseRequests
+#: routes/_app/admin/import.tsx:214
+#: routes/_app/admin/import.tsx:255
+msgid "{0, plural, one {# purchase request} other {# purchase requests}}"
+msgstr "{0, plural, one {# purchase request} other {# purchase requests}}"
+
+#. placeholder {0}: counts.reviews
+#. placeholder {0}: result.reviews
+#: routes/_app/admin/import.tsx:211
+#: routes/_app/admin/import.tsx:252
+msgid "{0, plural, one {# review} other {# reviews}}"
+msgstr "{0, plural, one {# review} other {# reviews}}"
+
+#. placeholder {0}: tenant.emailDomains.join(', ')
+#. placeholder {1}: tenant.bookCount
+#. placeholder {2}: tenant.memberCount
+#: routes/_app/admin/tenants.tsx:130
+msgid "{0} · {1} books · {2} members"
+msgstr "{0} · {1} books · {2} members"
+
+#. placeholder {0}: c.books ?? 0
+#. placeholder {1}: c.members ?? 0
+#. placeholder {2}: c.loans ?? 0
+#. placeholder {3}: c.reviews ?? 0
+#. placeholder {4}: c.purchaseRequests ?? 0
+#: routes/_app/admin/import.tsx:296
+msgid "{0} books · {1} members · {2} loans · {3} reviews · {4} requests"
+msgstr "{0} books · {1} members · {2} loans · {3} reviews · {4} requests"
+
+#. placeholder {0}: items.length
+#: routes/_app/my-books.tsx:85
+msgid "{0} borrowed"
+msgstr "{0} borrowed"
+
+#. placeholder {0}: item.daysOverdue
+#: routes/_app/admin/overdue.tsx:126
+msgid "{0}d"
+msgstr "{0}d"
+
+#: routes/_app/my-books.tsx:37
+msgid "{diffDays, plural, one {Due in # day} other {Due in # days}}"
+msgstr "{diffDays, plural, one {Due in # day} other {Due in # days}}"
+
+#: routes/_app/my-books.tsx:87
+msgid "{dueSoon} due soon"
+msgstr "{dueSoon} due soon"
+
+#: routes/_app/my-books.tsx:34
+msgid "{n, plural, one {Overdue by # day} other {Overdue by # days}}"
+msgstr "{n, plural, one {Overdue by # day} other {Overdue by # days}}"
+
+#: routes/_app/my-books.tsx:86
+msgid "{overdue} overdue"
+msgstr "{overdue} overdue"
+
+#: routes/_app/books/index.tsx:180
+msgid "{total} books"
+msgstr "{total} books"
+
+#: routes/_app/admin/tenants.tsx:92
+msgid "@acme.com, @acme.io"
+msgstr "@acme.com, @acme.io"
+
+#: routes/_app/books/$bookId.tsx:99
+msgid "← Back to catalog"
+msgstr "← Back to catalog"
+
+#: routes/_app/admin/members.$memberId.tsx:41
+#: routes/_app/admin/members.$memberId.tsx:53
+msgid "← Back to members"
+msgstr "← Back to members"
+
+#: routes/_app/route.tsx:102
+msgid "→ Admin view"
+msgstr "→ Admin view"
+
+#: routes/_app/route.tsx:102
+msgid "→ Reader view"
+msgstr "→ Reader view"
+
+#: routes/_app/route.tsx:102
+msgid "→ System view"
+msgstr "→ System view"
+
+#: routes/_app/admin/overdue.tsx:18
+msgid "1–7 days"
+msgstr "1–7 days"
+
+#: routes/_app/admin/overdue.tsx:22
+msgid "15+ days"
+msgstr "15+ days"
+
+#: routes/_app/admin/overdue.tsx:20
+msgid "8–14 days"
+msgstr "8–14 days"
+
+#: routes/_app/admin/tenants.tsx:142
+msgid "Activate"
+msgstr "Activate"
+
+#: routes/_app/admin/tenants.tsx:126
+msgid "Active"
+msgstr "Active"
+
+#: routes/_app/books/index.tsx:192
+msgid "Add a book or adjust the filters."
+msgstr "Add a book or adjust the filters."
+
+#: routes/_app/books/add.tsx:118
+#: routes/_app/books/add.tsx:187
+#: routes/_app/books/index.tsx:94
+#: routes/_app/books/index.tsx:196
+msgid "Add Book"
+msgstr "Add Book"
+
+#: routes/_app/books/add.tsx:187
+msgid "Adding…"
+msgstr "Adding…"
+
+#: routes/_app/admin/members.$memberId.tsx:78
+msgid "Address"
+msgstr "Address"
+
+#: routes/_app/admin/members.$memberId.tsx:61
+#: routes/_app/admin/members.tsx:114
+#: routes/_app/admin/members.tsx:193
+msgid "Admin"
+msgstr "Admin"
+
+#: routes/_app/route.tsx:97
+#: routes/_app/route.tsx:100
+msgid "Admin view"
+msgstr "Admin view"
+
+#: routes/_app/admin/members.$memberId.tsx:80
+msgid "Age"
+msgstr "Age"
+
+#: routes/_app/admin/overdue.tsx:16
+#: routes/_app/books/index.tsx:144
+msgid "All"
+msgstr "All"
+
+#. placeholder {0}: book.quantity
+#: routes/_app/books/$bookId.tsx:212
+msgid "All {0} copies borrowed"
+msgstr "All {0} copies borrowed"
+
+#: routes/_app/books/index.tsx:155
+msgid "All categories"
+msgstr "All categories"
+
+#: components/books/BookCard.tsx:76
+msgid "All copies borrowed"
+msgstr "All copies borrowed"
+
+#: routes/_app/admin/members.tsx:124
+msgid "All plans"
+msgstr "All plans"
+
+#: routes/_app/admin/members.tsx:113
+msgid "All roles"
+msgstr "All roles"
+
+#: routes/_app/books/index.tsx:170
+msgid "All shelves"
+msgstr "All shelves"
+
+#: routes/_app/admin/members.$memberId.tsx:92
+#: routes/_app/books/$bookId.tsx:319
+msgid "All source fields"
+msgstr "All source fields"
+
+#: routes/_app/admin/settings.tsx:142
+msgid "Allow renewals/extensions"
+msgstr "Allow renewals/extensions"
+
+#: routes/_app/admin/members.tsx:104
+#: routes/_app/books/index.tsx:136
+msgid "Ascending"
+msgstr "Ascending"
+
+#: routes/_app/books/$bookId.edit.tsx:103
+#: routes/_app/books/add.tsx:165
+#: routes/_app/books/index.tsx:124
+msgid "Author"
+msgstr "Author"
+
+#: routes/_app/books/index.tsx:125
+msgid "Availability"
+msgstr "Availability"
+
+#: components/books/BookCard.tsx:73
+#: routes/_app/books/index.tsx:145
+msgid "Available"
+msgstr "Available"
+
+#. placeholder {0}: book.availableCount
+#. placeholder {1}: book.quantity
+#: routes/_app/books/$bookId.tsx:211
+msgid "Available · {0} of {1}"
+msgstr "Available · {0} of {1}"
+
+#: components/books/BookCard.tsx:71
+msgid "Available · {available} of {total}"
+msgstr "Available · {available} of {total}"
+
+#: routes/_app/books/$bookId.tsx:90
+#: routes/_app/books/add.tsx:120
+msgid "Back to catalog"
+msgstr "Back to catalog"
+
+#: routes/_app/admin/overdue.tsx:92
+msgid "Book"
+msgstr "Book"
+
+#: routes/_app/books/$bookId.tsx:55
+msgid "Book deleted."
+msgstr "Book deleted."
+
+#: routes/_app/books/add.tsx:126
+msgid "Book details"
+msgstr "Book details"
+
+#: routes/_app/books/$bookId.tsx:88
+msgid "Book not found."
+msgstr "Book not found."
+
+#: components/FeedbackButton.tsx:35
+#: routes/_app/admin/feedback.tsx:14
+msgid "Book suggestion"
+msgstr "Book suggestion"
+
+#: routes/_app/admin/members.$memberId.tsx:81
+#: routes/_app/admin/members.tsx:94
+msgid "Books out"
+msgstr "Books out"
+
+#: components/books/BookCard.tsx:81
+#: routes/_app/books/$bookId.tsx:220
+#: routes/_app/scan.tsx:89
+msgid "Borrow"
+msgstr "Borrow"
+
+#: routes/_app/scan.tsx:57
+msgid "Borrow by ISBN"
+msgstr "Borrow by ISBN"
+
+#: routes/_app/books/index.tsx:146
+msgid "Borrowed"
+msgstr "Borrowed"
+
+#: routes/_app/books/$bookId.tsx:40
+#: routes/_app/books/index.tsx:72
+msgid "Borrowed — see it in “My Books”."
+msgstr "Borrowed — see it in “My Books”."
+
+#. placeholder {0}: new Date(item.borrowedAt).toLocaleDateString()
+#: routes/_app/my-books.tsx:168
+msgid "Borrowed {0}"
+msgstr "Borrowed {0}"
+
+#. placeholder {0}: result.title
+#. placeholder {1}: new Date(result.dueDate).toLocaleDateString()
+#: routes/_app/scan.tsx:98
+msgid "Borrowed <0>{0}</0> — due {1}"
+msgstr "Borrowed <0>{0}</0> — due {1}"
+
+#: routes/_app/books/$bookId.tsx:231
+msgid "Borrowed by "
+msgstr "Borrowed by "
+
+#: routes/_app/admin/overdue.tsx:95
+msgid "Borrower"
+msgstr "Borrower"
+
+#: routes/_app/admin/settings.tsx:110
+msgid "Borrowing period (days)"
+msgstr "Borrowing period (days)"
+
+#: routes/_app/books/$bookId.tsx:220
+#: routes/_app/scan.tsx:89
+msgid "Borrowing…"
+msgstr "Borrowing…"
+
+#: routes/_app/my-books.tsx:100
+#: routes/_app/my-books.tsx:129
+msgid "Browse catalog"
+msgstr "Browse catalog"
+
+#: routes/_app/admin/feedback.tsx:16
+msgid "Bug"
+msgstr "Bug"
+
+#: components/FeedbackButton.tsx:37
+msgid "Bug report"
+msgstr "Bug report"
+
+#. placeholder {0}: book.author
+#. placeholder {0}: item.author
+#: components/books/BookCard.tsx:59
+#: routes/_app/admin/overdue.tsx:111
+#: routes/_app/books/$bookId.tsx:120
+#: routes/_app/my-books.tsx:165
+msgid "by {0}"
+msgstr "by {0}"
+
+#: components/barcode/IsbnScanner.tsx:105
+msgid "Camera is not available. Enter the ISBN manually."
+msgstr "Camera is not available. Enter the ISBN manually."
+
+#: components/barcode/IsbnScanner.tsx:117
+msgid "Camera permission denied. Allow camera access or enter the ISBN manually."
+msgstr "Camera permission denied. Allow camera access or enter the ISBN manually."
+
+#: components/FeedbackButton.tsx:123
+#: routes/_app/books/$bookId.edit.tsx:142
+msgid "Cancel"
+msgstr "Cancel"
+
+#: components/barcode/IsbnScanner.tsx:146
+msgid "Cancel scan"
+msgstr "Cancel scan"
+
+#: routes/_app/route.tsx:80
+#: routes/_app/route.tsx:90
+msgid "Catalog"
+msgstr "Catalog"
+
+#: routes/_app/books/$bookId.tsx:146
+msgid "Category"
+msgstr "Category"
+
+#: routes/_app/books/$bookId.edit.tsx:78
+msgid "Changes saved."
+msgstr "Changes saved."
+
+#: routes/_app/admin/members.$memberId.tsx:76
+msgid "Class"
+msgstr "Class"
+
+#: routes/_app/books/$bookId.tsx:170
+msgid "CLC"
+msgstr "CLC"
+
+#: routes/_app/route.tsx:138
+msgid "Close menu"
+msgstr "Close menu"
+
+#: routes/_app/books/add.tsx:143
+#: routes/_app/scan.tsx:69
+msgid "Close scanner"
+msgstr "Close scanner"
+
+#: routes/_app/books/$bookId.tsx:158
+msgid "Code"
+msgstr "Code"
+
+#: routes/_app/admin/settings.tsx:94
+msgid "Configuration"
+msgstr "Configuration"
+
+#: routes/_app/books/add.tsx:169
+msgid "Copies"
+msgstr "Copies"
+
+#. placeholder {0}: i + 1
+#: routes/_app/books/$bookId.tsx:325
+msgid "Copy {0}"
+msgstr "Copy {0}"
+
+#: routes/_app/books/add.tsx:108
+msgid "Could not add the book. Please check the fields and try again."
+msgstr "Could not add the book. Please check the fields and try again."
+
+#: routes/_app/admin/tenants.tsx:40
+msgid "Could not create the library."
+msgstr "Could not create the library."
+
+#: routes/_app/books/$bookId.tsx:64
+msgid "Could not delete the book."
+msgstr "Could not delete the book."
+
+#: routes/_app/admin/import.tsx:85
+msgid "Could not fetch that URL. Paste a 番薯借阅 export link (https://…fanshujieyue.com/….xls)."
+msgstr "Could not fetch that URL. Paste a 番薯借阅 export link (https://…fanshujieyue.com/….xls)."
+
+#: routes/_app/admin/import.tsx:114
+msgid "Could not read this file. Make sure it is a 番薯借阅 Excel export (.xls/.xlsx)."
+msgstr "Could not read this file. Make sure it is a 番薯借阅 Excel export (.xls/.xlsx)."
+
+#: routes/_app/books/$bookId.edit.tsx:81
+msgid "Could not save changes. Please try again."
+msgstr "Could not save changes. Please try again."
+
+#: routes/_app/admin/settings.tsx:73
+msgid "Could not save settings. Check the values and try again."
+msgstr "Could not save settings. Check the values and try again."
+
+#: components/FeedbackButton.tsx:54
+msgid "Could not send feedback. Please try again."
+msgstr "Could not send feedback. Please try again."
+
+#: components/barcode/IsbnScanner.tsx:121
+msgid "Could not start the scanner. Enter the ISBN manually."
+msgstr "Could not start the scanner. Enter the ISBN manually."
+
+#: routes/_app/admin/tenants.tsx:46
+msgid "Could not update the library."
+msgstr "Could not update the library."
+
+#. placeholder {0}: book.title
+#. placeholder {0}: item.title
+#: components/books/BookCard.tsx:41
+#: routes/_app/books/$bookId.tsx:107
+#: routes/_app/my-books.tsx:147
+msgid "Cover of {0}"
+msgstr "Cover of {0}"
+
+#: routes/_app/admin/tenants.tsx:73
+msgid "Create a library"
+msgstr "Create a library"
+
+#: routes/_app/admin/tenants.tsx:97
+msgid "Create library"
+msgstr "Create library"
+
+#: routes/_app/admin/tenants.tsx:114
+msgid "Create the first one above."
+msgstr "Create the first one above."
+
+#: routes/_app/admin/tenants.tsx:97
+msgid "Creating…"
+msgstr "Creating…"
+
+#: components/ThemeToggle.tsx:65
+msgid "Dark mode"
+msgstr "Dark mode"
+
+#: routes/_app/books/index.tsx:122
+msgid "Date added"
+msgstr "Date added"
+
+#: routes/_app/admin/overdue.tsx:101
+msgid "Days overdue"
+msgstr "Days overdue"
+
+#: routes/_app/admin/tenants.tsx:142
+msgid "Deactivate"
+msgstr "Deactivate"
+
+#: routes/_app/books/$bookId.tsx:255
+#: routes/_app/books/$bookId.tsx:288
+msgid "Delete"
+msgstr "Delete"
+
+#: routes/_app/books/$bookId.tsx:286
+msgid "Delete this book?"
+msgstr "Delete this book?"
+
+#: routes/_app/books/$bookId.tsx:255
+msgid "Deleting…"
+msgstr "Deleting…"
+
+#: routes/_app/admin/members.$memberId.tsx:77
+msgid "Department"
+msgstr "Department"
+
+#: routes/_app/admin/members.tsx:105
+#: routes/_app/books/index.tsx:135
+msgid "Descending"
+msgstr "Descending"
+
+#: routes/_app/books/$bookId.edit.tsx:124
+#: routes/_app/books/$bookId.tsx:272
+msgid "Description"
+msgstr "Description"
+
+#: routes/_app/books/add.tsx:59
+msgid "Details auto-filled from Open Library. You can edit the title/author before saving."
+msgstr "Details auto-filled from Open Library. You can edit the title/author before saving."
+
+#: components/Toast.tsx:79
+msgid "Dismiss"
+msgstr "Dismiss"
+
+#. placeholder {0}: new Date(item.dueDate).toLocaleDateString()
+#: routes/_app/my-books.tsx:169
+msgid "Due {0}"
+msgstr "Due {0}"
+
+#: routes/_app/admin/overdue.tsx:98
+msgid "Due date"
+msgstr "Due date"
+
+#: routes/_app/my-books.tsx:36
+msgid "Due today"
+msgstr "Due today"
+
+#: routes/_app/scan.tsx:86
+msgid "e.g. 9780132350884"
+msgstr "e.g. 9780132350884"
+
+#: components/FeedbackButton.tsx:107
+msgid "e.g. Please add the ability to reserve a borrowed book…"
+msgstr "e.g. Please add the ability to reserve a borrowed book…"
+
+#: routes/_app/books/$bookId.tsx:247
+msgid "Edit"
+msgstr "Edit"
+
+#: routes/_app/books/$bookId.edit.tsx:91
+msgid "Edit Book"
+msgstr "Edit Book"
+
+#: routes/_app/admin/members.$memberId.tsx:72
+#: routes/login.tsx:85
+msgid "Email"
+msgstr "Email"
+
+#: routes/_app/admin/tenants.tsx:86
+msgid "Email domains (comma-separated)"
+msgstr "Email domains (comma-separated)"
+
+#. placeholder {0}: lib?.emailDomains.join(', ') ?? ''
+#: routes/_app/admin/settings.tsx:97
+msgid "Email domains: {0}"
+msgstr "Email domains: {0}"
+
+#: routes/_app/admin/members.$memberId.tsx:74
+msgid "Employee no."
+msgstr "Employee no."
+
+#: routes/_app/books/$bookId.tsx:202
+msgid "Entered"
+msgstr "Entered"
+
+#: routes/_app/admin/import.tsx:274
+msgid "Every import is recorded with its source and counts."
+msgstr "Every import is recorded with its source and counts."
+
+#: routes/_app/admin/members.tsx:172
+msgid "Expiry"
+msgstr "Expiry"
+
+#: routes/_app/admin/members.tsx:95
+msgid "Expiry date"
+msgstr "Expiry date"
+
+#: routes/_app/admin/import.tsx:292
+msgid "failed"
+msgstr "failed"
+
+#: components/FeedbackButton.tsx:33
+#: routes/_app/admin/feedback.tsx:12
+msgid "Feature request"
+msgstr "Feature request"
+
+#: components/FeedbackButton.tsx:74
+#: routes/_app/route.tsx:84
+msgid "Feedback"
+msgstr "Feedback"
+
+#: routes/_app/admin/import.tsx:181
+msgid "Fetch"
+msgstr "Fetch"
+
+#: routes/_app/admin/import.tsx:174
+msgid "https://…fanshujieyue.com/…/librarydata_….xls"
+msgstr "https://…fanshujieyue.com/…/librarydata_….xls"
+
+#: routes/_app/admin/import.tsx:231
+#: routes/_app/route.tsx:85
+msgid "Import"
+msgstr "Import"
+
+#: routes/_app/admin/import.tsx:132
+msgid "Import failed. Please try again."
+msgstr "Import failed. Please try again."
+
+#: routes/_app/admin/import.tsx:141
+msgid "Import from 番薯借阅"
+msgstr "Import from 番薯借阅"
+
+#: routes/_app/admin/import.tsx:271
+msgid "Import history"
+msgstr "Import history"
+
+#: routes/_app/admin/members.tsx:144
+msgid "Import 番薯 data or adjust the search/filters."
+msgstr "Import 番薯 data or adjust the search/filters."
+
+#. placeholder {0}: res.books
+#. placeholder {1}: res.members
+#. placeholder {2}: res.loans
+#: routes/_app/admin/import.tsx:128
+msgid "Imported {0} books, {1} members, {2} loans."
+msgstr "Imported {0} books, {1} members, {2} loans."
+
+#: routes/_app/admin/import.tsx:239
+msgid "Imported successfully"
+msgstr "Imported successfully"
+
+#: routes/_app/admin/import.tsx:231
+msgid "Importing…"
+msgstr "Importing…"
+
+#: routes/_app/admin/tenants.tsx:126
+msgid "Inactive"
+msgstr "Inactive"
+
+#: routes/_app/route.tsx:170
+msgid "Install app"
+msgstr "Install app"
+
+#: routes/_app/books/$bookId.edit.tsx:107
+#: routes/_app/books/add.tsx:135
+#: routes/_app/scan.tsx:61
+msgid "ISBN"
+msgstr "ISBN"
+
+#: routes/_app/books/add.tsx:62
+msgid "ISBN not found online. Enter the title and author manually."
+msgstr "ISBN not found online. Enter the title and author manually."
+
+#. placeholder {0}: book.isbn
+#: components/books/BookCard.tsx:65
+msgid "ISBN: {0}"
+msgstr "ISBN: {0}"
+
+#: routes/_app/admin/members.$memberId.tsx:83
+msgid "Joined"
+msgstr "Joined"
+
+#: routes/_app/admin/members.tsx:93
+msgid "Joined date"
+msgstr "Joined date"
+
+#: routes/login.tsx:25
+msgid "Library Admin"
+msgstr "Library Admin"
+
+#: routes/_app/books/index.tsx:91
+msgid "Library Catalog"
+msgstr "Library Catalog"
+
+#: routes/_app/admin/tenants.tsx:35
+msgid "Library created."
+msgstr "Library created."
+
+#: routes/_app/admin/settings.tsx:104
+#: routes/_app/admin/tenants.tsx:80
+msgid "Library name"
+msgstr "Library name"
+
+#: routes/login.tsx:26
+msgid "Library Reader"
+msgstr "Library Reader"
+
+#: routes/_app/admin/settings.tsx:89
+msgid "Library Settings"
+msgstr "Library Settings"
+
+#: components/ThemeToggle.tsx:65
+msgid "Light mode"
+msgstr "Light mode"
+
+#: components/InfiniteList.tsx:62
+msgid "Load more"
+msgstr "Load more"
+
+#: components/RouteProgress.tsx:15
+msgid "Loading"
+msgstr "Loading"
+
+#: components/InfiniteList.tsx:62
+#: routes/_app/admin/members.tsx:136
+#: routes/_app/admin/settings.tsx:82
+#: routes/_app/books/$bookId.edit.tsx:87
+msgid "Loading…"
+msgstr "Loading…"
+
+#: routes/_app/books/add.tsx:156
+msgid "Looking up ISBN…"
+msgstr "Looking up ISBN…"
+
+#: routes/_app/books/add.tsx:66
+msgid "Lookup failed. Enter the title and author manually."
+msgstr "Lookup failed. Enter the title and author manually."
+
+#: routes/_app/admin/tenants.tsx:66
+msgid "Manage libraries across the system (super admin)."
+msgstr "Manage libraries across the system (super admin)."
+
+#: routes/_app/admin/settings.tsx:124
+msgid "Max books per reader"
+msgstr "Max books per reader"
+
+#: routes/_app/admin/members.$memberId.tsx:70
+#: routes/_app/admin/members.tsx:163
+msgid "Member no."
+msgstr "Member no."
+
+#: routes/_app/admin/members.$memberId.tsx:38
+msgid "Member not found."
+msgstr "Member not found."
+
+#: routes/_app/admin/members.$memberId.tsx:84
+msgid "Member since"
+msgstr "Member since"
+
+#: routes/_app/admin/members.$memberId.tsx:85
+msgid "Member until"
+msgstr "Member until"
+
+#: routes/_app/admin/members.tsx:59
+#: routes/_app/route.tsx:81
+msgid "Members"
+msgstr "Members"
+
+#: routes/_app/my-books.tsx:94
+#: routes/_app/route.tsx:88
+msgid "My Books"
+msgstr "My Books"
+
+#: routes/_app/admin/members.tsx:92
+#: routes/_app/admin/members.tsx:154
+msgid "Name"
+msgstr "Name"
+
+#: routes/_app/books/$bookId.tsx:197
+msgid "No"
+msgstr "No"
+
+#: routes/_app/my-books.tsx:121
+msgid "No books borrowed yet"
+msgstr "No books borrowed yet"
+
+#: routes/_app/books/index.tsx:191
+msgid "No books match the current filters"
+msgstr "No books match the current filters"
+
+#: routes/_app/books/index.tsx:191
+msgid "No books match your search"
+msgstr "No books match your search"
+
+#: components/barcode/IsbnScanner.tsx:119
+msgid "No camera found. Enter the ISBN manually."
+msgstr "No camera found. Enter the ISBN manually."
+
+#: components/books/BookCard.tsx:47
+#: routes/_app/books/$bookId.tsx:113
+#: routes/_app/my-books.tsx:153
+msgid "No cover"
+msgstr "No cover"
+
+#: routes/_app/admin/feedback.tsx:56
+msgid "No feedback yet"
+msgstr "No feedback yet"
+
+#: routes/_app/admin/tenants.tsx:113
+msgid "No libraries yet"
+msgstr "No libraries yet"
+
+#: routes/_app/admin/members.tsx:143
+msgid "No members yet"
+msgstr "No members yet"
+
+#: routes/_app/admin/overdue.tsx:81
+msgid "No overdue books in this range"
+msgstr "No overdue books in this range"
+
+#: routes/_app/admin/members.$memberId.tsx:86
+msgid "Note"
+msgstr "Note"
+
+#: routes/_app/admin/overdue.tsx:82
+msgid "Nothing needs chasing right now."
+msgstr "Nothing needs chasing right now."
+
+#: components/Toast.tsx:46
+msgid "Notifications"
+msgstr "Notifications"
+
+#: routes/_app/route.tsx:138
+msgid "Open menu"
+msgstr "Open menu"
+
+#: routes/_app/route.tsx:148
+msgid "OpenBookCorner"
+msgstr "OpenBookCorner"
+
+#: routes/_app/admin/import.tsx:166
+msgid "or paste a link"
+msgstr "or paste a link"
+
+#: components/FeedbackButton.tsx:39
+#: routes/_app/admin/feedback.tsx:18
+msgid "Other"
+msgstr "Other"
+
+#: routes/_app/admin/members.tsx:166
+msgid "Out"
+msgstr "Out"
+
+#: routes/_app/route.tsx:82
+msgid "Overdue"
+msgstr "Overdue"
+
+#: routes/_app/admin/overdue.tsx:54
+msgid "Overdue Books"
+msgstr "Overdue Books"
+
+#: routes/_app/books/$bookId.tsx:176
+msgid "Pages"
+msgstr "Pages"
+
+#: routes/login.tsx:96
+msgid "Password"
+msgstr "Password"
+
+#: routes/_app/admin/members.$memberId.tsx:71
+#: routes/_app/admin/members.tsx:160
+msgid "Phone"
+msgstr "Phone"
+
+#: routes/_app/admin/members.$memberId.tsx:64
+#: routes/_app/admin/members.tsx:189
+msgid "placeholder"
+msgstr "placeholder"
+
+#: routes/_app/admin/members.$memberId.tsx:73
+msgid "Plan"
+msgstr "Plan"
+
+#. placeholder {0}: fileName ?? ''
+#: routes/_app/admin/import.tsx:198
+msgid "Preview — {0}"
+msgstr "Preview — {0}"
+
+#: routes/_app/books/$bookId.tsx:188
+#: routes/_app/books/index.tsx:126
+msgid "Price"
+msgstr "Price"
+
+#: routes/_app/books/$bookId.tsx:138
+msgid "Published"
+msgstr "Published"
+
+#: routes/_app/books/$bookId.edit.tsx:115
+msgid "Published year"
+msgstr "Published year"
+
+#: routes/_app/books/$bookId.edit.tsx:111
+#: routes/_app/books/$bookId.tsx:126
+msgid "Publisher"
+msgstr "Publisher"
+
+#. placeholder {0}: run.r2Key
+#: routes/_app/admin/import.tsx:308
+msgid "R2: {0}"
+msgstr "R2: {0}"
+
+#: routes/_app/admin/members.$memberId.tsx:61
+#: routes/_app/admin/members.tsx:115
+#: routes/_app/admin/members.tsx:193
+msgid "Reader"
+msgstr "Reader"
+
+#: routes/_app/route.tsx:98
+#: routes/_app/route.tsx:100
+msgid "Reader view"
+msgstr "Reader view"
+
+#: routes/_app/my-books.tsx:179
+msgid "Return"
+msgstr "Return"
+
+#: routes/_app/admin/members.$memberId.tsx:82
+#: routes/_app/admin/members.tsx:169
+msgid "Returned"
+msgstr "Returned"
+
+#: routes/_app/my-books.tsx:67
+msgid "Returned — thanks!"
+msgstr "Returned — thanks!"
+
+#: routes/_app/my-books.tsx:179
+msgid "Returning…"
+msgstr "Returning…"
+
+#: routes/_app/admin/members.tsx:157
+msgid "Role"
+msgstr "Role"
+
+#: routes/_app/admin/members.$memberId.tsx:79
+msgid "Room"
+msgstr "Room"
+
+#: routes/_app/books/$bookId.edit.tsx:135
+msgid "Save changes"
+msgstr "Save changes"
+
+#: routes/_app/admin/settings.tsx:151
+msgid "Save settings"
+msgstr "Save settings"
+
+#: routes/_app/admin/settings.tsx:151
+#: routes/_app/books/$bookId.edit.tsx:135
+msgid "Saving…"
+msgstr "Saving…"
+
+#: routes/_app/route.tsx:89
+msgid "Scan"
+msgstr "Scan"
+
+#: routes/_app/scan.tsx:53
+msgid "Scan a book’s barcode (or type its ISBN) to borrow it instantly."
+msgstr "Scan a book’s barcode (or type its ISBN) to borrow it instantly."
+
+#: routes/_app/my-books.tsx:122
+msgid "Scan a book’s barcode to borrow it, or browse the catalog."
+msgstr "Scan a book’s barcode to borrow it, or browse the catalog."
+
+#: routes/_app/books/add.tsx:128
+msgid "Scan an ISBN to auto-fill, or enter details manually."
+msgstr "Scan an ISBN to auto-fill, or enter details manually."
+
+#: routes/_app/scan.tsx:69
+msgid "Scan barcode"
+msgstr "Scan barcode"
+
+#: routes/_app/books/add.tsx:143
+msgid "Scan ISBN"
+msgstr "Scan ISBN"
+
+#: routes/_app/my-books.tsx:97
+#: routes/_app/my-books.tsx:126
+msgid "Scan to borrow"
+msgstr "Scan to borrow"
+
+#: routes/_app/scan.tsx:52
+msgid "Scan to Borrow"
+msgstr "Scan to Borrow"
+
+#: routes/_app/admin/members.tsx:77
+#: routes/_app/books/index.tsx:108
+msgid "Search"
+msgstr "Search"
+
+#: routes/_app/admin/members.tsx:70
+msgid "Search by name / phone / member no…"
+msgstr "Search by name / phone / member no…"
+
+#: routes/_app/books/index.tsx:105
+msgid "Search by title or author"
+msgstr "Search by title or author"
+
+#: routes/_app/books/index.tsx:101
+msgid "Search by title or author…"
+msgstr "Search by title or author…"
+
+#: routes/_app/admin/members.tsx:74
+msgid "Search members"
+msgstr "Search members"
+
+#: components/FeedbackButton.tsx:120
+msgid "Send"
+msgstr "Send"
+
+#: components/FeedbackButton.tsx:71
+#: components/FeedbackButton.tsx:77
+#: components/FeedbackButton.tsx:80
+msgid "Send feedback"
+msgstr "Send feedback"
+
+#: components/FeedbackButton.tsx:120
+msgid "Sending…"
+msgstr "Sending…"
+
+#: routes/_app/books/$bookId.tsx:164
+msgid "Series"
+msgstr "Series"
+
+#: routes/_app/route.tsx:83
+msgid "Settings"
+msgstr "Settings"
+
+#: routes/_app/admin/settings.tsx:71
+#: routes/_app/admin/settings.tsx:147
+msgid "Settings saved."
+msgstr "Settings saved."
+
+#: routes/_app/books/$bookId.tsx:152
+msgid "Shelf"
+msgstr "Shelf"
+
+#: routes/_app/books/$bookId.tsx:196
+msgid "Shelved"
+msgstr "Shelved"
+
+#: routes/login.tsx:108
+msgid "Sign in"
+msgstr "Sign in"
+
+#: routes/login.tsx:77
+msgid "Sign in to your library"
+msgstr "Sign in to your library"
+
+#: routes/_app/route.tsx:175
+msgid "Sign out"
+msgstr "Sign out"
+
+#. placeholder {0}: user.name
+#: routes/_app/route.tsx:188
+msgid "Signed in as {0}"
+msgstr "Signed in as {0}"
+
+#: routes/login.tsx:108
+msgid "Signing in…"
+msgstr "Signing in…"
+
+#: lib/errors.ts:20
+msgid "Something went wrong. Please try again."
+msgstr "Something went wrong. Please try again."
+
+#: routes/_app/admin/members.tsx:84
+#: routes/_app/books/index.tsx:115
+msgid "Sort"
+msgstr "Sort"
+
+#. placeholder {0}: run.sourceUrl ?? run.fileName ?? ''
+#: routes/_app/admin/import.tsx:303
+msgid "Source: {0}"
+msgstr "Source: {0}"
+
+#: routes/_app/books/$bookId.tsx:336
+msgid "Stock"
+msgstr "Stock"
+
+#: routes/_app/admin/members.$memberId.tsx:75
+msgid "Student no."
+msgstr "Student no."
+
+#: routes/_app/admin/import.tsx:292
+msgid "success"
+msgstr "success"
+
+#: routes/login.tsx:24
+msgid "Super Admin"
+msgstr "Super Admin"
+
+#: components/LanguageToggle.tsx:21
+#: components/LanguageToggle.tsx:22
+msgid "Switch language"
+msgstr "Switch language"
+
+#: routes/_app/route.tsx:110
+msgid "Switch to {nextLabelText} view"
+msgstr "Switch to {nextLabelText} view"
+
+#: components/ThemeToggle.tsx:64
+msgid "Switch to dark mode"
+msgstr "Switch to dark mode"
+
+#: components/ThemeToggle.tsx:64
+msgid "Switch to light mode"
+msgstr "Switch to light mode"
+
+#: routes/_app/route.tsx:95
+#: routes/_app/route.tsx:100
+msgid "System view"
+msgstr "System view"
+
+#: components/FeedbackButton.tsx:82
+msgid "Tell us what you’d like — features, books to add, or problems."
+msgstr "Tell us what you’d like — features, books to add, or problems."
+
+#: routes/_app/admin/tenants.tsx:63
+#: routes/_app/route.tsx:77
+msgid "Tenants"
+msgstr "Tenants"
+
+#: components/FeedbackButton.tsx:52
+msgid "Thanks for your feedback! 🎉"
+msgstr "Thanks for your feedback! 🎉"
+
+#: routes/login.tsx:42
+#: routes/login.tsx:64
+msgid "That email or password doesn’t match. Please try again."
+msgstr "That email or password doesn’t match. Please try again."
+
+#: lib/errors.ts:10
+msgid "This book could not be found."
+msgstr "This book could not be found."
+
+#: lib/errors.ts:16
+msgid "This book is currently borrowed and cannot be changed until it is returned."
+msgstr "This book is currently borrowed and cannot be changed until it is returned."
+
+#: routes/_app/books/$bookId.tsx:63
+msgid "This book is currently borrowed and cannot be deleted until it is returned."
+msgstr "This book is currently borrowed and cannot be deleted until it is returned."
+
+#: lib/errors.ts:12
+msgid "This book is currently borrowed by someone else."
+msgstr "This book is currently borrowed by someone else."
+
+#: lib/errors.ts:11
+msgid "This book is not in your library’s catalog yet. Ask a librarian to add it."
+msgstr "This book is not in your library’s catalog yet. Ask a librarian to add it."
+
+#: routes/_app/books/$bookId.tsx:287
+msgid "This removes the book from the catalog and cannot be undone."
+msgstr "This removes the book from the catalog and cannot be undone."
+
+#: routes/_app/books/$bookId.edit.tsx:99
+#: routes/_app/books/add.tsx:161
+#: routes/_app/books/index.tsx:123
+msgid "Title"
+msgstr "Title"
+
+#: routes/_app/books/$bookId.tsx:132
+msgid "Translator"
+msgstr "Translator"
+
+#: routes/login.tsx:113
+msgid "Try a demo account — tap a role to fill it in"
+msgstr "Try a demo account — tap a role to fill it in"
+
+#: routes/_app/books/index.tsx:192
+msgid "Try adjusting the search or filters."
+msgstr "Try adjusting the search or filters."
+
+#: components/FeedbackButton.tsx:86
+msgid "Type"
+msgstr "Type"
+
+#: routes/_app/admin/import.tsx:146
+msgid "Upload export"
+msgstr "Upload export"
+
+#: routes/_app/admin/import.tsx:149
+msgid "Upload the 番薯借阅 Excel export (.xls). Books, members, loans, reviews and purchase requests are imported into this library. Re-importing updates existing rows (safe to run again)."
+msgstr "Upload the 番薯借阅 Excel export (.xls). Books, members, loans, reviews and purchase requests are imported into this library. Re-importing updates existing rows (safe to run again)."
+
+#: routes/_app/admin/feedback.tsx:40
+msgid "User Feedback"
+msgstr "User Feedback"
+
+#: routes/_app/scan.tsx:103
+msgid "View in My Books"
+msgstr "View in My Books"
+
+#: lib/errors.ts:15
+msgid "We could not process this return. It may already be returned."
+msgstr "We could not process this return. It may already be returned."
+
+#: routes/login.tsx:76
+msgid "Welcome back"
+msgstr "Welcome back"
+
+#: routes/_app/admin/feedback.tsx:43
+msgid "What readers are asking for — use this to prioritize features."
+msgstr "What readers are asking for — use this to prioritize features."
+
+#: routes/_app/admin/feedback.tsx:57
+msgid "When readers send feedback, it will show up here."
+msgstr "When readers send feedback, it will show up here."
+
+#: routes/_app/books/$bookId.tsx:182
+msgid "Words"
+msgstr "Words"
+
+#: routes/_app/admin/import.tsx:186
+msgid "Working…"
+msgstr "Working…"
+
+#: routes/_app/books/$bookId.tsx:197
+msgid "Yes"
+msgstr "Yes"
+
+#: lib/errors.ts:19
+msgid "You appear to be offline. Connect to the internet and try again."
+msgstr "You appear to be offline. Connect to the internet and try again."
+
+#: components/Pwa.tsx:74
+msgid "You are offline — showing cached data. Borrowing requires a connection."
+msgstr "You are offline — showing cached data. Borrowing requires a connection."
+
+#: routes/_app/books/add.tsx:107
+msgid "You do not have permission to add books."
+msgstr "You do not have permission to add books."
+
+#: lib/errors.ts:14
+msgid "You have an overdue book. Please return it before borrowing more."
+msgstr "You have an overdue book. Please return it before borrowing more."
+
+#: lib/errors.ts:13
+msgid "You've reached your borrowing limit. Return a book before borrowing another."
+msgstr "You've reached your borrowing limit. Return a book before borrowing another."
+
+#: components/FeedbackButton.tsx:101
+msgid "Your feedback"
+msgstr "Your feedback"

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
+import { Trans } from '@lingui/react/macro'
 import { isLikelyOffline } from '@/lib/connectivity'
-import { useI18n } from '@/lib/i18n'
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>
@@ -39,7 +39,6 @@ export function useInstallPrompt() {
  * action now lives in the header (see useInstallPrompt). Client-only.
  */
 export function Pwa() {
-  const { t } = useI18n()
   const [offline, setOffline] = useState(false)
 
   useEffect(() => {
@@ -72,7 +71,7 @@ export function Pwa() {
       data-testid="offline-indicator"
       className="fixed inset-x-0 top-0 z-50 bg-amber-500 px-4 py-1 text-center text-xs font-medium text-amber-950"
     >
-      {t('pwa.offline')}
+      <Trans>You are offline — showing cached data. Borrowing requires a connection.</Trans>
     </div>
   )
 }

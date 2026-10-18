@@ -1,16 +1,16 @@
 import { useState } from 'react'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { trpcClient } from '@/lib/trpc'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Modal } from '@/components/ui/modal'
 import { useToast } from '@/components/Toast'
-import { useI18n } from '@/lib/i18n'
 
 const CATEGORIES = [
-  { value: 'feature_request', labelKey: 'feedback.category.feature_request' },
-  { value: 'book_suggestion', labelKey: 'feedback.category.book_suggestion' },
-  { value: 'bug', labelKey: 'feedback.category.bug' },
-  { value: 'other', labelKey: 'feedback.category.other' },
+  { value: 'feature_request' },
+  { value: 'book_suggestion' },
+  { value: 'bug' },
+  { value: 'other' },
 ] as const
 
 type Category = (typeof CATEGORIES)[number]['value']
@@ -18,12 +18,27 @@ type Category = (typeof CATEGORIES)[number]['value']
 /** Floating "Feedback" button + accessible modal to collect what users want. */
 export function FeedbackButton() {
   const toast = useToast()
-  const { t } = useI18n()
+  const { t } = useLingui()
   const [open, setOpen] = useState(false)
   const [category, setCategory] = useState<Category>('feature_request')
   const [message, setMessage] = useState('')
   const [pending, setPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // `<option>` children must be plain text, so category labels are produced as
+  // strings via the `t` macro rather than <Trans> elements.
+  function categoryLabel(value: Category): string {
+    switch (value) {
+      case 'feature_request':
+        return t`Feature request`
+      case 'book_suggestion':
+        return t`Book suggestion`
+      case 'bug':
+        return t`Bug report`
+      case 'other':
+        return t`Other`
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -34,9 +49,9 @@ export function FeedbackButton() {
       await trpcClient.feedback.submit.mutate({ category, message: message.trim() })
       setMessage('')
       setOpen(false)
-      toast.success(t('feedback.thanksToast'))
+      toast.success(t`Thanks for your feedback! 🎉`)
     } catch {
-      setError(t('feedback.error'))
+      setError(t`Could not send feedback. Please try again.`)
     } finally {
       setPending(false)
     }
@@ -53,22 +68,22 @@ export function FeedbackButton() {
         type="button"
         onClick={() => setOpen(true)}
         data-testid="feedback-button"
-        aria-label={t('feedback.send')}
+        aria-label={t`Send feedback`}
         className="fixed bottom-4 left-4 z-50 flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-lg hover:bg-primary/90"
       >
-        <span aria-hidden>💬</span> {t('feedback.button')}
+        <span aria-hidden>💬</span> <Trans>Feedback</Trans>
       </button>
 
-      <Modal open={open} onClose={close} ariaLabel={t('feedback.send')}>
+      <Modal open={open} onClose={close} ariaLabel={t`Send feedback`}>
         <form onSubmit={handleSubmit} className="space-y-4" data-testid="feedback-form">
           <div>
-            <h2 className="text-lg font-semibold">{t('feedback.send')}</h2>
+            <h2 className="text-lg font-semibold"><Trans>Send feedback</Trans></h2>
             <p className="text-sm text-muted-foreground">
-              {t('feedback.intro')}
+              <Trans>Tell us what you’d like — features, books to add, or problems.</Trans>
             </p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="fb-category">{t('feedback.type')}</Label>
+            <Label htmlFor="fb-category"><Trans>Type</Trans></Label>
             <select
               id="fb-category"
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -77,19 +92,19 @@ export function FeedbackButton() {
             >
               {CATEGORIES.map((c) => (
                 <option key={c.value} value={c.value}>
-                  {t(c.labelKey)}
+                  {categoryLabel(c.value)}
                 </option>
               ))}
             </select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="fb-message">{t('feedback.message')}</Label>
+            <Label htmlFor="fb-message"><Trans>Your feedback</Trans></Label>
             <textarea
               id="fb-message"
               className="flex min-h-28 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder={t('feedback.messagePlaceholder')}
+              placeholder={t`e.g. Please add the ability to reserve a borrowed book…`}
               aria-describedby={error ? 'fb-error' : undefined}
               aria-invalid={error ? true : undefined}
               required
@@ -102,10 +117,10 @@ export function FeedbackButton() {
           )}
           <div className="flex gap-2">
             <Button type="submit" disabled={pending || !message.trim()}>
-              {pending ? t('feedback.sending') : t('feedback.submit')}
+              {pending ? <Trans>Sending…</Trans> : <Trans>Send</Trans>}
             </Button>
             <Button type="button" variant="ghost" onClick={close}>
-              {t('feedback.cancel')}
+              <Trans>Cancel</Trans>
             </Button>
           </div>
         </form>

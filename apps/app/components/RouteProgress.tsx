@@ -5,14 +5,14 @@
  * responsive without a jarring full-screen flash. Content skeletons then take
  * over once the route mounts.
  */
-import { useI18n } from '@/lib/i18n'
+import { useLingui } from '@lingui/react/macro'
 
 export function RouteProgress() {
-  const { t } = useI18n()
+  const { t } = useLingui()
   return (
     <div
       role="status"
-      aria-label={t('common.loadingAria')}
+      aria-label={t`Loading`}
       className="pointer-events-none fixed inset-x-0 top-0 z-[70] h-0.5 overflow-hidden bg-primary/20"
       data-testid="route-progress"
     >
