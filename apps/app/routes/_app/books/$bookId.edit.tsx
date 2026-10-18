@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { FormPageSkeleton } from '@/components/ui/skeleton'
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api'
@@ -10,6 +11,7 @@ import { useToast } from '@/components/Toast'
 import { Trans, useLingui } from '@lingui/react/macro'
 
 export const Route = createFileRoute('/_app/books/$bookId/edit')({
+  pendingComponent: () => <FormPageSkeleton />,
   beforeLoad: ({ context }) => {
     const user = context.user
     if (user.role !== 'library_admin' && user.role !== 'super_admin') {

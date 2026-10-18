@@ -7,10 +7,10 @@ import { Badge } from '@/components/ui/badge'
 import { circulationErrorMessage } from '@/lib/errors'
 import { useToast } from '@/components/Toast'
 import { Trans, Plural, useLingui } from '@lingui/react/macro'
-import { BookListSkeleton } from '@/components/ui/skeleton'
+import { BookListSkeleton, ListPageSkeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
 
-export const Route = createFileRoute('/_app/my-books')({ component: MyBooksPage })
+export const Route = createFileRoute('/_app/my-books')({ component: MyBooksPage, pendingComponent: () => <ListPageSkeleton /> })
 
 const DAY = 24 * 60 * 60 * 1000
 

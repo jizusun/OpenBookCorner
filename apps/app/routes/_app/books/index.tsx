@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input'
 import { circulationErrorMessage } from '@/lib/errors'
 import { useToast } from '@/components/Toast'
 import { Trans, useLingui } from '@lingui/react/macro'
-import { BookListSkeleton } from '@/components/ui/skeleton'
+import { BookListSkeleton, ListPageSkeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
 import { useInfiniteList, LoadMoreSentinel } from '@/components/InfiniteList'
 import { useViewMode } from '@/lib/view-mode'
@@ -27,6 +27,7 @@ const searchSchema = z.object({
 })
 
 export const Route = createFileRoute('/_app/books/')({
+  pendingComponent: () => <ListPageSkeleton />,
   validateSearch: searchSchema,
   component: CatalogPage,
 })

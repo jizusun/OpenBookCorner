@@ -4,7 +4,7 @@ import { Trans } from '@lingui/react/macro'
 import { api } from '@/lib/api'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Skeleton, ListPageSkeleton } from '@/components/ui/skeleton'
 
 function CategoryLabel({ category }: { category: string }) {
   switch (category) {
@@ -22,6 +22,7 @@ function CategoryLabel({ category }: { category: string }) {
 }
 
 export const Route = createFileRoute('/_app/admin/feedback')({
+  pendingComponent: () => <ListPageSkeleton />,
   beforeLoad: ({ context }) => {
     const user = context.user
     if (user.role !== 'library_admin' && user.role !== 'super_admin') {

@@ -9,10 +9,11 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Skeleton, ListPageSkeleton } from '@/components/ui/skeleton'
 import { useToast } from '@/components/Toast'
 
 export const Route = createFileRoute('/_app/admin/tenants')({
+  pendingComponent: () => <ListPageSkeleton />,
   // Super-admin only.
   beforeLoad: ({ context }) => {
     if (context.user.role !== 'super_admin') throw redirect({ to: '/books' })
