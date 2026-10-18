@@ -19,10 +19,10 @@ const listQuery = z.object({
 /** Admin-only library members (番薯 成员). Tenant-scoped. */
 export const memberApp = new Hono<{ Variables: TenantVars }>()
   .use(sessionAuth, tenant, admin)
-  .get('/', zValidator('query', listQuery), (c) =>
-    c.json(new MemberService(c.get('db')).listByLibrary(c.get('libraryId'), c.req.valid('query'))),
+  .get('/', zValidator('query', listQuery), async (c) =>
+    c.json(await new MemberService(c.get('db')).listByLibrary(c.get('libraryId'), c.req.valid('query'))),
   )
-  .get('/facets', (c) => c.json(new MemberService(c.get('db')).listFacets(c.get('libraryId'))))
+  .get('/facets', async (c) => c.json(await new MemberService(c.get('db')).listFacets(c.get('libraryId'))))
   .get('/:memberId', async (c) => {
     const m = await new MemberService(c.get('db')).getById(c.req.param('memberId'), c.get('libraryId'))
     if (!m) return c.json({ error: 'MEMBER_NOT_FOUND' }, 404)

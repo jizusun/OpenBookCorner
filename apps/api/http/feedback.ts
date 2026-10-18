@@ -14,9 +14,9 @@ const submitBody = z.object({
 /** Feedback: any member can submit; admin can list. Tenant-scoped. */
 export const feedbackApp = new Hono<{ Variables: TenantVars }>()
   .use(sessionAuth, tenant)
-  .post('/', zValidator('json', submitBody), (c) =>
+  .post('/', zValidator('json', submitBody), async (c) =>
     c.json(
-      new FeedbackService(c.get('db')).submit({
+      await new FeedbackService(c.get('db')).submit({
         libraryId: c.get('libraryId'),
         userId: c.get('user').id,
         category: c.req.valid('json').category,
@@ -24,4 +24,4 @@ export const feedbackApp = new Hono<{ Variables: TenantVars }>()
       }),
     ),
   )
-  .get('/', admin, (c) => c.json(new FeedbackService(c.get('db')).listByLibrary(c.get('libraryId'))))
+  .get('/', admin, async (c) => c.json(await new FeedbackService(c.get('db')).listByLibrary(c.get('libraryId'))))

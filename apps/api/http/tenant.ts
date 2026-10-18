@@ -16,13 +16,13 @@ const setActiveBody = z.object({ libraryId: z.string().min(1), isActive: z.boole
 /** Super-admin only: cross-tenant library management (NOT tenant-scoped). */
 export const tenantApp = new Hono<{ Variables: AuthedVars }>()
   .use(sessionAuth, superAdmin)
-  .get('/', (c) => c.json(new TenantAdminService(c.get('db')).listAll()))
-  .post('/', zValidator('json', createBody), (c) =>
-    c.json(new TenantAdminService(c.get('db')).create(c.req.valid('json'))),
+  .get('/', async (c) => c.json(await new TenantAdminService(c.get('db')).listAll()))
+  .post('/', zValidator('json', createBody), async (c) =>
+    c.json(await new TenantAdminService(c.get('db')).create(c.req.valid('json'))),
   )
-  .post('/set-active', zValidator('json', setActiveBody), (c) =>
+  .post('/set-active', zValidator('json', setActiveBody), async (c) =>
     c.json(
-      new TenantAdminService(c.get('db')).setActive(
+      await new TenantAdminService(c.get('db')).setActive(
         c.req.valid('json').libraryId,
         c.req.valid('json').isActive,
       ),

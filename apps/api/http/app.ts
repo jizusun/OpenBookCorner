@@ -16,7 +16,7 @@ import { tenantApp } from './tenant'
  * expression (required for hc inference).
  */
 export const apiApp = new Hono()
-  .route('/auth', authApp)
+  .route('/session', authApp)
   .route('/book', bookApp)
   .route('/borrowing', borrowingApp)
   .route('/library', libraryApp)

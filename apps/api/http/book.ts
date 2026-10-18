@@ -48,16 +48,16 @@ const updateBody = z.object({
  */
 export const bookApp = new Hono<{ Variables: TenantVars }>()
   .use(sessionAuth, tenant)
-  .get('/', zValidator('query', listQuery), (c) =>
-    c.json(new BookService(c.get('db')).listByLibrary(c.get('libraryId'), c.req.valid('query'))),
+  .get('/', zValidator('query', listQuery), async (c) =>
+    c.json(await new BookService(c.get('db')).listByLibrary(c.get('libraryId'), c.req.valid('query'))),
   )
-  .get('/facets', (c) => c.json(new BookService(c.get('db')).listFacets(c.get('libraryId'))))
-  .get('/:bookId', (c) =>
-    c.json(new BookService(c.get('db')).getById(c.req.param('bookId'), c.get('libraryId'))),
+  .get('/facets', async (c) => c.json(await new BookService(c.get('db')).listFacets(c.get('libraryId'))))
+  .get('/:bookId', async (c) =>
+    c.json(await new BookService(c.get('db')).getById(c.req.param('bookId'), c.get('libraryId'))),
   )
   // Admin-only below.
-  .get('/:bookId/borrower', admin, (c) =>
-    c.json(new BookService(c.get('db')).getActiveBorrower(c.req.param('bookId'), c.get('libraryId'))),
+  .get('/:bookId/borrower', admin, async (c) =>
+    c.json(await new BookService(c.get('db')).getActiveBorrower(c.req.param('bookId'), c.get('libraryId'))),
   )
   .post('/', admin, zValidator('json', addBody), async (c) => {
     const input = c.req.valid('json')
@@ -82,7 +82,7 @@ export const bookApp = new Hono<{ Variables: TenantVars }>()
     if (!res.updated) return c.json({ error: 'BOOK_NOT_FOUND' }, 404)
     return c.json(res)
   })
-  .delete('/:bookId', admin, (c) =>
-    c.json(new BookService(c.get('db')).delete(c.req.param('bookId'), c.get('libraryId'))),
+  .delete('/:bookId', admin, async (c) =>
+    c.json(await new BookService(c.get('db')).delete(c.req.param('bookId'), c.get('libraryId'))),
   )
   .get('/lookup/:isbn', admin, async (c) => c.json(await lookupBookMetadata(c.req.param('isbn'))))

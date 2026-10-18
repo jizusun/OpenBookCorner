@@ -36,22 +36,26 @@ export const libraryApp = new Hono<{ Variables: TenantVars }>()
     if (!lib) return c.json({ error: 'LIBRARY_NOT_FOUND' }, 404)
     return c.json({ name: lib.name, emailDomains: lib.emailDomains, settings: lib.settings })
   })
-  .put('/settings', admin, zValidator('json', updateSettingsBody), (c) =>
-    c.json(new LibraryService(c.get('db')).updateSettings(c.get('libraryId'), c.req.valid('json'))),
+  .put('/settings', admin, zValidator('json', updateSettingsBody), async (c) =>
+    c.json(await new LibraryService(c.get('db')).updateSettings(c.get('libraryId'), c.req.valid('json'))),
   )
-  .post('/import/preview', admin, zValidator('json', z.object({ sheets: fanshuSheets })), (c) =>
-    c.json(previewFanshuImport(c.get('libraryId'), c.req.valid('json').sheets)),
+  .post('/import/preview', admin, zValidator('json', z.object({ sheets: fanshuSheets })), async (c) =>
+    c.json(await previewFanshuImport(c.get('libraryId'), c.req.valid('json').sheets)),
   )
   .post(
     '/import',
     admin,
     zValidator('json', z.object({ sheets: fanshuSheets, fileName: z.string().optional() })),
-    (c) =>
+    async (c) =>
       c.json(
-        new FanshuImportService(c.get('db')).import(c.get('libraryId'), c.req.valid('json').sheets, {
-          fileName: c.req.valid('json').fileName,
-          ranByUserId: c.get('user').id,
-        }),
+        await new FanshuImportService(c.get('db')).import(
+          c.get('libraryId'),
+          c.req.valid('json').sheets,
+          {
+            fileName: c.req.valid('json').fileName,
+            ranByUserId: c.get('user').id,
+          },
+        ),
       ),
   )
   .post(
@@ -71,6 +75,6 @@ export const libraryApp = new Hono<{ Variables: TenantVars }>()
       )
     },
   )
-  .get('/import/history', admin, (c) =>
-    c.json(new FanshuImportService(c.get('db')).listRuns(c.get('libraryId'))),
+  .get('/import/history', admin, async (c) =>
+    c.json(await new FanshuImportService(c.get('db')).listRuns(c.get('libraryId'))),
   )
