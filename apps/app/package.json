@@ -11,6 +11,7 @@
     "generate-routes": "tsr generate",
     "i18n:extract": "lingui extract",
     "i18n:compile": "lingui compile --typescript",
+    "i18n:check": "lingui extract --clean && bun run scripts/check-translations.ts",
     "test": "lingui compile --typescript && vitest run",
     "typecheck": "lingui compile --typescript && tsc --build"
   },
