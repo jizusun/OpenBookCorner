@@ -10,6 +10,9 @@ dist/
 
 # generated
 **/routeTree.gen.ts
+
+# Generated Lingui catalogs (precompiled from lib/i18n/{zh,en}.ts at build time)
+apps/app/lib/i18n/locales/
 **/worker-configuration.d.ts
 **/*.tsbuildinfo
 
