@@ -3,14 +3,14 @@ import { Hono } from 'hono'
 import { z } from 'zod'
 
 import type { TenantVars } from '../lib/mw'
-import { admin, sessionAuth, tenant } from '../lib/mw'
+import { admin, sessionAuth, tenant, tenantHostGuard } from '../lib/mw'
 import { CirculationService } from '../services'
 
 const overdueQuery = z.object({ range: z.enum(['1-7', '8-14', '15+', 'all']).optional() })
 
 /** Borrowing / circulation. Tenant-scoped; overdue listing is admin-only. */
 export const borrowingApp = new Hono<{ Variables: TenantVars }>()
-  .use(sessionAuth, tenant)
+  .use(sessionAuth, tenantHostGuard, tenant)
   .post('/borrow', zValidator('json', z.object({ bookId: z.string().min(1) })), async (c) =>
     c.json(
       await new CirculationService(c.get('db')).borrow(
