@@ -264,6 +264,10 @@ msgstr "Available · {available} of {total}"
 msgid "Back to catalog"
 msgstr "Back to catalog"
 
+#: components/ImpersonationBanner.tsx:44
+msgid "Back to my account"
+msgstr "Back to my account"
+
 #: routes/_app/admin/overdue.tsx:93
 msgid "Book"
 msgstr "Book"
@@ -1296,9 +1300,17 @@ msgstr "Yes"
 msgid "You appear to be offline. Connect to the internet and try again."
 msgstr "You appear to be offline. Connect to the internet and try again."
 
+#: components/ImpersonationBanner.tsx:35
+msgid "You are impersonating another user. Actions are recorded."
+msgstr "You are impersonating another user. Actions are recorded."
+
 #: components/Pwa.tsx:74
 msgid "You are offline — showing cached data. Borrowing requires a connection."
 msgstr "You are offline — showing cached data. Borrowing requires a connection."
+
+#: components/ImpersonationBanner.tsx:33
+msgid "You are viewing as {viewingAs}. Actions are recorded."
+msgstr "You are viewing as {viewingAs}. Actions are recorded."
 
 #: routes/_app/books/add.tsx:108
 msgid "You do not have permission to add books."
