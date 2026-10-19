@@ -644,11 +644,17 @@ export class TenantAdminService {
 
   // Activate / deactivate a library.
   async setActive(libraryId: string, isActive: boolean) {
+    const lib = await this.db
+      .select({ id: libraries.id })
+      .from(libraries)
+      .where(eq(libraries.id, libraryId))
+      .get()
+    if (!lib) return { id: libraryId, isActive, updated: false as const }
     await this.db
       .update(libraries)
       .set({ isActive, updatedAt: new Date().toISOString() })
       .where(eq(libraries.id, libraryId))
-    return { id: libraryId, isActive }
+    return { id: libraryId, isActive, updated: true as const }
   }
 }
 

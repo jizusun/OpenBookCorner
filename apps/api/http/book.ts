@@ -79,7 +79,7 @@ export const bookApp = new Hono<{ Variables: TenantVars }>()
       action: 'book.add',
       targetType: 'book',
       targetId: (added as { id?: string } | null)?.id ?? null,
-      metadata: { isbn: input.isbn, title: input.title, quantity: input.quantity ?? 1 },
+      metadata: { isbn: input.isbn, quantity: input.quantity ?? 1 },
     })
     return c.json(added)
   })

@@ -28,6 +28,10 @@ const setActiveBody = z.object({ libraryId: z.string().min(1), isActive: z.boole
 export const tenantApp = new Hono<{ Variables: AuthedVars }>()
   .use(sessionAuth, superAdmin)
   .get('/', async (c) => c.json(await new TenantAdminService(c.get('db')).listAll()))
+  // Super-admin system audit log (libraryId IS NULL): tenant.create/update/
+  // delete/setActive. These have no tenant scope, so the tenant-scoped
+  // /library/audit can never surface them (and a super admin has no libraryId).
+  .get('/audit', async (c) => c.json(await new AuditService(c.get('db')).listSystem()))
   .post('/', zValidator('json', createBody), async (c) => {
     const created = await new TenantAdminService(c.get('db')).create(c.req.valid('json'))
     await new AuditService(c.get('db')).log({
@@ -36,7 +40,7 @@ export const tenantApp = new Hono<{ Variables: AuthedVars }>()
       action: 'tenant.create',
       targetType: 'library',
       targetId: created.id,
-      metadata: { name: c.req.valid('json').name, slug: created.slug },
+      metadata: { slug: created.slug },
     })
     return c.json(created)
   })
@@ -78,6 +82,7 @@ export const tenantApp = new Hono<{ Variables: AuthedVars }>()
       c.req.valid('json').libraryId,
       c.req.valid('json').isActive,
     )
+    if (!res.updated) return c.json({ error: 'LIBRARY_NOT_FOUND' }, 404)
     await new AuditService(c.get('db')).log({
       actorUserId: c.get('user').id,
       libraryId: null,
