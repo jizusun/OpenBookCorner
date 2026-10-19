@@ -145,6 +145,26 @@ Fetch these when you need current Drizzle (or, in Phase 2, Hono) guidance.
   service (tenant validation) → server functions → UI → tests → docs.
 - Keep changes scoped. Match existing conventions. Ask before destructive or production actions.
 
+### TDD: present the test plan before implementing (required)
+
+For EVERY implementation task, BEFORE writing code, present the complete test-case
+plan across all layers of the testing pyramid, then wait for the go-ahead:
+
+- **Unit** (broad base): pure logic + service classes (sql.js test DB).
+- **Integration** (middle): hc handlers + mw guards via the test harness
+  (`apps/api/http/testHarness.ts`).
+- **Component**: React via `@testing-library/react`.
+- **E2E** (fewest, top): Playwright on one `wrangler dev` worker.
+
+List concrete per-case descriptions + target counts showing the shape
+**unit ≫ integration/component ≫ E2E**. Push the MAJORITY of coverage down to
+the unit level (pure functions + service classes with the sql.js test DB);
+reserve integration/component for wiring + guard behavior and E2E for the few
+flows only real end-to-end (auth cookie round-trips). Call out honestly which assertions are
+only reachable at a given layer (e.g. a Better Auth cookie round-trip is only
+real in E2E) rather than faking them at a lower layer. Then write the tests red,
+make them green, and keep the whole suite + CI + Preview green before done.
+
 <!-- tanstack-intent:start -->
 <!-- `npx @tanstack/intent@latest install` will manage guidance between these markers once deps are installed. -->
 <!-- tanstack-intent:end -->
