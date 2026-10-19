@@ -11,7 +11,7 @@ import { useInstallPrompt } from '@/components/Pwa'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { LanguageToggle } from '@/components/LanguageToggle'
 import { Trans, useLingui } from '@lingui/react/macro'
-import { setViewMode, useViewMode } from '@/lib/view-mode'
+import { setReaderPreview, useReaderPreview } from '@/lib/view-mode'
 
 export const Route = createFileRoute('/_app')({
   // Server-validated auth: requireMe throws if unauthenticated.
@@ -36,16 +36,19 @@ function AppLayout() {
   const router = useRouter()
   const { t } = useLingui()
   const isSuperAdmin = user.role === 'super_admin'
-  const isAdmin = user.role === 'library_admin' || user.role === 'super_admin'
-  const storedView = useViewMode()
-  // Normalize the stored view to one the current role is allowed to use.
-  const viewMode = (() => {
-    if (!isAdmin) return 'reader' as const
-    if (storedView === 'system' && !isSuperAdmin) return 'admin' as const
-    return storedView
-  })()
-  const inSystemView = isSuperAdmin && viewMode === 'system'
-  const inAdminView = isAdmin && viewMode === 'admin'
+  const isLibraryAdmin = user.role === 'library_admin'
+  const readerPreview = useReaderPreview()
+
+  // The surface is determined by ROLE (no three-state view switch). A library
+  // admin may optionally flip a secondary "Reader preview" to browse as a member;
+  // super admins use the system console and impersonation (not a view switch).
+  const surface: 'system' | 'admin' | 'reader' = isSuperAdmin
+    ? 'system'
+    : isLibraryAdmin && !readerPreview
+      ? 'admin'
+      : 'reader'
+  const inSystemView = surface === 'system'
+  const inAdminView = surface === 'admin'
   const { canInstall, install } = useInstallPrompt()
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -74,23 +77,14 @@ function AppLayout() {
     await router.navigate({ to: '/login' })
   }
 
-  const landingFor = (v: 'system' | 'admin' | 'reader') =>
-    v === 'system' ? '/admin/overview' : v === 'admin' ? '/books' : '/my-books'
-
-  async function switchView(next: 'system' | 'admin' | 'reader') {
-    setViewMode(next)
+  // Library-admin-only "Reader preview" toggle (not a role/scope switch). Flips
+  // the admin between the admin surface and a member's-eye reader surface.
+  async function toggleReaderPreview() {
+    const next = !readerPreview
+    setReaderPreview(next)
     setMenuOpen(false)
-    await router.navigate({ to: landingFor(next) })
+    await router.navigate({ to: next ? '/my-books' : '/books' })
   }
-
-  // Super admins cycle System → Admin → Reader; library admins toggle Admin ↔ Reader.
-  const nextView: 'system' | 'admin' | 'reader' = inSystemView
-    ? 'admin'
-    : inAdminView
-      ? 'reader'
-      : isSuperAdmin
-        ? 'system'
-        : 'admin'
 
   const navItems: NavItem[] = inSystemView
     ? [
@@ -116,25 +110,19 @@ function AppLayout() {
         ]
 
   const home = inSystemView ? '/admin/overview' : inAdminView ? '/books' : '/my-books'
-  const viewLabel = inSystemView
-    ? t`System view`
-    : inAdminView
-      ? t`Admin view`
-      : t`Reader view`
-  const nextLabelText =
-    nextView === 'system' ? t`System view` : nextView === 'admin' ? t`Admin view` : t`Reader view`
-  const nextSwitchLabel =
-    nextView === 'system' ? t`→ System view` : nextView === 'admin' ? t`→ Admin view` : t`→ Reader view`
 
-  const viewSwitcher = isAdmin ? (
+  // A library admin (only) gets a secondary Reader-preview toggle. Readers have
+  // no surface controls; super admins switch context via impersonation.
+  const readerPreviewToggle = isLibraryAdmin ? (
     <Button
       size="sm"
       variant="outline"
-      onClick={() => switchView(nextView)}
-      data-testid="view-switch"
-      title={t`Switch to ${nextLabelText} view`}
+      onClick={toggleReaderPreview}
+      data-testid="reader-preview-toggle"
+      aria-pressed={readerPreview}
+      title={readerPreview ? t`Exit reader preview` : t`Preview as a reader`}
     >
-      {nextSwitchLabel}
+      {readerPreview ? <Trans>Exit reader preview</Trans> : <Trans>Reader preview</Trans>}
     </Button>
   ) : null
 
@@ -181,12 +169,7 @@ function AppLayout() {
           </div>
 
           <div className="flex items-center gap-2 text-sm">
-            {isAdmin && (
-              <span className="hidden rounded-full border border-primary/40 bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary sm:inline">
-                {viewLabel}
-              </span>
-            )}
-            <span className="hidden sm:inline">{viewSwitcher}</span>
+            <span className="hidden sm:inline">{readerPreviewToggle}</span>
             <LanguageToggle />
             <ThemeToggle />
             {canInstall && (
@@ -213,7 +196,7 @@ function AppLayout() {
             className="mx-auto flex max-w-4xl flex-col gap-1 border-t p-4 text-sm sm:hidden"
           >
             {navLinks(() => setMenuOpen(false))}
-            {isAdmin && <div className="pt-2">{viewSwitcher}</div>}
+            {readerPreviewToggle && <div className="pt-2">{readerPreviewToggle}</div>}
             <span className="pt-2 text-muted-foreground">
               <Trans>Signed in as {user.name}</Trans>
             </span>

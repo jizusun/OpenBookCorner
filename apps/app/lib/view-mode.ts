@@ -1,24 +1,26 @@
 import { useSyncExternalStore } from 'react'
 
 /**
- * App "view mode" for admins, who can switch between the Admin view (manage the
- * library) and the Reader view (browse + borrow like a member). Readers always
- * use the reader view. Persisted in localStorage so it survives reloads.
+ * "Reader preview" toggle for LIBRARY ADMINS only.
+ *
+ * The app surface is determined by ROLE (reader → reader UI, library_admin →
+ * admin UI, super_admin → system console) — there is no three-state view switch.
+ * A library admin may optionally flip a secondary "Reader preview" to browse the
+ * catalog as a member would (borrow buttons instead of manage controls). Readers
+ * and super admins ignore this flag (super admins use impersonation to view as
+ * someone else). Persisted in localStorage so it survives reloads.
  */
-export type ViewMode = 'system' | 'admin' | 'reader'
-
-const STORAGE_KEY = 'obc-view'
+const STORAGE_KEY = 'obc-reader-preview'
 const listeners = new Set<() => void>()
 
-function read(): ViewMode {
-  if (typeof localStorage === 'undefined') return 'admin'
-  const v = localStorage.getItem(STORAGE_KEY)
-  return v === 'reader' || v === 'system' ? v : 'admin'
+function read(): boolean {
+  if (typeof localStorage === 'undefined') return false
+  return localStorage.getItem(STORAGE_KEY) === '1'
 }
 
-export function setViewMode(mode: ViewMode) {
+export function setReaderPreview(on: boolean) {
   try {
-    localStorage.setItem(STORAGE_KEY, mode)
+    localStorage.setItem(STORAGE_KEY, on ? '1' : '0')
   } catch {
     // ignore storage failures
   }
@@ -30,7 +32,7 @@ function subscribe(cb: () => void) {
   return () => listeners.delete(cb)
 }
 
-/** Current admin view mode. Only meaningful for admins. */
-export function useViewMode(): ViewMode {
-  return useSyncExternalStore(subscribe, read, () => 'admin')
+/** Whether the library admin has turned on Reader preview. */
+export function useReaderPreview(): boolean {
+  return useSyncExternalStore(subscribe, read, () => false)
 }

@@ -9,7 +9,7 @@ import { Skeleton, DetailPageSkeleton } from '@/components/ui/skeleton'
 import { ConfirmDialog } from '@/components/ui/modal'
 import { circulationErrorMessage } from '@/lib/errors'
 import { useToast } from '@/components/Toast'
-import { useViewMode } from '@/lib/view-mode'
+import { useReaderPreview } from '@/lib/view-mode'
 import { Trans, useLingui } from '@lingui/react/macro'
 
 export const Route = createFileRoute('/_app/books/$bookId')({ component: BookDetailPage, pendingComponent: () => <DetailPageSkeleton /> })
@@ -23,9 +23,9 @@ function BookDetailPage() {
 
   const { data: user } = useQuery(api.auth.me.queryOptions())
   const isAdmin = user?.role === 'library_admin' || user?.role === 'super_admin'
-  const viewMode = useViewMode()
+  const readerPreview = useReaderPreview()
   // Manage mode = admin in Admin view: show Edit/Delete + borrower, hide Borrow.
-  const manageMode = isAdmin && viewMode === 'admin'
+  const manageMode = isAdmin && !readerPreview
 
   const { data: book, isLoading } = useQuery(api.book.get.queryOptions({ bookId }))
 
