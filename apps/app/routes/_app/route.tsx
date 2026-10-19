@@ -93,7 +93,10 @@ function AppLayout() {
         : 'admin'
 
   const navItems: NavItem[] = inSystemView
-    ? [{ to: '/admin/tenants', label: <Trans>Tenants</Trans> }]
+    ? [
+        { to: '/admin/tenants', label: <Trans>Tenants</Trans> },
+        { to: '/admin/audit', label: <Trans>Audit log</Trans> },
+      ]
     : inAdminView
       ? [
           { to: '/books', label: <Trans>Catalog</Trans> },

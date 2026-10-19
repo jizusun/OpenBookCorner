@@ -129,6 +129,7 @@ const call = {
     json<Ok<(typeof client.tenant)['set-active']['$post']>>(
       client.tenant['set-active'].$post({ json: i }),
     ),
+  'tenant.audit': () => json<Ok<typeof client.tenant.audit.$get>>(client.tenant.audit.$get()),
 }
 
 type Endpoint = keyof typeof call
@@ -192,6 +193,7 @@ export const api = {
     update: node('tenant.update'),
     remove: node('tenant.remove'),
     setActive: node('tenant.setActive'),
+    audit: node('tenant.audit'),
   },
 }
 
