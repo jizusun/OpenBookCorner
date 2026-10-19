@@ -1,14 +1,43 @@
+import { useState } from 'react'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { Trans } from '@lingui/react/macro'
+import { Trans, useLingui } from '@lingui/react/macro'
+import { z } from 'zod'
 import { api } from '@/lib/api'
+import { Button } from '@/components/ui/button'
 import { ListPageSkeleton } from '@/components/ui/skeleton'
 import { AuditTable } from './AuditTable'
 import type { AuditRow } from '@/lib/audit-format'
 
+const PAGE_SIZE = 50
+
+// Known audit actions for the filter dropdown (ADR 0005 coverage).
+const ACTIONS = [
+  'tenant.create',
+  'tenant.update',
+  'tenant.delete',
+  'tenant.setActive',
+  'tenant.addAdmin',
+  'member.create',
+  'book.add',
+  'book.update',
+  'book.delete',
+  'library.updateSettings',
+  'circulation.borrow',
+  'circulation.return',
+  'impersonation.start',
+  'impersonation.stop',
+] as const
+
+const searchSchema = z.object({
+  tenant: z.string().optional(),
+  action: z.string().optional(),
+})
+
 export const Route = createFileRoute('/_app/admin/audit')({
   pendingComponent: () => <ListPageSkeleton />,
-  // Super-admin only (system-level audit log).
+  validateSearch: searchSchema,
+  // Super-admin only (global audit log).
   beforeLoad: ({ context }) => {
     if (context.user.role !== 'super_admin') throw redirect({ to: '/books' })
   },
@@ -16,8 +45,23 @@ export const Route = createFileRoute('/_app/admin/audit')({
 })
 
 function AuditPage() {
-  const { data, isLoading } = useQuery(api.tenant.audit.queryOptions())
-  const rows = (data ?? []) as AuditRow[]
+  const { tenant, action } = Route.useSearch()
+  const navigate = Route.useNavigate()
+  const { t } = useLingui()
+  const [page, setPage] = useState(1)
+
+  const { data: tenants } = useQuery(api.tenant.list.queryOptions())
+  const { data, isLoading } = useQuery(
+    api.admin.audit.queryOptions({ libraryId: tenant, action, page, limit: PAGE_SIZE }),
+  )
+  const rows = (data?.items ?? []) as AuditRow[]
+  const total = data?.total ?? 0
+  const hasMore = page * PAGE_SIZE < total
+
+  function setFilter(key: 'tenant' | 'action', value: string) {
+    setPage(1)
+    navigate({ search: (prev) => ({ ...prev, [key]: value || undefined }) })
+  }
 
   return (
     <div className="space-y-6">
@@ -26,11 +70,69 @@ function AuditPage() {
           <Trans>Audit log</Trans>
         </h1>
         <p className="text-sm text-muted-foreground">
-          <Trans>System-level actions across all tenants (super admin).</Trans>
+          <Trans>All changes across the system (super admin).</Trans>
         </p>
       </div>
 
+      <div className="flex flex-wrap items-center gap-2 text-sm" data-testid="audit-filters">
+        <select
+          className="rounded-md border px-2 py-1"
+          data-testid="audit-tenant-filter"
+          value={tenant ?? ''}
+          onChange={(e) => setFilter('tenant', e.target.value)}
+        >
+          <option value="">{t`All tenants`}</option>
+          {tenants?.map((tn) => (
+            <option key={tn.id} value={tn.id}>
+              {tn.name}
+            </option>
+          ))}
+        </select>
+        <select
+          className="rounded-md border px-2 py-1"
+          data-testid="audit-action-filter"
+          value={action ?? ''}
+          onChange={(e) => setFilter('action', e.target.value)}
+        >
+          <option value="">{t`All actions`}</option>
+          {ACTIONS.map((a) => (
+            <option key={a} value={a}>
+              {a}
+            </option>
+          ))}
+        </select>
+        {!isLoading && (
+          <span className="text-muted-foreground">
+            <Trans>{total} entries</Trans>
+          </span>
+        )}
+      </div>
+
       <AuditTable rows={rows} loading={isLoading} />
+
+      <div className="flex items-center justify-between text-sm">
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={page <= 1}
+          onClick={() => setPage((p) => Math.max(1, p - 1))}
+          data-testid="audit-prev"
+        >
+          <Trans>Previous</Trans>
+        </Button>
+        <span className="text-muted-foreground">
+          <Trans>Page {page}</Trans>
+        </span>
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={!hasMore}
+          onClick={() => setPage((p) => p + 1)}
+          data-testid="audit-next"
+        >
+          <Trans>Next</Trans>
+        </Button>
+      </div>
     </div>
   )
 }
