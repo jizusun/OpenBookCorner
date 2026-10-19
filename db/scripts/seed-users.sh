@@ -101,6 +101,12 @@ roles_sql="
   UPDATE user SET library_id='${LIBRARY_ID}', role='super_admin'    WHERE email='super@demo.test';
   UPDATE user SET library_id='lib-demo-002', role='library_admin'  WHERE email='admin@globex.test';
   UPDATE user SET library_id='lib-demo-002', role='library_reader' WHERE email='reader@globex.test';
+  -- Link a member record to the demo reader's login account so the super-admin
+  -- 'Sign in as them' (impersonation) action has a target on the Members page.
+  INSERT OR IGNORE INTO members (id, library_id, name, role, email, user_id, is_placeholder, created_at)
+  SELECT 'member-demo-reader', '${LIBRARY_ID}', 'Demo Reader', 'library_reader', 'reader@demo.test', u.id, 0, '2025-01-01T00:00:00.000Z'
+  FROM user u WHERE u.email='reader@demo.test';
+  UPDATE members SET user_id=(SELECT id FROM user WHERE email='reader@demo.test') WHERE id='member-demo-reader';
 "
 
 run_roles() {
