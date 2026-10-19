@@ -1,5 +1,7 @@
 import { betterAuth, type BetterAuthOptions } from 'better-auth'
 import { admin } from 'better-auth/plugins'
+import { createAccessControl } from 'better-auth/plugins/access'
+import { adminAc, defaultStatements } from 'better-auth/plugins/admin/access'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { eq } from 'drizzle-orm'
 import { account, schema as Db, session, user, verification, type Database } from '@obc/db'
@@ -7,6 +9,13 @@ import { account, schema as Db, session, user, verification, type Database } fro
 import type { Env } from './env'
 import { IMPERSONATION_DURATION_SECONDS } from './impersonation'
 import { auditImpersonationStart, auditImpersonationStop } from './impersonation-audit'
+
+// Access control for the admin plugin. When `adminRoles` names a custom role
+// (super_admin), Better Auth REQUIRES that role be defined in `roles` — otherwise
+// createAuth throws "Invalid admin roles" at construction (500 on every route).
+// super_admin gets the full admin statement set (incl. user:impersonate).
+const ac = createAccessControl(defaultStatements)
+const superAdminRole = ac.newRole(adminAc.statements)
 
 /**
  * Better Auth for OpenBookCorner — Phase 1 email/password on Cloudflare D1.
@@ -66,6 +75,8 @@ export function createAuth(db: Database, env: Env): Auth {
       // and (allowImpersonatingAdmins defaults false) they CANNOT impersonate
       // another super admin. Impersonation sessions are time-boxed.
       admin({
+        ac,
+        roles: { super_admin: superAdminRole },
         adminRoles: ['super_admin'],
         impersonationSessionDuration: IMPERSONATION_DURATION_SECONDS,
       }),
