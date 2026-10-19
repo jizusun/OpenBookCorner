@@ -49,6 +49,60 @@ for OpenBookCorner, scoped to what is valuable now.
 - Read-only *enforcement* of impersonation (tracked as ADR 0004 follow-up; the
   audit trail is the compensating control).
 
+## 2b. Visual design & layout principles (must-follow)
+
+The console must look **clean and spacious, never cluttered**. The current
+Tenants page is the anti-pattern to fix: an always-on create form hogs the fold,
+and each card crams name/status/slug/domains/counts/edit/deactivate/delete/login-
+link together with 3–4 buttons in a row. Every page in this console follows:
+
+**Layout & rhythm**
+- Content container `max-w-4xl mx-auto p-4` (matches the existing app shell);
+  wide tables may use `max-w-6xl`.
+- **One primary thing per screen.** A page is a *list* OR a *detail* OR a *form* —
+  not all three stacked. Secondary actions (create, edit, delete) move into
+  **dialogs** or the **detail page**, never a permanent block above a list.
+- Vertical rhythm with a consistent scale: section gap `space-y-6`, within-card
+  `space-y-3`, control gap `gap-2`. Generous whitespace > dense information.
+- Every page starts with a simple **header block**: `h1` title + one-line muted
+  description, then the content. No toolbar pile-up.
+
+**Lists & tables**
+- Prefer a **quiet table** (or a list of thin rows) over fat cards when showing
+  many homogeneous items (tenants, users, audit rows). Cards are for *detail*,
+  not for list rows.
+- A row shows only what's scannable: identity + 1–2 key facts + a **single**
+  primary action (e.g. "Enter →" / "Sign in as them"). Bulk of actions live on
+  the detail page. Avoid 3+ buttons per row.
+- Zebra/divider via `border-t`, hover `hover:bg-accent/40`. Muted secondary text
+  (`text-muted-foreground text-sm`). Right-align numeric columns.
+- Always provide **loading** (`Skeleton`) and **empty** (`EmptyState`) states.
+
+**Detail pages**
+- A compact header (name + status badge + key identifiers + one utility like
+  "Copy login link"), then **tabbed/segmented sections** (`Overview` / `Members`)
+  so a page never becomes a long scroll of mixed concerns.
+- Destructive actions (delete/deactivate) grouped and visually separated
+  (a "Danger zone" style block), not inline with everyday info.
+
+**Dashboard**
+- Stat cards in a responsive grid (`grid gap-4 sm:grid-cols-2 lg:grid-cols-4`),
+  each card = one number + label, nothing else. Recent-activity and per-tenant
+  blocks below, each with a "View all →" link rather than dumping everything.
+
+**Tokens & components (reuse, don't reinvent)**
+- Use existing design tokens only: `background/foreground/card/muted/primary/
+  border/accent` + `radius`. No ad-hoc colors (the amber impersonation banner is
+  the one deliberate exception — it must stand out).
+- Reuse `Card`, `Badge`, `Button`, `Input`, `Skeleton`, `EmptyState`, `modal`
+  (`ConfirmDialog`). Add a shadcn `Table`/`Tabs` via the shadcn MCP if a real
+  table/tab primitive is needed, rather than hand-rolling.
+- Responsive + accessible: mobile stacks to single column; keep the existing
+  `role`/`aria` patterns; respect reduced motion.
+
+These principles are acceptance criteria, not suggestions: a page that stacks a
+form + list + inline per-row CRUD (today's Tenants page) does not pass review.
+
 ## 3. Information architecture
 
 System view navigation (super admin only):
