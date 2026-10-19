@@ -98,6 +98,7 @@ function AppLayout() {
         { to: '/admin/tenants', label: <Trans>Tenants</Trans> },
         { to: '/admin/users', label: <Trans>Users</Trans> },
         { to: '/admin/audit', label: <Trans>Audit log</Trans> },
+        { to: '/admin/system', label: <Trans>System settings</Trans> },
       ]
     : inAdminView
       ? [
