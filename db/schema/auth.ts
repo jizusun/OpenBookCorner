@@ -31,6 +31,9 @@ export const session = sqliteTable('session', {
   expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
   ipAddress: text('ip_address'),
   userAgent: text('user_agent'),
+  // Better Auth admin plugin: set on an impersonation session to the REAL
+  // (super-admin) user id doing the impersonating. Null for normal sessions.
+  impersonatedBy: text('impersonated_by'),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
 })

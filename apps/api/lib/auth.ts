@@ -1,8 +1,10 @@
 import { betterAuth, type BetterAuthOptions } from 'better-auth'
+import { admin } from 'better-auth/plugins'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { account, schema as Db, session, user, verification, type Database } from '@obc/db'
 
 import type { Env } from './env'
+import { IMPERSONATION_DURATION_SECONDS } from './impersonation'
 
 /**
  * Better Auth for OpenBookCorner — Phase 1 email/password on Cloudflare D1.
@@ -56,6 +58,16 @@ export function createAuth(db: Database, env: Env): Auth {
       // D1 generates string ids; let Better Auth create them.
       database: { generateId: () => crypto.randomUUID() },
     },
+    plugins: [
+      // Admin plugin — we use ONLY its impersonation endpoints (ADR 0004 Part B).
+      // `adminRoles: ['super_admin']` means only super admins may impersonate,
+      // and (allowImpersonatingAdmins defaults false) they CANNOT impersonate
+      // another super admin. Impersonation sessions are time-boxed.
+      admin({
+        adminRoles: ['super_admin'],
+        impersonationSessionDuration: IMPERSONATION_DURATION_SECONDS,
+      }),
+    ],
   }
 
   // Reference Db to keep the import used even if tree-shaken in some builds.
