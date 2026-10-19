@@ -46,12 +46,15 @@ function renderCard(book: BookCardBook, onBorrow = () => {}, pending = false) {
 describe('BookCard', () => {
   it('renders title, author, publisher/year, isbn, and availability', async () => {
     renderCard(availableBook)
-    expect(await screen.findByText('Clean Code')).toBeInTheDocument()
+    // Await a TRANSLATED label first so the async zh catalog is active before
+    // the synchronous assertions below ('Clean Code' is a title — identical in
+    // en/zh — so awaiting it does NOT guarantee zh has loaded).
+    expect(await screen.findByText('可借')).toBeInTheDocument()
+    expect(screen.getByText('Clean Code')).toBeInTheDocument()
     expect(screen.getByText('作者：Robert C. Martin')).toBeInTheDocument()
     expect(screen.getByText(/Prentice Hall/)).toBeInTheDocument()
     expect(screen.getByText(/2008/)).toBeInTheDocument()
     expect(screen.getByText(/9780132350884/)).toBeInTheDocument()
-    expect(screen.getByText('可借')).toBeInTheDocument()
   })
 
   it('renders the cover image when provided', async () => {

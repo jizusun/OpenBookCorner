@@ -18,6 +18,10 @@ export const user = sqliteTable('user', {
   // --- OpenBookCorner tenant extension (additionalFields) ---
   libraryId: text('library_id'),
   role: text('role').notNull().default('library_reader'),
+  // --- Better Auth admin plugin fields (read on every session validation) ---
+  banned: integer('banned', { mode: 'boolean' }),
+  banReason: text('ban_reason'),
+  banExpires: integer('ban_expires', { mode: 'timestamp' }),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
 })
