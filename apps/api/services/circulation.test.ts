@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { BookService, CirculationService } from './index'
 import { createTestDb, seedBook, seedLibrary, seedUser } from '@obc/db/testing'
+import { eq } from 'drizzle-orm'
 import { borrowTransactions, books } from '@obc/db'
 import type { Database as Db } from '@obc/db'
 
@@ -367,5 +368,49 @@ describe('CirculationService.borrowByIsbn (scan-to-borrow)', () => {
     const svc = new CirculationService(db)
     // BOOK_A/isbn belongs to LIB_A; READER_B is in LIB_B
     await expect(svc.borrowByIsbn('9780000000001', READER_B, LIB_B)).rejects.toThrow('BOOK_NOT_IN_LIBRARY')
+  })
+})
+
+// --- Audit: borrow / return are recorded (ADR 0005) ---
+describe('CirculationService — audit trail', () => {
+  let db: Db
+  beforeEach(async () => {
+    db = await createTestDb()
+    await seedLibrary(db, LIB_A)
+    await seedUser(db, READER_A, LIB_A)
+    await seedBook(db, BOOK_A, LIB_A, '9780000000009', 1)
+  })
+
+  it('writes a circulation.borrow audit row (tenant-scoped, actor=reader, target=book)', async () => {
+    const { AuditService } = await import('./audit')
+    const svc = new CirculationService(db)
+    await svc.borrow(BOOK_A, READER_A, LIB_A)
+
+    const rows = await new AuditService(db).listByLibraryAction(LIB_A, 'circulation.borrow')
+    expect(rows).toHaveLength(1)
+    expect(rows[0]).toMatchObject({
+      actorUserId: READER_A,
+      libraryId: LIB_A,
+      action: 'circulation.borrow',
+      targetType: 'book',
+      targetId: BOOK_A,
+    })
+  })
+
+  it('writes a circulation.return audit row on return', async () => {
+    const { AuditService } = await import('./audit')
+    const svc = new CirculationService(db)
+    await svc.borrow(BOOK_A, READER_A, LIB_A)
+    const tx = await db
+      .select()
+      .from(borrowTransactions)
+      .where(eq(borrowTransactions.bookId, BOOK_A))
+      .get()
+    await svc.returnBook(tx!.id, READER_A, LIB_A)
+
+    const rows = await new AuditService(db).listByLibraryAction(LIB_A, 'circulation.return')
+    expect(rows).toHaveLength(1)
+    expect(rows[0].actorUserId).toBe(READER_A)
+    expect(rows[0].targetId).toBe(BOOK_A)
   })
 })

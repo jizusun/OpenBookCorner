@@ -145,6 +145,17 @@ Fetch these when you need current Drizzle (or, in Phase 2, Hono) guidance.
   service (tenant validation) → server functions → UI → tests → docs.
 - Keep changes scoped. Match existing conventions. Ask before destructive or production actions.
 
+### Write an ADR when a decision is architectural (do it proactively)
+
+When a change involves a non-trivial architectural or product decision — a new
+cross-cutting capability, a data-model/visibility/isolation choice, a tradeoff
+with lasting consequences, or anything future contributors would wonder "why was
+it done this way" — **write an ADR under `docs/adr/NNNN-title.md` as part of the
+work, without being asked**. Number sequentially; keep the existing format
+(Status, Context, Decision, Consequences, and References when research informed
+it). Small, local, or obvious changes do NOT need an ADR. When an ADR deepens or
+supersedes an earlier one, say so explicitly in the header.
+
 ### TDD: present the test plan before implementing (required)
 
 For EVERY implementation task, BEFORE writing code, present the complete test-case
