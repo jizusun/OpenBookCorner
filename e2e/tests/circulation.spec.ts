@@ -321,11 +321,30 @@ test.describe('Super admin (tenant management)', () => {
     await expect(page.getByRole('heading', { name: 'Tenants' })).toBeVisible()
 
     const unique = `Acme ${Date.now()}`
+    // Create is now a dialog, not an always-on form.
+    await page.getByTestId('create-tenant-open').click()
+    await expect(page.getByTestId('create-tenant-dialog')).toBeVisible()
     await page.getByLabel('Library name').fill(unique)
     await page.getByLabel(/Email domains/i).fill(`@acme${Date.now()}.com`)
     await page.getByRole('button', { name: 'Create library' }).click()
     await expect(page.getByText('Library created.')).toBeVisible()
     await expect(page.getByText(unique)).toBeVisible()
+  })
+
+  test('drills into a tenant detail page by clicking its name', async ({ page }) => {
+    await page.goto('/login', { waitUntil: 'domcontentloaded' })
+    await page.getByLabel('Email').fill('super@demo.test')
+    await page.getByLabel('Password').fill('password123')
+    await page.getByRole('button', { name: 'Sign In' }).click()
+    await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible()
+    await page.getByRole('link', { name: 'Tenants' }).first().click()
+    await expect(page.getByRole('heading', { name: 'Tenants' })).toBeVisible()
+    // Click the tenant name → tenant detail page (the drill-down).
+    await page.getByRole('link', { name: 'Acme Library' }).click()
+    await expect(page).toHaveURL(/\/admin\/tenants\/.+/)
+    await expect(page.getByRole('heading', { name: 'Acme Library' })).toBeVisible()
+    // Detail sections present.
+    await expect(page.getByText('Danger zone')).toBeVisible()
   })
 
   test('super admin stays in the system console (no view switch / reader preview)', async ({ page }) => {
