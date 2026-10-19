@@ -1,13 +1,15 @@
 import { useState } from 'react'
 import { ListPageSkeleton } from '@/components/ui/skeleton'
 import { createFileRoute, redirect, Link, useRouter } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { z } from 'zod'
 import { Trans, Plural, useLingui } from '@lingui/react/macro'
 import { api } from '@/lib/api'
 import { queryClient } from '@/lib/query'
 import { Button } from '@/components/ui/button'
+import { useToast } from '@/components/Toast'
 import { MemberImpersonateButton } from './MemberImpersonateButton'
+import { AddUserDialog } from './AddUserDialog'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -41,7 +43,9 @@ function MembersPage() {
   const router = useRouter()
   const { user } = Route.useRouteContext()
   const [term, setTerm] = useState(q ?? '')
+  const [addingMember, setAddingMember] = useState(false)
   const { t } = useLingui()
+  const toast = useToast()
 
   const { data: facets } = useQuery(api.member.facets.queryOptions())
 
@@ -50,6 +54,17 @@ function MembersPage() {
     api.member.list.query({ ...baseInput, page }),
   )
   const items = infinite.items
+
+  const addMember = useMutation({
+    ...api.member.create.mutationOptions(),
+    onSuccess: () => {
+      toast.success(t`Member added.`)
+      setAddingMember(false)
+      queryClient.invalidateQueries({ queryKey: ['member.list.infinite'] })
+    },
+    onError: (e: Error) =>
+      toast.error(e.message === 'EMAIL_TAKEN' ? t`That email is already in use.` : t`Could not add the member.`),
+  })
 
   function submit(e: React.FormEvent) {
     e.preventDefault()
@@ -64,11 +79,16 @@ function MembersPage() {
         <h1 className="text-2xl font-bold">
           <Trans>Members</Trans>
         </h1>
-        {!infinite.isLoading && (
-          <span className="text-sm text-muted-foreground">
-            <Plural value={infinite.total} one="# member" other="# members" />
-          </span>
-        )}
+        <div className="flex items-center gap-3">
+          {!infinite.isLoading && (
+            <span className="text-sm text-muted-foreground">
+              <Plural value={infinite.total} one="# member" other="# members" />
+            </span>
+          )}
+          <Button size="sm" onClick={() => setAddingMember(true)} data-testid="add-member-open">
+            <Trans>Add member</Trans>
+          </Button>
+        </div>
       </div>
 
       <form onSubmit={submit} className="flex gap-2" data-testid="member-search-form">
@@ -233,6 +253,14 @@ function MembersPage() {
         hasNextPage={infinite.hasNextPage}
         isFetchingNextPage={infinite.isFetchingNextPage}
         fetchNextPage={() => infinite.fetchNextPage()}
+      />
+
+      <AddUserDialog
+        open={addingMember}
+        title={t`Add member`}
+        pending={addMember.isPending}
+        onClose={() => setAddingMember(false)}
+        onSubmit={(v) => addMember.mutate(v)}
       />
     </div>
   )
