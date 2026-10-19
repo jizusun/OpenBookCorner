@@ -164,6 +164,17 @@ const call = {
     ),
   'admin.overview': () =>
     json<Ok<typeof client.admin.overview.$get>>(client.admin.overview.$get()),
+  'admin.audit': (i: { page?: number; limit?: number; libraryId?: string; action?: string } = {}) =>
+    json<Ok<typeof client.admin.audit.$get>>(
+      client.admin.audit.$get({
+        query: {
+          page: i.page != null ? String(i.page) : undefined,
+          limit: i.limit != null ? String(i.limit) : undefined,
+          libraryId: i.libraryId,
+          action: i.action,
+        },
+      }),
+    ),
 }
 
 type Endpoint = keyof typeof call
@@ -240,6 +251,7 @@ export const api = {
   admin: {
     users: node('admin.users'),
     overview: node('admin.overview'),
+    audit: node('admin.audit'),
   },
 }
 

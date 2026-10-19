@@ -100,3 +100,40 @@ describe('AuditService', () => {
     expect(await svc.listByLibrary(LIB_A)).toHaveLength(1)
   })
 })
+
+describe('AuditService.listAll (super-admin global, ADR 0005)', () => {
+  it('spans ALL tenants (incl. system-level), newest first, paginated with total', async () => {
+    const svc = new AuditService(db)
+    await svc.log({ actorUserId: ADMIN_A, libraryId: LIB_A, action: 'book.add', targetId: 'b1' })
+    await svc.log({ actorUserId: ADMIN_B, libraryId: LIB_B, action: 'book.add', targetId: 'b2' })
+    await svc.log({ actorUserId: ADMIN_A, libraryId: null, action: 'tenant.create', targetId: 'lib-x' })
+
+    const { items, total } = await svc.listAll({ page: 1, limit: 2 })
+    expect(total).toBe(3)
+    expect(items).toHaveLength(2)
+    // crosses tenants: both LIB_A and system-level rows are reachable across pages
+    const all = await svc.listAll({ page: 1, limit: 50 })
+    const libs = new Set(all.items.map((r) => r.libraryId))
+    expect(libs.has(LIB_A)).toBe(true)
+    expect(libs.has(LIB_B)).toBe(true)
+    expect(libs.has(null)).toBe(true)
+  })
+
+  it('filters by libraryId', async () => {
+    const svc = new AuditService(db)
+    await svc.log({ actorUserId: ADMIN_A, libraryId: LIB_A, action: 'book.add', targetId: 'b1' })
+    await svc.log({ actorUserId: ADMIN_B, libraryId: LIB_B, action: 'book.add', targetId: 'b2' })
+    const { items, total } = await svc.listAll({ libraryId: LIB_A })
+    expect(total).toBe(1)
+    expect(items.every((r) => r.libraryId === LIB_A)).toBe(true)
+  })
+
+  it('filters by action', async () => {
+    const svc = new AuditService(db)
+    await svc.log({ actorUserId: ADMIN_A, libraryId: LIB_A, action: 'book.add', targetId: 'b1' })
+    await svc.log({ actorUserId: ADMIN_A, libraryId: LIB_A, action: 'circulation.borrow', targetId: 'b1' })
+    const { items, total } = await svc.listAll({ action: 'circulation.borrow' })
+    expect(total).toBe(1)
+    expect(items[0].action).toBe('circulation.borrow')
+  })
+})
