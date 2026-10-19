@@ -28,6 +28,10 @@ export const serverApp = new Hono<{ Variables: BaseVars }>()
     const branding = await new TenantBrandingService(c.get('db')).getBySlug(slug)
     return c.json(branding)
   })
+  // Public, non-secret runtime config for the SPA. Exposes ONLY the environment
+  // name so the client can gate non-production affordances (e.g. the click-to-
+  // fill demo accounts, which must NEVER show in production).
+  .get('/api/public/config', (c) => c.json({ environment: c.get('env').ENVIRONMENT }))
   .on(['GET', 'POST'], '/api/auth/*', (c) => c.get('auth').handler(c.req.raw))
   .route('/api', apiApp)
   .get('/covers/:key', async (c) => {
