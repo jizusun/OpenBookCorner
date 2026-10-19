@@ -17,7 +17,7 @@ import { createMiddleware } from 'hono/factory'
 
 import type { Auth, AuthSession, AuthUser } from '../lib/auth'
 import type { Env } from '../lib/env'
-import type { BaseVars } from '../lib/mw'
+import type { BaseVars, RateLimiter } from '../lib/mw'
 import { serverApp } from './server'
 import type { Database } from '@obc/db'
 
@@ -41,6 +41,8 @@ export interface HarnessOptions {
   appOrigin?: string
   /** Override the environment (defaults to development). */
   environment?: Env['ENVIRONMENT']
+  /** Inject a rate limiter (for the public-endpoint 429 tests). */
+  rateLimiter?: RateLimiter
 }
 
 /** Build a stub `auth` whose `getSession` always resolves to the given session. */
@@ -89,6 +91,7 @@ export function createTestServer(opts: HarnessOptions) {
     c.set('db', opts.db)
     c.set('auth', auth)
     c.set('env', env)
+    if (opts.rateLimiter) c.set('rateLimiter', opts.rateLimiter)
     await next()
   })
 

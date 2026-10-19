@@ -4,14 +4,21 @@ import type { Auth, AuthSession, AuthUser } from './auth'
 import type { Database } from '@obc/db'
 import type { Env } from './env'
 
+/** Cloudflare native Rate Limiting binding (unsafe ratelimit). */
+export interface RateLimiter {
+  limit(options: { key: string }): Promise<{ success: boolean }>
+}
+
 /**
  * Variables available on EVERY request (set by the Worker before routing):
- * the per-request Drizzle db, the Better Auth instance, and the parsed env.
+ * the per-request Drizzle db, the Better Auth instance, the parsed env, and
+ * (optionally) the public rate limiter binding.
  */
 export type BaseVars = {
   db: Database
   auth: Auth
   env: Env
+  rateLimiter?: RateLimiter
 }
 
 /** After `sessionAuth`: a guaranteed authenticated user + session. */
@@ -39,6 +46,23 @@ export type TenantVars = AuthedVars & {
  */
 
 /** Requires an authenticated session; sets `user` + `session`. */
+/**
+ * Rate-limit the UNAUTHENTICATED public endpoints (/api/public/*) using the
+ * Workers native rate limiter, keyed by client IP (CF-Connecting-IP). Returns
+ * 429 when exceeded. No-op when the binding is absent (e.g. local dev / tests),
+ * so it never blocks local work. Per-location eventually-consistent counters —
+ * basic abuse protection for the Free-plan D1 (ADR 0003).
+ */
+export const publicRateLimit = createMiddleware<{ Variables: BaseVars }>(async (c, next) => {
+  const limiter = c.get('rateLimiter')
+  if (limiter) {
+    const ip = c.req.header('cf-connecting-ip') ?? c.req.header('x-forwarded-for') ?? 'anon'
+    const { success } = await limiter.limit({ key: `public:${ip}` })
+    if (!success) return c.json({ error: 'RATE_LIMITED' }, 429)
+  }
+  await next()
+})
+
 export const sessionAuth = createMiddleware<{ Variables: AuthedVars }>(async (c, next) => {
   const auth = c.get('auth')
   const data = await auth.api.getSession({ headers: c.req.raw.headers })

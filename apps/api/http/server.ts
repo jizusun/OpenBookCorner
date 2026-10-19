@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
 
+import { publicRateLimit } from '../lib/mw'
 import type { BaseVars } from '../lib/mw'
 import { TenantBrandingService } from '../services/branding'
 import { apiApp } from './app'
@@ -16,6 +17,8 @@ import { apiApp } from './app'
  */
 export const serverApp = new Hono<{ Variables: BaseVars }>()
   .get('/health', (c) => c.json({ status: 'healthy', timestamp: new Date().toISOString() }))
+  // Rate-limit all unauthenticated public endpoints (branding + config).
+  .use('/api/public/*', publicRateLimit)
   // Public, pre-auth branding for the tenant login page. Path-based tenancy:
   // the client reads the slug from the `/t/:slug` path and passes it as ?slug=.
   // Returns null (200) for a missing/invalid/unknown slug so the client shows

@@ -13,6 +13,7 @@ import {
   envSchema,
   type Env,
   parseOriginPatterns,
+  type RateLimiter,
   resolveEffectiveOrigin,
   serverApp,
 } from '@obc/api'
@@ -21,6 +22,7 @@ type CloudflareEnv = {
   ASSETS: Fetcher
   DB: D1Database
   COVERS: R2Bucket
+  PUBLIC_RATE_LIMITER?: RateLimiter
   APP_ORIGIN?: string
   APP_ORIGINS?: string
   APP_NAME?: string
@@ -75,6 +77,7 @@ const setup = createMiddleware<{ Bindings: CloudflareEnv; Variables: BaseVars }>
     c.set('db', db)
     c.set('auth', createAuth(db, env))
     c.set('env', env)
+    if (c.env.PUBLIC_RATE_LIMITER) c.set('rateLimiter', c.env.PUBLIC_RATE_LIMITER)
     await next()
   },
 )

@@ -27,6 +27,21 @@
   ],
   "r2_buckets": [{ "binding": "COVERS", "bucket_name": "openbookcorner-covers" }],
 
+  // Native Workers Rate Limiting binding (no KV/DO needed) to protect the
+  // UNAUTHENTICATED public endpoints (/api/public/*) — each valid-looking ?slug=
+  // triggers a D1 query, so cap anonymous traffic (ADR 0003). Per-location,
+  // eventually-consistent counters (sufficient for basic abuse protection).
+  "unsafe": {
+    "bindings": [
+      {
+        "name": "PUBLIC_RATE_LIMITER",
+        "type": "ratelimit",
+        "namespace_id": "1001",
+        "simple": { "limit": 30, "period": 60 }
+      }
+    ]
+  },
+
   // Custom-domain route for BOTH production and preview traffic. Preview URLs
   // become <preview-name>.openbookcorner.jizu.dev, which the existing advanced
   // certificate (*.openbookcorner.jizu.dev) already covers — no ACM/Total TLS
