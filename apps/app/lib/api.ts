@@ -152,11 +152,12 @@ const call = {
         },
       }),
     ),
-  'admin.users': (i: { search?: string; page?: number; limit?: number } = {}) =>
+  'admin.users': (i: { search?: string; libraryId?: string; page?: number; limit?: number } = {}) =>
     json<Ok<typeof client.admin.users.$get>>(
       client.admin.users.$get({
         query: {
           search: i.search,
+          libraryId: i.libraryId,
           page: i.page != null ? String(i.page) : undefined,
           limit: i.limit != null ? String(i.limit) : undefined,
         },

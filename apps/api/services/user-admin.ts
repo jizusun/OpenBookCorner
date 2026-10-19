@@ -1,9 +1,11 @@
-import { desc, eq, like, or, sql } from 'drizzle-orm'
+import { and, desc, eq, like, or, sql } from 'drizzle-orm'
 
 import { libraries, user, type Database } from '@obc/db'
 
 export interface UserListFilters {
   search?: string
+  /** Restrict to one tenant (super-admin tenant-detail "Users" section). */
+  libraryId?: string
   /** 1-based page. */
   page?: number
   limit?: number
@@ -32,12 +34,15 @@ export class UserAdminService {
     const page = Math.max(filters.page ?? 1, 1)
     const offset = (page - 1) * limit
 
-    const where = filters.search
+    const searchWhere = filters.search
       ? or(
           like(sql`lower(${user.name})`, `%${filters.search.toLowerCase()}%`),
           like(sql`lower(${user.email})`, `%${filters.search.toLowerCase()}%`),
         )
       : undefined
+    const libraryWhere = filters.libraryId ? eq(user.libraryId, filters.libraryId) : undefined
+    const conds = [searchWhere, libraryWhere].filter(Boolean)
+    const where = conds.length ? and(...(conds as [typeof conds[number]])) : undefined
 
     const rows = await this.db
       .select({
