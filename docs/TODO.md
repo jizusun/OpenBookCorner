@@ -34,10 +34,7 @@ Branch: `feat/impersonation`. Tick items as they land (commit hash in parens).
   `UPDATE user SET role='library_reader' WHERE role IS NULL OR role='user'`.
 - [ ] **Users page: impersonate button only on some rows** — resolved by the
   role fix; admins/super/self correctly have no button. (verify after deploy)
-- [ ] **Tenant detail: section/label mismatch** — the "Readers" section header
-  sits above an **"Add admin"** button and "No readers" empty state. Adding an
-  admin creates a USER (account), shown under a READER roster section → confusing.
-  Rework: separate "Add admin" (account) from the reader roster, or relabel.
+- [x] **Tenant detail: section/label mismatch** — FIXED: detail now lists Users (accounts) via admin.users?libraryId, header 'Users', 'Add admin' creates a user, impersonate via canImpersonateUser. (16d7f85)
 
 ## Done (recent)
 
