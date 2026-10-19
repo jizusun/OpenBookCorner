@@ -1,4 +1,4 @@
-import { and, desc, eq } from 'drizzle-orm'
+import { and, desc, eq, isNull } from 'drizzle-orm'
 
 import { auditLogs, type Database } from '@obc/db'
 
@@ -62,6 +62,21 @@ export class AuditService {
       .select()
       .from(auditLogs)
       .where(and(eq(auditLogs.libraryId, libraryId), eq(auditLogs.action, action)))
+      .orderBy(desc(auditLogs.createdAt))
+      .limit(limit)
+  }
+
+  /**
+   * System-level audit entries (libraryId IS NULL) — cross-tenant ops like
+   * tenant.create / tenant.setActive / tenant.update / tenant.delete. Super-admin
+   * only (these have no tenant scope, so listByLibrary can never surface them).
+   */
+  async listSystem(opts: { limit?: number } = {}) {
+    const limit = Math.min(opts.limit ?? 100, 500)
+    return this.db
+      .select()
+      .from(auditLogs)
+      .where(isNull(auditLogs.libraryId))
       .orderBy(desc(auditLogs.createdAt))
       .limit(limit)
   }

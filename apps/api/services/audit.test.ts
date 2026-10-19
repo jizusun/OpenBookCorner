@@ -85,4 +85,18 @@ describe('AuditService', () => {
     expect(adds).toHaveLength(2)
     expect(adds.every((r) => r.action === 'book.add')).toBe(true)
   })
+
+  it('listSystem returns only system-level entries (libraryId IS NULL)', async () => {
+    const svc = new AuditService(db)
+    await svc.log({ actorUserId: ADMIN_A, libraryId: null, action: 'tenant.create', targetId: 'lib-new' })
+    await svc.log({ actorUserId: ADMIN_A, libraryId: null, action: 'tenant.setActive', targetId: 'lib-new' })
+    await svc.log({ actorUserId: ADMIN_A, libraryId: LIB_A, action: 'book.add', targetId: 'b1' }) // tenant-scoped
+
+    const sys = await svc.listSystem()
+    expect(sys).toHaveLength(2)
+    expect(sys.every((r) => r.libraryId === null)).toBe(true)
+    expect(sys.map((r) => r.action).sort()).toEqual(['tenant.create', 'tenant.setActive'])
+    // tenant-scoped reads never see the system entries.
+    expect(await svc.listByLibrary(LIB_A)).toHaveLength(1)
+  })
 })

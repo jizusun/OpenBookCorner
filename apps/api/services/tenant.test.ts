@@ -47,11 +47,14 @@ describe('TenantAdminService (super-admin, cross-tenant)', () => {
     const svc = new TenantAdminService(db)
 
     const off = await svc.setActive('lib-x', false)
-    expect(off).toEqual({ id: 'lib-x', isActive: false })
+    expect(off).toEqual({ id: 'lib-x', isActive: false, updated: true })
     expect((await svc.listAll()).find((l) => l.id === 'lib-x')!.isActive).toBe(false)
 
     await svc.setActive('lib-x', true)
     expect((await svc.listAll()).find((l) => l.id === 'lib-x')!.isActive).toBe(true)
+
+    // Unknown id → not updated (handler returns 404, no audit).
+    expect((await svc.setActive('nope', false)).updated).toBe(false)
   })
 
   it('new library is immediately visible to its own catalog (tenant isolation intact)', async () => {
