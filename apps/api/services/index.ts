@@ -11,6 +11,7 @@ import {
 } from '@obc/db'
 
 import { isValidSlug, slugify } from '../lib/tenant'
+import { AuditService } from './audit'
 
 const DEFAULT_BORROW_DAYS = 14
 
@@ -299,6 +300,15 @@ export class CirculationService {
       dueDate: due.toISOString(),
     })
 
+    // Audit (ADR 0005): tenant-scoped; actor = the borrowing user, target = book.
+    await new AuditService(this.db).log({
+      actorUserId: userId,
+      libraryId,
+      action: 'circulation.borrow',
+      targetType: 'book',
+      targetId: bookId,
+    })
+
     return { dueDate: due.toISOString() }
   }
 
@@ -342,6 +352,15 @@ export class CirculationService {
       })
       .where(eq(books.id, bookId))
       .run()
+
+    // Audit (ADR 0005): tenant-scoped; actor = the returning user, target = book.
+    await new AuditService(this.db).log({
+      actorUserId: userId,
+      libraryId,
+      action: 'circulation.return',
+      targetType: 'book',
+      targetId: bookId,
+    })
 
     return { success: true }
   }
