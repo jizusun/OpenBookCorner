@@ -5,8 +5,7 @@ import {
   isValidSlug,
   parseOriginPatterns,
   resolveEffectiveOrigin,
-  resolveTenantHost,
-  RESERVED_SUBDOMAINS,
+  resolveTenantPath,
 } from './tenant'
 
 describe('isValidSlug', () => {
@@ -28,46 +27,35 @@ describe('isValidSlug', () => {
     expect(isValidSlug('')).toBe(false)
   })
 
-  it('rejects reserved subdomains', () => {
-    for (const r of RESERVED_SUBDOMAINS) expect(isValidSlug(r)).toBe(false)
-    expect(isValidSlug('www')).toBe(false)
+  it('rejects reserved slugs (route-colliding words)', () => {
     expect(isValidSlug('admin')).toBe(false)
-    expect(isValidSlug('preview')).toBe(false)
+    expect(isValidSlug('api')).toBe(false)
+    expect(isValidSlug('login')).toBe(false)
   })
 })
 
-describe('resolveTenantHost', () => {
-  const base = 'openbookcorner.jizu.dev'
-
-  it('returns the slug for a tenant subdomain', () => {
-    expect(resolveTenantHost('acme.openbookcorner.jizu.dev', base)).toBe('acme')
-    expect(resolveTenantHost('my-lib.openbookcorner.jizu.dev', base)).toBe('my-lib')
+describe('resolveTenantPath (/t/:slug path-based tenants)', () => {
+  it('returns the slug for a /t/:slug path', () => {
+    expect(resolveTenantPath('/t/acme')).toBe('acme')
+    expect(resolveTenantPath('/t/acme/')).toBe('acme')
+    expect(resolveTenantPath('/t/acme/books')).toBe('acme')
+    expect(resolveTenantPath('/t/my-lib/admin/members')).toBe('my-lib')
   })
 
-  it('returns null for the apex (no tenant)', () => {
-    expect(resolveTenantHost('openbookcorner.jizu.dev', base)).toBeNull()
+  it('returns null when there is no /t/ prefix', () => {
+    expect(resolveTenantPath('/')).toBeNull()
+    expect(resolveTenantPath('/books')).toBeNull()
+    expect(resolveTenantPath('/login')).toBeNull()
+    expect(resolveTenantPath('')).toBeNull()
+    expect(resolveTenantPath('/t')).toBeNull()
+    expect(resolveTenantPath('/t/')).toBeNull()
   })
 
-  it('returns null for reserved subdomains (preview, pr-N, www, admin, api, app)', () => {
-    expect(resolveTenantHost('preview.openbookcorner.jizu.dev', base)).toBeNull()
-    expect(resolveTenantHost('pr-42.openbookcorner.jizu.dev', base)).toBeNull()
-    expect(resolveTenantHost('www.openbookcorner.jizu.dev', base)).toBeNull()
-    expect(resolveTenantHost('admin.openbookcorner.jizu.dev', base)).toBeNull()
-    expect(resolveTenantHost('api.openbookcorner.jizu.dev', base)).toBeNull()
-    expect(resolveTenantHost('app.openbookcorner.jizu.dev', base)).toBeNull()
-  })
-
-  it('returns null for a foreign domain or a multi-label subdomain', () => {
-    expect(resolveTenantHost('acme.evil.com', base)).toBeNull()
-    expect(resolveTenantHost('a.b.openbookcorner.jizu.dev', base)).toBeNull() // only single-label tenant
-  })
-
-  it('ignores a port on the host', () => {
-    expect(resolveTenantHost('acme.openbookcorner.jizu.dev:666', base)).toBe('acme')
-  })
-
-  it('rejects an invalid-slug subdomain', () => {
-    expect(resolveTenantHost('AC_ME.openbookcorner.jizu.dev', base)).toBeNull()
+  it('returns null for an invalid or reserved slug segment', () => {
+    expect(resolveTenantPath('/t/AC_ME')).toBeNull() // invalid chars
+    expect(resolveTenantPath('/t/a')).toBeNull() // too short
+    expect(resolveTenantPath('/t/admin')).toBeNull() // reserved
+    expect(resolveTenantPath('/t/-acme/books')).toBeNull() // leading hyphen
   })
 })
 

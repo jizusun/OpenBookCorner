@@ -1,7 +1,6 @@
 import { Hono } from 'hono'
 
 import type { BaseVars } from '../lib/mw'
-import { resolveTenantHost } from '../lib/tenant'
 import { TenantBrandingService } from '../services/branding'
 import { apiApp } from './app'
 
@@ -17,15 +16,14 @@ import { apiApp } from './app'
  */
 export const serverApp = new Hono<{ Variables: BaseVars }>()
   .get('/health', (c) => c.json({ status: 'healthy', timestamp: new Date().toISOString() }))
-  // Public, pre-auth branding for the tenant login page. Resolve the tenant from
-  // an explicit ?slug=, else from the request Host subdomain. Returns null (200)
-  // for the apex / reserved / unknown host so the client shows the standard
-  // login. Safe fields only (TenantBrandingService); never sensitive data.
+  // Public, pre-auth branding for the tenant login page. Path-based tenancy:
+  // the client reads the slug from the `/t/:slug` path and passes it as ?slug=.
+  // Returns null (200) for a missing/invalid/unknown slug so the client shows
+  // the standard login. Safe fields only (TenantBrandingService); no sensitive
+  // data. This is the ONLY place the slug is used server-side — it is NOT an
+  // auth boundary (isolation is the session `libraryId`).
   .get('/api/public/branding', async (c) => {
-    const env = c.get('env')
-    const base = env.TENANT_BASE_DOMAIN ?? new URL(env.APP_ORIGIN).hostname
-    const slug =
-      c.req.query('slug') ?? resolveTenantHost(c.req.header('host') ?? '', base) ?? undefined
+    const slug = c.req.query('slug')
     if (!slug) return c.json(null)
     const branding = await new TenantBrandingService(c.get('db')).getBySlug(slug)
     return c.json(branding)

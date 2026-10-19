@@ -1,39 +1,37 @@
 /**
- * Pure, dependency-free helpers for multi-tenant subdomains + proxy origin
- * trust (ADR 0003). Kept pure so they are cheaply unit-tested and reused by the
- * Worker, the branding endpoint, and the guards.
+ * Pure, dependency-free helpers for PATH-based multi-tenancy (/t/:slug, ADR
+ * 0003) + proxy origin trust. Kept pure so they are cheaply unit-tested and
+ * reused by the branding endpoint, the frontend router, and the relay logic.
  */
 
-/** Subdomains that are NEVER tenants (infra / reserved). */
-export const RESERVED_SUBDOMAINS = ['www', 'app', 'admin', 'api', 'preview'] as const
+/**
+ * Slugs that would collide with top-level app routes and so are never valid
+ * tenant slugs (defense-in-depth; the `/t/` prefix already namespaces tenants).
+ */
+export const RESERVED_SLUGS = ['www', 'app', 'admin', 'api', 'login', 'preview', 'health'] as const
 
 const SLUG_RE = /^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])$/ // 2–40, no leading/trailing hyphen
 
 /** A valid tenant slug: 2–40 chars, lowercase alnum + internal hyphens, not reserved. */
 export function isValidSlug(slug: string): boolean {
   if (!SLUG_RE.test(slug)) return false
-  if ((RESERVED_SUBDOMAINS as readonly string[]).includes(slug)) return false
-  if (/^pr-\d+$/.test(slug)) return false // per-PR preview hosts
+  if ((RESERVED_SLUGS as readonly string[]).includes(slug)) return false
+  if (/^pr-\d+$/.test(slug)) return false // per-PR preview artifacts
   return true
 }
 
 /**
- * Resolve the tenant slug from a request Host, or null when the host is the
- * apex, a reserved subdomain, a per-PR preview, a foreign domain, or otherwise
- * not a single-label valid tenant under `baseDomain`.
+ * Resolve the tenant slug from a request path of the form `/t/:slug/...`, or
+ * null when the path has no `/t/` prefix or the slug segment is invalid/reserved.
+ * Tenant membership itself is still enforced by the session `libraryId`; this is
+ * for client routing + branding, not the isolation boundary.
  */
-export function resolveTenantHost(host: string, baseDomain: string): string | null {
-  if (!host) return null
-  const hostname = host.split(':')[0]!.toLowerCase() // strip port
-  if (hostname === baseDomain) return null // apex
-  const suffix = `.${baseDomain}`
-  if (!hostname.endsWith(suffix)) return null // foreign domain
-  const label = hostname.slice(0, -suffix.length)
-  if (!label || label.includes('.')) return null // must be a single label
-  if (/^pr-\d+$/.test(label)) return null // per-PR preview
-  if ((RESERVED_SUBDOMAINS as readonly string[]).includes(label)) return null
-  if (!isValidSlug(label)) return null
-  return label
+export function resolveTenantPath(pathname: string): string | null {
+  if (!pathname) return null
+  const segments = pathname.split('/').filter(Boolean) // drop empty (leading/trailing slashes)
+  if (segments[0] !== 't' || segments.length < 2) return null
+  const slug = segments[1]!.toLowerCase()
+  return isValidSlug(slug) ? slug : null
 }
 
 /** A trusted-origin pattern: a host dot-suffix + an exact required port (null = https default 443). */
