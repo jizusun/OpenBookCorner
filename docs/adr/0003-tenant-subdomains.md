@@ -227,6 +227,39 @@ images come direct from Cloudflare's CDN and may be slow/blocked in China. If
 China-fast covers matter, proxy `/covers/*` through the relay too (or serve
 covers from the relayed origin). Out of scope for this ADR; noted for ops.
 
+### 8. TLS cost reality + the free-plan path (decision: stay free)
+
+The zone (`jizu.dev`) is on the **Free plan**. TLS coverage options, verified
+against the live zone (2026-10-19):
+
+- **Universal SSL (free)** covers the apex + ONE wildcard level: `jizu.dev` and
+  `*.jizu.dev`. The existing advanced cert already covers `openbookcorner.jizu.dev`
+  + `*.openbookcorner.jizu.dev`.
+- **Production multi-tenancy is therefore FREE**: tenant subdomains
+  (`acme.openbookcorner.jizu.dev`) are a single level under `openbookcorner.jizu.dev`
+  and are already covered by the existing `*.openbookcorner.jizu.dev` cert. No new
+  cert, no cost.
+- **A SEPARATE preview domain with live tenant subdomains is NOT free via
+  wildcard**: `acme.‹preview-base›` is two levels deep; a two-level wildcard
+  (`*.preview.openbookcorner.jizu.dev` or `*.obcpreview.jizu.dev`) requires
+  **Advanced Certificate Manager (~$10/mo per zone)**. Ordering one on Free is
+  rejected (API error 1450). **Decision: do NOT buy ACM.**
+
+**Free ways to get live preview tenant-subdomains (if ever wanted):**
+- **Cloudflare for SaaS free tier** — 100 custom hostnames at no charge, each
+  with an auto-issued per-hostname cert. Register preview tenant hostnames (e.g.
+  `acme.preview.openbookcorner.jizu.dev`) as custom hostnames routed to the
+  Worker fallback origin. $0 up to 100 hostnames; per-hostname registration
+  (not an automatic wildcard).
+
+**What we actually ship (free):** production tenant subdomains on the existing
+cert; previews stay at `preview.openbookcorner.jizu.dev` with the reserved-word
+carve-out (`RESERVED_SUBDOMAINS` + `pr-\d+`). Multi-tenancy is fully EXERCISED in
+preview without live tenant hosts via the Host-header integration tests and the
+branding endpoint's `?slug=` param. The `TENANT_BASE_DOMAIN` env makes upgrading
+to real preview tenant-subdomains (via Cloudflare for SaaS or ACM) a config flip
+later — no code change.
+
 ## Security requirements (non-negotiable)
 
 1. `user.libraryId` (from the session) is the sole isolation source of truth;
