@@ -12,7 +12,7 @@ import { Trans, useLingui } from '@lingui/react/macro'
 import { BookListSkeleton, ListPageSkeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
 import { useInfiniteList, LoadMoreSentinel } from '@/components/InfiniteList'
-import { useViewMode } from '@/lib/view-mode'
+import { useReaderPreview } from '@/lib/view-mode'
 
 const sortSchema = z.enum(['enteredAt', 'title', 'author', 'available', 'price'])
 const availabilitySchema = z.enum(['all', 'available', 'borrowed'])
@@ -46,8 +46,8 @@ function CatalogPage() {
 
   const { data: user } = useQuery(api.auth.me.queryOptions())
   const isAdmin = user?.role === 'library_admin' || user?.role === 'super_admin'
-  const viewMode = useViewMode()
-  const manageMode = isAdmin && viewMode === 'admin'
+  const readerPreview = useReaderPreview()
+  const manageMode = isAdmin && !readerPreview
 
   const { data: facets } = useQuery(api.book.facets.queryOptions())
 

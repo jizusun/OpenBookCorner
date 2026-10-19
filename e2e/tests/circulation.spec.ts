@@ -182,14 +182,14 @@ test.describe('Admin', () => {
     await expect(page.getByRole('link', { name: 'Add Book' }).first()).toBeVisible()
   })
 
-  test('admin can switch to Reader view, gets My Books + can borrow', async ({ page }) => {
+  test('admin can turn on Reader preview, gets My Books + can borrow', async ({ page }) => {
     await login(page, 'admin@demo.test', 'Library Catalog')
-    // Switch Admin -> Reader view.
-    await page.getByTestId('view-switch').click()
+    // Turn on Reader preview (library-admin-only secondary toggle).
+    await page.getByTestId('reader-preview-toggle').click()
     await expect(page.getByRole('heading', { name: 'My Books' })).toBeVisible()
     await expect(page.getByRole('link', { name: 'My Books' }).first()).toBeVisible()
     await expect(page.getByRole('link', { name: 'Scan' }).first()).toBeVisible()
-    // In Reader view the admin can borrow from the catalog.
+    // In reader preview the admin can borrow from the catalog.
     await page.getByRole('link', { name: 'Catalog' }).first().click()
     await expect(page.getByRole('heading', { name: 'Library Catalog' })).toBeVisible()
     const borrowBtn = page.getByRole('button', { name: 'Borrow' }).first()
@@ -253,8 +253,8 @@ test.describe('Admin', () => {
     await page.getByRole('button', { name: 'Add Book' }).click()
     await expect(page.getByTestId('add-success')).toBeVisible()
 
-    // Switch to Reader view to borrow (admin cannot borrow in Admin view).
-    await page.getByTestId('view-switch').click() // Admin -> Reader
+    // Turn on reader preview to borrow (admin cannot borrow in the admin surface).
+    await page.getByTestId('reader-preview-toggle').click()
     await expect(page.getByRole('heading', { name: 'My Books' })).toBeVisible()
 
     // Find the new 2-copy book in the catalog and open its detail.
@@ -328,17 +328,19 @@ test.describe('Super admin (tenant management)', () => {
     await expect(page.getByText(unique)).toBeVisible()
   })
 
-  test('can switch System -> Admin -> Reader views', async ({ page }) => {
+  test('super admin stays in the system console (no view switch / reader preview)', async ({ page }) => {
     await page.goto('/login', { waitUntil: 'domcontentloaded' })
     await page.getByLabel('Email').fill('super@demo.test')
     await page.getByLabel('Password').fill('password123')
     await page.getByRole('button', { name: 'Sign In' }).click()
     await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible()
-
-    await page.getByTestId('view-switch').click() // -> Admin
-    await expect(page.getByRole('heading', { name: 'Library Catalog' })).toBeVisible()
-    await page.getByTestId('view-switch').click() // -> Reader
-    await expect(page.getByRole('heading', { name: 'My Books' })).toBeVisible()
+    // The three-state view switch is retired; the super admin uses the system
+    // console + impersonation, not a role/scope switch.
+    await expect(page.getByTestId('view-switch')).toHaveCount(0)
+    await expect(page.getByTestId('reader-preview-toggle')).toHaveCount(0)
+    // System console nav is present.
+    await expect(page.getByRole('link', { name: 'Users' }).first()).toBeVisible()
+    await expect(page.getByRole('link', { name: 'Audit log' }).first()).toBeVisible()
   })
 })
 

@@ -17,16 +17,14 @@ async function loginSuper(page: Page) {
 }
 
 test.describe('Impersonation (super admin)', () => {
-  test('impersonate a reader → banner + reader view, then exit back to admin', async ({ page }) => {
+  test('impersonate a reader → banner + reader view, then exit back to console', async ({ page }) => {
     await loginSuper(page)
 
-    // Go to the tenant Members page (System → Admin view first).
-    await page.getByTestId('view-switch').click() // System -> Admin
-    await expect(page.getByRole('heading', { name: 'Library Catalog' })).toBeVisible()
-    await page.getByRole('link', { name: 'Members' }).first().click()
-    await expect(page.getByRole('heading', { name: 'Members' })).toBeVisible()
+    // System console → Users (global cross-tenant user directory).
+    await page.getByRole('link', { name: 'Users' }).first().click()
+    await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible()
 
-    // The linked reader row exposes the impersonate action to the super admin.
+    // A reader row exposes the impersonate action to the super admin.
     const impersonate = page.getByRole('button', { name: 'Sign in as them' }).first()
     await expect(impersonate).toBeVisible()
     await impersonate.click()
@@ -38,7 +36,7 @@ test.describe('Impersonation (super admin)', () => {
     await expect(page.getByRole('button', { name: 'Back to my account' })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'My Books' })).toBeVisible()
 
-    // Exit impersonation → banner gone, back to the super-admin (System) landing.
+    // Exit impersonation → banner gone, back to the super-admin console (Overview).
     await page.getByRole('button', { name: 'Back to my account' }).click()
     await expect(page.getByRole('status')).toHaveCount(0)
     await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible()

@@ -4,7 +4,7 @@ import { signIn } from '@/lib/auth-client'
 import { fetchBranding, type TenantBranding } from '@/lib/branding'
 import { fetchConfig, isDemoVisible } from '@/lib/config'
 import { queryClient } from '@/lib/query'
-import { setViewMode } from '@/lib/view-mode'
+import { setReaderPreview } from '@/lib/view-mode'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -168,14 +168,14 @@ export function LoginPage({ slug }: { slug?: string } = {}) {
       // stale value from a previous session doesn't misroute. Branding is
       // presentational only — it does NOT change this role-based routing.
       const role = (res.data?.user as { role?: string } | undefined)?.role
+      // Role determines the surface; clear any stale reader-preview from a prior
+      // session so a library admin starts in the admin surface.
+      setReaderPreview(false)
       if (role === 'super_admin') {
-        setViewMode('system')
         await router.navigate({ to: '/admin/overview' })
       } else if (role === 'library_admin') {
-        setViewMode('admin')
         await router.navigate({ to: '/books' })
       } else {
-        setViewMode('reader')
         await router.navigate({ to: '/my-books' })
       }
     } catch {
