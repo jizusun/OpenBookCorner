@@ -5,12 +5,19 @@ import { z } from 'zod'
 import type { AuthedVars } from '../lib/mw'
 import { sessionAuth, superAdmin } from '../lib/mw'
 import { MemberService, TenantAdminService } from '../services'
+import { createTenantUser, type CreateAccount } from '../services/onboard'
 import { AuditService } from '../services/audit'
 
 const createBody = z.object({
   name: z.string().min(1).max(120),
   emailDomains: z.array(z.string().min(1)).min(1),
   slug: z.string().min(2).max(40).optional(),
+})
+
+const createAdminBody = z.object({
+  email: z.string().email(),
+  name: z.string().min(1).max(120),
+  password: z.string().min(8).max(128),
 })
 
 const listMembersQuery = z.object({
@@ -50,6 +57,31 @@ export const tenantApp = new Hono<{ Variables: AuthedVars }>()
     const summary = await new TenantAdminService(c.get('db')).getById(c.req.param('id'))
     if (!summary) return c.json({ error: 'LIBRARY_NOT_FOUND' }, 404)
     return c.json(summary)
+  })
+  .post('/:id/admins', zValidator('json', createAdminBody), async (c) => {
+    const body = c.req.valid('json')
+    const createAccount: CreateAccount = async (input) => {
+      const createUserApi = (c.get('auth').api as unknown as {
+        createUser: (o: { body: { email: string; name: string; password: string } }) => Promise<{ user: { id: string } }>
+      }).createUser
+      const res = await createUserApi({
+        body: { email: input.email, name: input.name, password: input.password },
+      })
+      return { userId: (res as { user: { id: string } }).user.id }
+    }
+    const result = await createTenantUser(c.get('db'), createAccount, {
+      libraryId: c.req.param('id'), // target tenant from the path (super admin is cross-tenant)
+      email: body.email,
+      name: body.name,
+      password: body.password,
+      role: 'library_admin',
+      actorUserId: c.get('user').id,
+    })
+    if (result.error) {
+      const status = result.error === 'EMAIL_TAKEN' ? 409 : result.error === 'LIBRARY_NOT_FOUND' ? 404 : 400
+      return c.json({ error: result.error }, status)
+    }
+    return c.json({ id: result.userId }, 201)
   })
   .post('/', zValidator('json', createBody), async (c) => {
     const created = await new TenantAdminService(c.get('db')).create(c.req.valid('json'))

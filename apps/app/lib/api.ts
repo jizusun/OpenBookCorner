@@ -111,6 +111,8 @@ const call = {
     json<Ok<(typeof client.member)[':memberId']['$get']>>(
       client.member[':memberId'].$get({ param: i }),
     ),
+  'member.create': (i: { email: string; name: string; password: string }) =>
+    json<Ok<typeof client.member.$post>>(client.member.$post({ json: i })),
   'feedback.submit': (i: FeedbackInput) =>
     json<Ok<typeof client.feedback.$post>>(client.feedback.$post({ json: i })),
   'feedback.list': () => json<Ok<typeof client.feedback.$get>>(client.feedback.$get()),
@@ -130,6 +132,13 @@ const call = {
       client.tenant['set-active'].$post({ json: i }),
     ),
   'tenant.audit': () => json<Ok<typeof client.tenant.audit.$get>>(client.tenant.audit.$get()),
+  'tenant.addAdmin': (i: { id: string; email: string; name: string; password: string }) =>
+    json<Ok<(typeof client.tenant)[':id']['admins']['$post']>>(
+      client.tenant[':id'].admins.$post({
+        param: { id: i.id },
+        json: { email: i.email, name: i.name, password: i.password },
+      }),
+    ),
   'tenant.get': (i: { id: string }) =>
     json<Ok<(typeof client.tenant)[':id']['$get']>>(client.tenant[':id'].$get({ param: i })),
   'tenant.members': (i: { id: string; search?: string; page?: number; limit?: number }) =>
@@ -210,7 +219,12 @@ export const api = {
     importFanshuFromUrl: node('library.importFanshuFromUrl'),
     importHistory: node('library.importHistory'),
   },
-  member: { list: node('member.list'), facets: node('member.facets'), get: node('member.get') },
+  member: {
+    list: node('member.list'),
+    facets: node('member.facets'),
+    get: node('member.get'),
+    create: node('member.create'),
+  },
   feedback: { submit: node('feedback.submit'), list: node('feedback.list') },
   tenant: {
     list: node('tenant.list'),
@@ -219,6 +233,7 @@ export const api = {
     remove: node('tenant.remove'),
     setActive: node('tenant.setActive'),
     audit: node('tenant.audit'),
+    addAdmin: node('tenant.addAdmin'),
     get: node('tenant.get'),
     members: node('tenant.members'),
   },
