@@ -13,6 +13,15 @@ Branch: `feat/impersonation`. Tick items as they land (commit hash in parens).
 - [ ] **Audit task 4** — full verify + E2E (borrow → appears in super-admin
   audit, filterable) + commit + push + CI/Preview green.
 
+## Overview drill-down + missing Books page (steer 2026-10-20)
+
+- [ ] **Overview stat cards clickable** — Tenants/Users/Books numbers on
+  `/admin/overview` should each link to the corresponding list page.
+- [ ] **Super-admin should have 3 list pages**: tenants (have), users (have),
+  **all books across the system (MISSING)** — build `/admin/books` global book
+  list (super-admin, cross-tenant, paginated/searchable) + `GET /api/admin/books`.
+- [ ] Wire overview: Tenants→/admin/tenants, Users→/admin/users, Books→/admin/books.
+
 ## Bugs found (to fix)
 
 - [ ] **Users page: Role column empty** — `/admin/users` shows blank Role for

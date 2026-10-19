@@ -1,4 +1,4 @@
-import { and, desc, eq, isNull } from 'drizzle-orm'
+import { and, desc, eq, isNull, sql } from 'drizzle-orm'
 
 import { auditLogs, type Database } from '@obc/db'
 
@@ -79,5 +79,42 @@ export class AuditService {
       .where(isNull(auditLogs.libraryId))
       .orderBy(desc(auditLogs.createdAt))
       .limit(limit)
+  }
+
+  /**
+   * Super-admin GLOBAL audit (ADR 0005): spans ALL tenants (and system-level
+   * rows), newest first, paginated, optionally filtered by tenant and/or action.
+   * This is the only cross-tenant reader — it MUST be called behind the
+   * super-admin guard. Returns the (filtered) total for pagination.
+   */
+  async listAll(
+    opts: { page?: number; limit?: number; libraryId?: string; action?: string } = {},
+  ): Promise<{ items: (typeof auditLogs.$inferSelect)[]; total: number }> {
+    const limit = Math.min(Math.max(opts.limit ?? 50, 1), 200)
+    const page = Math.max(opts.page ?? 1, 1)
+    const offset = (page - 1) * limit
+
+    const filters = [
+      opts.libraryId ? eq(auditLogs.libraryId, opts.libraryId) : undefined,
+      opts.action ? eq(auditLogs.action, opts.action) : undefined,
+    ].filter(Boolean)
+    const where = filters.length ? and(...(filters as [typeof filters[number]])) : undefined
+
+    const items = await this.db
+      .select()
+      .from(auditLogs)
+      .where(where)
+      .orderBy(desc(auditLogs.createdAt))
+      .limit(limit)
+      .offset(offset)
+      .all()
+
+    const totalRow = await this.db
+      .select({ count: sql<number>`count(*)` })
+      .from(auditLogs)
+      .where(where)
+      .get()
+
+    return { items, total: totalRow?.count ?? 0 }
   }
 }
