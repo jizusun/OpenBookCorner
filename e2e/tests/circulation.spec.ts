@@ -297,8 +297,9 @@ test.describe('Super admin (tenant management)', () => {
     await page.getByRole('button', { name: 'Sign In' }).click()
     await expect(page.getByRole('heading', { name: 'Tenants' })).toBeVisible()
     await expect(page.getByRole('link', { name: 'Tenants' }).first()).toBeVisible()
-    // The demo library is listed.
-    await expect(page.getByText('Demo Library')).toBeVisible()
+    // The demo tenants are listed (two-tenant seed: Acme + Globex).
+    await expect(page.getByText('Acme Library')).toBeVisible()
+    await expect(page.getByText('Globex Library')).toBeVisible()
   })
 
   test('can create a new library (tenant)', async ({ page }) => {

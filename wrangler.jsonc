@@ -48,18 +48,11 @@
   "previews": {
     "vars": {
       "ENVIRONMENT": "preview",
-      "APP_NAME": "OpenBookCorner (Preview)",
-      // Preview tenant base is the preview host itself, so the preview host is
-      // never parsed as a production tenant (decoupled from production's
-      // TENANT_BASE_DOMAIN). On the FREE plan, LIVE preview tenant-subdomains
-      // (acme.preview.openbookcorner.jizu.dev, two levels) are NOT possible —
-      // Universal SSL covers only one wildcard level and the existing
-      // *.openbookcorner.jizu.dev cert does not cover *.preview.openbookcorner…
-      // Multi-tenancy is still fully exercised in preview via Host-header
-      // integration tests + the branding endpoint's ?slug= param. To get live
-      // preview tenant-subdomains for $0, use the Cloudflare for SaaS free tier
-      // (100 custom hostnames); or ACM ($10/mo) for a wildcard (ADR 0003 §8).
-      "TENANT_BASE_DOMAIN": "preview.openbookcorner.jizu.dev"
+      "APP_NAME": "OpenBookCorner (Preview)"
+      // Path-based tenancy (ADR 0003): tenants are `/t/:slug` on the single
+      // preview origin (preview.openbookcorner.jizu.dev) — no subdomains, no
+      // cert/DNS work. The preview has real multi-tenancy at
+      // preview.openbookcorner.jizu.dev/t/:slug.
     },
     "d1_databases": [
       {
