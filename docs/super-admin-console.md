@@ -329,3 +329,41 @@ page (or grouped), built on the merged impersonation baseline (PR #19).
   name/email. Do we need tenant/role filters in v1 or later?
 - **System settings**: confirmed read-only for now; revisit when a concrete
   writable setting is needed.
+
+
+## 11. Surface model — reader / admin / system (replaces "view switch")
+
+Today a single app shows a three-state **view switch** (System ⇄ Admin ⇄
+Reader). This conflates two different axes — **role** (reader vs. admin) and
+**scope** (one tenant vs. all tenants) — into one cycling button, and it overlaps
+with impersonation (a super admin "becoming a reader" is the same mental model as
+impersonating one, but implemented via a separate `view-mode` mechanism). It
+feels off because classic library systems (and most B2B SaaS) never make you
+*switch* — **your role decides what you see**.
+
+Target model (concept, not a physical split — still one `apps/app`):
+
+- **User surface (reader)** — `/my-books`, `/scan`, `/books`. Lightweight,
+  general-audience. A reader only ever sees this.
+- **Admin surface (librarian)** — `/admin/*` (members, overdue, settings,
+  import, catalog editing). A library_admin lands here and stays here. "See it as
+  a reader" is NOT a global view switch; it is either impersonation or a clearly
+  labelled, secondary **"Reader preview"** toggle — not a primary nav control.
+- **System console (super admin)** — `/admin/overview|tenants|users|audit|system`
+  (this document). To experience a specific tenant/user, the super admin uses
+  **impersonation** (banner + audit + exit), the single mechanism for
+  "view as someone else".
+
+Consequences:
+- **Retire the three-state view switch.** Role determines the surface; there is
+  no cycling button. This removes the "weird" UX and the duplicate
+  view-mode-vs-impersonation mechanisms.
+- **One "view as someone else" mechanism**: impersonation.
+- **"End" separation is expressed via layout + nav**, not a toggle: the admin
+  surface uses a denser operational layout; the user surface stays light.
+
+Sequencing: this retirement is the **final step**, done only after the five
+system pages exist — otherwise a super admin whose view switch is removed would
+have nowhere to go. Until then the view switch stays. Tracked as the closing
+task of the super-admin console work (may become its own small ADR when
+implemented).
