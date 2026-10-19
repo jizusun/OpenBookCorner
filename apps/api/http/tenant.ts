@@ -4,13 +4,19 @@ import { z } from 'zod'
 
 import type { AuthedVars } from '../lib/mw'
 import { sessionAuth, superAdmin } from '../lib/mw'
-import { TenantAdminService } from '../services'
+import { MemberService, TenantAdminService } from '../services'
 import { AuditService } from '../services/audit'
 
 const createBody = z.object({
   name: z.string().min(1).max(120),
   emailDomains: z.array(z.string().min(1)).min(1),
   slug: z.string().min(2).max(40).optional(),
+})
+
+const listMembersQuery = z.object({
+  search: z.string().optional(),
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).max(200).optional(),
 })
 
 const updateBody = z.object({
@@ -32,6 +38,19 @@ export const tenantApp = new Hono<{ Variables: AuthedVars }>()
   // delete/setActive. These have no tenant scope, so the tenant-scoped
   // /library/audit can never surface them (and a super admin has no libraryId).
   .get('/audit', async (c) => c.json(await new AuditService(c.get('db')).listSystem()))
+  // Single-tenant summary + that tenant's members (super-admin tenant detail).
+  // Members are read by the PATH libraryId (cross-tenant), distinct from the
+  // session-scoped /api/member endpoint. Register the longer path first.
+  .get('/:id/members', zValidator('query', listMembersQuery), async (c) =>
+    c.json(
+      await new MemberService(c.get('db')).listByLibrary(c.req.param('id'), c.req.valid('query')),
+    ),
+  )
+  .get('/:id', async (c) => {
+    const summary = await new TenantAdminService(c.get('db')).getById(c.req.param('id'))
+    if (!summary) return c.json({ error: 'LIBRARY_NOT_FOUND' }, 404)
+    return c.json(summary)
+  })
   .post('/', zValidator('json', createBody), async (c) => {
     const created = await new TenantAdminService(c.get('db')).create(c.req.valid('json'))
     await new AuditService(c.get('db')).log({
