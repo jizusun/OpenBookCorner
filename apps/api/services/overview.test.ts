@@ -43,7 +43,7 @@ describe('OverviewService.get', () => {
     expect(o.tenants).toHaveLength(2)
     const a = o.tenants.find((tn) => tn.id === LIB_A)!
     expect(a.bookCount).toBe(1)
-    // per-tenant memberCount counts members records: LIB_A has 2.
-    expect(a.memberCount).toBe(2)
+    // per-tenant userCount counts login accounts: LIB_A has 2 users (alice, bob).
+    expect(a.userCount).toBe(2)
   })
 })

@@ -49,8 +49,8 @@ test.describe('Impersonation (super admin)', () => {
     await page.getByRole('button', { name: 'Sign In' }).click()
     await expect(page.getByRole('heading', { name: 'Library Catalog' })).toBeVisible()
 
-    await page.getByRole('link', { name: 'Members' }).first().click()
-    await expect(page.getByRole('heading', { name: 'Members' })).toBeVisible()
+    await page.getByRole('link', { name: 'Readers' }).first().click()
+    await expect(page.getByRole('heading', { name: 'Readers' })).toBeVisible()
     // No impersonation control for a non-super-admin.
     await expect(page.getByRole('button', { name: 'Sign in as them' })).toHaveCount(0)
   })

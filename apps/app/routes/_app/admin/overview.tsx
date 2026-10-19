@@ -83,7 +83,7 @@ function OverviewPage() {
               </span>
               <span className="text-muted-foreground">
                 <Trans>
-                  {tn.memberCount} users · {tn.bookCount} books
+                  {tn.userCount} users · {tn.bookCount} books
                 </Trans>
               </span>
             </Link>

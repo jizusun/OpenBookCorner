@@ -133,14 +133,18 @@ function TenantDetailPage() {
             {editing ? <Trans>Cancel</Trans> : <Trans>Edit</Trans>}
           </Button>
         </div>
-        <dl className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-3">
+        <dl className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
           <div>
             <dt className="text-muted-foreground"><Trans>Email domains</Trans></dt>
             <dd>{tenant.emailDomains.join(', ')}</dd>
           </div>
           <div>
-            <dt className="text-muted-foreground"><Trans>Members</Trans></dt>
-            <dd>{tenant.memberCount}</dd>
+            <dt className="text-muted-foreground"><Trans>Users</Trans></dt>
+            <dd>{tenant.userCount}</dd>
+          </div>
+          <div>
+            <dt className="text-muted-foreground"><Trans>Readers</Trans></dt>
+            <dd>{tenant.readerCount}</dd>
           </div>
           <div>
             <dt className="text-muted-foreground"><Trans>Books</Trans></dt>
@@ -175,7 +179,7 @@ function TenantDetailPage() {
       <section className="space-y-2">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-muted-foreground">
-            <Trans>Members</Trans>
+            <Trans>Readers</Trans>
           </h2>
           <Button size="sm" variant="outline" onClick={() => setAddingAdmin(true)} data-testid="add-admin-open">
             <Trans>Add admin</Trans>
@@ -184,7 +188,7 @@ function TenantDetailPage() {
         {membersLoading ? (
           <Skeleton className="h-24 w-full" />
         ) : members.length === 0 ? (
-          <EmptyState icon="👥" title={<Trans>No members</Trans>} />
+          <EmptyState icon="👥" title={<Trans>No readers</Trans>} />
         ) : (
           <div className="overflow-x-auto rounded-md border" data-testid="tenant-members-table">
             <table className="w-full text-sm">

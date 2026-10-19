@@ -13,8 +13,8 @@ describe('TenantAdminService (super-admin, cross-tenant)', () => {
   it('lists all libraries with book + member counts', async () => {
     await seedLibrary(db, 'lib-a')
     await seedLibrary(db, 'lib-b')
-    await seedMember(db, 'm1', 'lib-a')
-    await seedMember(db, 'm2', 'lib-a')
+    await seedUser(db, 'u1', 'lib-a')
+    await seedUser(db, 'u2', 'lib-a')
     await seedBook(db, 'bk1', 'lib-a')
 
     const svc = new TenantAdminService(db)
@@ -23,9 +23,9 @@ describe('TenantAdminService (super-admin, cross-tenant)', () => {
     expect(all).toHaveLength(2)
     const a = all.find((l) => l.id === 'lib-a')!
     const b = all.find((l) => l.id === 'lib-b')!
-    expect(a.memberCount).toBe(2) // counts members records (same as detail page)
+    expect(a.userCount).toBe(2) // counts login accounts (users), not 番薯 readers
     expect(a.bookCount).toBe(1)
-    expect(b.memberCount).toBe(0)
+    expect(b.userCount).toBe(0)
     expect(b.bookCount).toBe(0)
   })
 
