@@ -78,6 +78,11 @@ export function createAuth(db: Database, env: Env): Auth {
         ac,
         roles: { super_admin: superAdminRole },
         adminRoles: ['super_admin'],
+        // New sign-ups default to library_reader (our role set). WITHOUT this the
+        // admin plugin assigns its own default role 'user', which is outside our
+        // {super_admin, library_admin, library_reader} set and breaks role-based
+        // UI/guards (e.g. empty Role column, no impersonate affordance).
+        defaultRole: 'library_reader',
         impersonationSessionDuration: IMPERSONATION_DURATION_SECONDS,
       }),
     ],

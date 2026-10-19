@@ -24,15 +24,16 @@ Branch: `feat/impersonation`. Tick items as they land (commit hash in parens).
 
 ## Bugs found (to fix)
 
-- [ ] **Users page: Role column empty** — `/admin/users` shows blank Role for
-  every row. Backend selects `user.role`; UI renders `roleLabel(u.role)`.
-  Suspect: preview DB rows have empty/null `role` (seed path). NEED to confirm
-  actual `user.role` values in preview D1 (blocked: wrangler needs
-  CLOUDFLARE_API_TOKEN; use `cf` OAuth or seed-users path). Then fix root cause
-  (seed sets role, or UI/back-end default).
-- [ ] **Users page: impersonate button only on some rows** — EXPECTED for
-  admins/super (not impersonable) + self; but verify it's role-driven and not a
-  side effect of the empty-role bug. Tie to the Role-empty fix.
+- [x] **Users page: Role column empty** — ROOT CAUSE: Better Auth admin plugin
+  assigned its own default role `"user"` to sign-ups, overriding our
+  `library_reader` default (outside our role set → empty label / no impersonate).
+  FIX: `admin({ defaultRole: 'library_reader' })`. Verified new sign-ups now get
+  `library_reader`. (commit pending)
+- [ ] **One-off data fix**: existing preview users created before the fix may
+  have role `user`/NULL (e.g. the real signup hongyan@sap). Backfill
+  `UPDATE user SET role='library_reader' WHERE role IS NULL OR role='user'`.
+- [ ] **Users page: impersonate button only on some rows** — resolved by the
+  role fix; admins/super/self correctly have no button. (verify after deploy)
 - [ ] **Tenant detail: section/label mismatch** — the "Readers" section header
   sits above an **"Add admin"** button and "No readers" empty state. Adding an
   admin creates a USER (account), shown under a READER roster section → confusing.
