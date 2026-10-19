@@ -541,6 +541,10 @@ msgstr "Delete this book?"
 msgid "Deleting…"
 msgstr "Deleting…"
 
+#: routes/login.tsx:59
+msgid "Demo accounts (non-production) — tap to fill in"
+msgstr "Demo accounts (non-production) — tap to fill in"
+
 #: routes/_app/admin/members.$memberId.tsx:78
 msgid "Department"
 msgstr "Department"
@@ -594,7 +598,7 @@ msgid "Edit Book"
 msgstr "Edit Book"
 
 #: routes/_app/admin/members.$memberId.tsx:73
-#: routes/login.tsx:129
+#: routes/login.tsx:205
 msgid "Email"
 msgstr "Email"
 
@@ -908,7 +912,7 @@ msgstr "Overdue Books"
 msgid "Pages"
 msgstr "Pages"
 
-#: routes/login.tsx:140
+#: routes/login.tsx:216
 msgid "Password"
 msgstr "Password"
 
@@ -1094,12 +1098,12 @@ msgstr "Shelf"
 msgid "Shelved"
 msgstr "Shelved"
 
-#: routes/login.tsx:152
+#: routes/login.tsx:228
 msgid "Sign in"
 msgstr "Sign in"
 
-#: routes/login.tsx:37
-#: routes/login.tsx:48
+#: routes/login.tsx:101
+#: routes/login.tsx:112
 msgid "Sign in to your library"
 msgstr "Sign in to your library"
 
@@ -1112,7 +1116,7 @@ msgstr "Sign out"
 msgid "Signed in as {0}"
 msgstr "Signed in as {0}"
 
-#: routes/login.tsx:152
+#: routes/login.tsx:228
 msgid "Signing in…"
 msgstr "Signing in…"
 
@@ -1189,8 +1193,8 @@ msgstr "Tenants"
 msgid "Thanks for your feedback! 🎉"
 msgstr "Thanks for your feedback! 🎉"
 
-#: routes/login.tsx:83
-#: routes/login.tsx:106
+#: routes/login.tsx:159
+#: routes/login.tsx:182
 msgid "That email or password doesn’t match. Please try again."
 msgstr "That email or password doesn’t match. Please try again."
 
@@ -1264,7 +1268,7 @@ msgstr "View in My Books"
 msgid "We could not process this return. It may already be returned."
 msgstr "We could not process this return. It may already be returned."
 
-#: routes/login.tsx:45
+#: routes/login.tsx:109
 msgid "Welcome back"
 msgstr "Welcome back"
 

@@ -17,7 +17,12 @@ vi.mock('@/lib/branding', async () => {
   const actual = await vi.importActual<typeof import('@/lib/branding')>('@/lib/branding')
   return { ...actual, fetchBranding: vi.fn() }
 })
+vi.mock('@/lib/config', async () => {
+  const actual = await vi.importActual<typeof import('@/lib/config')>('@/lib/config')
+  return { ...actual, fetchConfig: vi.fn() }
+})
 import { fetchBranding } from '@/lib/branding'
+import { fetchConfig } from '@/lib/config'
 
 const branding: TenantBranding = {
   name: 'Acme Library',
@@ -80,25 +85,49 @@ describe('LoginPage (branded vs standard, demo accounts)', () => {
 
   beforeEach(() => {
     vi.mocked(fetchBranding).mockReset()
+    vi.mocked(fetchConfig).mockReset()
+    // Default to a non-production environment so demo accounts are visible.
+    vi.mocked(fetchConfig).mockResolvedValue({ environment: 'preview' })
   })
   afterEach(() => {
     vi.clearAllMocks()
   })
 
-  it('shows the tenant name and never shows demo accounts on a branded host', async () => {
-    vi.mocked(fetchBranding).mockResolvedValue(branding)
+  it('shows the standard header on the apex (no branding)', async () => {
+    vi.mocked(fetchBranding).mockResolvedValue(null)
     renderLogin()
-    await waitFor(() => expect(screen.getByTestId('branded-name')).toBeInTheDocument())
+    // Default locale is Chinese; the standard header is "欢迎回来".
+    await waitFor(() => expect(screen.getByText('欢迎回来')).toBeInTheDocument())
+    expect(screen.queryByTestId('branded-name')).not.toBeInTheDocument()
+  })
+
+  it('shows click-to-fill demo accounts (incl. super admin) on the apex in non-production', async () => {
+    vi.mocked(fetchBranding).mockResolvedValue(null)
+    vi.mocked(fetchConfig).mockResolvedValue({ environment: 'preview' })
+    renderLogin()
+    await waitFor(() => expect(screen.getByTestId('demo-accounts')).toBeInTheDocument())
+    // Apex shows all five, including the super admin.
+    expect(screen.getByText('super@demo.test · password123')).toBeInTheDocument()
+    expect(screen.getByText('admin@demo.test · password123')).toBeInTheDocument()
+    expect(screen.getByText('admin@globex.test · password123')).toBeInTheDocument()
+  })
+
+  it('HIDES demo accounts in production (fail-closed)', async () => {
+    vi.mocked(fetchBranding).mockResolvedValue(null)
+    vi.mocked(fetchConfig).mockResolvedValue({ environment: 'production' })
+    renderLogin()
+    await waitFor(() => expect(screen.getByText('欢迎回来')).toBeInTheDocument())
     expect(screen.queryByTestId('demo-accounts')).not.toBeInTheDocument()
   })
 
-  it('shows the standard login (no branding, no demo accounts) on the apex', async () => {
+  it('a demo button fills the email + password fields', async () => {
     vi.mocked(fetchBranding).mockResolvedValue(null)
+    vi.mocked(fetchConfig).mockResolvedValue({ environment: 'preview' })
     renderLogin()
-    // Default locale is Chinese; the standard header is "欢迎回来". Demo accounts
-    // were removed from the product.
-    await waitFor(() => expect(screen.getByText('欢迎回来')).toBeInTheDocument())
-    expect(screen.queryByTestId('demo-accounts')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('branded-name')).not.toBeInTheDocument()
+    const btn = await screen.findByText('admin@demo.test · password123')
+    btn.click()
+    await waitFor(() =>
+      expect((screen.getByLabelText('邮箱') as HTMLInputElement).value).toBe('admin@demo.test'),
+    )
   })
 })
