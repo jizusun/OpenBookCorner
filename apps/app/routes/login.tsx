@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label'
 import { LanguageToggle } from '@/components/LanguageToggle'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
-export const Route = createFileRoute('/login')({ component: LoginPage })
+export const Route = createFileRoute('/login')({ component: () => <LoginPage /> })
 
 /**
  * Login header. When `branding` is present (the request Host resolved to a
@@ -83,7 +83,7 @@ function DemoAccounts({ onFill }: { onFill: (demo: { email: string; password: st
   )
 }
 
-function LoginPage() {
+export function LoginPage({ slug }: { slug?: string } = {}) {
   const router = useRouter()
   const { t } = useLingui()
   const [email, setEmail] = useState('')
@@ -96,13 +96,13 @@ function LoginPage() {
 
   useEffect(() => {
     let active = true
-    void fetchBranding().then((b) => {
+    void fetchBranding(slug).then((b) => {
       if (active) setBranding(b)
     })
     return () => {
       active = false
     }
-  }, [])
+  }, [slug])
 
   function fillDemo(demo: { email: string; password: string }) {
     setEmail(demo.email)

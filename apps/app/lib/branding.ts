@@ -18,14 +18,17 @@ export interface TenantBranding {
 }
 
 /**
- * Fetch the current host's tenant branding (same-origin, cookies included for
- * parity with the rest of the API client). Returns `null` for the apex / an
- * unknown host, or if the request fails — the caller then renders the standard
- * unbranded login. Never throws.
+ * Fetch a tenant's login branding by slug (same-origin, cookies included).
+ * Path-based tenancy: the caller reads the slug from the `/t/:slug` path and
+ * passes it here. Returns `null` for a missing/unknown slug or on failure — the
+ * caller then renders the standard unbranded login. Never throws.
  */
-export async function fetchBranding(): Promise<TenantBranding | null> {
+export async function fetchBranding(slug: string | undefined): Promise<TenantBranding | null> {
+  if (!slug) return null
   try {
-    const res = await fetch('/api/public/branding', { credentials: 'include' })
+    const res = await fetch(`/api/public/branding?slug=${encodeURIComponent(slug)}`, {
+      credentials: 'include',
+    })
     if (!res.ok) return null
     const body = (await res.json()) as TenantBranding | null
     return body ?? null
