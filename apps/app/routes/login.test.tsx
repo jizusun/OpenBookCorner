@@ -85,17 +85,20 @@ describe('LoginPage (branded vs standard, demo accounts)', () => {
     vi.clearAllMocks()
   })
 
-  it('hides the demo accounts and shows the tenant name on a branded host', async () => {
+  it('shows the tenant name and never shows demo accounts on a branded host', async () => {
     vi.mocked(fetchBranding).mockResolvedValue(branding)
     renderLogin()
     await waitFor(() => expect(screen.getByTestId('branded-name')).toBeInTheDocument())
     expect(screen.queryByTestId('demo-accounts')).not.toBeInTheDocument()
   })
 
-  it('shows the demo accounts on the apex / unbranded host', async () => {
+  it('shows the standard login (no branding, no demo accounts) on the apex', async () => {
     vi.mocked(fetchBranding).mockResolvedValue(null)
     renderLogin()
-    await waitFor(() => expect(screen.getByTestId('demo-accounts')).toBeInTheDocument())
+    // Default locale is Chinese; the standard header is "欢迎回来". Demo accounts
+    // were removed from the product.
+    await waitFor(() => expect(screen.getByText('欢迎回来')).toBeInTheDocument())
+    expect(screen.queryByTestId('demo-accounts')).not.toBeInTheDocument()
     expect(screen.queryByTestId('branded-name')).not.toBeInTheDocument()
   })
 })
