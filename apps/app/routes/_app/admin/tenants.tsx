@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute, redirect, Link } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { api } from '@/lib/api'
@@ -166,7 +166,13 @@ function TenantsPage() {
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0 space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold">{tenant.name}</span>
+                      <Link
+                        to="/admin/tenants/$libraryId"
+                        params={{ libraryId: tenant.id }}
+                        className="font-semibold text-primary underline-offset-2 hover:underline"
+                      >
+                        {tenant.name}
+                      </Link>
                       <Badge variant={tenant.isActive ? 'default' : 'secondary'}>
                         {tenant.isActive ? <Trans>Active</Trans> : <Trans>Inactive</Trans>}
                       </Badge>

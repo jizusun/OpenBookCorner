@@ -536,6 +536,39 @@ export class TenantAdminService {
     }))
   }
 
+  /**
+   * Single-tenant summary for the super-admin tenant-detail page. `memberCount`
+   * counts the `members` records (what the detail page's Members list shows),
+   * and `bookCount` the books. Returns null when the library does not exist.
+   */
+  async getById(libraryId: string) {
+    const lib = await this.db.select().from(libraries).where(eq(libraries.id, libraryId)).get()
+    if (!lib) return null
+    const bookRow = await this.db
+      .select({ count: sql<number>`count(*)` })
+      .from(books)
+      .where(eq(books.libraryId, libraryId))
+      .get()
+    const memberRow = await this.db
+      .select({ count: sql<number>`count(*)` })
+      .from(members)
+      .where(eq(members.libraryId, libraryId))
+      .get()
+    return {
+      id: lib.id,
+      name: lib.name,
+      slug: lib.slug,
+      emailDomains: lib.emailDomains,
+      brandColor: lib.brandColor,
+      loginWelcome: lib.loginWelcome,
+      logoUrl: lib.logoUrl,
+      isActive: lib.isActive,
+      createdAt: lib.createdAt,
+      bookCount: bookRow?.count ?? 0,
+      memberCount: memberRow?.count ?? 0,
+    }
+  }
+
   /** Pick a valid, unique slug: prefer the requested one, else derive from the
    * name; disambiguate collisions with a numeric suffix. Returns null if no
    * usable base can be formed. */

@@ -130,6 +130,19 @@ const call = {
       client.tenant['set-active'].$post({ json: i }),
     ),
   'tenant.audit': () => json<Ok<typeof client.tenant.audit.$get>>(client.tenant.audit.$get()),
+  'tenant.get': (i: { id: string }) =>
+    json<Ok<(typeof client.tenant)[':id']['$get']>>(client.tenant[':id'].$get({ param: i })),
+  'tenant.members': (i: { id: string; search?: string; page?: number; limit?: number }) =>
+    json<Ok<(typeof client.tenant)[':id']['members']['$get']>>(
+      client.tenant[':id'].members.$get({
+        param: { id: i.id },
+        query: {
+          search: i.search,
+          page: i.page != null ? String(i.page) : undefined,
+          limit: i.limit != null ? String(i.limit) : undefined,
+        },
+      }),
+    ),
   'admin.users': (i: { search?: string; page?: number; limit?: number } = {}) =>
     json<Ok<typeof client.admin.users.$get>>(
       client.admin.users.$get({
@@ -204,6 +217,8 @@ export const api = {
     remove: node('tenant.remove'),
     setActive: node('tenant.setActive'),
     audit: node('tenant.audit'),
+    get: node('tenant.get'),
+    members: node('tenant.members'),
   },
   admin: {
     users: node('admin.users'),
