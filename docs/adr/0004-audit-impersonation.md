@@ -92,6 +92,36 @@ If a super admin must see/act as a tenant user, implement it per best practice
 Impersonation is **out of scope until explicitly prioritized**; Part A does not
 depend on it.
 
+#### Part B — as implemented (v1)
+
+Part B was prioritized and shipped on top of **Better Auth's `admin` plugin**
+(`impersonateUser` / `stopImpersonating`), rather than hand-rolled sessions:
+
+- **Separate, short-lived session (1).** The admin plugin mints a distinct
+  impersonation session with `session.impersonatedBy` = the real super-admin id,
+  time-boxed to **30 min** (`impersonationSessionDuration`), and
+  `stopImpersonating` restores the admin's own session. ✔
+- **Scoped / least-privilege (3).** `adminRoles: ['super_admin']` — only super
+  admins may impersonate; the plugin refuses to impersonate another admin
+  (`allowImpersonatingAdmins` left false). The UI action (`canShowImpersonateAction`)
+  is super-admin-only, never self, and only for members with a linked login. ✔
+- **Full audit trail (4).** `databaseHooks.session.create/delete.after` write
+  `impersonation.start` / `impersonation.stop` rows server-side (real actor +
+  `onBehalfOfUserId`, scoped to the target's tenant so that tenant sees it). ✔
+- **Persistent on-screen banner (5).** `ImpersonationBanner` (role=status,
+  sticky) shows for the whole session with a **"Back to my account"** exit (not
+  "Sign out"). ✔
+- **Read-only by default (2) — DEFERRED.** v1 grants **full access** as the
+  impersonated user (Better Auth's built-in behavior). Mutations are NOT yet
+  blocked in middleware. The compensating control is the complete, tenant-visible
+  audit trail (every action is attributed to the real super admin via
+  `actorUserId`). Middleware-enforced read-only is tracked as a follow-up
+  hardening — see the checklist below.
+
+> Deliberate deviation: the team chose full-access impersonation for v1 to ship
+> the support-as-user capability with its audit trail; read-only enforcement is
+> the next hardening step, not a blocker.
+
 ### Part C — Small defensive improvements (not architectural; land as code)
 
 These are implementation hygiene, listed here for completeness but shippable
