@@ -1,10 +1,12 @@
 import { betterAuth, type BetterAuthOptions } from 'better-auth'
 import { admin } from 'better-auth/plugins'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { eq } from 'drizzle-orm'
 import { account, schema as Db, session, user, verification, type Database } from '@obc/db'
 
 import type { Env } from './env'
 import { IMPERSONATION_DURATION_SECONDS } from './impersonation'
+import { auditImpersonationStart, auditImpersonationStop } from './impersonation-audit'
 
 /**
  * Better Auth for OpenBookCorner — Phase 1 email/password on Cloudflare D1.
@@ -68,6 +70,49 @@ export function createAuth(db: Database, env: Env): Auth {
         impersonationSessionDuration: IMPERSONATION_DURATION_SECONDS,
       }),
     ],
+    databaseHooks: {
+      session: {
+        // Audit impersonation server-side so it can't be bypassed from the client.
+        // A session with `impersonatedBy` set is an impersonation; resolve the
+        // impersonated user's tenant and record impersonation.start / .stop.
+        create: {
+          after: async (newSession) => {
+            const impersonatedBy = (newSession as { impersonatedBy?: string | null })
+              .impersonatedBy
+            if (!impersonatedBy) return
+            const targetUserId = (newSession as { userId: string }).userId
+            const row = await db
+              .select({ libraryId: user.libraryId })
+              .from(user)
+              .where(eq(user.id, targetUserId))
+              .get?.()
+            await auditImpersonationStart(db, {
+              impersonatedBy,
+              targetUserId,
+              targetLibraryId: row?.libraryId ?? null,
+            })
+          },
+        },
+        delete: {
+          after: async (oldSession) => {
+            const impersonatedBy = (oldSession as { impersonatedBy?: string | null })
+              .impersonatedBy
+            if (!impersonatedBy) return
+            const targetUserId = (oldSession as { userId: string }).userId
+            const row = await db
+              .select({ libraryId: user.libraryId })
+              .from(user)
+              .where(eq(user.id, targetUserId))
+              .get?.()
+            await auditImpersonationStop(db, {
+              impersonatedBy,
+              targetUserId,
+              targetLibraryId: row?.libraryId ?? null,
+            })
+          },
+        },
+      },
+    },
   }
 
   // Reference Db to keep the import used even if tree-shaken in some builds.
