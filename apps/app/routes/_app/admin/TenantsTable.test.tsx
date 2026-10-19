@@ -12,8 +12,8 @@ import { I18nProvider } from '@/lib/i18n'
 import { TenantsTable, type TenantRow } from './TenantsTable'
 
 const rows: TenantRow[] = [
-  { id: 'lib-a', name: 'Acme', slug: 'acme', isActive: true, bookCount: 34, memberCount: 12 },
-  { id: 'lib-b', name: 'Globex', slug: 'globex', isActive: false, bookCount: 20, memberCount: 8 },
+  { id: 'lib-a', name: 'Acme', slug: 'acme', isActive: true, bookCount: 34, userCount: 12 },
+  { id: 'lib-b', name: 'Globex', slug: 'globex', isActive: false, bookCount: 20, userCount: 8 },
 ]
 
 function renderTable(props: Parameters<typeof TenantsTable>[0]) {

@@ -48,8 +48,8 @@ test.describe('Tenant onboarding', () => {
     await login(page, 'admin@demo.test', 'password123')
     await expect(page.getByRole('heading', { name: 'Library Catalog' })).toBeVisible()
 
-    await page.getByRole('link', { name: 'Members' }).first().click()
-    await expect(page.getByRole('heading', { name: 'Members' })).toBeVisible()
+    await page.getByRole('link', { name: 'Readers' }).first().click()
+    await expect(page.getByRole('heading', { name: 'Readers' })).toBeVisible()
     await page.getByTestId('add-member-open').click()
     await expect(page.getByTestId('add-user-dialog')).toBeVisible()
     await page.getByTestId('add-user-email').fill(email)

@@ -97,7 +97,7 @@ function AppLayout() {
     : inAdminView
       ? [
           { to: '/books', label: <Trans>Catalog</Trans> },
-          { to: '/admin/members', label: <Trans>Members</Trans> },
+          { to: '/admin/members', label: <Trans>Readers</Trans> },
           { to: '/admin/overdue', label: <Trans>Overdue</Trans> },
           { to: '/admin/settings', label: <Trans>Settings</Trans> },
           { to: '/admin/feedback', label: <Trans>Feedback</Trans> },

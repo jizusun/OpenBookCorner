@@ -512,14 +512,16 @@ export class TenantAdminService {
       .from(books)
       .groupBy(books.libraryId)
       .all()
-    const memberCounts = await this.db
-      .select({ libraryId: members.libraryId, count: sql<number>`count(*)` })
-      .from(members)
-      .groupBy(members.libraryId)
+    // Count USERS (login accounts: admins + readers) — the super-admin view is
+    // "who is using the system", NOT the imported 番薯 reader roster (members).
+    const userCounts = await this.db
+      .select({ libraryId: user.libraryId, count: sql<number>`count(*)` })
+      .from(user)
+      .groupBy(user.libraryId)
       .all()
 
     const bookBy = new Map(bookCounts.map((r) => [r.libraryId, r.count]))
-    const memberBy = new Map(memberCounts.map((r) => [r.libraryId, r.count]))
+    const userBy = new Map(userCounts.map((r) => [r.libraryId, r.count]))
 
     return libs.map((l) => ({
       id: l.id,
@@ -532,14 +534,15 @@ export class TenantAdminService {
       isActive: l.isActive,
       createdAt: l.createdAt,
       bookCount: bookBy.get(l.id) ?? 0,
-      memberCount: memberBy.get(l.id) ?? 0,
+      userCount: userBy.get(l.id) ?? 0,
     }))
   }
 
   /**
-   * Single-tenant summary for the super-admin tenant-detail page. `memberCount`
-   * counts the `members` records (what the detail page's Members list shows),
-   * and `bookCount` the books. Returns null when the library does not exist.
+   * Single-tenant summary for the super-admin tenant-detail page. `userCount`
+   * counts login accounts (users); `bookCount` the books. The 番薯 reader roster
+   * (members) is shown separately on the detail page, not as this headline.
+   * Returns null when the library does not exist.
    */
   async getById(libraryId: string) {
     const lib = await this.db.select().from(libraries).where(eq(libraries.id, libraryId)).get()
@@ -549,7 +552,12 @@ export class TenantAdminService {
       .from(books)
       .where(eq(books.libraryId, libraryId))
       .get()
-    const memberRow = await this.db
+    const userRow = await this.db
+      .select({ count: sql<number>`count(*)` })
+      .from(user)
+      .where(eq(user.libraryId, libraryId))
+      .get()
+    const readerRow = await this.db
       .select({ count: sql<number>`count(*)` })
       .from(members)
       .where(eq(members.libraryId, libraryId))
@@ -565,7 +573,10 @@ export class TenantAdminService {
       isActive: lib.isActive,
       createdAt: lib.createdAt,
       bookCount: bookRow?.count ?? 0,
-      memberCount: memberRow?.count ?? 0,
+      // userCount = login accounts (admins + readers); readerCount = 番薯 reader
+      // roster (members, may lack accounts). Two distinct, clearly-named numbers.
+      userCount: userRow?.count ?? 0,
+      readerCount: readerRow?.count ?? 0,
     }
   }
 

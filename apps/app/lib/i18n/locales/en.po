@@ -50,11 +50,9 @@ msgid "{0, plural, one {# loan} other {# loans}}"
 msgstr "{0, plural, one {# loan} other {# loans}}"
 
 #. placeholder {0}: counts.members
-#. placeholder {0}: infinite.total
 #. placeholder {0}: result.members
 #: routes/_app/admin/import.tsx:207
 #: routes/_app/admin/import.tsx:248
-#: routes/_app/admin/members.tsx:85
 msgid "{0, plural, one {# member} other {# members}}"
 msgstr "{0, plural, one {# member} other {# members}}"
 
@@ -64,6 +62,11 @@ msgstr "{0, plural, one {# member} other {# members}}"
 #: routes/_app/admin/import.tsx:257
 msgid "{0, plural, one {# purchase request} other {# purchase requests}}"
 msgstr "{0, plural, one {# purchase request} other {# purchase requests}}"
+
+#. placeholder {0}: infinite.total
+#: routes/_app/admin/members.tsx:85
+msgid "{0, plural, one {# reader} other {# readers}}"
+msgstr "{0, plural, one {# reader} other {# readers}}"
 
 #. placeholder {0}: counts.reviews
 #. placeholder {0}: result.reviews
@@ -86,7 +89,7 @@ msgstr "{0} books · {1} members · {2} loans · {3} reviews · {4} requests"
 msgid "{0} borrowed"
 msgstr "{0} borrowed"
 
-#. placeholder {0}: tn.memberCount
+#. placeholder {0}: tn.userCount
 #. placeholder {1}: tn.bookCount
 #: routes/_app/admin/overview.tsx:85
 msgid "{0} users · {1} books"
@@ -159,12 +162,12 @@ msgid "Action"
 msgstr "Action"
 
 #: routes/_app/admin/members.tsx:203
-#: routes/_app/admin/tenants.$libraryId.tsx:196
+#: routes/_app/admin/tenants.$libraryId.tsx:200
 #: routes/_app/admin/UsersTable.tsx:90
 msgid "Actions"
 msgstr "Actions"
 
-#: routes/_app/admin/tenants.$libraryId.tsx:236
+#: routes/_app/admin/tenants.$libraryId.tsx:240
 msgid "Activate"
 msgstr "Activate"
 
@@ -190,8 +193,8 @@ msgstr "Add"
 msgid "Add a book or adjust the filters."
 msgstr "Add a book or adjust the filters."
 
-#: routes/_app/admin/tenants.$libraryId.tsx:181
-#: routes/_app/admin/tenants.$libraryId.tsx:246
+#: routes/_app/admin/tenants.$libraryId.tsx:185
+#: routes/_app/admin/tenants.$libraryId.tsx:250
 msgid "Add admin"
 msgstr "Add admin"
 
@@ -204,8 +207,8 @@ msgstr "Add Book"
 
 #: routes/_app/admin/members.tsx:89
 #: routes/_app/admin/members.tsx:260
-msgid "Add member"
-msgstr "Add member"
+msgid "Add reader"
+msgstr "Add reader"
 
 #: routes/_app/admin/AddUserDialog.tsx:94
 #: routes/_app/books/add.tsx:188
@@ -219,7 +222,7 @@ msgstr "Address"
 #: routes/_app/admin/members.$memberId.tsx:62
 #: routes/_app/admin/members.tsx:140
 #: routes/_app/admin/members.tsx:226
-#: routes/_app/admin/tenants.$libraryId.tsx:205
+#: routes/_app/admin/tenants.$libraryId.tsx:209
 msgid "Admin"
 msgstr "Admin"
 
@@ -348,7 +351,7 @@ msgid "Book suggestion"
 msgstr "Book suggestion"
 
 #: routes/_app/admin/overview.tsx:51
-#: routes/_app/admin/tenants.$libraryId.tsx:146
+#: routes/_app/admin/tenants.$libraryId.tsx:150
 #: routes/_app/admin/TenantsTable.tsx:67
 msgid "Books"
 msgstr "Books"
@@ -405,7 +408,7 @@ msgstr "Borrowing period (days)"
 msgid "Borrowing…"
 msgstr "Borrowing…"
 
-#: routes/_app/admin/tenants.$libraryId.tsx:315
+#: routes/_app/admin/tenants.$libraryId.tsx:319
 msgid "Brand color"
 msgstr "Brand color"
 
@@ -502,7 +505,7 @@ msgstr "Copies"
 msgid "Copy {0}"
 msgstr "Copy {0}"
 
-#: routes/_app/admin/tenants.$libraryId.tsx:161
+#: routes/_app/admin/tenants.$libraryId.tsx:165
 msgid "Copy link"
 msgstr "Copy link"
 
@@ -588,7 +591,7 @@ msgstr "Created tenant"
 msgid "Creating…"
 msgstr "Creating…"
 
-#: routes/_app/admin/tenants.$libraryId.tsx:227
+#: routes/_app/admin/tenants.$libraryId.tsx:231
 msgid "Danger zone"
 msgstr "Danger zone"
 
@@ -604,22 +607,22 @@ msgstr "Date added"
 msgid "Days overdue"
 msgstr "Days overdue"
 
-#: routes/_app/admin/tenants.$libraryId.tsx:236
+#: routes/_app/admin/tenants.$libraryId.tsx:240
 msgid "Deactivate"
 msgstr "Deactivate"
 
-#: routes/_app/admin/tenants.$libraryId.tsx:255
+#: routes/_app/admin/tenants.$libraryId.tsx:259
 #: routes/_app/books/$bookId.tsx:255
 #: routes/_app/books/$bookId.tsx:288
 msgid "Delete"
 msgstr "Delete"
 
 #. placeholder {0}: tenant.name
-#: routes/_app/admin/tenants.$libraryId.tsx:254
+#: routes/_app/admin/tenants.$libraryId.tsx:258
 msgid "Delete {0}?"
 msgstr "Delete {0}?"
 
-#: routes/_app/admin/tenants.$libraryId.tsx:239
+#: routes/_app/admin/tenants.$libraryId.tsx:243
 msgid "Delete tenant"
 msgstr "Delete tenant"
 
@@ -703,7 +706,7 @@ msgid "Email"
 msgstr "Email"
 
 #: routes/_app/admin/tenants.$libraryId.tsx:138
-#: routes/_app/admin/tenants.$libraryId.tsx:311
+#: routes/_app/admin/tenants.$libraryId.tsx:315
 msgid "Email domains"
 msgstr "Email domains"
 
@@ -884,11 +887,11 @@ msgstr "Loading"
 msgid "Loading…"
 msgstr "Loading…"
 
-#: routes/_app/admin/tenants.$libraryId.tsx:158
+#: routes/_app/admin/tenants.$libraryId.tsx:162
 msgid "Login link copied."
 msgstr "Login link copied."
 
-#: routes/_app/admin/tenants.$libraryId.tsx:319
+#: routes/_app/admin/tenants.$libraryId.tsx:323
 msgid "Login welcome"
 msgstr "Login welcome"
 
@@ -929,14 +932,6 @@ msgstr "Member since"
 msgid "Member until"
 msgstr "Member until"
 
-#: routes/_app/admin/members.tsx:80
-#: routes/_app/admin/tenants.$libraryId.tsx:142
-#: routes/_app/admin/tenants.$libraryId.tsx:178
-#: routes/_app/admin/TenantsTable.tsx:64
-#: routes/_app/route.tsx:100
-msgid "Members"
-msgstr "Members"
-
 #: routes/_app/my-books.tsx:94
 #: routes/_app/route.tsx:107
 msgid "My Books"
@@ -945,8 +940,8 @@ msgstr "My Books"
 #: routes/_app/admin/AddUserDialog.tsx:61
 #: routes/_app/admin/members.tsx:118
 #: routes/_app/admin/members.tsx:180
-#: routes/_app/admin/tenants.$libraryId.tsx:193
-#: routes/_app/admin/tenants.$libraryId.tsx:303
+#: routes/_app/admin/tenants.$libraryId.tsx:197
+#: routes/_app/admin/tenants.$libraryId.tsx:307
 #: routes/_app/admin/TenantsTable.tsx:55
 #: routes/_app/admin/UsersTable.tsx:77
 msgid "Name"
@@ -990,10 +985,6 @@ msgstr "No feedback yet"
 msgid "No libraries yet"
 msgstr "No libraries yet"
 
-#: routes/_app/admin/tenants.$libraryId.tsx:187
-msgid "No members"
-msgstr "No members"
-
 #: routes/_app/admin/members.tsx:169
 msgid "No members yet"
 msgstr "No members yet"
@@ -1001,6 +992,10 @@ msgstr "No members yet"
 #: routes/_app/admin/overdue.tsx:82
 msgid "No overdue books in this range"
 msgstr "No overdue books in this range"
+
+#: routes/_app/admin/tenants.$libraryId.tsx:191
+msgid "No readers"
+msgstr "No readers"
 
 #: routes/_app/admin/UsersTable.tsx:64
 msgid "No users found"
@@ -1127,13 +1122,20 @@ msgstr "Read-only system information (super admin)."
 #: routes/_app/admin/members.$memberId.tsx:62
 #: routes/_app/admin/members.tsx:141
 #: routes/_app/admin/members.tsx:226
-#: routes/_app/admin/tenants.$libraryId.tsx:205
+#: routes/_app/admin/tenants.$libraryId.tsx:209
 msgid "Reader"
 msgstr "Reader"
 
 #: routes/_app/route.tsx:125
 msgid "Reader preview"
 msgstr "Reader preview"
+
+#: routes/_app/admin/members.tsx:80
+#: routes/_app/admin/tenants.$libraryId.tsx:146
+#: routes/_app/admin/tenants.$libraryId.tsx:182
+#: routes/_app/route.tsx:100
+msgid "Readers"
+msgstr "Readers"
 
 #: routes/_app/admin/overview.tsx:57
 msgid "Recent activity"
@@ -1157,7 +1159,7 @@ msgid "Returning…"
 msgstr "Returning…"
 
 #: routes/_app/admin/members.tsx:183
-#: routes/_app/admin/tenants.$libraryId.tsx:194
+#: routes/_app/admin/tenants.$libraryId.tsx:198
 #: routes/_app/admin/UsersTable.tsx:86
 msgid "Role"
 msgstr "Role"
@@ -1166,7 +1168,7 @@ msgstr "Role"
 msgid "Room"
 msgstr "Room"
 
-#: routes/_app/admin/tenants.$libraryId.tsx:324
+#: routes/_app/admin/tenants.$libraryId.tsx:328
 #: routes/_app/books/$bookId.edit.tsx:137
 msgid "Save changes"
 msgstr "Save changes"
@@ -1176,7 +1178,7 @@ msgid "Save settings"
 msgstr "Save settings"
 
 #: routes/_app/admin/settings.tsx:153
-#: routes/_app/admin/tenants.$libraryId.tsx:324
+#: routes/_app/admin/tenants.$libraryId.tsx:328
 #: routes/_app/books/$bookId.edit.tsx:137
 msgid "Saving…"
 msgstr "Saving…"
@@ -1313,7 +1315,7 @@ msgstr "Signing in…"
 msgid "Slow network — still loading, hang tight…"
 msgstr "Slow network — still loading, hang tight…"
 
-#: routes/_app/admin/tenants.$libraryId.tsx:307
+#: routes/_app/admin/tenants.$libraryId.tsx:311
 #: routes/_app/admin/TenantsTable.tsx:58
 msgid "Slug"
 msgstr "Slug"
@@ -1406,7 +1408,7 @@ msgstr "Tenancy model"
 msgid "Tenant"
 msgstr "Tenant"
 
-#: routes/_app/admin/tenants.$libraryId.tsx:152
+#: routes/_app/admin/tenants.$libraryId.tsx:156
 msgid "Tenant login link"
 msgstr "Tenant login link"
 
@@ -1510,6 +1512,8 @@ msgid "User Feedback"
 msgstr "User Feedback"
 
 #: routes/_app/admin/overview.tsx:50
+#: routes/_app/admin/tenants.$libraryId.tsx:142
+#: routes/_app/admin/TenantsTable.tsx:64
 #: routes/_app/admin/users.tsx:46
 #: routes/_app/route.tsx:93
 msgid "Users"

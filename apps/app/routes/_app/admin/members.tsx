@@ -77,16 +77,16 @@ function MembersPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">
-          <Trans>Members</Trans>
+          <Trans>Readers</Trans>
         </h1>
         <div className="flex items-center gap-3">
           {!infinite.isLoading && (
             <span className="text-sm text-muted-foreground">
-              <Plural value={infinite.total} one="# member" other="# members" />
+              <Plural value={infinite.total} one="# reader" other="# readers" />
             </span>
           )}
           <Button size="sm" onClick={() => setAddingMember(true)} data-testid="add-member-open">
-            <Trans>Add member</Trans>
+            <Trans>Add reader</Trans>
           </Button>
         </div>
       </div>
@@ -257,7 +257,7 @@ function MembersPage() {
 
       <AddUserDialog
         open={addingMember}
-        title={t`Add member`}
+        title={t`Add reader`}
         pending={addMember.isPending}
         onClose={() => setAddingMember(false)}
         onSubmit={(v) => addMember.mutate(v)}

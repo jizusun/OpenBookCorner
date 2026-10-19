@@ -34,9 +34,10 @@ describe('GET /api/tenant/:id (single tenant summary)', () => {
     const app = createTestServer({ db, session: superSession })
     const res = await app.request(new Request(url(`/${LIB_A}`)))
     expect(res.status).toBe(200)
-    const body = (await res.json()) as { id: string; memberCount: number; bookCount: number }
+    const body = (await res.json()) as { id: string; userCount: number; readerCount: number; bookCount: number }
     expect(body.id).toBe(LIB_A)
-    expect(body.memberCount).toBe(2)
+    expect(body.userCount).toBe(1) // login accounts: the seeded super admin
+    expect(body.readerCount).toBe(2) // 番薯 reader roster (members)
     expect(body.bookCount).toBe(1)
   })
 

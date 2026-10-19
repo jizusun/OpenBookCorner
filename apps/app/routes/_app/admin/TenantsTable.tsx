@@ -10,7 +10,7 @@ export interface TenantRow {
   slug: string | null
   isActive: boolean
   bookCount: number
-  memberCount: number
+  userCount: number
 }
 
 export interface TenantsTableProps {
@@ -61,7 +61,7 @@ export function TenantsTable({ rows, loading }: TenantsTableProps) {
               <Trans>Status</Trans>
             </th>
             <th className="px-3 py-2 font-medium">
-              <Trans>Members</Trans>
+              <Trans>Users</Trans>
             </th>
             <th className="px-3 py-2 font-medium">
               <Trans>Books</Trans>
@@ -88,7 +88,7 @@ export function TenantsTable({ rows, loading }: TenantsTableProps) {
                   {tn.isActive ? <Trans>Active</Trans> : <Trans>Inactive</Trans>}
                 </Badge>
               </td>
-              <td className="px-3 py-2 text-muted-foreground">{tn.memberCount}</td>
+              <td className="px-3 py-2 text-muted-foreground">{tn.userCount}</td>
               <td className="px-3 py-2 text-muted-foreground">{tn.bookCount}</td>
             </tr>
           ))}
