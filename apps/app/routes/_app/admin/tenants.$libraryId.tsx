@@ -13,6 +13,7 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { ConfirmDialog } from '@/components/ui/modal'
 import { useToast } from '@/components/Toast'
 import { MemberImpersonateButton } from './MemberImpersonateButton'
+import { canImpersonateUser } from '@/lib/impersonation'
 import { AddUserDialog } from './AddUserDialog'
 
 export const Route = createFileRoute('/_app/admin/tenants/$libraryId')({
@@ -29,10 +30,12 @@ function TenantDetailPage() {
   const { t } = useLingui()
 
   const { data: tenant, isLoading } = useQuery(api.tenant.get.queryOptions({ id: libraryId }))
-  const { data: membersData, isLoading: membersLoading } = useQuery(
-    api.tenant.members.queryOptions({ id: libraryId, limit: 100 }),
+  // Super-admin tenant detail lists the tenant's USERS (login accounts), not the
+  // 番薯 reader roster (ADR 0006: super admin sees Users).
+  const { data: usersData, isLoading: usersLoading } = useQuery(
+    api.admin.users.queryOptions({ libraryId, limit: 100 }),
   )
-  const members = membersData?.items ?? []
+  const users = usersData?.items ?? []
 
   const [editing, setEditing] = useState(false)
   const [deleting, setDeleting] = useState(false)
@@ -41,7 +44,7 @@ function TenantDetailPage() {
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: api.tenant.get.queryKey({ id: libraryId }) })
     qc.invalidateQueries({ queryKey: api.tenant.list.queryKey() })
-    qc.invalidateQueries({ queryKey: api.tenant.members.queryKey({ id: libraryId, limit: 100 }) })
+    qc.invalidateQueries({ queryKey: api.admin.users.queryKey({ libraryId, limit: 100 }) })
   }
 
   const addAdmin = useMutation({
@@ -133,7 +136,7 @@ function TenantDetailPage() {
             {editing ? <Trans>Cancel</Trans> : <Trans>Edit</Trans>}
           </Button>
         </div>
-        <dl className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+        <dl className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-3">
           <div>
             <dt className="text-muted-foreground"><Trans>Email domains</Trans></dt>
             <dd>{tenant.emailDomains.join(', ')}</dd>
@@ -141,10 +144,6 @@ function TenantDetailPage() {
           <div>
             <dt className="text-muted-foreground"><Trans>Users</Trans></dt>
             <dd>{tenant.userCount}</dd>
-          </div>
-          <div>
-            <dt className="text-muted-foreground"><Trans>Readers</Trans></dt>
-            <dd>{tenant.readerCount}</dd>
           </div>
           <div>
             <dt className="text-muted-foreground"><Trans>Books</Trans></dt>
@@ -179,22 +178,23 @@ function TenantDetailPage() {
       <section className="space-y-2">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-muted-foreground">
-            <Trans>Readers</Trans>
+            <Trans>Users</Trans>
           </h2>
           <Button size="sm" variant="outline" onClick={() => setAddingAdmin(true)} data-testid="add-admin-open">
             <Trans>Add admin</Trans>
           </Button>
         </div>
-        {membersLoading ? (
+        {usersLoading ? (
           <Skeleton className="h-24 w-full" />
-        ) : members.length === 0 ? (
-          <EmptyState icon="👥" title={<Trans>No readers</Trans>} />
+        ) : users.length === 0 ? (
+          <EmptyState icon="👥" title={<Trans>No users</Trans>} />
         ) : (
-          <div className="overflow-x-auto rounded-md border" data-testid="tenant-members-table">
+          <div className="overflow-x-auto rounded-md border" data-testid="tenant-users-table">
             <table className="w-full text-sm">
               <thead className="bg-muted/50 text-left text-muted-foreground">
                 <tr>
                   <th className="px-3 py-2 font-medium"><Trans>Name</Trans></th>
+                  <th className="px-3 py-2 font-medium"><Trans>Email</Trans></th>
                   <th className="px-3 py-2 font-medium"><Trans>Role</Trans></th>
                   <th className="px-3 py-2 font-medium">
                     <span className="sr-only"><Trans>Actions</Trans></span>
@@ -202,20 +202,27 @@ function TenantDetailPage() {
                 </tr>
               </thead>
               <tbody>
-                {members.map((m) => (
-                  <tr key={m.id} className="border-t hover:bg-accent/40">
-                    <td className="px-3 py-2 font-medium">{m.name}</td>
+                {users.map((u) => (
+                  <tr key={u.id} className="border-t hover:bg-accent/40">
+                    <td className="px-3 py-2 font-medium">{u.name}</td>
+                    <td className="px-3 py-2 text-muted-foreground">{u.email}</td>
                     <td className="px-3 py-2">
-                      {m.role === 'library_admin' ? t`Admin` : t`Reader`}
+                      {u.role === 'super_admin'
+                        ? t`Super admin`
+                        : u.role === 'library_admin'
+                          ? t`Admin`
+                          : t`Reader`}
                     </td>
                     <td className="px-3 py-2">
-                      <MemberImpersonateButton
-                        viewerRole={user.role}
-                        viewerId={user.id}
-                        memberUserId={m.userId}
-                        clearCache={() => queryClient.clear()}
-                        onImpersonated={() => router.navigate({ to: '/my-books' })}
-                      />
+                      {canImpersonateUser(user.role, user.id, { id: u.id, role: u.role }) && (
+                        <MemberImpersonateButton
+                          viewerRole={user.role}
+                          viewerId={user.id}
+                          memberUserId={u.id}
+                          clearCache={() => queryClient.clear()}
+                          onImpersonated={() => router.navigate({ to: '/my-books' })}
+                        />
+                      )}
                     </td>
                   </tr>
                 ))}

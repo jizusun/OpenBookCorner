@@ -65,3 +65,13 @@ describe('UserAdminService.listAll', () => {
     expect(res.total).toBe(4)
   })
 })
+
+describe('UserAdminService.listAll — libraryId filter (tenant detail Users)', () => {
+  it('restricts to one tenant', async () => {
+    const svc = new UserAdminService(db)
+    const { items, total } = await svc.listAll({ libraryId: LIB_A })
+    // Acme: alice + bob (seeded in the top-level beforeEach)
+    expect(total).toBe(2)
+    expect(items.every((u) => u.libraryId === LIB_A)).toBe(true)
+  })
+})
