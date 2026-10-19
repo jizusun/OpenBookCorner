@@ -5,6 +5,7 @@ import { z } from 'zod'
 import type { AuthedVars } from '../lib/mw'
 import { sessionAuth, superAdmin } from '../lib/mw'
 import { UserAdminService } from '../services/user-admin'
+import { OverviewService } from '../services/overview'
 
 const listQuery = z.object({
   search: z.string().optional(),
@@ -22,3 +23,4 @@ export const adminApp = new Hono<{ Variables: AuthedVars }>()
   .get('/users', zValidator('query', listQuery), async (c) =>
     c.json(await new UserAdminService(c.get('db')).listAll(c.req.valid('query'))),
   )
+  .get('/overview', async (c) => c.json(await new OverviewService(c.get('db')).get()))

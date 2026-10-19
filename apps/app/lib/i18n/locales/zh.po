@@ -86,6 +86,12 @@ msgstr "{0} 本图书 · {1} 位成员 · {2} 条借阅 · {3} 条评论 · {4} 
 msgid "{0} borrowed"
 msgstr "已借 {0} 本"
 
+#. placeholder {0}: tn.memberCount
+#. placeholder {1}: tn.bookCount
+#: routes/_app/admin/overview.tsx:85
+msgid "{0} users · {1} books"
+msgstr "{0} 位用户 · {1} 本藏书"
+
 #. placeholder {0}: item.daysOverdue
 #: routes/_app/admin/overdue.tsx:127
 msgid "{0}d"
@@ -132,15 +138,15 @@ msgstr "← 返回成员列表"
 msgid "← Back to tenants"
 msgstr "← 返回租户列表"
 
-#: routes/_app/route.tsx:125
+#: routes/_app/route.tsx:126
 msgid "→ Admin view"
 msgstr "→ 管理视图"
 
-#: routes/_app/route.tsx:125
+#: routes/_app/route.tsx:126
 msgid "→ Reader view"
 msgstr "→ 读者视图"
 
-#: routes/_app/route.tsx:125
+#: routes/_app/route.tsx:126
 msgid "→ System view"
 msgstr "→ 系统视图"
 
@@ -174,6 +180,7 @@ msgstr "启用"
 msgid "Activated/deactivated tenant"
 msgstr "启用/停用租户"
 
+#: routes/_app/admin/overview.tsx:81
 #: routes/_app/admin/tenants.$libraryId.tsx:53
 #: routes/_app/admin/tenants.tsx:177
 msgid "Active"
@@ -209,8 +216,8 @@ msgstr "地址"
 msgid "Admin"
 msgstr "管理员"
 
-#: routes/_app/route.tsx:120
-#: routes/_app/route.tsx:123
+#: routes/_app/route.tsx:121
+#: routes/_app/route.tsx:124
 msgid "Admin view"
 msgstr "管理视图"
 
@@ -267,7 +274,7 @@ msgid "Ascending"
 msgstr "升序"
 
 #: routes/_app/admin/audit.tsx:26
-#: routes/_app/route.tsx:99
+#: routes/_app/route.tsx:100
 msgid "Audit log"
 msgstr "审计日志"
 
@@ -330,6 +337,7 @@ msgstr "未找到该图书。"
 msgid "Book suggestion"
 msgstr "荐书"
 
+#: routes/_app/admin/overview.tsx:51
 #: routes/_app/admin/tenants.$libraryId.tsx:76
 msgid "Books"
 msgstr "藏书"
@@ -434,8 +442,8 @@ msgstr "取消扫描"
 msgid "Cannot delete a library that still has members or books."
 msgstr "该图书馆仍有成员或书籍，无法删除。"
 
-#: routes/_app/route.tsx:103
-#: routes/_app/route.tsx:113
+#: routes/_app/route.tsx:104
+#: routes/_app/route.tsx:114
 msgid "Catalog"
 msgstr "书目"
 
@@ -455,7 +463,7 @@ msgstr "班级"
 msgid "CLC"
 msgstr "中图法分类号"
 
-#: routes/_app/route.tsx:166
+#: routes/_app/route.tsx:167
 msgid "Close menu"
 msgstr "收起菜单"
 
@@ -704,7 +712,7 @@ msgid "Feature request"
 msgstr "功能建议"
 
 #: components/FeedbackButton.tsx:74
-#: routes/_app/route.tsx:107
+#: routes/_app/route.tsx:108
 msgid "Feedback"
 msgstr "反馈"
 
@@ -717,7 +725,7 @@ msgid "https://…fanshujieyue.com/…/librarydata_….xls"
 msgstr "https://…fanshujieyue.com/…/librarydata_….xls"
 
 #: routes/_app/admin/import.tsx:233
-#: routes/_app/route.tsx:108
+#: routes/_app/route.tsx:109
 msgid "Import"
 msgstr "导入"
 
@@ -752,12 +760,13 @@ msgstr "导入成功"
 msgid "Importing…"
 msgstr "导入中…"
 
+#: routes/_app/admin/overview.tsx:81
 #: routes/_app/admin/tenants.$libraryId.tsx:53
 #: routes/_app/admin/tenants.tsx:177
 msgid "Inactive"
 msgstr "已停用"
 
-#: routes/_app/route.tsx:198
+#: routes/_app/route.tsx:199
 msgid "Install app"
 msgstr "安装应用"
 
@@ -876,12 +885,12 @@ msgstr "会员到期"
 #: routes/_app/admin/members.tsx:65
 #: routes/_app/admin/tenants.$libraryId.tsx:72
 #: routes/_app/admin/tenants.$libraryId.tsx:93
-#: routes/_app/route.tsx:104
+#: routes/_app/route.tsx:105
 msgid "Members"
 msgstr "成员"
 
 #: routes/_app/my-books.tsx:94
-#: routes/_app/route.tsx:111
+#: routes/_app/route.tsx:112
 msgid "My Books"
 msgstr "我的借阅"
 
@@ -964,11 +973,11 @@ msgstr "通知"
 msgid "on behalf of {0}"
 msgstr "代 {0}"
 
-#: routes/_app/route.tsx:166
+#: routes/_app/route.tsx:167
 msgid "Open menu"
 msgstr "打开菜单"
 
-#: routes/_app/route.tsx:176
+#: routes/_app/route.tsx:177
 msgid "OpenBookCorner"
 msgstr "开卷角"
 
@@ -985,7 +994,7 @@ msgstr "其他"
 msgid "Out"
 msgstr "在借"
 
-#: routes/_app/route.tsx:105
+#: routes/_app/route.tsx:106
 msgid "Overdue"
 msgstr "逾期"
 
@@ -993,7 +1002,9 @@ msgstr "逾期"
 msgid "Overdue Books"
 msgstr "逾期图书"
 
+#: routes/_app/admin/overview.tsx:41
 #: routes/_app/admin/tenants.$libraryId.tsx:64
+#: routes/_app/route.tsx:97
 msgid "Overview"
 msgstr "概况"
 
@@ -1054,10 +1065,14 @@ msgstr "R2：{0}"
 msgid "Reader"
 msgstr "普通成员"
 
-#: routes/_app/route.tsx:121
-#: routes/_app/route.tsx:123
+#: routes/_app/route.tsx:122
+#: routes/_app/route.tsx:124
 msgid "Reader view"
 msgstr "读者视图"
+
+#: routes/_app/admin/overview.tsx:57
+msgid "Recent activity"
+msgstr "近期动态"
 
 #: routes/_app/my-books.tsx:179
 msgid "Return"
@@ -1101,7 +1116,7 @@ msgstr "保存设置"
 msgid "Saving…"
 msgstr "保存中…"
 
-#: routes/_app/route.tsx:112
+#: routes/_app/route.tsx:113
 msgid "Scan"
 msgstr "扫码"
 
@@ -1182,7 +1197,7 @@ msgstr "发送中…"
 msgid "Series"
 msgstr "系列"
 
-#: routes/_app/route.tsx:106
+#: routes/_app/route.tsx:107
 msgid "Settings"
 msgstr "设置"
 
@@ -1212,12 +1227,12 @@ msgstr "以其身份登录"
 msgid "Sign in to your library"
 msgstr "登录你的图书馆"
 
-#: routes/_app/route.tsx:203
+#: routes/_app/route.tsx:204
 msgid "Sign out"
 msgstr "退出登录"
 
 #. placeholder {0}: user.name
-#: routes/_app/route.tsx:216
+#: routes/_app/route.tsx:217
 msgid "Signed in as {0}"
 msgstr "已登录：{0}"
 
@@ -1272,7 +1287,7 @@ msgstr "成功"
 msgid "Switch language"
 msgstr "切换语言"
 
-#: routes/_app/route.tsx:133
+#: routes/_app/route.tsx:134
 msgid "Switch to {nextLabelText} view"
 msgstr "切换到{nextLabelText}"
 
@@ -1288,14 +1303,18 @@ msgstr "切换到浅色模式"
 msgid "System actions (tenant changes, impersonation) will appear here."
 msgstr "系统操作（租户变更、模拟登录）会显示在这里。"
 
-#: routes/_app/route.tsx:118
-#: routes/_app/route.tsx:123
+#: routes/_app/route.tsx:119
+#: routes/_app/route.tsx:124
 msgid "System view"
 msgstr "系统视图"
 
 #: routes/_app/admin/audit.tsx:29
 msgid "System-level actions across all tenants (super admin)."
 msgstr "跨所有租户的系统级操作（超级管理员）。"
+
+#: routes/_app/admin/overview.tsx:44
+msgid "System-wide snapshot (super admin)."
+msgstr "全系统概况（超级管理员）。"
 
 #: routes/_app/admin/AuditTable.tsx:78
 msgid "Target"
@@ -1317,8 +1336,10 @@ msgstr "租户登录链接"
 msgid "Tenant not found"
 msgstr "未找到租户"
 
+#: routes/_app/admin/overview.tsx:49
+#: routes/_app/admin/overview.tsx:68
 #: routes/_app/admin/tenants.tsx:103
-#: routes/_app/route.tsx:97
+#: routes/_app/route.tsx:98
 msgid "Tenants"
 msgstr "租户"
 
@@ -1405,10 +1426,15 @@ msgstr "上传番薯借阅的 Excel 导出文件（.xls）。图书、成员、�
 msgid "User Feedback"
 msgstr "用户反馈"
 
+#: routes/_app/admin/overview.tsx:50
 #: routes/_app/admin/users.tsx:46
-#: routes/_app/route.tsx:98
+#: routes/_app/route.tsx:99
 msgid "Users"
 msgstr "用户"
+
+#: routes/_app/admin/overview.tsx:60
+msgid "View all →"
+msgstr "查看全部 →"
 
 #: routes/_app/scan.tsx:103
 msgid "View in My Books"

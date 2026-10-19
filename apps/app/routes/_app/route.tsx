@@ -62,7 +62,7 @@ function AppLayout() {
       // Restore the admin's own identity: drop cached queries + go to the
       // super-admin landing.
       queryClient.clear()
-      await router.navigate({ to: '/admin/tenants' })
+      await router.navigate({ to: '/admin/overview' })
     }
   }
 
@@ -75,7 +75,7 @@ function AppLayout() {
   }
 
   const landingFor = (v: 'system' | 'admin' | 'reader') =>
-    v === 'system' ? '/admin/tenants' : v === 'admin' ? '/books' : '/my-books'
+    v === 'system' ? '/admin/overview' : v === 'admin' ? '/books' : '/my-books'
 
   async function switchView(next: 'system' | 'admin' | 'reader') {
     setViewMode(next)
@@ -94,6 +94,7 @@ function AppLayout() {
 
   const navItems: NavItem[] = inSystemView
     ? [
+        { to: '/admin/overview', label: <Trans>Overview</Trans> },
         { to: '/admin/tenants', label: <Trans>Tenants</Trans> },
         { to: '/admin/users', label: <Trans>Users</Trans> },
         { to: '/admin/audit', label: <Trans>Audit log</Trans> },
@@ -113,7 +114,7 @@ function AppLayout() {
           { to: '/books', label: <Trans>Catalog</Trans> },
         ]
 
-  const home = inSystemView ? '/admin/tenants' : inAdminView ? '/books' : '/my-books'
+  const home = inSystemView ? '/admin/overview' : inAdminView ? '/books' : '/my-books'
   const viewLabel = inSystemView
     ? t`System view`
     : inAdminView
