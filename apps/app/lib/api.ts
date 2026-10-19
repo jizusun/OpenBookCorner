@@ -115,8 +115,16 @@ const call = {
     json<Ok<typeof client.feedback.$post>>(client.feedback.$post({ json: i })),
   'feedback.list': () => json<Ok<typeof client.feedback.$get>>(client.feedback.$get()),
   'tenant.list': () => json<Ok<typeof client.tenant.$get>>(client.tenant.$get()),
-  'tenant.create': (i: { name: string; emailDomains: string[] }) =>
+  'tenant.create': (i: { name: string; emailDomains: string[]; slug?: string }) =>
     json<Ok<typeof client.tenant.$post>>(client.tenant.$post({ json: i })),
+  'tenant.update': (i: TenantUpdateInput) => {
+    const { id, ...rest } = i
+    return json<Ok<(typeof client.tenant)[':id']['$patch']>>(
+      client.tenant[':id'].$patch({ param: { id }, json: rest }),
+    )
+  },
+  'tenant.remove': (i: { id: string }) =>
+    json<Ok<(typeof client.tenant)[':id']['$delete']>>(client.tenant[':id'].$delete({ param: i })),
   'tenant.setActive': (i: { libraryId: string; isActive: boolean }) =>
     json<Ok<(typeof client.tenant)['set-active']['$post']>>(
       client.tenant['set-active'].$post({ json: i }),
@@ -181,6 +189,8 @@ export const api = {
   tenant: {
     list: node('tenant.list'),
     create: node('tenant.create'),
+    update: node('tenant.update'),
+    remove: node('tenant.remove'),
     setActive: node('tenant.setActive'),
   },
 }
@@ -252,4 +262,13 @@ type MemberListInput = {
 type FeedbackInput = {
   category: 'feature_request' | 'bug' | 'book_suggestion' | 'other'
   message: string
+}
+type TenantUpdateInput = {
+  id: string
+  name?: string
+  emailDomains?: string[]
+  slug?: string
+  logoUrl?: string | null
+  brandColor?: string | null
+  loginWelcome?: string | null
 }
