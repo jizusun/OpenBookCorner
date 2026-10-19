@@ -19,7 +19,7 @@ import type { Auth, AuthSession, AuthUser } from '../lib/auth'
 import type { Env } from '../lib/env'
 import type { BaseVars, RateLimiter } from '../lib/mw'
 import { serverApp } from './server'
-import type { Database } from '@obc/db'
+import { user as dbUser, type Database } from '@obc/db'
 
 /** The minimal session shape the guards read off the stub auth. */
 export interface StubSessionUser {
@@ -46,7 +46,7 @@ export interface HarnessOptions {
 }
 
 /** Build a stub `auth` whose `getSession` always resolves to the given session. */
-export function createStubAuth(session: StubSessionUser | null): Auth {
+export function createStubAuth(session: StubSessionUser | null, db?: Database): Auth {
   const data =
     session == null
       ? null
@@ -64,6 +64,23 @@ export function createStubAuth(session: StubSessionUser | null): Auth {
   return {
     api: {
       getSession: async () => data,
+      // Minimal stand-in for the admin plugin's createUser: inserts a user row
+      // so onboard integration tests can exercise our guards + tenant scoping +
+      // member link + audit. The real password hash / login is covered by E2E.
+      createUser: async (opts: { body: { email: string; name: string } }) => {
+        const id = `user-${opts.body.email}`
+        if (db) {
+          await db.insert(dbUser).values({
+            id,
+            email: opts.body.email,
+            name: opts.body.name,
+            emailVerified: false,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          })
+        }
+        return { user: { id } }
+      },
     },
   } as unknown as Auth
 }
@@ -85,7 +102,7 @@ export function createTestServer(opts: HarnessOptions) {
     COVERS: undefined as unknown as R2Bucket,
   } satisfies Env
 
-  const auth = createStubAuth(opts.session ?? null)
+  const auth = createStubAuth(opts.session ?? null, opts.db)
 
   const setup = createMiddleware<{ Variables: BaseVars }>(async (c, next) => {
     c.set('db', opts.db)

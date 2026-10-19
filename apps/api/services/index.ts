@@ -513,9 +513,9 @@ export class TenantAdminService {
       .groupBy(books.libraryId)
       .all()
     const memberCounts = await this.db
-      .select({ libraryId: user.libraryId, count: sql<number>`count(*)` })
-      .from(user)
-      .groupBy(user.libraryId)
+      .select({ libraryId: members.libraryId, count: sql<number>`count(*)` })
+      .from(members)
+      .groupBy(members.libraryId)
       .all()
 
     const bookBy = new Map(bookCounts.map((r) => [r.libraryId, r.count]))

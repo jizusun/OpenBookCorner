@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { createTestDb, seedLibrary, seedUser, seedBook } from '@obc/db/testing'
+import { createTestDb, seedLibrary, seedUser, seedBook, seedMember } from '@obc/db/testing'
 import type { Database } from '@obc/db'
 
 import { AuditService } from './audit'
@@ -19,6 +19,8 @@ beforeEach(async () => {
   await seedUser(db, 'carol', LIB_B, 'library_reader')
   await seedBook(db, 'bk1', LIB_A)
   await seedBook(db, 'bk2', LIB_B)
+  await seedMember(db, 'm1', LIB_A)
+  await seedMember(db, 'm2', LIB_A)
   await new AuditService(db).log({ actorUserId: 'bob', libraryId: null, action: 'tenant.create', targetId: LIB_B })
 })
 
@@ -41,7 +43,7 @@ describe('OverviewService.get', () => {
     expect(o.tenants).toHaveLength(2)
     const a = o.tenants.find((tn) => tn.id === LIB_A)!
     expect(a.bookCount).toBe(1)
-    // listAll's memberCount counts user rows: LIB_A has 2 users.
+    // per-tenant memberCount counts members records: LIB_A has 2.
     expect(a.memberCount).toBe(2)
   })
 })
