@@ -72,13 +72,6 @@ msgstr "{0, plural, other {# 条荐购}}"
 msgid "{0, plural, one {# review} other {# reviews}}"
 msgstr "{0, plural, other {# 条评论}}"
 
-#. placeholder {0}: tenant.emailDomains.join(', ')
-#. placeholder {1}: tenant.bookCount
-#. placeholder {2}: tenant.memberCount
-#: routes/_app/admin/tenants.tsx:131
-msgid "{0} · {1} books · {2} members"
-msgstr "{0} · {1} 本图书 · {2} 位成员"
-
 #. placeholder {0}: c.books ?? 0
 #. placeholder {1}: c.members ?? 0
 #. placeholder {2}: c.loans ?? 0
@@ -118,7 +111,7 @@ msgstr "{overdue} 本逾期"
 msgid "{total} books"
 msgstr "共 {total} 本"
 
-#: routes/_app/admin/tenants.tsx:93
+#: routes/_app/admin/tenants.tsx:132
 msgid "@acme.com, @acme.io"
 msgstr "@acme.com, @acme.io"
 
@@ -155,11 +148,11 @@ msgstr "15 天以上"
 msgid "8–14 days"
 msgstr "8–14 天"
 
-#: routes/_app/admin/tenants.tsx:143
+#: routes/_app/admin/tenants.tsx:194
 msgid "Activate"
 msgstr "启用"
 
-#: routes/_app/admin/tenants.tsx:127
+#: routes/_app/admin/tenants.tsx:171
 msgid "Active"
 msgstr "已启用"
 
@@ -344,6 +337,10 @@ msgstr "借阅期限（天）"
 msgid "Borrowing…"
 msgstr "借阅中…"
 
+#: routes/_app/admin/tenants.tsx:294
+msgid "Brand color"
+msgstr "品牌色"
+
 #: routes/_app/my-books.tsx:100
 #: routes/_app/my-books.tsx:129
 msgid "Browse catalog"
@@ -375,6 +372,7 @@ msgid "Camera permission denied. Allow camera access or enter the ISBN manually.
 msgstr "摄像头权限被拒绝，请允许访问或手动输入 ISBN。"
 
 #: components/FeedbackButton.tsx:123
+#: routes/_app/admin/tenants.tsx:186
 #: routes/_app/books/$bookId.edit.tsx:144
 msgid "Cancel"
 msgstr "取消"
@@ -382,6 +380,10 @@ msgstr "取消"
 #: components/barcode/IsbnScanner.tsx:146
 msgid "Cancel scan"
 msgstr "取消扫描"
+
+#: routes/_app/admin/tenants.tsx:83
+msgid "Cannot delete a library that still has members or books."
+msgstr "该图书馆仍有成员或书籍，无法删除。"
 
 #: routes/_app/route.tsx:80
 #: routes/_app/route.tsx:90
@@ -430,17 +432,25 @@ msgstr "册数"
 msgid "Copy {0}"
 msgstr "副本 {0}"
 
+#: routes/_app/admin/tenants.tsx:214
+msgid "Copy link"
+msgstr "复制链接"
+
 #: routes/_app/books/add.tsx:109
 msgid "Could not add the book. Please check the fields and try again."
 msgstr "添加失败，请检查填写内容后重试。"
 
-#: routes/_app/admin/tenants.tsx:41
+#: routes/_app/admin/tenants.tsx:42
 msgid "Could not create the library."
 msgstr "创建图书馆失败。"
 
 #: routes/_app/books/$bookId.tsx:64
 msgid "Could not delete the book."
 msgstr "删除失败，请重试。"
+
+#: routes/_app/admin/tenants.tsx:84
+msgid "Could not delete the library."
+msgstr "无法删除该图书馆。"
 
 #: routes/_app/admin/import.tsx:87
 msgid "Could not fetch that URL. Paste a 番薯借阅 export link (https://…fanshujieyue.com/….xls)."
@@ -466,7 +476,8 @@ msgstr "发送失败，请重试。"
 msgid "Could not start the scanner. Enter the ISBN manually."
 msgstr "扫描无法启动，请手动输入 ISBN。"
 
-#: routes/_app/admin/tenants.tsx:47
+#: routes/_app/admin/tenants.tsx:48
+#: routes/_app/admin/tenants.tsx:68
 msgid "Could not update the library."
 msgstr "更新图书馆失败。"
 
@@ -478,19 +489,19 @@ msgstr "更新图书馆失败。"
 msgid "Cover of {0}"
 msgstr "《{0}》封面"
 
-#: routes/_app/admin/tenants.tsx:74
+#: routes/_app/admin/tenants.tsx:113
 msgid "Create a library"
 msgstr "创建图书馆"
 
-#: routes/_app/admin/tenants.tsx:98
+#: routes/_app/admin/tenants.tsx:137
 msgid "Create library"
 msgstr "创建图书馆"
 
-#: routes/_app/admin/tenants.tsx:115
+#: routes/_app/admin/tenants.tsx:154
 msgid "Create the first one above."
 msgstr "在上方创建第一个图书馆。"
 
-#: routes/_app/admin/tenants.tsx:98
+#: routes/_app/admin/tenants.tsx:137
 msgid "Creating…"
 msgstr "创建中…"
 
@@ -506,14 +517,21 @@ msgstr "上架时间"
 msgid "Days overdue"
 msgstr "逾期天数"
 
-#: routes/_app/admin/tenants.tsx:143
+#: routes/_app/admin/tenants.tsx:194
 msgid "Deactivate"
 msgstr "停用"
 
+#: routes/_app/admin/tenants.tsx:197
+#: routes/_app/admin/tenants.tsx:231
 #: routes/_app/books/$bookId.tsx:255
 #: routes/_app/books/$bookId.tsx:288
 msgid "Delete"
 msgstr "删除"
+
+#. placeholder {0}: tenant.name
+#: routes/_app/admin/tenants.tsx:230
+msgid "Delete {0}?"
+msgstr "删除 {0}？"
 
 #: routes/_app/books/$bookId.tsx:286
 msgid "Delete this book?"
@@ -566,6 +584,7 @@ msgstr "例如 9780132350884"
 msgid "e.g. Please add the ability to reserve a borrowed book…"
 msgstr "例如：希望能预约已被借走的书…"
 
+#: routes/_app/admin/tenants.tsx:186
 #: routes/_app/books/$bookId.tsx:247
 msgid "Edit"
 msgstr "编辑"
@@ -575,11 +594,15 @@ msgid "Edit Book"
 msgstr "编辑图书"
 
 #: routes/_app/admin/members.$memberId.tsx:73
-#: routes/login.tsx:166
+#: routes/login.tsx:129
 msgid "Email"
 msgstr "邮箱"
 
-#: routes/_app/admin/tenants.tsx:87
+#: routes/_app/admin/tenants.tsx:290
+msgid "Email domains"
+msgstr "邮箱域名"
+
+#: routes/_app/admin/tenants.tsx:126
 msgid "Email domains (comma-separated)"
 msgstr "邮箱域名（用逗号分隔）"
 
@@ -666,7 +689,7 @@ msgstr "导入成功"
 msgid "Importing…"
 msgstr "导入中…"
 
-#: routes/_app/admin/tenants.tsx:127
+#: routes/_app/admin/tenants.tsx:171
 msgid "Inactive"
 msgstr "已停用"
 
@@ -697,30 +720,30 @@ msgstr "入馆日期"
 msgid "Joined date"
 msgstr "入馆日期"
 
-#: routes/login.tsx:59
-msgid "Library Admin"
-msgstr "图书馆管理员"
-
 #: routes/_app/books/index.tsx:92
 msgid "Library Catalog"
 msgstr "图书馆书目"
 
-#: routes/_app/admin/tenants.tsx:36
+#: routes/_app/admin/tenants.tsx:37
 msgid "Library created."
 msgstr "图书馆已创建。"
 
+#: routes/_app/admin/tenants.tsx:75
+msgid "Library deleted."
+msgstr "图书馆已删除。"
+
 #: routes/_app/admin/settings.tsx:106
-#: routes/_app/admin/tenants.tsx:81
+#: routes/_app/admin/tenants.tsx:120
 msgid "Library name"
 msgstr "图书馆名称"
-
-#: routes/login.tsx:60
-msgid "Library Reader"
-msgstr "图书馆读者"
 
 #: routes/_app/admin/settings.tsx:91
 msgid "Library Settings"
 msgstr "图书馆设置"
+
+#: routes/_app/admin/tenants.tsx:58
+msgid "Library updated."
+msgstr "图书馆已更新。"
 
 #: components/ThemeToggle.tsx:65
 msgid "Light mode"
@@ -741,6 +764,14 @@ msgstr "加载中"
 msgid "Loading…"
 msgstr "加载中…"
 
+#: routes/_app/admin/tenants.tsx:211
+msgid "Login link copied."
+msgstr "登录链接已复制。"
+
+#: routes/_app/admin/tenants.tsx:298
+msgid "Login welcome"
+msgstr "登录欢迎语"
+
 #: routes/_app/books/add.tsx:157
 msgid "Looking up ISBN…"
 msgstr "正在查询 ISBN…"
@@ -749,7 +780,7 @@ msgstr "正在查询 ISBN…"
 msgid "Lookup failed. Enter the title and author manually."
 msgstr "查询失败，请手动填写书名和作者。"
 
-#: routes/_app/admin/tenants.tsx:67
+#: routes/_app/admin/tenants.tsx:106
 msgid "Manage libraries across the system (super admin)."
 msgstr "管理系统内的所有图书馆（超级管理员）。"
 
@@ -786,6 +817,7 @@ msgstr "我的借阅"
 
 #: routes/_app/admin/members.tsx:94
 #: routes/_app/admin/members.tsx:156
+#: routes/_app/admin/tenants.tsx:282
 msgid "Name"
 msgstr "姓名"
 
@@ -819,7 +851,7 @@ msgstr "暂无封面"
 msgid "No feedback yet"
 msgstr "暂无反馈"
 
-#: routes/_app/admin/tenants.tsx:114
+#: routes/_app/admin/tenants.tsx:153
 msgid "No libraries yet"
 msgstr "还没有图书馆"
 
@@ -876,7 +908,7 @@ msgstr "逾期图书"
 msgid "Pages"
 msgstr "页数"
 
-#: routes/login.tsx:177
+#: routes/login.tsx:140
 msgid "Password"
 msgstr "密码"
 
@@ -958,6 +990,7 @@ msgstr "权限"
 msgid "Room"
 msgstr "房号"
 
+#: routes/_app/admin/tenants.tsx:303
 #: routes/_app/books/$bookId.edit.tsx:137
 msgid "Save changes"
 msgstr "保存修改"
@@ -967,6 +1000,7 @@ msgid "Save settings"
 msgstr "保存设置"
 
 #: routes/_app/admin/settings.tsx:153
+#: routes/_app/admin/tenants.tsx:303
 #: routes/_app/books/$bookId.edit.tsx:137
 msgid "Saving…"
 msgstr "保存中…"
@@ -1060,7 +1094,7 @@ msgstr "所属书架"
 msgid "Shelved"
 msgstr "是否上架"
 
-#: routes/login.tsx:189
+#: routes/login.tsx:152
 msgid "Sign in"
 msgstr "登录"
 
@@ -1078,13 +1112,17 @@ msgstr "退出登录"
 msgid "Signed in as {0}"
 msgstr "已登录：{0}"
 
-#: routes/login.tsx:189
+#: routes/login.tsx:152
 msgid "Signing in…"
 msgstr "登录中…"
 
 #: components/ui/skeleton.tsx:51
 msgid "Slow network — still loading, hang tight…"
 msgstr "网络较慢，仍在加载，请稍候…"
+
+#: routes/_app/admin/tenants.tsx:286
+msgid "Slug"
+msgstr "短链标识"
 
 #: lib/errors.ts:20
 msgid "Something went wrong. Please try again."
@@ -1112,10 +1150,6 @@ msgstr "学号"
 msgid "success"
 msgstr "成功"
 
-#: routes/login.tsx:58
-msgid "Super Admin"
-msgstr "超级管理员"
-
 #: components/LanguageToggle.tsx:21
 #: components/LanguageToggle.tsx:22
 msgid "Switch language"
@@ -1142,7 +1176,11 @@ msgstr "系统视图"
 msgid "Tell us what you’d like — features, books to add, or problems."
 msgstr "告诉我们你的想法——想要的功能、想加的书，或遇到的问题。"
 
-#: routes/_app/admin/tenants.tsx:64
+#: routes/_app/admin/tenants.tsx:205
+msgid "Tenant login link"
+msgstr "租户登录链接"
+
+#: routes/_app/admin/tenants.tsx:103
 #: routes/_app/route.tsx:77
 msgid "Tenants"
 msgstr "租户"
@@ -1151,10 +1189,18 @@ msgstr "租户"
 msgid "Thanks for your feedback! 🎉"
 msgstr "感谢你的反馈！🎉"
 
-#: routes/login.tsx:120
-#: routes/login.tsx:143
+#: routes/login.tsx:83
+#: routes/login.tsx:106
 msgid "That email or password doesn’t match. Please try again."
 msgstr "邮箱或密码不正确，请重试。"
+
+#: routes/_app/admin/tenants.tsx:65
+msgid "That slug is already taken."
+msgstr "该短链标识已被占用。"
+
+#: routes/_app/admin/tenants.tsx:67
+msgid "That slug is not valid (use lowercase letters, numbers, hyphens)."
+msgstr "短链标识无效（仅限小写字母、数字和连字符）。"
 
 #: lib/errors.ts:10
 msgid "This book could not be found."
@@ -1189,10 +1235,6 @@ msgstr "书名"
 #: routes/_app/books/$bookId.tsx:132
 msgid "Translator"
 msgstr "译者"
-
-#: routes/login.tsx:65
-msgid "Try a demo account — tap a role to fill it in"
-msgstr "试用演示账号——点击任一角色即可自动填写"
 
 #: routes/_app/books/index.tsx:193
 msgid "Try adjusting the search or filters."
