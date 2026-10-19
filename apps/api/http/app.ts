@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
 
+import { adminApp } from './admin'
 import { authApp } from './auth'
 import { bookApp } from './book'
 import { borrowingApp } from './borrowing'
@@ -23,5 +24,6 @@ export const apiApp = new Hono()
   .route('/member', memberApp)
   .route('/feedback', feedbackApp)
   .route('/tenant', tenantApp)
+  .route('/admin', adminApp)
 
 export type Api = typeof apiApp
