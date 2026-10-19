@@ -21,6 +21,22 @@ export function isValidSlug(slug: string): boolean {
 }
 
 /**
+ * Derive a URL slug from a free-text library name: lowercase, non-alnum → single
+ * hyphens, trimmed of leading/trailing hyphens, truncated to 40 chars. Returns
+ * null when nothing usable remains or the result is too short (<2). The caller
+ * ensures uniqueness + validity (isValidSlug) separately.
+ */
+export function slugify(name: string): string | null {
+  const s = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 40)
+    .replace(/-+$/g, '') // slice may leave a trailing hyphen
+  return s.length >= 2 ? s : null
+}
+
+/**
  * Resolve the tenant slug from a request path of the form `/t/:slug/...`, or
  * null when the path has no `/t/` prefix or the slug segment is invalid/reserved.
  * Tenant membership itself is still enforced by the session `libraryId`; this is

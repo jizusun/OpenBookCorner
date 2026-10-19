@@ -10,6 +10,8 @@ import {
   type LibrarySettings,
 } from '@obc/db'
 
+import { isValidSlug, slugify } from '../lib/tenant'
+
 const DEFAULT_BORROW_DAYS = 14
 
 export class BookService {
@@ -522,7 +524,11 @@ export class TenantAdminService {
     return libs.map((l) => ({
       id: l.id,
       name: l.name,
+      slug: l.slug,
       emailDomains: l.emailDomains,
+      brandColor: l.brandColor,
+      loginWelcome: l.loginWelcome,
+      logoUrl: l.logoUrl,
       isActive: l.isActive,
       createdAt: l.createdAt,
       bookCount: bookBy.get(l.id) ?? 0,
@@ -530,20 +536,110 @@ export class TenantAdminService {
     }))
   }
 
-  // Create a new library (tenant).
-  async create(input: { name: string; emailDomains: string[] }) {
+  /** Pick a valid, unique slug: prefer the requested one, else derive from the
+   * name; disambiguate collisions with a numeric suffix. Returns null if no
+   * usable base can be formed. */
+  private async uniqueSlug(name: string, requested?: string): Promise<string | null> {
+    const base = (requested && isValidSlug(requested) ? requested : null) ?? slugify(name)
+    if (!base) return null
+    const existing = await this.db
+      .select({ slug: libraries.slug })
+      .from(libraries)
+      .all()
+    const taken = new Set(existing.map((r) => r.slug).filter(Boolean) as string[])
+    if (!taken.has(base)) return base
+    for (let i = 2; i < 1000; i++) {
+      const candidate = `${base}-${i}`.slice(0, 40).replace(/-+$/g, '')
+      if (isValidSlug(candidate) && !taken.has(candidate)) return candidate
+    }
+    return null
+  }
+
+  // Create a new library (tenant) with an auto-generated unique slug.
+  async create(input: { name: string; emailDomains: string[]; slug?: string }) {
     const id = crypto.randomUUID()
     const now = new Date().toISOString()
+    const slug = await this.uniqueSlug(input.name, input.slug)
     await this.db.insert(libraries).values({
       id,
       name: input.name,
+      slug,
       emailDomains: input.emailDomains,
       settings: { borrowingPeriodDays: 14, maxBooksPerReader: 5, allowExtensions: false },
       isActive: true,
       createdAt: now,
       updatedAt: now,
     })
-    return { id }
+    return { id, slug }
+  }
+
+  // Update a library's name / email domains / slug / branding.
+  async update(
+    libraryId: string,
+    fields: {
+      name?: string
+      emailDomains?: string[]
+      slug?: string
+      logoUrl?: string | null
+      brandColor?: string | null
+      loginWelcome?: string | null
+    },
+  ): Promise<{ updated: boolean; slug?: string | null; error?: string }> {
+    const lib = await this.db
+      .select()
+      .from(libraries)
+      .where(eq(libraries.id, libraryId))
+      .get()
+    if (!lib) return { updated: false, error: 'LIBRARY_NOT_FOUND' }
+
+    const patch: Record<string, unknown> = { updatedAt: new Date().toISOString() }
+    if (fields.name !== undefined) patch.name = fields.name
+    if (fields.emailDomains !== undefined) patch.emailDomains = fields.emailDomains
+    if (fields.logoUrl !== undefined) patch.logoUrl = fields.logoUrl
+    if (fields.brandColor !== undefined) patch.brandColor = fields.brandColor
+    if (fields.loginWelcome !== undefined) patch.loginWelcome = fields.loginWelcome
+
+    if (fields.slug !== undefined && fields.slug !== lib.slug) {
+      if (!isValidSlug(fields.slug)) return { updated: false, error: 'INVALID_SLUG' }
+      const clash = await this.db
+        .select({ id: libraries.id })
+        .from(libraries)
+        .where(eq(libraries.slug, fields.slug))
+        .get()
+      if (clash && clash.id !== libraryId) return { updated: false, error: 'SLUG_TAKEN' }
+      patch.slug = fields.slug
+    }
+
+    await this.db.update(libraries).set(patch).where(eq(libraries.id, libraryId))
+    return { updated: true, slug: (patch.slug as string | undefined) ?? lib.slug }
+  }
+
+  // Delete a library. Refuses while it still has members or books (avoid
+  // orphaning tenant-scoped data); the caller surfaces the reason.
+  async delete(libraryId: string): Promise<{ deleted: boolean; error?: string }> {
+    const lib = await this.db
+      .select({ id: libraries.id })
+      .from(libraries)
+      .where(eq(libraries.id, libraryId))
+      .get()
+    if (!lib) return { deleted: false, error: 'LIBRARY_NOT_FOUND' }
+
+    const bookCount = await this.db
+      .select({ c: sql<number>`count(*)` })
+      .from(books)
+      .where(eq(books.libraryId, libraryId))
+      .get()
+    const memberCount = await this.db
+      .select({ c: sql<number>`count(*)` })
+      .from(user)
+      .where(eq(user.libraryId, libraryId))
+      .get()
+    if ((bookCount?.c ?? 0) > 0 || (memberCount?.c ?? 0) > 0) {
+      return { deleted: false, error: 'LIBRARY_NOT_EMPTY' }
+    }
+
+    await this.db.delete(libraries).where(eq(libraries.id, libraryId))
+    return { deleted: true }
   }
 
   // Activate / deactivate a library.

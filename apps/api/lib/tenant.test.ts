@@ -6,7 +6,36 @@ import {
   parseOriginPatterns,
   resolveEffectiveOrigin,
   resolveTenantPath,
+  slugify,
 } from './tenant'
+
+describe('slugify', () => {
+  it('lowercases, trims, and hyphenates a library name', () => {
+    expect(slugify('Acme Library')).toBe('acme-library')
+    expect(slugify('  Globex   Corp  ')).toBe('globex-corp')
+    expect(slugify('Hello, World!')).toBe('hello-world')
+  })
+
+  it('strips invalid chars and collapses/strips hyphens', () => {
+    expect(slugify('A&B__C')).toBe('a-b-c')
+    expect(slugify('--Acme--')).toBe('acme')
+    expect(slugify('café münchen')).toBe('caf-m-nchen')
+  })
+
+  it('returns null when nothing valid remains', () => {
+    expect(slugify('!!!')).toBeNull()
+    expect(slugify('')).toBeNull()
+    expect(slugify('a')).toBeNull() // too short after slugify (min 2)
+  })
+
+  it('produces a slug that passes isValidSlug (when non-null)', () => {
+    for (const n of ['Acme Library', 'My Big Library 2', 'Tech-Books']) {
+      const s = slugify(n)
+      expect(s).not.toBeNull()
+      expect(isValidSlug(s!)).toBe(true)
+    }
+  })
+})
 
 describe('isValidSlug', () => {
   it('accepts lowercase alphanumeric + hyphen, 2–40 chars', () => {
