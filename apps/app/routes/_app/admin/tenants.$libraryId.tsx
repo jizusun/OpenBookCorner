@@ -13,6 +13,7 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { ConfirmDialog } from '@/components/ui/modal'
 import { useToast } from '@/components/Toast'
 import { MemberImpersonateButton } from './MemberImpersonateButton'
+import { AddUserDialog } from './AddUserDialog'
 
 export const Route = createFileRoute('/_app/admin/tenants/$libraryId')({
   pendingComponent: () => <Skeleton className="h-40 w-full" />,
@@ -35,11 +36,24 @@ function TenantDetailPage() {
 
   const [editing, setEditing] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [addingAdmin, setAddingAdmin] = useState(false)
 
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: api.tenant.get.queryKey({ id: libraryId }) })
     qc.invalidateQueries({ queryKey: api.tenant.list.queryKey() })
+    qc.invalidateQueries({ queryKey: api.tenant.members.queryKey({ id: libraryId, limit: 100 }) })
   }
+
+  const addAdmin = useMutation({
+    ...api.tenant.addAdmin.mutationOptions(),
+    onSuccess: () => {
+      toast.success(t`Admin added.`)
+      setAddingAdmin(false)
+      invalidate()
+    },
+    onError: (e: Error) =>
+      toast.error(e.message === 'EMAIL_TAKEN' ? t`That email is already in use.` : t`Could not add the admin.`),
+  })
 
   const toggle = useMutation({
     ...api.tenant.setActive.mutationOptions(),
@@ -159,9 +173,14 @@ function TenantDetailPage() {
 
       {/* Members */}
       <section className="space-y-2">
-        <h2 className="text-sm font-semibold text-muted-foreground">
-          <Trans>Members</Trans>
-        </h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-muted-foreground">
+            <Trans>Members</Trans>
+          </h2>
+          <Button size="sm" variant="outline" onClick={() => setAddingAdmin(true)} data-testid="add-admin-open">
+            <Trans>Add admin</Trans>
+          </Button>
+        </div>
         {membersLoading ? (
           <Skeleton className="h-24 w-full" />
         ) : members.length === 0 ? (
@@ -221,6 +240,14 @@ function TenantDetailPage() {
           </Button>
         </div>
       </section>
+
+      <AddUserDialog
+        open={addingAdmin}
+        title={t`Add admin`}
+        pending={addAdmin.isPending}
+        onClose={() => setAddingAdmin(false)}
+        onSubmit={(v) => addAdmin.mutate({ id: tenant.id, ...v })}
+      />
 
       <ConfirmDialog
         open={deleting}
