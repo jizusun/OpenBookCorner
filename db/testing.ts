@@ -23,6 +23,7 @@ export async function createTestDb(): Promise<Database> {
       id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL UNIQUE,
       email_verified INTEGER NOT NULL DEFAULT 0, image TEXT,
       library_id TEXT, role TEXT NOT NULL DEFAULT 'library_reader',
+      banned INTEGER, ban_reason TEXT, ban_expires INTEGER,
       created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL
     );
     CREATE TABLE books (
