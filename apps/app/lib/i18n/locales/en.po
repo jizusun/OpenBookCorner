@@ -120,6 +120,10 @@ msgstr "{overdue} overdue"
 msgid "{total} books"
 msgstr "{total} books"
 
+#: routes/_app/admin/audit.tsx:106
+msgid "{total} entries"
+msgstr "{total} entries"
+
 #: routes/_app/admin/users.tsx:67
 msgid "{total} users"
 msgstr "{total} users"
@@ -244,9 +248,17 @@ msgstr "All"
 msgid "All {0} copies borrowed"
 msgstr "All {0} copies borrowed"
 
+#: routes/_app/admin/audit.tsx:97
+msgid "All actions"
+msgstr "All actions"
+
 #: routes/_app/books/index.tsx:156
 msgid "All categories"
 msgstr "All categories"
+
+#: routes/_app/admin/audit.tsx:73
+msgid "All changes across the system (super admin)."
+msgstr "All changes across the system (super admin)."
 
 #: components/books/BookCard.tsx:76
 msgid "All copies borrowed"
@@ -269,6 +281,10 @@ msgstr "All shelves"
 msgid "All source fields"
 msgstr "All source fields"
 
+#: routes/_app/admin/audit.tsx:84
+msgid "All tenants"
+msgstr "All tenants"
+
 #: routes/_app/admin/users.tsx:49
 msgid "All users across every tenant (super admin)."
 msgstr "All users across every tenant (super admin)."
@@ -286,7 +302,7 @@ msgstr "Ascending"
 msgid "At least 8 characters"
 msgstr "At least 8 characters"
 
-#: routes/_app/admin/audit.tsx:26
+#: routes/_app/admin/audit.tsx:70
 #: routes/_app/route.tsx:94
 msgid "Audit log"
 msgstr "Audit log"
@@ -948,6 +964,10 @@ msgstr "My Books"
 msgid "Name"
 msgstr "Name"
 
+#: routes/_app/admin/audit.tsx:133
+msgid "Next"
+msgstr "Next"
+
 #: routes/_app/books/$bookId.tsx:197
 msgid "No"
 msgstr "No"
@@ -1054,6 +1074,10 @@ msgstr "Overdue Books"
 msgid "Overview"
 msgstr "Overview"
 
+#: routes/_app/admin/audit.tsx:124
+msgid "Page {page}"
+msgstr "Page {page}"
+
 #: routes/_app/books/$bookId.tsx:176
 msgid "Pages"
 msgstr "Pages"
@@ -1092,6 +1116,10 @@ msgstr "Preview — {0}"
 #: routes/_app/route.tsx:123
 msgid "Preview as a reader"
 msgstr "Preview as a reader"
+
+#: routes/_app/admin/audit.tsx:121
+msgid "Previous"
+msgstr "Previous"
 
 #: routes/_app/books/$bookId.tsx:188
 #: routes/_app/books/index.tsx:127
@@ -1382,10 +1410,6 @@ msgstr "System actions (tenant changes, impersonation) will appear here."
 #: routes/_app/route.tsx:95
 msgid "System settings"
 msgstr "System settings"
-
-#: routes/_app/admin/audit.tsx:29
-msgid "System-level actions across all tenants (super admin)."
-msgstr "System-level actions across all tenants (super admin)."
 
 #: routes/_app/admin/overview.tsx:44
 msgid "System-wide snapshot (super admin)."

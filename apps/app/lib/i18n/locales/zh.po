@@ -120,6 +120,10 @@ msgstr "{overdue} 本逾期"
 msgid "{total} books"
 msgstr "共 {total} 本"
 
+#: routes/_app/admin/audit.tsx:106
+msgid "{total} entries"
+msgstr "共 {total} 条"
+
 #: routes/_app/admin/users.tsx:67
 msgid "{total} users"
 msgstr "共 {total} 位用户"
@@ -244,9 +248,17 @@ msgstr "全部"
 msgid "All {0} copies borrowed"
 msgstr "{0} 本全部借出"
 
+#: routes/_app/admin/audit.tsx:97
+msgid "All actions"
+msgstr "所有操作"
+
 #: routes/_app/books/index.tsx:156
 msgid "All categories"
 msgstr "全部分类"
+
+#: routes/_app/admin/audit.tsx:73
+msgid "All changes across the system (super admin)."
+msgstr "全系统的所有变更（超级管理员）。"
 
 #: components/books/BookCard.tsx:76
 msgid "All copies borrowed"
@@ -269,6 +281,10 @@ msgstr "全部书架"
 msgid "All source fields"
 msgstr "原始数据 / 全部字段"
 
+#: routes/_app/admin/audit.tsx:84
+msgid "All tenants"
+msgstr "所有租户"
+
 #: routes/_app/admin/users.tsx:49
 msgid "All users across every tenant (super admin)."
 msgstr "所有租户的全部用户（超级管理员）。"
@@ -286,7 +302,7 @@ msgstr "升序"
 msgid "At least 8 characters"
 msgstr "至少 8 个字符"
 
-#: routes/_app/admin/audit.tsx:26
+#: routes/_app/admin/audit.tsx:70
 #: routes/_app/route.tsx:94
 msgid "Audit log"
 msgstr "审计日志"
@@ -948,6 +964,10 @@ msgstr "我的借阅"
 msgid "Name"
 msgstr "姓名"
 
+#: routes/_app/admin/audit.tsx:133
+msgid "Next"
+msgstr "下一页"
+
 #: routes/_app/books/$bookId.tsx:197
 msgid "No"
 msgstr "否"
@@ -1054,6 +1074,10 @@ msgstr "逾期图书"
 msgid "Overview"
 msgstr "概况"
 
+#: routes/_app/admin/audit.tsx:124
+msgid "Page {page}"
+msgstr "第 {page} 页"
+
 #: routes/_app/books/$bookId.tsx:176
 msgid "Pages"
 msgstr "页数"
@@ -1092,6 +1116,10 @@ msgstr "预览 — {0}"
 #: routes/_app/route.tsx:123
 msgid "Preview as a reader"
 msgstr "以读者身份预览"
+
+#: routes/_app/admin/audit.tsx:121
+msgid "Previous"
+msgstr "上一页"
 
 #: routes/_app/books/$bookId.tsx:188
 #: routes/_app/books/index.tsx:127
@@ -1382,10 +1410,6 @@ msgstr "系统操作（租户变更、模拟登录）会显示在这里。"
 #: routes/_app/route.tsx:95
 msgid "System settings"
 msgstr "系统设置"
-
-#: routes/_app/admin/audit.tsx:29
-msgid "System-level actions across all tenants (super admin)."
-msgstr "跨所有租户的系统级操作（超级管理员）。"
 
 #: routes/_app/admin/overview.tsx:44
 msgid "System-wide snapshot (super admin)."
