@@ -103,6 +103,12 @@ test.describe('Auth', () => {
     await expect(page.getByRole('button', { name: 'Sign In' })).toBeVisible()
   })
 
+  test('anonymous /t/:slug/ redirects to that tenant login (no 404)', async ({ page }) => {
+    await page.goto('/t/acme/', { waitUntil: 'domcontentloaded' })
+    await expect(page).toHaveURL(/\/t\/acme\/login$/)
+    await expect(page.getByRole('button', { name: 'Sign In' })).toBeVisible()
+  })
+
   test('reader does not see admin nav links', async ({ page }) => {
     await login(page, 'reader@demo.test')
     await expect(page.getByRole('link', { name: 'Catalog' }).first()).toBeVisible()
