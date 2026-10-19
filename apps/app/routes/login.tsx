@@ -170,7 +170,7 @@ export function LoginPage({ slug }: { slug?: string } = {}) {
       const role = (res.data?.user as { role?: string } | undefined)?.role
       if (role === 'super_admin') {
         setViewMode('system')
-        await router.navigate({ to: '/admin/tenants' })
+        await router.navigate({ to: '/admin/overview' })
       } else if (role === 'library_admin') {
         setViewMode('admin')
         await router.navigate({ to: '/books' })

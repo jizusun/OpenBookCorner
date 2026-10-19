@@ -153,6 +153,8 @@ const call = {
         },
       }),
     ),
+  'admin.overview': () =>
+    json<Ok<typeof client.admin.overview.$get>>(client.admin.overview.$get()),
 }
 
 type Endpoint = keyof typeof call
@@ -222,6 +224,7 @@ export const api = {
   },
   admin: {
     users: node('admin.users'),
+    overview: node('admin.overview'),
   },
 }
 

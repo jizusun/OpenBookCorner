@@ -13,7 +13,7 @@ async function loginSuper(page: Page) {
   await page.getByLabel('Email').fill('super@demo.test')
   await page.getByLabel('Password').fill('password123')
   await page.getByRole('button', { name: 'Sign In' }).click()
-  await expect(page.getByRole('heading', { name: 'Tenants' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible()
 }
 
 test.describe('Impersonation (super admin)', () => {
@@ -41,7 +41,7 @@ test.describe('Impersonation (super admin)', () => {
     // Exit impersonation → banner gone, back to the super-admin (System) landing.
     await page.getByRole('button', { name: 'Back to my account' }).click()
     await expect(page.getByRole('status')).toHaveCount(0)
-    await expect(page.getByRole('heading', { name: 'Tenants' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible()
   })
 
   test('library_admin does NOT see the impersonate action (least privilege)', async ({ page }) => {

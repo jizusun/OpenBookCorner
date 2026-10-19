@@ -296,13 +296,16 @@ test.describe('Admin', () => {
 })
 
 test.describe('Super admin (tenant management)', () => {
-  test('lands in System view and can see the Tenants page', async ({ page }) => {
+  test('lands on the Overview and can open the Tenants page', async ({ page }) => {
     await page.goto('/login', { waitUntil: 'domcontentloaded' })
     await page.getByLabel('Email').fill('super@demo.test')
     await page.getByLabel('Password').fill('password123')
     await page.getByRole('button', { name: 'Sign In' }).click()
+    // Super admin now lands on the system Overview dashboard.
+    await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible()
+    // Navigate to the Tenants page via the System nav.
+    await page.getByRole('link', { name: 'Tenants' }).first().click()
     await expect(page.getByRole('heading', { name: 'Tenants' })).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Tenants' }).first()).toBeVisible()
     // The demo tenants are listed (two-tenant seed: Acme + Globex).
     await expect(page.getByText('Acme Library')).toBeVisible()
     await expect(page.getByText('Globex Library')).toBeVisible()
@@ -313,6 +316,8 @@ test.describe('Super admin (tenant management)', () => {
     await page.getByLabel('Email').fill('super@demo.test')
     await page.getByLabel('Password').fill('password123')
     await page.getByRole('button', { name: 'Sign In' }).click()
+    await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible()
+    await page.getByRole('link', { name: 'Tenants' }).first().click()
     await expect(page.getByRole('heading', { name: 'Tenants' })).toBeVisible()
 
     const unique = `Acme ${Date.now()}`
@@ -328,7 +333,7 @@ test.describe('Super admin (tenant management)', () => {
     await page.getByLabel('Email').fill('super@demo.test')
     await page.getByLabel('Password').fill('password123')
     await page.getByRole('button', { name: 'Sign In' }).click()
-    await expect(page.getByRole('heading', { name: 'Tenants' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible()
 
     await page.getByTestId('view-switch').click() // -> Admin
     await expect(page.getByRole('heading', { name: 'Library Catalog' })).toBeVisible()
