@@ -52,37 +52,6 @@ export function LoginHeader({ branding }: { branding: TenantBranding | null }) {
 }
 
 /** Demo accounts helper — only shown on the standard (unbranded) login. */
-function DemoAccounts({ onFill }: { onFill: (demo: { email: string; password: string }) => void }) {
-  const { t } = useLingui()
-  const demoAccounts = [
-    { role: t`Super Admin`, email: 'super@demo.test', password: 'password123' },
-    { role: t`Library Admin`, email: 'admin@demo.test', password: 'password123' },
-    { role: t`Library Reader`, email: 'reader@demo.test', password: 'password123' },
-  ] as const
-  return (
-    <div className="mt-6 rounded-md border border-dashed p-4" data-testid="demo-accounts">
-      <p className="text-xs font-medium text-muted-foreground">
-        <Trans>Try a demo account — tap a role to fill it in</Trans>
-      </p>
-      <div className="mt-3 space-y-2">
-        {demoAccounts.map((demo) => (
-          <button
-            key={demo.email}
-            type="button"
-            onClick={() => onFill(demo)}
-            className="flex w-full items-center justify-between rounded-md border bg-muted/40 px-3 py-2 text-left text-sm transition-colors hover:bg-muted"
-          >
-            <span className="font-medium">{demo.role}</span>
-            <span className="text-xs text-muted-foreground">
-              {demo.email} · {demo.password}
-            </span>
-          </button>
-        ))}
-      </div>
-    </div>
-  )
-}
-
 export function LoginPage({ slug }: { slug?: string } = {}) {
   const router = useRouter()
   const { t } = useLingui()
@@ -103,12 +72,6 @@ export function LoginPage({ slug }: { slug?: string } = {}) {
       active = false
     }
   }, [slug])
-
-  function fillDemo(demo: { email: string; password: string }) {
-    setEmail(demo.email)
-    setPassword(demo.password)
-    setError(null)
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -189,9 +152,6 @@ export function LoginPage({ slug }: { slug?: string } = {}) {
               {pending ? <Trans>Signing in…</Trans> : <Trans>Sign in</Trans>}
             </Button>
           </form>
-
-          {/* Demo accounts are hidden on a real tenant host (branded login). */}
-          {!branding && <DemoAccounts onFill={fillDemo} />}
         </CardContent>
       </Card>
     </div>
