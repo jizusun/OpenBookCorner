@@ -541,6 +541,10 @@ msgstr "确定删除这本书吗？"
 msgid "Deleting…"
 msgstr "删除中…"
 
+#: routes/login.tsx:59
+msgid "Demo accounts (non-production) — tap to fill in"
+msgstr "演示账户（非生产环境）— 点击自动填充"
+
 #: routes/_app/admin/members.$memberId.tsx:78
 msgid "Department"
 msgstr "部门"
@@ -594,7 +598,7 @@ msgid "Edit Book"
 msgstr "编辑图书"
 
 #: routes/_app/admin/members.$memberId.tsx:73
-#: routes/login.tsx:129
+#: routes/login.tsx:205
 msgid "Email"
 msgstr "邮箱"
 
@@ -908,7 +912,7 @@ msgstr "逾期图书"
 msgid "Pages"
 msgstr "页数"
 
-#: routes/login.tsx:140
+#: routes/login.tsx:216
 msgid "Password"
 msgstr "密码"
 
@@ -1094,12 +1098,12 @@ msgstr "所属书架"
 msgid "Shelved"
 msgstr "是否上架"
 
-#: routes/login.tsx:152
+#: routes/login.tsx:228
 msgid "Sign in"
 msgstr "登录"
 
-#: routes/login.tsx:37
-#: routes/login.tsx:48
+#: routes/login.tsx:101
+#: routes/login.tsx:112
 msgid "Sign in to your library"
 msgstr "登录你的图书馆"
 
@@ -1112,7 +1116,7 @@ msgstr "退出登录"
 msgid "Signed in as {0}"
 msgstr "已登录：{0}"
 
-#: routes/login.tsx:152
+#: routes/login.tsx:228
 msgid "Signing in…"
 msgstr "登录中…"
 
@@ -1189,8 +1193,8 @@ msgstr "租户"
 msgid "Thanks for your feedback! 🎉"
 msgstr "感谢你的反馈！🎉"
 
-#: routes/login.tsx:83
-#: routes/login.tsx:106
+#: routes/login.tsx:159
+#: routes/login.tsx:182
 msgid "That email or password doesn’t match. Please try again."
 msgstr "邮箱或密码不正确，请重试。"
 
@@ -1264,7 +1268,7 @@ msgstr "在「我的借阅」中查看"
 msgid "We could not process this return. It may already be returned."
 msgstr "无法处理这次归还，可能已经还过了。"
 
-#: routes/login.tsx:45
+#: routes/login.tsx:109
 msgid "Welcome back"
 msgstr "欢迎回来"
 
