@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { createFileRoute, Link, Outlet, redirect, useRouter } from '@tanstack/react-router'
-import { signOut } from '@/lib/auth-client'
+import { authClient, signOut, useSession } from '@/lib/auth-client'
+import { impersonationState } from '@/lib/impersonation'
 import { ensureRequireMe } from '@/lib/api'
 import { queryClient } from '@/lib/query'
 import { Button } from '@/components/ui/button'
+import { ImpersonationBanner } from '@/components/ImpersonationBanner'
 import { FeedbackButton } from '@/components/FeedbackButton'
 import { useInstallPrompt } from '@/components/Pwa'
 import { ThemeToggle } from '@/components/ThemeToggle'
@@ -46,6 +48,23 @@ function AppLayout() {
   const inAdminView = isAdmin && viewMode === 'admin'
   const { canInstall, install } = useInstallPrompt()
   const [menuOpen, setMenuOpen] = useState(false)
+
+  // Impersonation banner state: Better Auth sets session.impersonatedBy on an
+  // impersonation session. When present, show the persistent banner; the current
+  // user object (the impersonated user) supplies the display name.
+  const session = useSession()
+  const impersonation = impersonationState(session.data?.session ?? null)
+
+  async function handleExitImpersonation() {
+    try {
+      await authClient.admin.stopImpersonating()
+    } finally {
+      // Restore the admin's own identity: drop cached queries + go to the
+      // super-admin landing.
+      queryClient.clear()
+      await router.navigate({ to: '/admin/tenants' })
+    }
+  }
 
   async function handleLogout() {
     await signOut()
@@ -128,6 +147,11 @@ function AppLayout() {
 
   return (
     <div className="min-h-screen bg-background">
+      <ImpersonationBanner
+        active={impersonation.active}
+        viewingAs={user.name}
+        onExit={handleExitImpersonation}
+      />
       <header className="border-b border-t-2 border-t-primary bg-card">
         <div className="mx-auto flex max-w-4xl items-center justify-between gap-2 p-4">
           <div className="flex items-center gap-2">

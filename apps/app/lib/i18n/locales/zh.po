@@ -264,6 +264,10 @@ msgstr "可借 · {available}/{total}"
 msgid "Back to catalog"
 msgstr "返回书目"
 
+#: components/ImpersonationBanner.tsx:44
+msgid "Back to my account"
+msgstr "返回我的账户"
+
 #: routes/_app/admin/overdue.tsx:93
 msgid "Book"
 msgstr "图书"
@@ -1296,9 +1300,17 @@ msgstr "是"
 msgid "You appear to be offline. Connect to the internet and try again."
 msgstr "你似乎已离线，请连接网络后重试。"
 
+#: components/ImpersonationBanner.tsx:35
+msgid "You are impersonating another user. Actions are recorded."
+msgstr "你正在以其他用户身份浏览，所有操作都会被记录。"
+
 #: components/Pwa.tsx:74
 msgid "You are offline — showing cached data. Borrowing requires a connection."
 msgstr "当前离线，显示的是缓存数据。借书需要联网。"
+
+#: components/ImpersonationBanner.tsx:33
+msgid "You are viewing as {viewingAs}. Actions are recorded."
+msgstr "你正在以 {viewingAs} 的身份浏览，所有操作都会被记录。"
 
 #: routes/_app/books/add.tsx:108
 msgid "You do not have permission to add books."
