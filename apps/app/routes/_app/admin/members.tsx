@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { ListPageSkeleton } from '@/components/ui/skeleton'
-import { createFileRoute, redirect, Link } from '@tanstack/react-router'
+import { createFileRoute, redirect, Link, useRouter } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { z } from 'zod'
 import { Trans, Plural, useLingui } from '@lingui/react/macro'
 import { api } from '@/lib/api'
+import { queryClient } from '@/lib/query'
 import { Button } from '@/components/ui/button'
+import { MemberImpersonateButton } from './MemberImpersonateButton'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -36,6 +38,8 @@ type Member = Awaited<ReturnType<typeof api.member.list.query>>['items'][number]
 function MembersPage() {
   const { q, sort, dir, role, plan } = Route.useSearch()
   const navigate = Route.useNavigate()
+  const router = useRouter()
+  const { user } = Route.useRouteContext()
   const [term, setTerm] = useState(q ?? '')
   const { t } = useLingui()
 
@@ -173,6 +177,13 @@ function MembersPage() {
                 <th className="px-3 py-2">
                   <Trans>Expiry</Trans>
                 </th>
+                {user.role === 'super_admin' && (
+                  <th className="px-3 py-2">
+                    <span className="sr-only">
+                      <Trans>Actions</Trans>
+                    </span>
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody>
@@ -200,6 +211,17 @@ function MembersPage() {
                   <td className="px-3 py-2">
                     {m.memberExpiry ? new Date(m.memberExpiry).toLocaleDateString() : '—'}
                   </td>
+                  {user.role === 'super_admin' && (
+                    <td className="px-3 py-2">
+                      <MemberImpersonateButton
+                        viewerRole={user.role}
+                        viewerId={user.id}
+                        memberUserId={m.userId}
+                        clearCache={() => queryClient.clear()}
+                        onImpersonated={() => router.navigate({ to: '/my-books' })}
+                      />
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
