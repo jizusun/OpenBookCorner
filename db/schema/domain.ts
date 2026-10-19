@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm'
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 import { relations } from 'drizzle-orm'
 import { user } from './auth'
@@ -25,8 +26,8 @@ export const libraries = sqliteTable('libraries', {
   logoUrl: text('logo_url'),
   brandColor: text('brand_color'),
   loginWelcome: text('login_welcome'),
-  createdAt: text('created_at').notNull().default('CURRENT_TIMESTAMP'),
-  updatedAt: text('updated_at').notNull().default('CURRENT_TIMESTAMP'),
+  createdAt: text('created_at').notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text('updated_at').notNull().default(sql`CURRENT_TIMESTAMP`),
 })
 
 export const books = sqliteTable('books', {
@@ -66,8 +67,8 @@ export const books = sqliteTable('books', {
   // Full original export row(s) for this book — guarantees zero field loss even
   // for columns we don't model as typed fields.
   raw: text('raw', { mode: 'json' }).$type<Record<string, unknown>>(),
-  createdAt: text('created_at').notNull().default('CURRENT_TIMESTAMP'),
-  updatedAt: text('updated_at').notNull().default('CURRENT_TIMESTAMP'),
+  createdAt: text('created_at').notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text('updated_at').notNull().default(sql`CURRENT_TIMESTAMP`),
 })
 
 /**
@@ -107,7 +108,7 @@ export const members = sqliteTable('members', {
   userId: text('user_id').references(() => user.id), // linked login account, if any
   source: text('source'), // 'fanshu-import'
   raw: text('raw', { mode: 'json' }).$type<Record<string, unknown>>(),
-  createdAt: text('created_at').notNull().default('CURRENT_TIMESTAMP'),
+  createdAt: text('created_at').notNull().default(sql`CURRENT_TIMESTAMP`),
 })
 
 /** Book reviews (番薯 评论清单). */
@@ -124,7 +125,7 @@ export const reviews = sqliteTable('reviews', {
   reviewedAt: text('reviewed_at'), // 评论创建时间
   source: text('source'),
   raw: text('raw', { mode: 'json' }).$type<Record<string, unknown>>(),
-  createdAt: text('created_at').notNull().default('CURRENT_TIMESTAMP'),
+  createdAt: text('created_at').notNull().default(sql`CURRENT_TIMESTAMP`),
 })
 
 /** Purchase requests (番薯 荐购清单). */
@@ -141,7 +142,7 @@ export const purchaseRequests = sqliteTable('purchase_requests', {
   requesters: text('requesters'), // 荐购人
   source: text('source'),
   raw: text('raw', { mode: 'json' }).$type<Record<string, unknown>>(),
-  createdAt: text('created_at').notNull().default('CURRENT_TIMESTAMP'),
+  createdAt: text('created_at').notNull().default(sql`CURRENT_TIMESTAMP`),
 })
 
 export const importRuns = sqliteTable('import_runs', {
@@ -157,7 +158,7 @@ export const importRuns = sqliteTable('import_runs', {
   status: text('status', { enum: ['success', 'failed'] }).notNull().default('success'),
   counts: text('counts', { mode: 'json' }).$type<Record<string, unknown>>(),
   error: text('error'),
-  createdAt: text('created_at').notNull().default('CURRENT_TIMESTAMP'),
+  createdAt: text('created_at').notNull().default(sql`CURRENT_TIMESTAMP`),
 })
 
 export const borrowTransactions = sqliteTable('borrow_transactions', {
@@ -194,7 +195,7 @@ export const feedback = sqliteTable('feedback', {
     .default('other'),
   message: text('message').notNull(),
   status: text('status', { enum: ['new', 'reviewed', 'done'] }).notNull().default('new'),
-  createdAt: text('created_at').notNull().default('CURRENT_TIMESTAMP'),
+  createdAt: text('created_at').notNull().default(sql`CURRENT_TIMESTAMP`),
 })
 
 /**
@@ -213,7 +214,7 @@ export const auditLogs = sqliteTable('audit_logs', {
   targetType: text('target_type'),
   targetId: text('target_id'),
   metadata: text('metadata', { mode: 'json' }).$type<Record<string, unknown>>(),
-  createdAt: text('created_at').notNull().default('CURRENT_TIMESTAMP'),
+  createdAt: text('created_at').notNull().default(sql`CURRENT_TIMESTAMP`),
 })
 
 // --- Relations ---
