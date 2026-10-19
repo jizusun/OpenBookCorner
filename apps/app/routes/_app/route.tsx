@@ -95,6 +95,7 @@ function AppLayout() {
   const navItems: NavItem[] = inSystemView
     ? [
         { to: '/admin/tenants', label: <Trans>Tenants</Trans> },
+        { to: '/admin/users', label: <Trans>Users</Trans> },
         { to: '/admin/audit', label: <Trans>Audit log</Trans> },
       ]
     : inAdminView

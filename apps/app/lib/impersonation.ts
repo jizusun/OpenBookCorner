@@ -32,3 +32,20 @@ export function canShowImpersonateAction(
   if (targetUserId === viewerId) return false
   return true
 }
+
+/**
+ * Whether a super admin may impersonate a target USER whose role is known
+ * (global user directory). Builds on `canShowImpersonateAction` and additionally
+ * refuses to impersonate another admin/super-admin — mirroring Better Auth's
+ * `allowImpersonatingAdmins: false`, so the UI never offers an action the server
+ * would reject.
+ */
+export function canImpersonateUser(
+  viewerRole: string | null | undefined,
+  viewerId: string,
+  target: { id: string; role: string },
+): boolean {
+  if (!canShowImpersonateAction(viewerRole, target.id, viewerId)) return false
+  if (target.role === 'library_admin' || target.role === 'super_admin') return false
+  return true
+}

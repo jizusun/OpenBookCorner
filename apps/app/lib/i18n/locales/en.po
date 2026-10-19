@@ -111,6 +111,10 @@ msgstr "{overdue} overdue"
 msgid "{total} books"
 msgstr "{total} books"
 
+#: routes/_app/admin/users.tsx:67
+msgid "{total} users"
+msgstr "{total} users"
+
 #: routes/_app/admin/tenants.tsx:132
 msgid "@acme.com, @acme.io"
 msgstr "@acme.com, @acme.io"
@@ -124,15 +128,15 @@ msgstr "← Back to catalog"
 msgid "← Back to members"
 msgstr "← Back to members"
 
-#: routes/_app/route.tsx:124
+#: routes/_app/route.tsx:125
 msgid "→ Admin view"
 msgstr "→ Admin view"
 
-#: routes/_app/route.tsx:124
+#: routes/_app/route.tsx:125
 msgid "→ Reader view"
 msgstr "→ Reader view"
 
-#: routes/_app/route.tsx:124
+#: routes/_app/route.tsx:125
 msgid "→ System view"
 msgstr "→ System view"
 
@@ -153,6 +157,7 @@ msgid "Action"
 msgstr "Action"
 
 #: routes/_app/admin/members.tsx:183
+#: routes/_app/admin/UsersTable.tsx:89
 msgid "Actions"
 msgstr "Actions"
 
@@ -197,8 +202,8 @@ msgstr "Address"
 msgid "Admin"
 msgstr "Admin"
 
-#: routes/_app/route.tsx:119
-#: routes/_app/route.tsx:122
+#: routes/_app/route.tsx:120
+#: routes/_app/route.tsx:123
 msgid "Admin view"
 msgstr "Admin view"
 
@@ -241,6 +246,10 @@ msgstr "All shelves"
 msgid "All source fields"
 msgstr "All source fields"
 
+#: routes/_app/admin/users.tsx:49
+msgid "All users across every tenant (super admin)."
+msgstr "All users across every tenant (super admin)."
+
 #: routes/_app/admin/settings.tsx:144
 msgid "Allow renewals/extensions"
 msgstr "Allow renewals/extensions"
@@ -251,7 +260,7 @@ msgid "Ascending"
 msgstr "Ascending"
 
 #: routes/_app/admin/audit.tsx:26
-#: routes/_app/route.tsx:98
+#: routes/_app/route.tsx:99
 msgid "Audit log"
 msgstr "Audit log"
 
@@ -410,8 +419,8 @@ msgstr "Cancel scan"
 msgid "Cannot delete a library that still has members or books."
 msgstr "Cannot delete a library that still has members or books."
 
-#: routes/_app/route.tsx:102
-#: routes/_app/route.tsx:112
+#: routes/_app/route.tsx:103
+#: routes/_app/route.tsx:113
 msgid "Catalog"
 msgstr "Catalog"
 
@@ -431,7 +440,7 @@ msgstr "Class"
 msgid "CLC"
 msgstr "CLC"
 
-#: routes/_app/route.tsx:165
+#: routes/_app/route.tsx:166
 msgid "Close menu"
 msgstr "Close menu"
 
@@ -631,6 +640,7 @@ msgid "Edit Book"
 msgstr "Edit Book"
 
 #: routes/_app/admin/members.$memberId.tsx:73
+#: routes/_app/admin/UsersTable.tsx:79
 #: routes/login.tsx:205
 msgid "Email"
 msgstr "Email"
@@ -678,7 +688,7 @@ msgid "Feature request"
 msgstr "Feature request"
 
 #: components/FeedbackButton.tsx:74
-#: routes/_app/route.tsx:106
+#: routes/_app/route.tsx:107
 msgid "Feedback"
 msgstr "Feedback"
 
@@ -691,7 +701,7 @@ msgid "https://…fanshujieyue.com/…/librarydata_….xls"
 msgstr "https://…fanshujieyue.com/…/librarydata_….xls"
 
 #: routes/_app/admin/import.tsx:233
-#: routes/_app/route.tsx:107
+#: routes/_app/route.tsx:108
 msgid "Import"
 msgstr "Import"
 
@@ -730,7 +740,7 @@ msgstr "Importing…"
 msgid "Inactive"
 msgstr "Inactive"
 
-#: routes/_app/route.tsx:197
+#: routes/_app/route.tsx:198
 msgid "Install app"
 msgstr "Install app"
 
@@ -843,18 +853,19 @@ msgid "Member until"
 msgstr "Member until"
 
 #: routes/_app/admin/members.tsx:65
-#: routes/_app/route.tsx:103
+#: routes/_app/route.tsx:104
 msgid "Members"
 msgstr "Members"
 
 #: routes/_app/my-books.tsx:94
-#: routes/_app/route.tsx:110
+#: routes/_app/route.tsx:111
 msgid "My Books"
 msgstr "My Books"
 
 #: routes/_app/admin/members.tsx:98
 #: routes/_app/admin/members.tsx:160
 #: routes/_app/admin/tenants.tsx:282
+#: routes/_app/admin/UsersTable.tsx:76
 msgid "Name"
 msgstr "Name"
 
@@ -904,6 +915,10 @@ msgstr "No members yet"
 msgid "No overdue books in this range"
 msgstr "No overdue books in this range"
 
+#: routes/_app/admin/UsersTable.tsx:63
+msgid "No users found"
+msgstr "No users found"
+
 #: routes/_app/admin/members.$memberId.tsx:87
 msgid "Note"
 msgstr "Note"
@@ -921,11 +936,11 @@ msgstr "Notifications"
 msgid "on behalf of {0}"
 msgstr "on behalf of {0}"
 
-#: routes/_app/route.tsx:165
+#: routes/_app/route.tsx:166
 msgid "Open menu"
 msgstr "Open menu"
 
-#: routes/_app/route.tsx:175
+#: routes/_app/route.tsx:176
 msgid "OpenBookCorner"
 msgstr "OpenBookCorner"
 
@@ -942,7 +957,7 @@ msgstr "Other"
 msgid "Out"
 msgstr "Out"
 
-#: routes/_app/route.tsx:104
+#: routes/_app/route.tsx:105
 msgid "Overdue"
 msgstr "Overdue"
 
@@ -1006,8 +1021,8 @@ msgstr "R2: {0}"
 msgid "Reader"
 msgstr "Reader"
 
-#: routes/_app/route.tsx:120
-#: routes/_app/route.tsx:122
+#: routes/_app/route.tsx:121
+#: routes/_app/route.tsx:123
 msgid "Reader view"
 msgstr "Reader view"
 
@@ -1029,6 +1044,7 @@ msgid "Returning…"
 msgstr "Returning…"
 
 #: routes/_app/admin/members.tsx:163
+#: routes/_app/admin/UsersTable.tsx:85
 msgid "Role"
 msgstr "Role"
 
@@ -1051,7 +1067,7 @@ msgstr "Save settings"
 msgid "Saving…"
 msgstr "Saving…"
 
-#: routes/_app/route.tsx:111
+#: routes/_app/route.tsx:112
 msgid "Scan"
 msgstr "Scan"
 
@@ -1085,6 +1101,7 @@ msgid "Scan to Borrow"
 msgstr "Scan to Borrow"
 
 #: routes/_app/admin/members.tsx:83
+#: routes/_app/admin/users.tsx:61
 #: routes/_app/books/index.tsx:109
 msgid "Search"
 msgstr "Search"
@@ -1092,6 +1109,10 @@ msgstr "Search"
 #: routes/_app/admin/members.tsx:76
 msgid "Search by name / phone / member no…"
 msgstr "Search by name / phone / member no…"
+
+#: routes/_app/admin/users.tsx:55
+msgid "Search by name or email…"
+msgstr "Search by name or email…"
 
 #: routes/_app/books/index.tsx:106
 msgid "Search by title or author"
@@ -1104,6 +1125,10 @@ msgstr "Search by title or author…"
 #: routes/_app/admin/members.tsx:80
 msgid "Search members"
 msgstr "Search members"
+
+#: routes/_app/admin/users.tsx:58
+msgid "Search users"
+msgstr "Search users"
 
 #: components/FeedbackButton.tsx:120
 msgid "Send"
@@ -1123,7 +1148,7 @@ msgstr "Sending…"
 msgid "Series"
 msgstr "Series"
 
-#: routes/_app/route.tsx:105
+#: routes/_app/route.tsx:106
 msgid "Settings"
 msgstr "Settings"
 
@@ -1153,12 +1178,12 @@ msgstr "Sign in as them"
 msgid "Sign in to your library"
 msgstr "Sign in to your library"
 
-#: routes/_app/route.tsx:202
+#: routes/_app/route.tsx:203
 msgid "Sign out"
 msgstr "Sign out"
 
 #. placeholder {0}: user.name
-#: routes/_app/route.tsx:215
+#: routes/_app/route.tsx:216
 msgid "Signed in as {0}"
 msgstr "Signed in as {0}"
 
@@ -1213,7 +1238,7 @@ msgstr "success"
 msgid "Switch language"
 msgstr "Switch language"
 
-#: routes/_app/route.tsx:132
+#: routes/_app/route.tsx:133
 msgid "Switch to {nextLabelText} view"
 msgstr "Switch to {nextLabelText} view"
 
@@ -1229,8 +1254,8 @@ msgstr "Switch to light mode"
 msgid "System actions (tenant changes, impersonation) will appear here."
 msgstr "System actions (tenant changes, impersonation) will appear here."
 
-#: routes/_app/route.tsx:117
-#: routes/_app/route.tsx:122
+#: routes/_app/route.tsx:118
+#: routes/_app/route.tsx:123
 msgid "System view"
 msgstr "System view"
 
@@ -1245,6 +1270,10 @@ msgstr "Target"
 #: components/FeedbackButton.tsx:82
 msgid "Tell us what you’d like — features, books to add, or problems."
 msgstr "Tell us what you’d like — features, books to add, or problems."
+
+#: routes/_app/admin/UsersTable.tsx:82
+msgid "Tenant"
+msgstr "Tenant"
 
 #: routes/_app/admin/tenants.tsx:205
 msgid "Tenant login link"
@@ -1310,6 +1339,10 @@ msgstr "Title"
 msgid "Translator"
 msgstr "Translator"
 
+#: routes/_app/admin/UsersTable.tsx:64
+msgid "Try a different search."
+msgstr "Try a different search."
+
 #: routes/_app/books/index.tsx:193
 msgid "Try adjusting the search or filters."
 msgstr "Try adjusting the search or filters."
@@ -1333,6 +1366,11 @@ msgstr "Upload the 番薯借阅 Excel export (.xls). Books, members, loans, revi
 #: routes/_app/admin/feedback.tsx:41
 msgid "User Feedback"
 msgstr "User Feedback"
+
+#: routes/_app/admin/users.tsx:46
+#: routes/_app/route.tsx:98
+msgid "Users"
+msgstr "Users"
 
 #: routes/_app/scan.tsx:103
 msgid "View in My Books"
