@@ -88,12 +88,19 @@ signup() {
 signup "reader@demo.test" "Demo Reader"
 signup "admin@demo.test"  "Demo Admin"
 signup "super@demo.test"  "Demo Super Admin"
+signup "reader@globex.test" "Globex Reader"
+signup "admin@globex.test"  "Globex Admin"
 
 echo "Attaching library + roles..."
 roles_sql="
+  INSERT OR IGNORE INTO libraries (id, name, slug, brand_color, login_welcome, email_domains, settings, is_active, created_at, updated_at)
+  VALUES ('lib-demo-002','Globex Library','globex','#b1420a','Welcome to the Globex Library','[\"@globex.test\"]','{\"borrowingPeriodDays\":21,\"maxBooksPerReader\":3,\"allowExtensions\":true}',1,'2025-01-01T00:00:00.000Z','2025-01-01T00:00:00.000Z');
+  UPDATE libraries SET slug='acme', name='Acme Library', brand_color='#0a6ed1', login_welcome='Welcome to the Acme Library' WHERE id='${LIBRARY_ID}' AND slug IS NULL;
   UPDATE user SET library_id='${LIBRARY_ID}', role='library_admin'  WHERE email='admin@demo.test';
   UPDATE user SET library_id='${LIBRARY_ID}', role='library_reader' WHERE email='reader@demo.test';
   UPDATE user SET library_id='${LIBRARY_ID}', role='super_admin'    WHERE email='super@demo.test';
+  UPDATE user SET library_id='lib-demo-002', role='library_admin'  WHERE email='admin@globex.test';
+  UPDATE user SET library_id='lib-demo-002', role='library_reader' WHERE email='reader@globex.test';
 "
 
 run_roles() {
