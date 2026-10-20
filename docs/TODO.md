@@ -48,3 +48,11 @@ Branch: `feat/impersonation`. Tick items as they land (commit hash in parens).
 - [ ] "Invite / enable login" on a reader detail (attach a `user` to an existing
   `members` row — provision-on-demand per ADR 0006).
 - [ ] Reader self-signup matches an existing `members` row (avoid duplicate person).
+
+## Resolved (2026-10-20 UI review)
+- [x] Users Role column empty — true root cause: lingui macro `t` passed into a
+  plain fn (roleLabel) → empty at runtime. Fixed with in-component <RoleLabel>
+  <Trans> (8ef5bad). Also fixed new-signup default role (bcd8972). E2E regression added.
+- [x] "impersonate anyone" — canImpersonateUser was a deny-list; empty/unknown
+  roles slipped through. Now allow-list (only library_reader) (0b98ea0) + tests.
+- [x] Reusable SearchBar + Pager; Users page pagination; clickable overview cards (06e6808).
