@@ -113,6 +113,13 @@ const call = {
     ),
   'member.create': (i: { email: string; name: string; password: string }) =>
     json<Ok<typeof client.member.$post>>(client.member.$post({ json: i })),
+  'member.enableLogin': (i: { memberId: string; email: string; password: string }) =>
+    json<Ok<(typeof client.member)[':memberId']['enable-login']['$post']>>(
+      client.member[':memberId']['enable-login'].$post({
+        param: { memberId: i.memberId },
+        json: { email: i.email, password: i.password },
+      }),
+    ),
   'feedback.submit': (i: FeedbackInput) =>
     json<Ok<typeof client.feedback.$post>>(client.feedback.$post({ json: i })),
   'feedback.list': () => json<Ok<typeof client.feedback.$get>>(client.feedback.$get()),
@@ -246,6 +253,7 @@ export const api = {
     facets: node('member.facets'),
     get: node('member.get'),
     create: node('member.create'),
+    enableLogin: node('member.enableLogin'),
   },
   feedback: { submit: node('feedback.submit'), list: node('feedback.list') },
   tenant: {

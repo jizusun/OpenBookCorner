@@ -91,3 +91,61 @@ export async function createTenantUser(
 
   return { userId }
 }
+
+
+export interface EnableMemberLoginInput {
+  memberId: string
+  libraryId: string
+  email: string
+  password: string
+  actorUserId: string
+}
+
+export interface EnableMemberLoginResult {
+  userId?: string
+  error?: 'MEMBER_NOT_FOUND' | 'ALREADY_LINKED' | 'EMAIL_TAKEN' | 'INVALID_INPUT'
+}
+
+/**
+ * Provision-on-demand (ADR 0006): give an EXISTING member (e.g. a 番薯-imported
+ * reader) a login account and link it — rather than importing accounts. Creates
+ * a library_reader user scoped to the member's library, named after the member,
+ * and sets members.userId. The member must belong to `libraryId` (session tenant)
+ * and must not already be linked. `createAccount` is injected (hashing).
+ */
+export async function enableMemberLogin(
+  db: Database,
+  createAccount: CreateAccount,
+  input: EnableMemberLoginInput,
+): Promise<EnableMemberLoginResult> {
+  const email = input.email.trim().toLowerCase()
+  if (!email || !input.password) return { error: 'INVALID_INPUT' }
+
+  const member = await db
+    .select({ id: members.id, name: members.name, userId: members.userId })
+    .from(members)
+    .where(and(eq(members.id, input.memberId), eq(members.libraryId, input.libraryId)))
+    .get()
+  if (!member) return { error: 'MEMBER_NOT_FOUND' }
+  if (member.userId) return { error: 'ALREADY_LINKED' }
+
+  const existing = await db.select({ id: user.id }).from(user).where(eq(user.email, email)).get()
+  if (existing) return { error: 'EMAIL_TAKEN' }
+
+  const { userId } = await createAccount({ email, name: member.name, password: input.password })
+  await db
+    .update(user)
+    .set({ libraryId: input.libraryId, role: 'library_reader' })
+    .where(eq(user.id, userId))
+  await db.update(members).set({ userId }).where(eq(members.id, input.memberId))
+
+  await new AuditService(db).log({
+    actorUserId: input.actorUserId,
+    libraryId: input.libraryId,
+    action: 'member.enableLogin',
+    targetType: 'user',
+    targetId: userId,
+  })
+
+  return { userId }
+}

@@ -137,8 +137,8 @@ msgstr "@acme.com, @acme.io"
 msgid "← Back to catalog"
 msgstr "← 返回书目"
 
-#: routes/_app/admin/members.$memberId.tsx:42
-#: routes/_app/admin/members.$memberId.tsx:54
+#: routes/_app/admin/members.$memberId.tsx:66
+#: routes/_app/admin/members.$memberId.tsx:78
 msgid "← Back to members"
 msgstr "← 返回成员列表"
 
@@ -220,11 +220,11 @@ msgstr "添加读者"
 msgid "Adding…"
 msgstr "添加中…"
 
-#: routes/_app/admin/members.$memberId.tsx:79
+#: routes/_app/admin/members.$memberId.tsx:103
 msgid "Address"
 msgstr "地址"
 
-#: routes/_app/admin/members.$memberId.tsx:62
+#: routes/_app/admin/members.$memberId.tsx:86
 #: routes/_app/admin/members.tsx:140
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:213
@@ -236,7 +236,7 @@ msgstr "管理员"
 msgid "Admin added."
 msgstr "管理员已添加。"
 
-#: routes/_app/admin/members.$memberId.tsx:81
+#: routes/_app/admin/members.$memberId.tsx:105
 msgid "Age"
 msgstr "年龄"
 
@@ -282,7 +282,7 @@ msgstr "全部权限"
 msgid "All shelves"
 msgstr "全部书架"
 
-#: routes/_app/admin/members.$memberId.tsx:93
+#: routes/_app/admin/members.$memberId.tsx:133
 #: routes/_app/books/$bookId.tsx:319
 msgid "All source fields"
 msgstr "原始数据 / 全部字段"
@@ -382,7 +382,7 @@ msgstr "荐书"
 msgid "Books"
 msgstr "藏书"
 
-#: routes/_app/admin/members.$memberId.tsx:82
+#: routes/_app/admin/members.$memberId.tsx:106
 #: routes/_app/admin/members.tsx:120
 msgid "Books out"
 msgstr "在借数量"
@@ -497,7 +497,7 @@ msgstr "所属分类"
 msgid "Changes saved."
 msgstr "修改已保存。"
 
-#: routes/_app/admin/members.$memberId.tsx:77
+#: routes/_app/admin/members.$memberId.tsx:101
 msgid "Class"
 msgstr "班级"
 
@@ -558,6 +558,10 @@ msgstr "删除失败，请重试。"
 #: routes/_app/admin/tenants.$libraryId.tsx:94
 msgid "Could not delete the library."
 msgstr "无法删除该图书馆。"
+
+#: routes/_app/admin/members.$memberId.tsx:54
+msgid "Could not enable login."
+msgstr "无法开通登录。"
 
 #: routes/_app/admin/import.tsx:87
 msgid "Could not fetch that URL. Paste a 番薯借阅 export link (https://…fanshujieyue.com/….xls)."
@@ -672,7 +676,7 @@ msgstr "演示账号"
 msgid "Demo accounts (non-production) — tap to fill in"
 msgstr "演示账户（非生产环境）— 点击自动填充"
 
-#: routes/_app/admin/members.$memberId.tsx:78
+#: routes/_app/admin/members.$memberId.tsx:102
 msgid "Department"
 msgstr "部门"
 
@@ -725,7 +729,7 @@ msgid "Edit Book"
 msgstr "编辑图书"
 
 #: routes/_app/admin/AddUserDialog.tsx:48
-#: routes/_app/admin/members.$memberId.tsx:73
+#: routes/_app/admin/members.$memberId.tsx:97
 #: routes/_app/admin/tenants.$libraryId.tsx:197
 #: routes/_app/admin/UsersTable.tsx:41
 #: routes/login.tsx:205
@@ -746,9 +750,22 @@ msgstr "邮箱域名（用逗号分隔）"
 msgid "Email domains: {0}"
 msgstr "邮箱域名：{0}"
 
-#: routes/_app/admin/members.$memberId.tsx:75
+#: routes/_app/admin/members.$memberId.tsx:99
 msgid "Employee no."
 msgstr "工号"
+
+#: routes/_app/admin/members.$memberId.tsx:125
+msgid "Enable login"
+msgstr "开通登录"
+
+#. placeholder {0}: m.name
+#: routes/_app/admin/members.$memberId.tsx:147
+msgid "Enable login for {0}"
+msgstr "为 {0} 开通登录"
+
+#: routes/_app/admin/members.$memberId.tsx:121
+msgid "Enabled"
+msgstr "已开通"
 
 #: routes/_app/books/$bookId.tsx:202
 msgid "Entered"
@@ -863,7 +880,7 @@ msgstr "网上未找到该 ISBN，请手动填写书名和作者。"
 msgid "ISBN: {0}"
 msgstr "ISBN：{0}"
 
-#: routes/_app/admin/members.$memberId.tsx:84
+#: routes/_app/admin/members.$memberId.tsx:108
 msgid "Joined"
 msgstr "入馆日期"
 
@@ -915,6 +932,14 @@ msgstr "加载中"
 msgid "Loading…"
 msgstr "加载中…"
 
+#: routes/_app/admin/members.$memberId.tsx:117
+msgid "Login account"
+msgstr "登录账号"
+
+#: routes/_app/admin/members.$memberId.tsx:44
+msgid "Login enabled."
+msgstr "已开通登录。"
+
 #: routes/_app/admin/tenants.$libraryId.tsx:161
 msgid "Login link copied."
 msgstr "登录链接已复制。"
@@ -943,20 +968,20 @@ msgstr "每位读者最多可借"
 msgid "Member added."
 msgstr "成员已添加。"
 
-#: routes/_app/admin/members.$memberId.tsx:71
+#: routes/_app/admin/members.$memberId.tsx:95
 #: routes/_app/admin/members.tsx:189
 msgid "Member no."
 msgstr "会员号"
 
-#: routes/_app/admin/members.$memberId.tsx:39
+#: routes/_app/admin/members.$memberId.tsx:63
 msgid "Member not found."
 msgstr "未找到该成员。"
 
-#: routes/_app/admin/members.$memberId.tsx:85
+#: routes/_app/admin/members.$memberId.tsx:109
 msgid "Member since"
 msgstr "会员起始"
 
-#: routes/_app/admin/members.$memberId.tsx:86
+#: routes/_app/admin/members.$memberId.tsx:110
 msgid "Member until"
 msgstr "会员到期"
 
@@ -1037,7 +1062,7 @@ msgstr "暂无用户"
 msgid "No users found"
 msgstr "未找到用户"
 
-#: routes/_app/admin/members.$memberId.tsx:87
+#: routes/_app/admin/members.$memberId.tsx:111
 msgid "Note"
 msgstr "备注"
 
@@ -1109,17 +1134,17 @@ msgstr "路径式 —— 每个租户通过 /t/:slug 访问"
 msgid "Per-tenant settings live on each tenant's detail page."
 msgstr "各租户的设置在其详情页中管理。"
 
-#: routes/_app/admin/members.$memberId.tsx:72
+#: routes/_app/admin/members.$memberId.tsx:96
 #: routes/_app/admin/members.tsx:186
 msgid "Phone"
 msgstr "手机"
 
-#: routes/_app/admin/members.$memberId.tsx:65
+#: routes/_app/admin/members.$memberId.tsx:89
 #: routes/_app/admin/members.tsx:222
 msgid "placeholder"
 msgstr "占位"
 
-#: routes/_app/admin/members.$memberId.tsx:74
+#: routes/_app/admin/members.$memberId.tsx:98
 msgid "Plan"
 msgstr "会员计划"
 
@@ -1163,7 +1188,7 @@ msgstr "R2：{0}"
 msgid "Read-only system information (super admin)."
 msgstr "只读系统信息（超级管理员）。"
 
-#: routes/_app/admin/members.$memberId.tsx:62
+#: routes/_app/admin/members.$memberId.tsx:86
 #: routes/_app/admin/members.tsx:141
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:214
@@ -1188,7 +1213,7 @@ msgstr "近期动态"
 msgid "Return"
 msgstr "归还"
 
-#: routes/_app/admin/members.$memberId.tsx:83
+#: routes/_app/admin/members.$memberId.tsx:107
 #: routes/_app/admin/members.tsx:195
 msgid "Returned"
 msgstr "已还数量"
@@ -1207,7 +1232,7 @@ msgstr "归还中…"
 msgid "Role"
 msgstr "权限"
 
-#: routes/_app/admin/members.$memberId.tsx:80
+#: routes/_app/admin/members.$memberId.tsx:104
 msgid "Room"
 msgstr "房号"
 
@@ -1401,7 +1426,7 @@ msgstr "存量明细"
 msgid "Stopped impersonation"
 msgstr "结束模拟登录"
 
-#: routes/_app/admin/members.$memberId.tsx:76
+#: routes/_app/admin/members.$memberId.tsx:100
 msgid "Student no."
 msgstr "学号"
 
@@ -1480,6 +1505,7 @@ msgstr "租户"
 msgid "Thanks for your feedback! 🎉"
 msgstr "感谢你的反馈！🎉"
 
+#: routes/_app/admin/members.$memberId.tsx:51
 #: routes/_app/admin/members.tsx:66
 #: routes/_app/admin/tenants.$libraryId.tsx:58
 msgid "That email is already in use."
@@ -1517,6 +1543,10 @@ msgstr "这本书已被他人借走。"
 #: lib/errors.ts:11
 msgid "This book is not in your library’s catalog yet. Ask a librarian to add it."
 msgstr "这本书还不在你图书馆的书目里，请联系管理员添加。"
+
+#: routes/_app/admin/members.$memberId.tsx:53
+msgid "This member already has a login."
+msgstr "该成员已有登录账号。"
 
 #: routes/_app/books/$bookId.tsx:287
 msgid "This removes the book from the catalog and cannot be undone."

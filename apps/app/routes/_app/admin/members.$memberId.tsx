@@ -1,10 +1,14 @@
+import { useState } from 'react'
 import { createFileRoute, redirect, Link } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { api } from '@/lib/api'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton, DetailPageSkeleton } from '@/components/ui/skeleton'
+import { useToast } from '@/components/Toast'
+import { AddUserDialog } from './AddUserDialog'
 
 export const Route = createFileRoute('/_app/admin/members/$memberId')({
   pendingComponent: () => <DetailPageSkeleton />,
@@ -30,6 +34,26 @@ function MemberDetailPage() {
   const { memberId } = Route.useParams()
   const { data: m, isLoading } = useQuery(api.member.get.queryOptions({ memberId }))
   const { t } = useLingui()
+  const qc = useQueryClient()
+  const toast = useToast()
+  const [enabling, setEnabling] = useState(false)
+
+  const enableLogin = useMutation({
+    ...api.member.enableLogin.mutationOptions(),
+    onSuccess: () => {
+      toast.success(t`Login enabled.`)
+      setEnabling(false)
+      qc.invalidateQueries({ queryKey: api.member.get.queryKey({ memberId }) })
+    },
+    onError: (e: Error) =>
+      toast.error(
+        e.message === 'EMAIL_TAKEN'
+          ? t`That email is already in use.`
+          : e.message === 'ALREADY_LINKED'
+            ? t`This member already has a login.`
+            : t`Could not enable login.`,
+      ),
+  })
 
   if (isLoading) return <Skeleton className="h-40 w-full" />
   if (!m) {
@@ -87,6 +111,22 @@ function MemberDetailPage() {
             <Row label={t`Note`} value={m.note} />
           </dl>
 
+          {/* Login account (provision-on-demand, ADR 0006) */}
+          <div className="mt-4 flex items-center gap-3 border-t pt-4 text-sm" data-testid="member-login">
+            <span className="text-muted-foreground">
+              <Trans>Login account</Trans>
+            </span>
+            {m.userId ? (
+              <Badge variant="outline">
+                <Trans>Enabled</Trans>
+              </Badge>
+            ) : (
+              <Button size="sm" variant="outline" onClick={() => setEnabling(true)} data-testid="enable-login-open">
+                <Trans>Enable login</Trans>
+              </Button>
+            )}
+          </div>
+
           {rawEntries.length > 0 && (
             <details className="mt-4" data-testid="member-raw">
               <summary className="cursor-pointer text-sm font-semibold">
@@ -101,6 +141,14 @@ function MemberDetailPage() {
           )}
         </CardContent>
       </Card>
+
+      <AddUserDialog
+        open={enabling}
+        title={t`Enable login for ${m.name}`}
+        pending={enableLogin.isPending}
+        onClose={() => setEnabling(false)}
+        onSubmit={(v) => enableLogin.mutate({ memberId, email: v.email, password: v.password })}
+      />
     </div>
   )
 }
