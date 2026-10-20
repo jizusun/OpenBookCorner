@@ -186,6 +186,11 @@ msgstr "Activated/deactivated tenant"
 msgid "Active"
 msgstr "Active"
 
+#: routes/_app/admin/activity.tsx:28
+#: routes/_app/route.tsx:105
+msgid "Activity"
+msgstr "Activity"
+
 #: routes/_app/admin/AuditTable.tsx:36
 msgid "Actor"
 msgstr "Actor"
@@ -485,7 +490,7 @@ msgid "Cannot delete a library that still has members or books."
 msgstr "Cannot delete a library that still has members or books."
 
 #: routes/_app/route.tsx:100
-#: routes/_app/route.tsx:110
+#: routes/_app/route.tsx:111
 msgid "Catalog"
 msgstr "Catalog"
 
@@ -505,7 +510,7 @@ msgstr "Class"
 msgid "CLC"
 msgstr "CLC"
 
-#: routes/_app/route.tsx:157
+#: routes/_app/route.tsx:158
 msgid "Close menu"
 msgstr "Close menu"
 
@@ -779,8 +784,8 @@ msgstr "Environment"
 msgid "Every import is recorded with its source and counts."
 msgstr "Every import is recorded with its source and counts."
 
-#: routes/_app/route.tsx:124
-#: routes/_app/route.tsx:126
+#: routes/_app/route.tsx:125
+#: routes/_app/route.tsx:127
 msgid "Exit reader preview"
 msgstr "Exit reader preview"
 
@@ -819,7 +824,7 @@ msgid "https://…fanshujieyue.com/…/librarydata_….xls"
 msgstr "https://…fanshujieyue.com/…/librarydata_….xls"
 
 #: routes/_app/admin/import.tsx:233
-#: routes/_app/route.tsx:105
+#: routes/_app/route.tsx:106
 msgid "Import"
 msgstr "Import"
 
@@ -860,7 +865,7 @@ msgstr "Importing…"
 msgid "Inactive"
 msgstr "Inactive"
 
-#: routes/_app/route.tsx:184
+#: routes/_app/route.tsx:185
 msgid "Install app"
 msgstr "Install app"
 
@@ -986,7 +991,7 @@ msgid "Member until"
 msgstr "Member until"
 
 #: routes/_app/my-books.tsx:94
-#: routes/_app/route.tsx:108
+#: routes/_app/route.tsx:109
 msgid "My Books"
 msgstr "My Books"
 
@@ -1079,11 +1084,11 @@ msgstr "Notifications"
 msgid "on behalf of {0}"
 msgstr "on behalf of {0}"
 
-#: routes/_app/route.tsx:157
+#: routes/_app/route.tsx:158
 msgid "Open menu"
 msgstr "Open menu"
 
-#: routes/_app/route.tsx:167
+#: routes/_app/route.tsx:168
 msgid "OpenBookCorner"
 msgstr "OpenBookCorner"
 
@@ -1153,7 +1158,7 @@ msgstr "Plan"
 msgid "Preview — {0}"
 msgstr "Preview — {0}"
 
-#: routes/_app/route.tsx:124
+#: routes/_app/route.tsx:125
 msgid "Preview as a reader"
 msgstr "Preview as a reader"
 
@@ -1196,7 +1201,7 @@ msgstr "Read-only system information (super admin)."
 msgid "Reader"
 msgstr "Reader"
 
-#: routes/_app/route.tsx:126
+#: routes/_app/route.tsx:127
 msgid "Reader preview"
 msgstr "Reader preview"
 
@@ -1208,6 +1213,10 @@ msgstr "Readers"
 #: routes/_app/admin/overview.tsx:71
 msgid "Recent activity"
 msgstr "Recent activity"
+
+#: routes/_app/admin/activity.tsx:31
+msgid "Recent changes in your library."
+msgstr "Recent changes in your library."
 
 #: routes/_app/my-books.tsx:179
 msgid "Return"
@@ -1251,7 +1260,7 @@ msgstr "Save settings"
 msgid "Saving…"
 msgstr "Saving…"
 
-#: routes/_app/route.tsx:109
+#: routes/_app/route.tsx:110
 msgid "Scan"
 msgstr "Scan"
 
@@ -1374,12 +1383,12 @@ msgstr "Sign in as them"
 msgid "Sign in to your library"
 msgstr "Sign in to your library"
 
-#: routes/_app/route.tsx:189
+#: routes/_app/route.tsx:190
 msgid "Sign out"
 msgstr "Sign out"
 
 #. placeholder {0}: user.name
-#: routes/_app/route.tsx:202
+#: routes/_app/route.tsx:203
 msgid "Signed in as {0}"
 msgstr "Signed in as {0}"
 

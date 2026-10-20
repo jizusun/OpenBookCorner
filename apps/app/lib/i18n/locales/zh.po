@@ -186,6 +186,11 @@ msgstr "启用/停用租户"
 msgid "Active"
 msgstr "已启用"
 
+#: routes/_app/admin/activity.tsx:28
+#: routes/_app/route.tsx:105
+msgid "Activity"
+msgstr "活动"
+
 #: routes/_app/admin/AuditTable.tsx:36
 msgid "Actor"
 msgstr "操作者"
@@ -485,7 +490,7 @@ msgid "Cannot delete a library that still has members or books."
 msgstr "该图书馆仍有成员或书籍，无法删除。"
 
 #: routes/_app/route.tsx:100
-#: routes/_app/route.tsx:110
+#: routes/_app/route.tsx:111
 msgid "Catalog"
 msgstr "书目"
 
@@ -505,7 +510,7 @@ msgstr "班级"
 msgid "CLC"
 msgstr "中图法分类号"
 
-#: routes/_app/route.tsx:157
+#: routes/_app/route.tsx:158
 msgid "Close menu"
 msgstr "收起菜单"
 
@@ -779,8 +784,8 @@ msgstr "运行环境"
 msgid "Every import is recorded with its source and counts."
 msgstr "每次导入都会记录来源和数量。"
 
-#: routes/_app/route.tsx:124
-#: routes/_app/route.tsx:126
+#: routes/_app/route.tsx:125
+#: routes/_app/route.tsx:127
 msgid "Exit reader preview"
 msgstr "退出读者预览"
 
@@ -819,7 +824,7 @@ msgid "https://…fanshujieyue.com/…/librarydata_….xls"
 msgstr "https://…fanshujieyue.com/…/librarydata_….xls"
 
 #: routes/_app/admin/import.tsx:233
-#: routes/_app/route.tsx:105
+#: routes/_app/route.tsx:106
 msgid "Import"
 msgstr "导入"
 
@@ -860,7 +865,7 @@ msgstr "导入中…"
 msgid "Inactive"
 msgstr "已停用"
 
-#: routes/_app/route.tsx:184
+#: routes/_app/route.tsx:185
 msgid "Install app"
 msgstr "安装应用"
 
@@ -986,7 +991,7 @@ msgid "Member until"
 msgstr "会员到期"
 
 #: routes/_app/my-books.tsx:94
-#: routes/_app/route.tsx:108
+#: routes/_app/route.tsx:109
 msgid "My Books"
 msgstr "我的借阅"
 
@@ -1079,11 +1084,11 @@ msgstr "通知"
 msgid "on behalf of {0}"
 msgstr "代 {0}"
 
-#: routes/_app/route.tsx:157
+#: routes/_app/route.tsx:158
 msgid "Open menu"
 msgstr "打开菜单"
 
-#: routes/_app/route.tsx:167
+#: routes/_app/route.tsx:168
 msgid "OpenBookCorner"
 msgstr "开卷角"
 
@@ -1153,7 +1158,7 @@ msgstr "会员计划"
 msgid "Preview — {0}"
 msgstr "预览 — {0}"
 
-#: routes/_app/route.tsx:124
+#: routes/_app/route.tsx:125
 msgid "Preview as a reader"
 msgstr "以读者身份预览"
 
@@ -1196,7 +1201,7 @@ msgstr "只读系统信息（超级管理员）。"
 msgid "Reader"
 msgstr "普通成员"
 
-#: routes/_app/route.tsx:126
+#: routes/_app/route.tsx:127
 msgid "Reader preview"
 msgstr "读者预览"
 
@@ -1208,6 +1213,10 @@ msgstr "读者"
 #: routes/_app/admin/overview.tsx:71
 msgid "Recent activity"
 msgstr "近期动态"
+
+#: routes/_app/admin/activity.tsx:31
+msgid "Recent changes in your library."
+msgstr "本馆的近期变更。"
 
 #: routes/_app/my-books.tsx:179
 msgid "Return"
@@ -1251,7 +1260,7 @@ msgstr "保存设置"
 msgid "Saving…"
 msgstr "保存中…"
 
-#: routes/_app/route.tsx:109
+#: routes/_app/route.tsx:110
 msgid "Scan"
 msgstr "扫码"
 
@@ -1374,12 +1383,12 @@ msgstr "以其身份登录"
 msgid "Sign in to your library"
 msgstr "登录你的图书馆"
 
-#: routes/_app/route.tsx:189
+#: routes/_app/route.tsx:190
 msgid "Sign out"
 msgstr "退出登录"
 
 #. placeholder {0}: user.name
-#: routes/_app/route.tsx:202
+#: routes/_app/route.tsx:203
 msgid "Signed in as {0}"
 msgstr "已登录：{0}"
 
