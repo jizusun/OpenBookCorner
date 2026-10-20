@@ -58,13 +58,8 @@ Branch: `feat/impersonation`. Tick items as they land (commit hash in parens).
 - [x] Reusable SearchBar + Pager; Users page pagination; clickable overview cards (06e6808).
 
 ## Follow-ups (requested, keep ticking)
-- [ ] **In progress: DataTable reuse** — new generic DataTable<T> built+tested;
-  now migrate UsersTable/BooksTable/TenantsTable/AuditTable to use it (remove the
-  4 duplicated <table> shells). Keep each page's columns/cell renderers.
-- [ ] **Audit log: show names, not IDs** — audit rows show actorUserId /
-  onBehalfOf / targetId as raw ids. Resolve to user names (join user on
-  actor/onBehalfOf; target too where it's a user). Backend: enrich listAll /
-  listSystem output with actorName/onBehalfOfName; UI shows names, id as title/tooltip.
+- [x] **DataTable reuse** — generic DataTable<T> built+tested; Users/Books/Tenants/Audit tables all migrated to it (one quiet table shell). (this commit)
+- [x] **Audit log shows names** — listAll enriches actorName/onBehalfOfName/targetName (batched user lookup); audit table shows names, falls back to id. (this commit)
 - [ ] Tenant-level "activity" audit page for library admins (listByLibrary ready).
 - [ ] Reader "invite / enable login" (attach a user to an existing members row).
 - [ ] Server-side hardening: block impersonating non-reader roles server-side too

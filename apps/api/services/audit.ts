@@ -1,6 +1,6 @@
-import { and, desc, eq, isNull, sql } from 'drizzle-orm'
+import { and, desc, eq, inArray, isNull, sql } from 'drizzle-orm'
 
-import { auditLogs, type Database } from '@obc/db'
+import { auditLogs, user, type Database } from '@obc/db'
 
 /** Input for recording one privileged action. */
 export interface AuditEntry {
@@ -89,7 +89,7 @@ export class AuditService {
    */
   async listAll(
     opts: { page?: number; limit?: number; libraryId?: string; action?: string } = {},
-  ): Promise<{ items: (typeof auditLogs.$inferSelect)[]; total: number }> {
+  ): Promise<{ items: EnrichedAuditRow[]; total: number }> {
     const limit = Math.min(Math.max(opts.limit ?? 50, 1), 200)
     const page = Math.max(opts.page ?? 1, 1)
     const offset = (page - 1) * limit
@@ -115,6 +115,41 @@ export class AuditService {
       .where(where)
       .get()
 
-    return { items, total: totalRow?.count ?? 0 }
+    return { items: await this.enrichNames(items), total: totalRow?.count ?? 0 }
   }
+
+  /**
+   * Resolve actor/onBehalfOf/target ids to user names (one batched query), so
+   * the UI can show names instead of raw ids. Names are null when the id is not
+   * a known user (e.g. a target that is a book/library).
+   */
+  private async enrichNames(
+    rows: (typeof auditLogs.$inferSelect)[],
+  ): Promise<EnrichedAuditRow[]> {
+    const ids = new Set<string>()
+    for (const r of rows) {
+      ids.add(r.actorUserId)
+      if (r.onBehalfOfUserId) ids.add(r.onBehalfOfUserId)
+      if (r.targetId) ids.add(r.targetId)
+    }
+    if (ids.size === 0) return rows.map((r) => ({ ...r, actorName: null, onBehalfOfName: null, targetName: null }))
+    const users = await this.db
+      .select({ id: user.id, name: user.name })
+      .from(user)
+      .where(inArray(user.id, [...ids]))
+      .all()
+    const nameById = new Map(users.map((u) => [u.id, u.name]))
+    return rows.map((r) => ({
+      ...r,
+      actorName: nameById.get(r.actorUserId) ?? null,
+      onBehalfOfName: r.onBehalfOfUserId ? (nameById.get(r.onBehalfOfUserId) ?? null) : null,
+      targetName: r.targetId ? (nameById.get(r.targetId) ?? null) : null,
+    }))
+  }
+}
+
+export type EnrichedAuditRow = typeof auditLogs.$inferSelect & {
+  actorName: string | null
+  onBehalfOfName: string | null
+  targetName: string | null
 }

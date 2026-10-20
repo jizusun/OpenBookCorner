@@ -162,13 +162,13 @@ msgstr "15+ days"
 msgid "8–14 days"
 msgstr "8–14 days"
 
-#: routes/_app/admin/AuditTable.tsx:75
+#: routes/_app/admin/AuditTable.tsx:49
 msgid "Action"
 msgstr "Action"
 
 #: routes/_app/admin/members.tsx:203
 #: routes/_app/admin/tenants.$libraryId.tsx:200
-#: routes/_app/admin/UsersTable.tsx:91
+#: routes/_app/admin/UsersTable.tsx:45
 msgid "Actions"
 msgstr "Actions"
 
@@ -176,17 +176,17 @@ msgstr "Actions"
 msgid "Activate"
 msgstr "Activate"
 
-#: routes/_app/admin/AuditTable.tsx:23
+#: routes/_app/admin/AuditTable.tsx:21
 msgid "Activated/deactivated tenant"
 msgstr "Activated/deactivated tenant"
 
 #: routes/_app/admin/overview.tsx:95
 #: routes/_app/admin/tenants.$libraryId.tsx:121
-#: routes/_app/admin/TenantsTable.tsx:88
+#: routes/_app/admin/TenantsTable.tsx:38
 msgid "Active"
 msgstr "Active"
 
-#: routes/_app/admin/AuditTable.tsx:72
+#: routes/_app/admin/AuditTable.tsx:36
 msgid "Actor"
 msgstr "Actor"
 
@@ -228,7 +228,7 @@ msgstr "Address"
 #: routes/_app/admin/members.tsx:140
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:213
-#: routes/_app/admin/UsersTable.tsx:30
+#: routes/_app/admin/UsersTable.tsx:28
 msgid "Admin"
 msgstr "Admin"
 
@@ -313,7 +313,7 @@ msgstr "At least 8 characters"
 msgid "Audit log"
 msgstr "Audit log"
 
-#: routes/_app/admin/BooksTable.tsx:46
+#: routes/_app/admin/BooksTable.tsx:22
 #: routes/_app/books/$bookId.edit.tsx:105
 #: routes/_app/books/add.tsx:166
 #: routes/_app/books/index.tsx:125
@@ -325,7 +325,7 @@ msgid "Availability"
 msgstr "Availability"
 
 #: components/books/BookCard.tsx:73
-#: routes/_app/admin/BooksTable.tsx:49
+#: routes/_app/admin/BooksTable.tsx:25
 #: routes/_app/books/index.tsx:146
 msgid "Available"
 msgstr "Available"
@@ -377,7 +377,7 @@ msgstr "Book suggestion"
 #: routes/_app/admin/books.tsx:39
 #: routes/_app/admin/overview.tsx:65
 #: routes/_app/admin/tenants.$libraryId.tsx:149
-#: routes/_app/admin/TenantsTable.tsx:67
+#: routes/_app/admin/TenantsTable.tsx:43
 #: routes/_app/route.tsx:94
 msgid "Books"
 msgstr "Books"
@@ -605,11 +605,11 @@ msgstr "Create a library"
 msgid "Create library"
 msgstr "Create library"
 
-#: routes/_app/admin/TenantsTable.tsx:43
+#: routes/_app/admin/TenantsTable.tsx:60
 msgid "Create the first one."
 msgstr "Create the first one."
 
-#: routes/_app/admin/AuditTable.tsx:21
+#: routes/_app/admin/AuditTable.tsx:19
 msgid "Created tenant"
 msgstr "Created tenant"
 
@@ -656,7 +656,7 @@ msgstr "Delete tenant"
 msgid "Delete this book?"
 msgstr "Delete this book?"
 
-#: routes/_app/admin/AuditTable.tsx:27
+#: routes/_app/admin/AuditTable.tsx:25
 msgid "Deleted tenant"
 msgstr "Deleted tenant"
 
@@ -727,7 +727,7 @@ msgstr "Edit Book"
 #: routes/_app/admin/AddUserDialog.tsx:48
 #: routes/_app/admin/members.$memberId.tsx:73
 #: routes/_app/admin/tenants.$libraryId.tsx:197
-#: routes/_app/admin/UsersTable.tsx:81
+#: routes/_app/admin/UsersTable.tsx:41
 #: routes/login.tsx:205
 msgid "Email"
 msgstr "Email"
@@ -839,7 +839,7 @@ msgstr "Importing…"
 
 #: routes/_app/admin/overview.tsx:95
 #: routes/_app/admin/tenants.$libraryId.tsx:121
-#: routes/_app/admin/TenantsTable.tsx:88
+#: routes/_app/admin/TenantsTable.tsx:38
 msgid "Inactive"
 msgstr "Inactive"
 
@@ -847,7 +847,7 @@ msgstr "Inactive"
 msgid "Install app"
 msgstr "Install app"
 
-#: routes/_app/admin/BooksTable.tsx:48
+#: routes/_app/admin/BooksTable.tsx:24
 #: routes/_app/books/$bookId.edit.tsx:109
 #: routes/_app/books/add.tsx:136
 #: routes/_app/scan.tsx:61
@@ -970,8 +970,8 @@ msgstr "My Books"
 #: routes/_app/admin/members.tsx:180
 #: routes/_app/admin/tenants.$libraryId.tsx:196
 #: routes/_app/admin/tenants.$libraryId.tsx:314
-#: routes/_app/admin/TenantsTable.tsx:55
-#: routes/_app/admin/UsersTable.tsx:78
+#: routes/_app/admin/TenantsTable.tsx:22
+#: routes/_app/admin/UsersTable.tsx:40
 msgid "Name"
 msgstr "Name"
 
@@ -983,7 +983,7 @@ msgstr "Next"
 msgid "No"
 msgstr "No"
 
-#: routes/_app/admin/AuditTable.tsx:54
+#: routes/_app/admin/AuditTable.tsx:71
 msgid "No audit entries yet"
 msgstr "No audit entries yet"
 
@@ -991,7 +991,7 @@ msgstr "No audit entries yet"
 msgid "No books borrowed yet"
 msgstr "No books borrowed yet"
 
-#: routes/_app/admin/BooksTable.tsx:35
+#: routes/_app/admin/BooksTable.tsx:39
 msgid "No books found"
 msgstr "No books found"
 
@@ -1017,7 +1017,7 @@ msgstr "No cover"
 msgid "No feedback yet"
 msgstr "No feedback yet"
 
-#: routes/_app/admin/TenantsTable.tsx:42
+#: routes/_app/admin/TenantsTable.tsx:60
 msgid "No libraries yet"
 msgstr "No libraries yet"
 
@@ -1033,7 +1033,7 @@ msgstr "No overdue books in this range"
 msgid "No users"
 msgstr "No users"
 
-#: routes/_app/admin/UsersTable.tsx:65
+#: routes/_app/admin/UsersTable.tsx:68
 msgid "No users found"
 msgstr "No users found"
 
@@ -1049,8 +1049,8 @@ msgstr "Nothing needs chasing right now."
 msgid "Notifications"
 msgstr "Notifications"
 
-#. placeholder {0}: v.onBehalfOf
-#: routes/_app/admin/AuditTable.tsx:90
+#. placeholder {0}: v.onBehalfOfName ?? v.onBehalfOf
+#: routes/_app/admin/AuditTable.tsx:42
 msgid "on behalf of {0}"
 msgstr "on behalf of {0}"
 
@@ -1167,7 +1167,7 @@ msgstr "Read-only system information (super admin)."
 #: routes/_app/admin/members.tsx:141
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:214
-#: routes/_app/admin/UsersTable.tsx:31
+#: routes/_app/admin/UsersTable.tsx:29
 msgid "Reader"
 msgstr "Reader"
 
@@ -1203,7 +1203,7 @@ msgstr "Returning…"
 
 #: routes/_app/admin/members.tsx:183
 #: routes/_app/admin/tenants.$libraryId.tsx:198
-#: routes/_app/admin/UsersTable.tsx:87
+#: routes/_app/admin/UsersTable.tsx:43
 msgid "Role"
 msgstr "Role"
 
@@ -1367,7 +1367,7 @@ msgid "Slow network — still loading, hang tight…"
 msgstr "Slow network — still loading, hang tight…"
 
 #: routes/_app/admin/tenants.$libraryId.tsx:318
-#: routes/_app/admin/TenantsTable.tsx:58
+#: routes/_app/admin/TenantsTable.tsx:33
 msgid "Slug"
 msgstr "Slug"
 
@@ -1385,11 +1385,11 @@ msgstr "Sort"
 msgid "Source: {0}"
 msgstr "Source: {0}"
 
-#: routes/_app/admin/AuditTable.tsx:17
+#: routes/_app/admin/AuditTable.tsx:15
 msgid "Started impersonation"
 msgstr "Started impersonation"
 
-#: routes/_app/admin/TenantsTable.tsx:61
+#: routes/_app/admin/TenantsTable.tsx:35
 msgid "Status"
 msgstr "Status"
 
@@ -1397,7 +1397,7 @@ msgstr "Status"
 msgid "Stock"
 msgstr "Stock"
 
-#: routes/_app/admin/AuditTable.tsx:19
+#: routes/_app/admin/AuditTable.tsx:17
 msgid "Stopped impersonation"
 msgstr "Stopped impersonation"
 
@@ -1410,7 +1410,7 @@ msgid "success"
 msgstr "success"
 
 #: routes/_app/admin/tenants.$libraryId.tsx:211
-#: routes/_app/admin/UsersTable.tsx:29
+#: routes/_app/admin/UsersTable.tsx:27
 msgid "Super admin"
 msgstr "Super admin"
 
@@ -1427,7 +1427,7 @@ msgstr "Switch to dark mode"
 msgid "Switch to light mode"
 msgstr "Switch to light mode"
 
-#: routes/_app/admin/AuditTable.tsx:55
+#: routes/_app/admin/AuditTable.tsx:72
 msgid "System actions (tenant changes, impersonation) will appear here."
 msgstr "System actions (tenant changes, impersonation) will appear here."
 
@@ -1440,7 +1440,7 @@ msgstr "System settings"
 msgid "System-wide snapshot (super admin)."
 msgstr "System-wide snapshot (super admin)."
 
-#: routes/_app/admin/AuditTable.tsx:78
+#: routes/_app/admin/AuditTable.tsx:56
 msgid "Target"
 msgstr "Target"
 
@@ -1456,8 +1456,8 @@ msgstr "Temporary password"
 msgid "Tenancy model"
 msgstr "Tenancy model"
 
-#: routes/_app/admin/BooksTable.tsx:47
-#: routes/_app/admin/UsersTable.tsx:84
+#: routes/_app/admin/BooksTable.tsx:23
+#: routes/_app/admin/UsersTable.tsx:42
 msgid "Tenant"
 msgstr "Tenant"
 
@@ -1522,11 +1522,11 @@ msgstr "This book is not in your library’s catalog yet. Ask a librarian to add
 msgid "This removes the book from the catalog and cannot be undone."
 msgstr "This removes the book from the catalog and cannot be undone."
 
-#: routes/_app/admin/AuditTable.tsx:69
+#: routes/_app/admin/AuditTable.tsx:34
 msgid "Time"
 msgstr "Time"
 
-#: routes/_app/admin/BooksTable.tsx:45
+#: routes/_app/admin/BooksTable.tsx:21
 #: routes/_app/books/$bookId.edit.tsx:101
 #: routes/_app/books/add.tsx:162
 #: routes/_app/books/index.tsx:124
@@ -1537,8 +1537,8 @@ msgstr "Title"
 msgid "Translator"
 msgstr "Translator"
 
-#: routes/_app/admin/BooksTable.tsx:35
-#: routes/_app/admin/UsersTable.tsx:66
+#: routes/_app/admin/BooksTable.tsx:39
+#: routes/_app/admin/UsersTable.tsx:68
 msgid "Try a different search."
 msgstr "Try a different search."
 
@@ -1550,7 +1550,7 @@ msgstr "Try adjusting the search or filters."
 msgid "Type"
 msgstr "Type"
 
-#: routes/_app/admin/AuditTable.tsx:25
+#: routes/_app/admin/AuditTable.tsx:23
 msgid "Updated tenant"
 msgstr "Updated tenant"
 
@@ -1569,7 +1569,7 @@ msgstr "User Feedback"
 #: routes/_app/admin/overview.tsx:64
 #: routes/_app/admin/tenants.$libraryId.tsx:145
 #: routes/_app/admin/tenants.$libraryId.tsx:181
-#: routes/_app/admin/TenantsTable.tsx:64
+#: routes/_app/admin/TenantsTable.tsx:42
 #: routes/_app/admin/users.tsx:43
 #: routes/_app/route.tsx:93
 msgid "Users"
