@@ -165,6 +165,16 @@ const call = {
     ),
   'admin.overview': () =>
     json<Ok<typeof client.admin.overview.$get>>(client.admin.overview.$get()),
+  'admin.books': (i: { search?: string; page?: number; limit?: number } = {}) =>
+    json<Ok<typeof client.admin.books.$get>>(
+      client.admin.books.$get({
+        query: {
+          search: i.search,
+          page: i.page != null ? String(i.page) : undefined,
+          limit: i.limit != null ? String(i.limit) : undefined,
+        },
+      }),
+    ),
   'admin.audit': (i: { page?: number; limit?: number; libraryId?: string; action?: string } = {}) =>
     json<Ok<typeof client.admin.audit.$get>>(
       client.admin.audit.$get({
@@ -253,6 +263,7 @@ export const api = {
     users: node('admin.users'),
     overview: node('admin.overview'),
     audit: node('admin.audit'),
+    books: node('admin.books'),
   },
 }
 
