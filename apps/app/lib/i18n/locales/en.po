@@ -168,7 +168,7 @@ msgstr "Action"
 
 #: routes/_app/admin/members.tsx:203
 #: routes/_app/admin/tenants.$libraryId.tsx:200
-#: routes/_app/admin/UsersTable.tsx:90
+#: routes/_app/admin/UsersTable.tsx:91
 msgid "Actions"
 msgstr "Actions"
 
@@ -228,6 +228,7 @@ msgstr "Address"
 #: routes/_app/admin/members.tsx:140
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:213
+#: routes/_app/admin/UsersTable.tsx:30
 msgid "Admin"
 msgstr "Admin"
 
@@ -726,7 +727,7 @@ msgstr "Edit Book"
 #: routes/_app/admin/AddUserDialog.tsx:48
 #: routes/_app/admin/members.$memberId.tsx:73
 #: routes/_app/admin/tenants.$libraryId.tsx:197
-#: routes/_app/admin/UsersTable.tsx:80
+#: routes/_app/admin/UsersTable.tsx:81
 #: routes/login.tsx:205
 msgid "Email"
 msgstr "Email"
@@ -970,7 +971,7 @@ msgstr "My Books"
 #: routes/_app/admin/tenants.$libraryId.tsx:196
 #: routes/_app/admin/tenants.$libraryId.tsx:314
 #: routes/_app/admin/TenantsTable.tsx:55
-#: routes/_app/admin/UsersTable.tsx:77
+#: routes/_app/admin/UsersTable.tsx:78
 msgid "Name"
 msgstr "Name"
 
@@ -1032,7 +1033,7 @@ msgstr "No overdue books in this range"
 msgid "No users"
 msgstr "No users"
 
-#: routes/_app/admin/UsersTable.tsx:64
+#: routes/_app/admin/UsersTable.tsx:65
 msgid "No users found"
 msgstr "No users found"
 
@@ -1166,6 +1167,7 @@ msgstr "Read-only system information (super admin)."
 #: routes/_app/admin/members.tsx:141
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:214
+#: routes/_app/admin/UsersTable.tsx:31
 msgid "Reader"
 msgstr "Reader"
 
@@ -1201,7 +1203,7 @@ msgstr "Returning…"
 
 #: routes/_app/admin/members.tsx:183
 #: routes/_app/admin/tenants.$libraryId.tsx:198
-#: routes/_app/admin/UsersTable.tsx:86
+#: routes/_app/admin/UsersTable.tsx:87
 msgid "Role"
 msgstr "Role"
 
@@ -1408,6 +1410,7 @@ msgid "success"
 msgstr "success"
 
 #: routes/_app/admin/tenants.$libraryId.tsx:211
+#: routes/_app/admin/UsersTable.tsx:29
 msgid "Super admin"
 msgstr "Super admin"
 
@@ -1454,7 +1457,7 @@ msgid "Tenancy model"
 msgstr "Tenancy model"
 
 #: routes/_app/admin/BooksTable.tsx:47
-#: routes/_app/admin/UsersTable.tsx:83
+#: routes/_app/admin/UsersTable.tsx:84
 msgid "Tenant"
 msgstr "Tenant"
 
@@ -1535,7 +1538,7 @@ msgid "Translator"
 msgstr "Translator"
 
 #: routes/_app/admin/BooksTable.tsx:35
-#: routes/_app/admin/UsersTable.tsx:65
+#: routes/_app/admin/UsersTable.tsx:66
 msgid "Try a different search."
 msgstr "Try a different search."
 

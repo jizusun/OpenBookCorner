@@ -168,7 +168,7 @@ msgstr "操作"
 
 #: routes/_app/admin/members.tsx:203
 #: routes/_app/admin/tenants.$libraryId.tsx:200
-#: routes/_app/admin/UsersTable.tsx:90
+#: routes/_app/admin/UsersTable.tsx:91
 msgid "Actions"
 msgstr "操作"
 
@@ -228,6 +228,7 @@ msgstr "地址"
 #: routes/_app/admin/members.tsx:140
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:213
+#: routes/_app/admin/UsersTable.tsx:30
 msgid "Admin"
 msgstr "管理员"
 
@@ -726,7 +727,7 @@ msgstr "编辑图书"
 #: routes/_app/admin/AddUserDialog.tsx:48
 #: routes/_app/admin/members.$memberId.tsx:73
 #: routes/_app/admin/tenants.$libraryId.tsx:197
-#: routes/_app/admin/UsersTable.tsx:80
+#: routes/_app/admin/UsersTable.tsx:81
 #: routes/login.tsx:205
 msgid "Email"
 msgstr "邮箱"
@@ -970,7 +971,7 @@ msgstr "我的借阅"
 #: routes/_app/admin/tenants.$libraryId.tsx:196
 #: routes/_app/admin/tenants.$libraryId.tsx:314
 #: routes/_app/admin/TenantsTable.tsx:55
-#: routes/_app/admin/UsersTable.tsx:77
+#: routes/_app/admin/UsersTable.tsx:78
 msgid "Name"
 msgstr "姓名"
 
@@ -1032,7 +1033,7 @@ msgstr "该区间没有逾期图书"
 msgid "No users"
 msgstr "暂无用户"
 
-#: routes/_app/admin/UsersTable.tsx:64
+#: routes/_app/admin/UsersTable.tsx:65
 msgid "No users found"
 msgstr "未找到用户"
 
@@ -1166,6 +1167,7 @@ msgstr "只读系统信息（超级管理员）。"
 #: routes/_app/admin/members.tsx:141
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:214
+#: routes/_app/admin/UsersTable.tsx:31
 msgid "Reader"
 msgstr "普通成员"
 
@@ -1201,7 +1203,7 @@ msgstr "归还中…"
 
 #: routes/_app/admin/members.tsx:183
 #: routes/_app/admin/tenants.$libraryId.tsx:198
-#: routes/_app/admin/UsersTable.tsx:86
+#: routes/_app/admin/UsersTable.tsx:87
 msgid "Role"
 msgstr "权限"
 
@@ -1408,6 +1410,7 @@ msgid "success"
 msgstr "成功"
 
 #: routes/_app/admin/tenants.$libraryId.tsx:211
+#: routes/_app/admin/UsersTable.tsx:29
 msgid "Super admin"
 msgstr "超级管理员"
 
@@ -1454,7 +1457,7 @@ msgid "Tenancy model"
 msgstr "多租户模型"
 
 #: routes/_app/admin/BooksTable.tsx:47
-#: routes/_app/admin/UsersTable.tsx:83
+#: routes/_app/admin/UsersTable.tsx:84
 msgid "Tenant"
 msgstr "租户"
 
@@ -1535,7 +1538,7 @@ msgid "Translator"
 msgstr "译者"
 
 #: routes/_app/admin/BooksTable.tsx:35
-#: routes/_app/admin/UsersTable.tsx:65
+#: routes/_app/admin/UsersTable.tsx:66
 msgid "Try a different search."
 msgstr "换个搜索词试试。"
 
