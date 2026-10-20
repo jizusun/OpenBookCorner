@@ -92,6 +92,24 @@ export function createAuth(db: Database, env: Env): Auth {
         // A session with `impersonatedBy` set is an impersonation; resolve the
         // impersonated user's tenant and record impersonation.start / .stop.
         create: {
+          before: async (newSession) => {
+            // Server-side guard (ADR 0006): an impersonation session (one with
+            // impersonatedBy set) may only target a library_reader — mirrors the
+            // UI allow-list and the admin plugin's admin block, and closes the
+            // gap for empty/unknown roles. Non-readers are refused.
+            const impersonatedBy = (newSession as { impersonatedBy?: string | null })
+              .impersonatedBy
+            if (!impersonatedBy) return
+            const targetUserId = (newSession as { userId: string }).userId
+            const row = await db
+              .select({ role: user.role })
+              .from(user)
+              .where(eq(user.id, targetUserId))
+              .get?.()
+            if (row?.role !== 'library_reader') {
+              throw new Error('IMPERSONATION_TARGET_NOT_READER')
+            }
+          },
           after: async (newSession) => {
             const impersonatedBy = (newSession as { impersonatedBy?: string | null })
               .impersonatedBy
