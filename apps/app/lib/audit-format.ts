@@ -7,15 +7,20 @@
  * impersonation flag, target placeholder, and time formatting.
  */
 
-/** One audit row as returned by GET /api/tenant/audit (JSON shape). */
+/** One audit row as returned by the audit endpoints (JSON shape). The *Name
+ *  fields are resolved server-side (join on user) so the UI can show names
+ *  instead of raw ids; they may be null when the id is not a known user. */
 export interface AuditRow {
   id: string
   actorUserId: string
+  actorName?: string | null
   onBehalfOfUserId: string | null
+  onBehalfOfName?: string | null
   libraryId: string | null
   action: string
   targetType: string | null
   targetId: string | null
+  targetName?: string | null
   metadata: Record<string, unknown> | null
   createdAt: string
 }
@@ -50,7 +55,9 @@ export interface AuditRowView {
   action: string
   kind: AuditActionKind
   actorUserId: string
+  actorName: string | null
   onBehalfOf: string | null
+  onBehalfOfName: string | null
   isImpersonation: boolean
   targetDisplay: string
   targetId: string | null
@@ -79,9 +86,12 @@ export function formatAuditRow(row: AuditRow): AuditRowView {
     action: row.action,
     kind: auditActionKind(row.action),
     actorUserId: row.actorUserId,
+    actorName: row.actorName ?? null,
     onBehalfOf,
+    onBehalfOfName: row.onBehalfOfName ?? null,
     isImpersonation: onBehalfOf !== null,
-    targetDisplay: row.targetId ?? '—',
+    // Prefer a resolved name; fall back to the id, then a placeholder.
+    targetDisplay: row.targetName ?? row.targetId ?? '—',
     targetId: row.targetId ?? null,
     time: formatTime(row.createdAt),
     hasMetadata: row.metadata != null && Object.keys(row.metadata).length > 0,
