@@ -6,11 +6,18 @@ import type { AuthedVars } from '../lib/mw'
 import { sessionAuth, superAdmin } from '../lib/mw'
 import { UserAdminService } from '../services/user-admin'
 import { OverviewService } from '../services/overview'
+import { BookAdminService } from '../services/book-admin'
 import { AuditService } from '../services/audit'
 
 const listQuery = z.object({
   search: z.string().optional(),
   libraryId: z.string().optional(),
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).max(200).optional(),
+})
+
+const booksQuery = z.object({
+  search: z.string().optional(),
   page: z.coerce.number().int().min(1).optional(),
   limit: z.coerce.number().int().min(1).max(200).optional(),
 })
@@ -33,6 +40,9 @@ export const adminApp = new Hono<{ Variables: AuthedVars }>()
     c.json(await new UserAdminService(c.get('db')).listAll(c.req.valid('query'))),
   )
   .get('/overview', async (c) => c.json(await new OverviewService(c.get('db')).get()))
+  .get('/books', zValidator('query', booksQuery), async (c) =>
+    c.json(await new BookAdminService(c.get('db')).listAll(c.req.valid('query'))),
+  )
   .get('/audit', zValidator('query', auditQuery), async (c) =>
     c.json(await new AuditService(c.get('db')).listAll(c.req.valid('query'))),
   )
