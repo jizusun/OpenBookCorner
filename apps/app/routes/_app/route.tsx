@@ -102,6 +102,7 @@ function AppLayout() {
           { to: '/admin/overdue', label: <Trans>Overdue</Trans> },
           { to: '/admin/settings', label: <Trans>Settings</Trans> },
           { to: '/admin/feedback', label: <Trans>Feedback</Trans> },
+          { to: '/admin/activity', label: <Trans>Activity</Trans> },
           { to: '/admin/import', label: <Trans>Import</Trans> },
         ]
       : [

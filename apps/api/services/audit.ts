@@ -44,15 +44,16 @@ export class AuditService {
     })
   }
 
-  /** Tenant-scoped audit entries, newest first. */
+  /** Tenant-scoped audit entries, newest first (names resolved for display). */
   async listByLibrary(libraryId: string, opts: { limit?: number } = {}) {
     const limit = Math.min(opts.limit ?? 100, 500)
-    return this.db
+    const rows = await this.db
       .select()
       .from(auditLogs)
       .where(eq(auditLogs.libraryId, libraryId))
       .orderBy(desc(auditLogs.createdAt))
       .limit(limit)
+    return this.enrichNames(rows)
   }
 
   /** Filter to a specific action within a tenant (newest first). */

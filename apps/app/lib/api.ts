@@ -111,6 +111,7 @@ const call = {
     json<Ok<(typeof client.member)[':memberId']['$get']>>(
       client.member[':memberId'].$get({ param: i }),
     ),
+  'library.audit': () => json<Ok<typeof client.library.audit.$get>>(client.library.audit.$get()),
   'member.create': (i: { email: string; name: string; password: string }) =>
     json<Ok<typeof client.member.$post>>(client.member.$post({ json: i })),
   'member.enableLogin': (i: { memberId: string; email: string; password: string }) =>
@@ -244,6 +245,7 @@ export const api = {
     settings: node('library.settings'),
     updateSettings: node('library.updateSettings'),
     importFanshuPreview: node('library.importFanshuPreview'),
+    audit: node('library.audit'),
     importFanshu: node('library.importFanshu'),
     importFanshuFromUrl: node('library.importFanshuFromUrl'),
     importHistory: node('library.importHistory'),
