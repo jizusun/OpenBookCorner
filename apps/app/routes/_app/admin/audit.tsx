@@ -4,8 +4,8 @@ import { useQuery } from '@tanstack/react-query'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { z } from 'zod'
 import { api } from '@/lib/api'
-import { Button } from '@/components/ui/button'
 import { ListPageSkeleton } from '@/components/ui/skeleton'
+import { Pager } from '@/components/ui/Pager'
 import { AuditTable } from './AuditTable'
 import type { AuditRow } from '@/lib/audit-format'
 
@@ -110,29 +110,13 @@ function AuditPage() {
 
       <AuditTable rows={rows} loading={isLoading} />
 
-      <div className="flex items-center justify-between text-sm">
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={page <= 1}
-          onClick={() => setPage((p) => Math.max(1, p - 1))}
-          data-testid="audit-prev"
-        >
-          <Trans>Previous</Trans>
-        </Button>
-        <span className="text-muted-foreground">
-          <Trans>Page {page}</Trans>
-        </span>
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={!hasMore}
-          onClick={() => setPage((p) => p + 1)}
-          data-testid="audit-next"
-        >
-          <Trans>Next</Trans>
-        </Button>
-      </div>
+      <Pager
+        page={page}
+        hasMore={hasMore}
+        onPrev={() => setPage((p) => Math.max(1, p - 1))}
+        onNext={() => setPage((p) => p + 1)}
+        data-testid="audit-pager"
+      />
     </div>
   )
 }

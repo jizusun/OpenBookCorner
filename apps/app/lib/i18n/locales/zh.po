@@ -91,7 +91,7 @@ msgstr "已借 {0} 本"
 
 #. placeholder {0}: tn.userCount
 #. placeholder {1}: tn.bookCount
-#: routes/_app/admin/overview.tsx:87
+#: routes/_app/admin/overview.tsx:99
 msgid "{0} users · {1} books"
 msgstr "{0} 位用户 · {1} 本藏书"
 
@@ -116,7 +116,7 @@ msgstr "{n, plural, other {逾期 # 天}}"
 msgid "{overdue} overdue"
 msgstr "{overdue} 本逾期"
 
-#: routes/_app/admin/books.tsx:67
+#: routes/_app/admin/books.tsx:59
 #: routes/_app/books/index.tsx:181
 msgid "{total} books"
 msgstr "共 {total} 本"
@@ -125,7 +125,7 @@ msgstr "共 {total} 本"
 msgid "{total} entries"
 msgstr "共 {total} 条"
 
-#: routes/_app/admin/users.tsx:67
+#: routes/_app/admin/users.tsx:63
 msgid "{total} users"
 msgstr "共 {total} 位用户"
 
@@ -180,7 +180,7 @@ msgstr "启用"
 msgid "Activated/deactivated tenant"
 msgstr "启用/停用租户"
 
-#: routes/_app/admin/overview.tsx:83
+#: routes/_app/admin/overview.tsx:95
 #: routes/_app/admin/tenants.$libraryId.tsx:121
 #: routes/_app/admin/TenantsTable.tsx:88
 msgid "Active"
@@ -253,7 +253,7 @@ msgstr "{0} 本全部借出"
 msgid "All actions"
 msgstr "所有操作"
 
-#: routes/_app/admin/books.tsx:49
+#: routes/_app/admin/books.tsx:42
 msgid "All books across every tenant (super admin)."
 msgstr "所有租户的全部藏书（超级管理员）。"
 
@@ -290,7 +290,7 @@ msgstr "原始数据 / 全部字段"
 msgid "All tenants"
 msgstr "所有租户"
 
-#: routes/_app/admin/users.tsx:49
+#: routes/_app/admin/users.tsx:46
 msgid "All users across every tenant (super admin)."
 msgstr "所有租户的全部用户（超级管理员）。"
 
@@ -373,8 +373,8 @@ msgstr "未找到该图书。"
 msgid "Book suggestion"
 msgstr "荐书"
 
-#: routes/_app/admin/books.tsx:46
-#: routes/_app/admin/overview.tsx:53
+#: routes/_app/admin/books.tsx:39
+#: routes/_app/admin/overview.tsx:65
 #: routes/_app/admin/tenants.$libraryId.tsx:149
 #: routes/_app/admin/TenantsTable.tsx:67
 #: routes/_app/route.tsx:94
@@ -836,7 +836,7 @@ msgstr "导入成功"
 msgid "Importing…"
 msgstr "导入中…"
 
-#: routes/_app/admin/overview.tsx:83
+#: routes/_app/admin/overview.tsx:95
 #: routes/_app/admin/tenants.$libraryId.tsx:121
 #: routes/_app/admin/TenantsTable.tsx:88
 msgid "Inactive"
@@ -974,8 +974,7 @@ msgstr "我的借阅"
 msgid "Name"
 msgstr "姓名"
 
-#: routes/_app/admin/audit.tsx:133
-#: routes/_app/admin/books.tsx:79
+#: components/ui/Pager.tsx:26
 msgid "Next"
 msgstr "下一页"
 
@@ -1083,14 +1082,13 @@ msgstr "逾期"
 msgid "Overdue Books"
 msgstr "逾期图书"
 
-#: routes/_app/admin/overview.tsx:43
+#: routes/_app/admin/overview.tsx:55
 #: routes/_app/admin/tenants.$libraryId.tsx:133
 #: routes/_app/route.tsx:91
 msgid "Overview"
 msgstr "概况"
 
-#: routes/_app/admin/audit.tsx:124
-#: routes/_app/admin/books.tsx:77
+#: components/ui/Pager.tsx:23
 msgid "Page {page}"
 msgstr "第 {page} 页"
 
@@ -1133,8 +1131,7 @@ msgstr "预览 — {0}"
 msgid "Preview as a reader"
 msgstr "以读者身份预览"
 
-#: routes/_app/admin/audit.tsx:121
-#: routes/_app/admin/books.tsx:75
+#: components/ui/Pager.tsx:20
 msgid "Previous"
 msgstr "上一页"
 
@@ -1181,7 +1178,7 @@ msgstr "读者预览"
 msgid "Readers"
 msgstr "读者"
 
-#: routes/_app/admin/overview.tsx:59
+#: routes/_app/admin/overview.tsx:71
 msgid "Recent activity"
 msgstr "近期动态"
 
@@ -1260,14 +1257,13 @@ msgstr "扫码借书"
 msgid "Scan to Borrow"
 msgstr "扫码借书"
 
-#: routes/_app/admin/books.tsx:61
+#: components/ui/SearchBar.tsx:38
 #: routes/_app/admin/members.tsx:103
-#: routes/_app/admin/users.tsx:61
 #: routes/_app/books/index.tsx:109
 msgid "Search"
 msgstr "搜索"
 
-#: routes/_app/admin/books.tsx:58
+#: routes/_app/admin/books.tsx:49
 msgid "Search books"
 msgstr "搜索藏书"
 
@@ -1275,7 +1271,7 @@ msgstr "搜索藏书"
 msgid "Search by name / phone / member no…"
 msgstr "按姓名 / 手机 / 会员号搜索…"
 
-#: routes/_app/admin/users.tsx:55
+#: routes/_app/admin/users.tsx:52
 msgid "Search by name or email…"
 msgstr "按姓名或邮箱搜索…"
 
@@ -1287,7 +1283,7 @@ msgstr "按书名或作者搜索"
 msgid "Search by title or author…"
 msgstr "按书名或作者搜索…"
 
-#: routes/_app/admin/books.tsx:55
+#: routes/_app/admin/books.tsx:48
 msgid "Search by title, author or ISBN…"
 msgstr "按书名、作者或 ISBN 搜索…"
 
@@ -1295,7 +1291,7 @@ msgstr "按书名、作者或 ISBN 搜索…"
 msgid "Search members"
 msgstr "搜索成员"
 
-#: routes/_app/admin/users.tsx:58
+#: routes/_app/admin/users.tsx:53
 msgid "Search users"
 msgstr "搜索用户"
 
@@ -1437,7 +1433,7 @@ msgstr "系统操作（租户变更、模拟登录）会显示在这里。"
 msgid "System settings"
 msgstr "系统设置"
 
-#: routes/_app/admin/overview.tsx:46
+#: routes/_app/admin/overview.tsx:58
 msgid "System-wide snapshot (super admin)."
 msgstr "全系统概况（超级管理员）。"
 
@@ -1470,8 +1466,8 @@ msgstr "租户登录链接"
 msgid "Tenant not found"
 msgstr "未找到租户"
 
-#: routes/_app/admin/overview.tsx:51
-#: routes/_app/admin/overview.tsx:70
+#: routes/_app/admin/overview.tsx:63
+#: routes/_app/admin/overview.tsx:82
 #: routes/_app/admin/tenants.index.tsx:53
 #: routes/_app/route.tsx:92
 msgid "Tenants"
@@ -1567,16 +1563,16 @@ msgstr "上传番薯借阅的 Excel 导出文件（.xls）。图书、成员、�
 msgid "User Feedback"
 msgstr "用户反馈"
 
-#: routes/_app/admin/overview.tsx:52
+#: routes/_app/admin/overview.tsx:64
 #: routes/_app/admin/tenants.$libraryId.tsx:145
 #: routes/_app/admin/tenants.$libraryId.tsx:181
 #: routes/_app/admin/TenantsTable.tsx:64
-#: routes/_app/admin/users.tsx:46
+#: routes/_app/admin/users.tsx:43
 #: routes/_app/route.tsx:93
 msgid "Users"
 msgstr "用户"
 
-#: routes/_app/admin/overview.tsx:62
+#: routes/_app/admin/overview.tsx:74
 msgid "View all →"
 msgstr "查看全部 →"
 
