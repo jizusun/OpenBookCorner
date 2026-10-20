@@ -54,4 +54,25 @@ test.describe('Impersonation (super admin)', () => {
     // No impersonation control for a non-super-admin.
     await expect(page.getByRole('button', { name: 'Sign in as them' })).toHaveCount(0)
   })
+
+  test('users page renders the Role column and offers impersonate only for readers', async ({ page }) => {
+    await page.goto('/login', { waitUntil: 'domcontentloaded' })
+    await page.getByLabel('Email').fill('super@demo.test')
+    await page.getByLabel('Password').fill('password123')
+    await page.getByRole('button', { name: 'Sign In' }).click()
+    await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible()
+    await page.getByRole('link', { name: 'Users' }).first().click()
+    await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible()
+
+    // Role column renders (regression: a macro `t` passed into a plain fn gave
+    // an empty Role column). Both Admin and Reader labels appear.
+    await expect(page.getByText('Admin', { exact: true }).first()).toBeVisible()
+    await expect(page.getByText('Reader', { exact: true }).first()).toBeVisible()
+
+    // Impersonate is offered for readers but NOT admins/super (allow-list).
+    const readerRow = page.getByRole('row', { name: /reader@demo\.test/ })
+    await expect(readerRow.getByRole('button', { name: 'Sign in as them' })).toBeVisible()
+    const adminRow = page.getByRole('row', { name: /admin@demo\.test/ })
+    await expect(adminRow.getByRole('button', { name: 'Sign in as them' })).toHaveCount(0)
+  })
 })
