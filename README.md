@@ -1,104 +1,91 @@
 # OpenBookCorner
 
-**Transform your company's book collection from chaos to community.**
+**Turn your organization's scattered books into a shared, searchable library.**
 
-A multi-tenant Progressive Web Application that revolutionizes how organizations manage their library book inventories, turning scattered book collections into thriving workplace communities.
+OpenBookCorner is a multi-tenant library-management Progressive Web App (PWA):
+every organization ("library/tenant") gets its own isolated catalog, members,
+and borrowing records. It runs on Cloudflare's free tier, so a small library can
+operate at essentially no cost.
 
-## 💡 Why OpenBookCorner?
+> This README is for people who want to **use** OpenBookCorner. Developers: see
+> [`docs/development.md`](docs/development.md) (architecture + dev workflow) and
+> [`docs/deployment.md`](docs/deployment.md) (how to deploy it yourself).
 
-**The Problem:** Books scattered across offices, manual tracking, duplicate purchases, and hours wasted searching for resources.
+## Who it's for
 
-**The Solution:** A digital library system that transforms chaos into community.
+- **Readers** — find and borrow books, scan to borrow, track what you have out.
+- **Library admins** — manage the catalog, members, borrowing and overdues,
+  import an existing library, and see your library's activity.
+- **Super admins (platform operator)** — manage all tenants, users and books
+  across the system, with a full audit log.
 
-### Key Benefits
+## Features
 
-**📈 For Organizations**
-- Eliminate duplicate book purchases
-- Reduce time spent on manual tracking
-- Support professional development initiatives
-- Build a learning culture
+### For readers
+- **Browse & search** the catalog (title / author / ISBN).
+- **Borrow & return**, with per-library borrowing limits and due dates.
+- **Scan to borrow** — type or scan an ISBN to borrow in one step.
+- **My Books** — your current loans and due dates.
+- **Installable PWA** — add to your phone's home screen; works like an app.
+- **Bilingual UI** — English / 简体中文 (switch anytime).
 
-**👥 For Employees**
-- Find books instantly with search
-- Borrow/return with mobile scanning
-- Get notifications for book availability
-- Share reviews and recommendations
+### For library admins
+- **Catalog management** — add / edit / remove books, multiple copies per title.
+- **Members (readers roster)** — search, view details, track loans & overdues.
+- **Add a reader** — create a reader account directly, or **enable login** for an
+  existing roster entry (e.g. someone imported from your old system).
+- **Overdue tracking** and **reader feedback** inbox.
+- **Import an existing library** — one-click import from a 番薯 (Fanshu) export
+  (books, members, loans, reviews, purchase requests).
+- **Branded tenant login** — your library's name, color and welcome message at
+  `/(t)/your-slug/login`.
+- **Activity log** — recent changes in your library.
+- **Reader preview** — see the catalog as a member does.
 
-**⚡ Quick Wins**
-- **Week 1**: Digital catalog replaces spreadsheets
-- **Month 1**: Mobile scanning saves hours weekly
-- **Quarter 1**: Community features drive engagement
+### For super admins
+- **Overview dashboard** — tenant / user / book counts, each a drill-down to its
+  list, plus recent system activity.
+- **Tenants** — create, edit, (de)activate, delete libraries; drill into any
+  tenant to see its users and add an admin.
+- **Users** — every login account across all tenants, searchable.
+- **Books** — every book across all tenants, searchable.
+- **Audit log** — every change across the whole system, filterable by tenant and
+  action, paginated.
+- **Impersonation** — sign in as a reader to reproduce an issue, with a
+  persistent banner, a time-boxed session, a one-click "Back to my account", and
+  a full audit trail. (Readers only; admins can't be impersonated.)
 
-## 🚀 Getting Started Options
+### Built-in safety
+- **Complete tenant isolation** — a library can never see another's data.
+- **Role-based access** — super admin / library admin / reader.
+- **Append-only audit log** of privileged actions (who did what, when).
 
-### 🌐 Try Our Demo
-Want to see OpenBookCorner in action? **[Try our live demo → Placeholder here](https://demo.openbookcorner.com)**
-- No setup required
-- Pre-loaded with sample data
-- Test all features instantly
-- Perfect for evaluating the solution
+## Using OpenBookCorner
 
-### 💰 Cost-Efficient Self-Hosting
-Built on **Cloudflare's edge platform** for maximum cost efficiency:
+### Option 1 — Use our hosted instance
+The quickest way: use the OpenBookCorner instance we run on Cloudflare — nothing
+to install. Ask us (or your organization's admin) for an invite; your library
+admin adds you as a reader, or you sign up with your work email and are matched
+to your organization by email domain.
 
-**Cloudflare Free Tier Includes:**
-- **D1 Database**: 100k reads/day, 100k writes/day
-- **Workers**: 100k requests/day
-- **Pages**: Unlimited static hosting
-- **KV Storage**: 100k reads/day, 1k writes/day
-- **R2 Storage**: 10GB free storage
+### Option 2 — Self-host on your own Cloudflare account
+OpenBookCorner is designed to run on Cloudflare's **free tier** (Workers + D1 +
+R2), so most small/medium libraries run **$0/month**. You deploy it to your own
+Cloudflare account and own all your data. Step-by-step instructions are in
+[`docs/deployment.md`](docs/deployment.md).
 
-**Perfect for small to medium libraries** - Most organizations can run OpenBookCorner **completely free** on Cloudflare's generous free tier. Only pay as you scale beyond the free limits.
+Roughly:
+1. Create a Cloudflare account; create a D1 database and an R2 bucket.
+2. Set the app secret and deploy the Worker (one command).
+3. Apply database migrations; create your first super admin.
+4. Create a library (tenant), add its admin — they take it from there.
 
-**Estimated Monthly Costs:**
-- **Small Library** (< 100 users): **$0/month**
-- **Medium Library** (100-500 users): **$5-15/month**
-- **Large Library** (500+ users): **$20-50/month**
+## Cost
 
-*Compare this to traditional library management systems costing $100-500+ per month!*
+On Cloudflare's free tier (D1 100k reads/day, Workers 100k req/day, R2 10 GB):
+- **Small library (<100 readers):** typically **$0/month**.
+- **Larger libraries:** low single/double-digit dollars as you exceed free limits.
 
-## 🎯 Technical Excellence Meets Business Needs
+## License
 
-This application enables organizations to digitally transform their library management with:
-
-- **Multi-tenant Architecture**: Complete data isolation between organizations
-- **Progressive Web App**: Native mobile experience with offline capabilities
-- **Barcode Scanning**: ISBN scanning for efficient book management
-- **Role-based Access Control**: Super Admin, Library Admin, and Library Reader roles
-- **Email-based Authentication**: Passwordless login with verification codes
-- **Automated Workflows**: Overdue tracking, notifications, and book requests
-
-## 🏗️ Technology Stack
-
-**Frontend:** TanStack Start (React) + shadcn/ui + Tailwind CSS + TanStack Query + PWA  
-**Server:** TanStack Start server functions on Cloudflare Workers (no separate API layer)  
-**Database:** Cloudflare D1 + KV + R2 Storage (Drizzle ORM)  
-**Auth:** Lucia Auth (email/password in Phase 1; WeChat OAuth planned for Phase 2)
-
-> See `docs/adr/0001-tech-stack-and-hosting.md` for the full decision and the phased WeChat/China plan.
-
-
-## 📱 Key Features
-
-- **Multi-tenant Architecture**: Complete data isolation between organizations
-- **Mobile Barcode Scanning**: ISBN scanning for quick book management
-- **Search & Discovery**: Find books instantly with smart search
-- **Automated Workflows**: Overdue tracking and email notifications
-- **Progressive Web App**: Install on mobile devices with offline support
-- **Role-based Access**: Super Admin, Librarian, and Member roles
-- **Community Features**: Book reviews, requests, and recommendations
-
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Submit a pull request
-
-## 📄 License
-
-MIT License - see [LICENSE](LICENSE) for details.
-
----
-
-**Built with ❤️ using TanStack Start, Cloudflare, and modern web technologies**
+MIT — see [LICENSE](LICENSE).
