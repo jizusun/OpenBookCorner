@@ -42,4 +42,11 @@ describe('canImpersonateUser', () => {
     expect(canImpersonateUser('super_admin', 'root', { id: 'root', role: 'library_reader' })).toBe(false)
     expect(canImpersonateUser('library_admin', 'bob', { id: 'alice', role: 'library_reader' })).toBe(false)
   })
+  it('refuses an empty or unknown target role (allow-list: only library_reader)', () => {
+    // Regression: a deny-list would wrongly allow impersonating users whose role
+    // is '', null-ish, or Better Auth's legacy 'user' — i.e. "impersonate anyone".
+    expect(canImpersonateUser('super_admin', 'root', { id: 'a', role: '' })).toBe(false)
+    expect(canImpersonateUser('super_admin', 'root', { id: 'b', role: 'user' })).toBe(false)
+    expect(canImpersonateUser('super_admin', 'root', { id: 'c', role: 'something_else' })).toBe(false)
+  })
 })
