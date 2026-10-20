@@ -43,7 +43,7 @@ Branch: `feat/impersonation`. Tick items as they land (commit hash in parens).
 
 ## Later / deferred
 
-- [ ] Tenant-level "activity" audit page for library admins (`listByLibrary`
+- [x] Tenant-level "activity" audit page (/admin/activity, 6b99f8d).
   backend ready; no frontend).
 - [ ] "Invite / enable login" on a reader detail (attach a `user` to an existing
   `members` row — provision-on-demand per ADR 0006).
@@ -61,6 +61,6 @@ Branch: `feat/impersonation`. Tick items as they land (commit hash in parens).
 - [x] **DataTable reuse** — generic DataTable<T> built+tested; Users/Books/Tenants/Audit tables all migrated to it (one quiet table shell). (this commit)
 - [x] **Audit log shows names** — listAll enriches actorName/onBehalfOfName/targetName (batched user lookup); audit table shows names, falls back to id. (this commit)
 - [ ] Tenant-level "activity" audit page for library admins (listByLibrary ready).
-- [ ] Reader "invite / enable login" (attach a user to an existing members row).
-- [ ] Server-side hardening: block impersonating non-reader roles server-side too
+- [x] Reader enable-login (member detail, 1f9a2dc).
+- [x] Server-side impersonation guard — only readers (891c789).
   (UI allow-list done; belt-and-suspenders).
