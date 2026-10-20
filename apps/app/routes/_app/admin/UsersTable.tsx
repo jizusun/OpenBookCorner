@@ -1,4 +1,4 @@
-import { Trans, useLingui } from '@lingui/react/macro'
+import { Trans } from '@lingui/react/macro'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -23,11 +23,13 @@ export interface UsersTableProps {
   clearCache: () => void
 }
 
-function roleLabel(role: string, t: ReturnType<typeof useLingui>['t']): string {
-  if (role === 'super_admin') return t`Super admin`
-  if (role === 'library_admin') return t`Admin`
-  if (role === 'library_reader') return t`Reader`
-  return role
+/** Role label via real <Trans> (a macro `t` passed into a plain fn doesn't get
+ *  extracted/translated — that caused an empty Role column). */
+function RoleLabel({ role }: { role: string }) {
+  if (role === 'super_admin') return <Trans>Super admin</Trans>
+  if (role === 'library_admin') return <Trans>Admin</Trans>
+  if (role === 'library_reader') return <Trans>Reader</Trans>
+  return <>{role || '—'}</>
 }
 
 /**
@@ -44,7 +46,6 @@ export function UsersTable({
   onImpersonated,
   clearCache,
 }: UsersTableProps) {
-  const { t } = useLingui()
 
   if (loading) {
     return (
@@ -103,7 +104,7 @@ export function UsersTable({
               <td className="px-3 py-2 text-muted-foreground">{u.email}</td>
               <td className="px-3 py-2">{u.libraryName ?? '—'}</td>
               <td className="px-3 py-2">
-                <Badge variant="outline">{roleLabel(u.role, t)}</Badge>
+                <Badge variant="outline"><RoleLabel role={u.role} /></Badge>
               </td>
               <td className="px-3 py-2">
                 {canImpersonateUser(viewerRole, viewerId, { id: u.id, role: u.role }) && (
