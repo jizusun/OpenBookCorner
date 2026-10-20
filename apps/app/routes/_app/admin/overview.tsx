@@ -16,14 +16,16 @@ export const Route = createFileRoute('/_app/admin/overview')({
   component: OverviewPage,
 })
 
-function StatCard({ label, value }: { label: React.ReactNode; value: number }) {
+function StatCard({ label, value, to }: { label: React.ReactNode; value: number; to: string }) {
   return (
-    <Card>
-      <CardContent className="p-4">
-        <div className="text-2xl font-bold">{value}</div>
-        <div className="text-sm text-muted-foreground">{label}</div>
-      </CardContent>
-    </Card>
+    <Link to={to} className="block rounded-lg transition-colors hover:bg-accent/40" data-testid="stat-card">
+      <Card>
+        <CardContent className="p-4">
+          <div className="text-2xl font-bold">{value}</div>
+          <div className="text-sm text-muted-foreground">{label}</div>
+        </CardContent>
+      </Card>
+    </Link>
   )
 }
 
@@ -46,9 +48,9 @@ function OverviewPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard label={<Trans>Tenants</Trans>} value={data.counts.tenants} />
-        <StatCard label={<Trans>Users</Trans>} value={data.counts.users} />
-        <StatCard label={<Trans>Books</Trans>} value={data.counts.books} />
+        <StatCard label={<Trans>Tenants</Trans>} value={data.counts.tenants} to="/admin/tenants" />
+        <StatCard label={<Trans>Users</Trans>} value={data.counts.users} to="/admin/users" />
+        <StatCard label={<Trans>Books</Trans>} value={data.counts.books} to="/admin/books" />
       </div>
 
       <section className="space-y-2">
