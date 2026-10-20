@@ -5,11 +5,12 @@ import { z } from 'zod'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { api } from '@/lib/api'
 import { queryClient } from '@/lib/query'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { ListPageSkeleton } from '@/components/ui/skeleton'
+import { SearchBar } from '@/components/ui/SearchBar'
+import { Pager } from '@/components/ui/Pager'
 import { UsersTable, type AdminUserRow } from './UsersTable'
 
+const PAGE_SIZE = 50
 const searchSchema = z.object({ q: z.string().optional() })
 
 export const Route = createFileRoute('/_app/admin/users')({
@@ -28,16 +29,12 @@ function UsersPage() {
   const router = useRouter()
   const { user } = Route.useRouteContext()
   const { t } = useLingui()
-  const [term, setTerm] = useState(q ?? '')
+  const [page, setPage] = useState(1)
 
-  const { data, isLoading } = useQuery(api.admin.users.queryOptions({ search: q, limit: 50 }))
+  const { data, isLoading } = useQuery(api.admin.users.queryOptions({ search: q, page, limit: PAGE_SIZE }))
   const rows = (data?.items ?? []) as AdminUserRow[]
   const total = data?.total ?? 0
-
-  function submit(e: React.FormEvent) {
-    e.preventDefault()
-    navigate({ search: () => ({ q: term.trim() || undefined }) })
-  }
+  const hasMore = page * PAGE_SIZE < total
 
   return (
     <div className="space-y-6">
@@ -50,17 +47,16 @@ function UsersPage() {
         </p>
       </div>
 
-      <form onSubmit={submit} className="flex gap-2" data-testid="user-search-form">
-        <Input
-          placeholder={t`Search by name or email…`}
-          value={term}
-          onChange={(e) => setTerm(e.target.value)}
-          aria-label={t`Search users`}
-        />
-        <Button type="submit" variant="outline">
-          <Trans>Search</Trans>
-        </Button>
-      </form>
+      <SearchBar
+        initial={q ?? ''}
+        placeholder={t`Search by name or email…`}
+        ariaLabel={t`Search users`}
+        data-testid="user-search-form"
+        onSearch={(term) => {
+          setPage(1)
+          navigate({ search: () => ({ q: term || undefined }) })
+        }}
+      />
 
       {!isLoading && (
         <p className="text-sm text-muted-foreground">
@@ -75,6 +71,14 @@ function UsersPage() {
         viewerId={user.id}
         clearCache={() => queryClient.clear()}
         onImpersonated={() => router.navigate({ to: '/my-books' })}
+      />
+
+      <Pager
+        page={page}
+        hasMore={hasMore}
+        onPrev={() => setPage((p) => Math.max(1, p - 1))}
+        onNext={() => setPage((p) => p + 1)}
+        data-testid="users-pager"
       />
     </div>
   )

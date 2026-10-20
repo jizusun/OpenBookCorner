@@ -18,11 +18,23 @@ export const Route = createFileRoute('/_app/admin/overview')({
 
 function StatCard({ label, value, to }: { label: React.ReactNode; value: number; to: string }) {
   return (
-    <Link to={to} className="block rounded-lg transition-colors hover:bg-accent/40" data-testid="stat-card">
-      <Card>
+    <Link
+      to={to}
+      className="group block cursor-pointer rounded-lg transition-all hover:-translate-y-0.5"
+      data-testid="stat-card"
+    >
+      <Card className="transition-colors group-hover:border-primary group-hover:shadow-sm">
         <CardContent className="p-4">
-          <div className="text-2xl font-bold">{value}</div>
-          <div className="text-sm text-muted-foreground">{label}</div>
+          <div className="flex items-start justify-between">
+            <div className="text-2xl font-bold">{value}</div>
+            <span
+              aria-hidden
+              className="text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary"
+            >
+              →
+            </span>
+          </div>
+          <div className="text-sm text-muted-foreground group-hover:text-foreground">{label}</div>
         </CardContent>
       </Card>
     </Link>
