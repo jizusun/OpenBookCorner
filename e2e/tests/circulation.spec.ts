@@ -347,6 +347,18 @@ test.describe('Super admin (tenant management)', () => {
     await expect(page.getByText('Danger zone')).toBeVisible()
   })
 
+  test('overview Books card drills into the global books list', async ({ page }) => {
+    await page.goto('/login', { waitUntil: 'domcontentloaded' })
+    await page.getByLabel('Email').fill('super@demo.test')
+    await page.getByLabel('Password').fill('password123')
+    await page.getByRole('button', { name: 'Sign In' }).click()
+    await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible()
+    // Click the "Books" stat card (3rd card) → the global books list page.
+    await page.getByTestId('stat-card').nth(2).click()
+    await expect(page).toHaveURL(/\/admin\/books/)
+    await expect(page.getByRole('heading', { name: 'Books' })).toBeVisible()
+  })
+
   test('super admin stays in the system console (no view switch / reader preview)', async ({ page }) => {
     await page.goto('/login', { waitUntil: 'domcontentloaded' })
     await page.getByLabel('Email').fill('super@demo.test')

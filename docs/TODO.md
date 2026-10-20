@@ -8,19 +8,17 @@ Branch: `feat/impersonation`. Tick items as they land (commit hash in parens).
 - [ ] **Audit task 2** — `AuditService.listAll` global/paginated/filterable +
   `GET /api/admin/audit` (super-admin) + integration. Backend DONE (service +
   route + api proxy + 4 integration green); FRONTEND page not yet switched.
-- [ ] **Audit task 3** — Audit page `/admin/audit` → data source `admin.audit`
-  (global), add tenant/action filters + pagination; component tests + i18n.
+- [x] Audit page: global admin.audit + tenant/action filters + pagination (626ad06)
 - [ ] **Audit task 4** — full verify + E2E (borrow → appears in super-admin
   audit, filterable) + commit + push + CI/Preview green.
 
 ## Overview drill-down + missing Books page (steer 2026-10-20)
 
-- [ ] **Overview stat cards clickable** — Tenants/Users/Books numbers on
-  `/admin/overview` should each link to the corresponding list page.
+- [x] **Overview stat cards clickable** (aebee74)
 - [ ] **Super-admin should have 3 list pages**: tenants (have), users (have),
   **all books across the system (MISSING)** — build `/admin/books` global book
   list (super-admin, cross-tenant, paginated/searchable) + `GET /api/admin/books`.
-- [ ] Wire overview: Tenants→/admin/tenants, Users→/admin/users, Books→/admin/books.
+- [x] Overview wired to /admin/tenants|users|books (aebee74)
 
 ## Bugs found (to fix)
 
