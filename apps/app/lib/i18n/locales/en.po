@@ -91,7 +91,7 @@ msgstr "{0} borrowed"
 
 #. placeholder {0}: tn.userCount
 #. placeholder {1}: tn.bookCount
-#: routes/_app/admin/overview.tsx:85
+#: routes/_app/admin/overview.tsx:87
 msgid "{0} users · {1} books"
 msgstr "{0} users · {1} books"
 
@@ -180,7 +180,7 @@ msgstr "Activate"
 msgid "Activated/deactivated tenant"
 msgstr "Activated/deactivated tenant"
 
-#: routes/_app/admin/overview.tsx:81
+#: routes/_app/admin/overview.tsx:83
 #: routes/_app/admin/tenants.$libraryId.tsx:121
 #: routes/_app/admin/TenantsTable.tsx:88
 msgid "Active"
@@ -374,7 +374,7 @@ msgid "Book suggestion"
 msgstr "Book suggestion"
 
 #: routes/_app/admin/books.tsx:46
-#: routes/_app/admin/overview.tsx:51
+#: routes/_app/admin/overview.tsx:53
 #: routes/_app/admin/tenants.$libraryId.tsx:149
 #: routes/_app/admin/TenantsTable.tsx:67
 #: routes/_app/route.tsx:94
@@ -836,7 +836,7 @@ msgstr "Imported successfully"
 msgid "Importing…"
 msgstr "Importing…"
 
-#: routes/_app/admin/overview.tsx:81
+#: routes/_app/admin/overview.tsx:83
 #: routes/_app/admin/tenants.$libraryId.tsx:121
 #: routes/_app/admin/TenantsTable.tsx:88
 msgid "Inactive"
@@ -1083,7 +1083,7 @@ msgstr "Overdue"
 msgid "Overdue Books"
 msgstr "Overdue Books"
 
-#: routes/_app/admin/overview.tsx:41
+#: routes/_app/admin/overview.tsx:43
 #: routes/_app/admin/tenants.$libraryId.tsx:133
 #: routes/_app/route.tsx:91
 msgid "Overview"
@@ -1181,7 +1181,7 @@ msgstr "Reader preview"
 msgid "Readers"
 msgstr "Readers"
 
-#: routes/_app/admin/overview.tsx:57
+#: routes/_app/admin/overview.tsx:59
 msgid "Recent activity"
 msgstr "Recent activity"
 
@@ -1437,7 +1437,7 @@ msgstr "System actions (tenant changes, impersonation) will appear here."
 msgid "System settings"
 msgstr "System settings"
 
-#: routes/_app/admin/overview.tsx:44
+#: routes/_app/admin/overview.tsx:46
 msgid "System-wide snapshot (super admin)."
 msgstr "System-wide snapshot (super admin)."
 
@@ -1470,8 +1470,8 @@ msgstr "Tenant login link"
 msgid "Tenant not found"
 msgstr "Tenant not found"
 
-#: routes/_app/admin/overview.tsx:49
-#: routes/_app/admin/overview.tsx:68
+#: routes/_app/admin/overview.tsx:51
+#: routes/_app/admin/overview.tsx:70
 #: routes/_app/admin/tenants.index.tsx:53
 #: routes/_app/route.tsx:92
 msgid "Tenants"
@@ -1567,7 +1567,7 @@ msgstr "Upload the 番薯借阅 Excel export (.xls). Books, members, loans, revi
 msgid "User Feedback"
 msgstr "User Feedback"
 
-#: routes/_app/admin/overview.tsx:50
+#: routes/_app/admin/overview.tsx:52
 #: routes/_app/admin/tenants.$libraryId.tsx:145
 #: routes/_app/admin/tenants.$libraryId.tsx:181
 #: routes/_app/admin/TenantsTable.tsx:64
@@ -1576,7 +1576,7 @@ msgstr "User Feedback"
 msgid "Users"
 msgstr "Users"
 
-#: routes/_app/admin/overview.tsx:60
+#: routes/_app/admin/overview.tsx:62
 msgid "View all →"
 msgstr "View all →"
 
