@@ -46,6 +46,9 @@ export function canImpersonateUser(
   target: { id: string; role: string },
 ): boolean {
   if (!canShowImpersonateAction(viewerRole, target.id, viewerId)) return false
-  if (target.role === 'library_admin' || target.role === 'super_admin') return false
-  return true
+  // Allow-list, NOT deny-list: only a library_reader may be impersonated.
+  // Anything else — library_admin, super_admin, or an empty/unknown role
+  // (legacy/dirty data) — is refused, mirroring the server guard and avoiding
+  // "impersonate anyone" when a role is missing.
+  return target.role === 'library_reader'
 }
