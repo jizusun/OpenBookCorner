@@ -107,6 +107,10 @@ roles_sql="
   SELECT 'member-demo-reader', '${LIBRARY_ID}', 'Demo Reader', 'library_reader', 'reader@demo.test', u.id, 0, '2025-01-01T00:00:00.000Z'
   FROM user u WHERE u.email='reader@demo.test';
   UPDATE members SET user_id=(SELECT id FROM user WHERE email='reader@demo.test') WHERE id='member-demo-reader';
+  -- Idempotent role backfill: any account with no role (or Better Auth's old
+  -- default 'user', pre the admin-plugin defaultRole fix) becomes a library_reader
+  -- so role-based UI/guards never see an out-of-set role (ADR 0006).
+  UPDATE user SET role='library_reader' WHERE role IS NULL OR role='user';
 "
 
 run_roles() {

@@ -29,9 +29,7 @@ Branch: `feat/impersonation`. Tick items as they land (commit hash in parens).
   `library_reader` default (outside our role set → empty label / no impersonate).
   FIX: `admin({ defaultRole: 'library_reader' })`. Verified new sign-ups now get
   `library_reader`. (commit pending)
-- [ ] **One-off data fix**: existing preview users created before the fix may
-  have role `user`/NULL (e.g. the real signup hongyan@sap). Backfill
-  `UPDATE user SET role='library_reader' WHERE role IS NULL OR role='user'`.
+- [x] **One-off data fix** — preview D1 verified CLEAN (0 role=user/NULL; 3 admin/2 reader/1 super). Added idempotent backfill to seed-users.sh (UPDATE user SET role='library_reader' WHERE role IS NULL OR role='user') so CI self-heals any residue.
 - [ ] **Users page: impersonate button only on some rows** — resolved by the
   role fix; admins/super/self correctly have no button. (verify after deploy)
 - [x] **Tenant detail: section/label mismatch** — FIXED: detail now lists Users (accounts) via admin.users?libraryId, header 'Users', 'Add admin' creates a user, impersonate via canImpersonateUser. (16d7f85)
