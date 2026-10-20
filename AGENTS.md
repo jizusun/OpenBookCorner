@@ -40,6 +40,14 @@ Bun monorepo (workspaces: `apps/*`, `db`, `packages/*`):
    via `bun --cwd apps/app test` (happy-dom/jsdom). Use `@testing-library/react`.
 5. **Verify before done**: `bun run typecheck` + tests + `bun --cwd apps/app build` after changes.
    Clean up temp files.
+6. **i18n catalogs**: after adding/removing/moving any `<Trans>` or `` t`…` `` string,
+   run `bun --cwd apps/app i18n:extract -- --clean` and commit the updated `.po`
+   files — CI's "catalogs in sync" check runs exactly that and fails on any diff.
+   Then add zh translations for new msgids (CI also fails on untranslated). Never
+   pass lingui's macro `t` into a plain helper function — the macro only
+   transforms in-component, so `` t`…` `` there yields an empty string at runtime
+   (it caused an empty Role column); render labels with `<Trans>` in a small
+   in-component sub-component instead.
 
 ## Deploy
 
