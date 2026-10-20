@@ -5,7 +5,7 @@ import { z } from 'zod'
 import type { TenantVars } from '../lib/mw'
 import { admin, sessionAuth, tenant } from '../lib/mw'
 import { MemberService } from '../services'
-import { createTenantUser, type CreateAccount } from '../services/onboard'
+import { createTenantUser, enableMemberLogin, type CreateAccount } from '../services/onboard'
 
 const listQuery = z.object({
   search: z.string().optional(),
@@ -15,6 +15,11 @@ const listQuery = z.object({
   sortDir: z.enum(['asc', 'desc']).optional(),
   role: z.enum(['library_admin', 'library_reader']).optional(),
   plan: z.string().optional(),
+})
+
+const enableLoginBody = z.object({
+  email: z.string().email(),
+  password: z.string().min(8).max(128),
 })
 
 const createMemberBody = z.object({
@@ -58,4 +63,33 @@ export const memberApp = new Hono<{ Variables: TenantVars }>()
     const m = await new MemberService(c.get('db')).getById(c.req.param('memberId'), c.get('libraryId'))
     if (!m) return c.json({ error: 'MEMBER_NOT_FOUND' }, 404)
     return c.json(m)
+  })
+  .post('/:memberId/enable-login', zValidator('json', enableLoginBody), async (c) => {
+    const body = c.req.valid('json')
+    const createAccount: CreateAccount = async (input) => {
+      const createUserApi = (c.get('auth').api as unknown as {
+        createUser: (o: { body: { email: string; name: string; password: string } }) => Promise<{ user: { id: string } }>
+      }).createUser
+      const res = await createUserApi({ body: { email: input.email, name: input.name, password: input.password } })
+      return { userId: res.user.id }
+    }
+    const result = await enableMemberLogin(c.get('db'), createAccount, {
+      memberId: c.req.param('memberId'),
+      libraryId: c.get('libraryId'),
+      email: body.email,
+      password: body.password,
+      actorUserId: c.get('user').id,
+    })
+    if (result.error) {
+      const status =
+        result.error === 'EMAIL_TAKEN'
+          ? 409
+          : result.error === 'MEMBER_NOT_FOUND'
+            ? 404
+            : result.error === 'ALREADY_LINKED'
+              ? 409
+              : 400
+      return c.json({ error: result.error }, status)
+    }
+    return c.json({ id: result.userId }, 201)
   })

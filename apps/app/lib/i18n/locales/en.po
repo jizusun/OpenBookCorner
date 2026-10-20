@@ -137,8 +137,8 @@ msgstr "@acme.com, @acme.io"
 msgid "← Back to catalog"
 msgstr "← Back to catalog"
 
-#: routes/_app/admin/members.$memberId.tsx:42
-#: routes/_app/admin/members.$memberId.tsx:54
+#: routes/_app/admin/members.$memberId.tsx:66
+#: routes/_app/admin/members.$memberId.tsx:78
 msgid "← Back to members"
 msgstr "← Back to members"
 
@@ -220,11 +220,11 @@ msgstr "Add reader"
 msgid "Adding…"
 msgstr "Adding…"
 
-#: routes/_app/admin/members.$memberId.tsx:79
+#: routes/_app/admin/members.$memberId.tsx:103
 msgid "Address"
 msgstr "Address"
 
-#: routes/_app/admin/members.$memberId.tsx:62
+#: routes/_app/admin/members.$memberId.tsx:86
 #: routes/_app/admin/members.tsx:140
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:213
@@ -236,7 +236,7 @@ msgstr "Admin"
 msgid "Admin added."
 msgstr "Admin added."
 
-#: routes/_app/admin/members.$memberId.tsx:81
+#: routes/_app/admin/members.$memberId.tsx:105
 msgid "Age"
 msgstr "Age"
 
@@ -282,7 +282,7 @@ msgstr "All roles"
 msgid "All shelves"
 msgstr "All shelves"
 
-#: routes/_app/admin/members.$memberId.tsx:93
+#: routes/_app/admin/members.$memberId.tsx:133
 #: routes/_app/books/$bookId.tsx:319
 msgid "All source fields"
 msgstr "All source fields"
@@ -382,7 +382,7 @@ msgstr "Book suggestion"
 msgid "Books"
 msgstr "Books"
 
-#: routes/_app/admin/members.$memberId.tsx:82
+#: routes/_app/admin/members.$memberId.tsx:106
 #: routes/_app/admin/members.tsx:120
 msgid "Books out"
 msgstr "Books out"
@@ -497,7 +497,7 @@ msgstr "Category"
 msgid "Changes saved."
 msgstr "Changes saved."
 
-#: routes/_app/admin/members.$memberId.tsx:77
+#: routes/_app/admin/members.$memberId.tsx:101
 msgid "Class"
 msgstr "Class"
 
@@ -558,6 +558,10 @@ msgstr "Could not delete the book."
 #: routes/_app/admin/tenants.$libraryId.tsx:94
 msgid "Could not delete the library."
 msgstr "Could not delete the library."
+
+#: routes/_app/admin/members.$memberId.tsx:54
+msgid "Could not enable login."
+msgstr "Could not enable login."
 
 #: routes/_app/admin/import.tsx:87
 msgid "Could not fetch that URL. Paste a 番薯借阅 export link (https://…fanshujieyue.com/….xls)."
@@ -672,7 +676,7 @@ msgstr "Demo accounts"
 msgid "Demo accounts (non-production) — tap to fill in"
 msgstr "Demo accounts (non-production) — tap to fill in"
 
-#: routes/_app/admin/members.$memberId.tsx:78
+#: routes/_app/admin/members.$memberId.tsx:102
 msgid "Department"
 msgstr "Department"
 
@@ -725,7 +729,7 @@ msgid "Edit Book"
 msgstr "Edit Book"
 
 #: routes/_app/admin/AddUserDialog.tsx:48
-#: routes/_app/admin/members.$memberId.tsx:73
+#: routes/_app/admin/members.$memberId.tsx:97
 #: routes/_app/admin/tenants.$libraryId.tsx:197
 #: routes/_app/admin/UsersTable.tsx:41
 #: routes/login.tsx:205
@@ -746,9 +750,22 @@ msgstr "Email domains (comma-separated)"
 msgid "Email domains: {0}"
 msgstr "Email domains: {0}"
 
-#: routes/_app/admin/members.$memberId.tsx:75
+#: routes/_app/admin/members.$memberId.tsx:99
 msgid "Employee no."
 msgstr "Employee no."
+
+#: routes/_app/admin/members.$memberId.tsx:125
+msgid "Enable login"
+msgstr "Enable login"
+
+#. placeholder {0}: m.name
+#: routes/_app/admin/members.$memberId.tsx:147
+msgid "Enable login for {0}"
+msgstr "Enable login for {0}"
+
+#: routes/_app/admin/members.$memberId.tsx:121
+msgid "Enabled"
+msgstr "Enabled"
 
 #: routes/_app/books/$bookId.tsx:202
 msgid "Entered"
@@ -863,7 +880,7 @@ msgstr "ISBN not found online. Enter the title and author manually."
 msgid "ISBN: {0}"
 msgstr "ISBN: {0}"
 
-#: routes/_app/admin/members.$memberId.tsx:84
+#: routes/_app/admin/members.$memberId.tsx:108
 msgid "Joined"
 msgstr "Joined"
 
@@ -915,6 +932,14 @@ msgstr "Loading"
 msgid "Loading…"
 msgstr "Loading…"
 
+#: routes/_app/admin/members.$memberId.tsx:117
+msgid "Login account"
+msgstr "Login account"
+
+#: routes/_app/admin/members.$memberId.tsx:44
+msgid "Login enabled."
+msgstr "Login enabled."
+
 #: routes/_app/admin/tenants.$libraryId.tsx:161
 msgid "Login link copied."
 msgstr "Login link copied."
@@ -943,20 +968,20 @@ msgstr "Max books per reader"
 msgid "Member added."
 msgstr "Member added."
 
-#: routes/_app/admin/members.$memberId.tsx:71
+#: routes/_app/admin/members.$memberId.tsx:95
 #: routes/_app/admin/members.tsx:189
 msgid "Member no."
 msgstr "Member no."
 
-#: routes/_app/admin/members.$memberId.tsx:39
+#: routes/_app/admin/members.$memberId.tsx:63
 msgid "Member not found."
 msgstr "Member not found."
 
-#: routes/_app/admin/members.$memberId.tsx:85
+#: routes/_app/admin/members.$memberId.tsx:109
 msgid "Member since"
 msgstr "Member since"
 
-#: routes/_app/admin/members.$memberId.tsx:86
+#: routes/_app/admin/members.$memberId.tsx:110
 msgid "Member until"
 msgstr "Member until"
 
@@ -1037,7 +1062,7 @@ msgstr "No users"
 msgid "No users found"
 msgstr "No users found"
 
-#: routes/_app/admin/members.$memberId.tsx:87
+#: routes/_app/admin/members.$memberId.tsx:111
 msgid "Note"
 msgstr "Note"
 
@@ -1109,17 +1134,17 @@ msgstr "Path-based — each tenant is served at /t/:slug"
 msgid "Per-tenant settings live on each tenant's detail page."
 msgstr "Per-tenant settings live on each tenant's detail page."
 
-#: routes/_app/admin/members.$memberId.tsx:72
+#: routes/_app/admin/members.$memberId.tsx:96
 #: routes/_app/admin/members.tsx:186
 msgid "Phone"
 msgstr "Phone"
 
-#: routes/_app/admin/members.$memberId.tsx:65
+#: routes/_app/admin/members.$memberId.tsx:89
 #: routes/_app/admin/members.tsx:222
 msgid "placeholder"
 msgstr "placeholder"
 
-#: routes/_app/admin/members.$memberId.tsx:74
+#: routes/_app/admin/members.$memberId.tsx:98
 msgid "Plan"
 msgstr "Plan"
 
@@ -1163,7 +1188,7 @@ msgstr "R2: {0}"
 msgid "Read-only system information (super admin)."
 msgstr "Read-only system information (super admin)."
 
-#: routes/_app/admin/members.$memberId.tsx:62
+#: routes/_app/admin/members.$memberId.tsx:86
 #: routes/_app/admin/members.tsx:141
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:214
@@ -1188,7 +1213,7 @@ msgstr "Recent activity"
 msgid "Return"
 msgstr "Return"
 
-#: routes/_app/admin/members.$memberId.tsx:83
+#: routes/_app/admin/members.$memberId.tsx:107
 #: routes/_app/admin/members.tsx:195
 msgid "Returned"
 msgstr "Returned"
@@ -1207,7 +1232,7 @@ msgstr "Returning…"
 msgid "Role"
 msgstr "Role"
 
-#: routes/_app/admin/members.$memberId.tsx:80
+#: routes/_app/admin/members.$memberId.tsx:104
 msgid "Room"
 msgstr "Room"
 
@@ -1401,7 +1426,7 @@ msgstr "Stock"
 msgid "Stopped impersonation"
 msgstr "Stopped impersonation"
 
-#: routes/_app/admin/members.$memberId.tsx:76
+#: routes/_app/admin/members.$memberId.tsx:100
 msgid "Student no."
 msgstr "Student no."
 
@@ -1480,6 +1505,7 @@ msgstr "Tenants"
 msgid "Thanks for your feedback! 🎉"
 msgstr "Thanks for your feedback! 🎉"
 
+#: routes/_app/admin/members.$memberId.tsx:51
 #: routes/_app/admin/members.tsx:66
 #: routes/_app/admin/tenants.$libraryId.tsx:58
 msgid "That email is already in use."
@@ -1517,6 +1543,10 @@ msgstr "This book is currently borrowed by someone else."
 #: lib/errors.ts:11
 msgid "This book is not in your library’s catalog yet. Ask a librarian to add it."
 msgstr "This book is not in your library’s catalog yet. Ask a librarian to add it."
+
+#: routes/_app/admin/members.$memberId.tsx:53
+msgid "This member already has a login."
+msgstr "This member already has a login."
 
 #: routes/_app/books/$bookId.tsx:287
 msgid "This removes the book from the catalog and cannot be undone."
