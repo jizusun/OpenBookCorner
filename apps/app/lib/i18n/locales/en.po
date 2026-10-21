@@ -162,6 +162,10 @@ msgstr "15+ days"
 msgid "8–14 days"
 msgstr "8–14 days"
 
+#: routes/_app/profile.tsx:75
+msgid "Account"
+msgstr "Account"
+
 #: routes/_app/admin/AuditTable.tsx:49
 msgid "Action"
 msgstr "Action"
@@ -234,6 +238,7 @@ msgstr "Address"
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:213
 #: routes/_app/admin/UsersTable.tsx:28
+#: routes/_app/profile.tsx:24
 msgid "Admin"
 msgstr "Admin"
 
@@ -593,6 +598,11 @@ msgstr "Could not start the scanner. Enter the ISBN manually."
 msgid "Could not update the library."
 msgstr "Could not update the library."
 
+#: routes/_app/profile.tsx:48
+#: routes/_app/profile.tsx:56
+msgid "Could not update your profile."
+msgstr "Could not update your profile."
+
 #. placeholder {0}: book.title
 #. placeholder {0}: item.title
 #: components/books/BookCard.tsx:41
@@ -699,6 +709,10 @@ msgstr "Details auto-filled from Open Library. You can edit the title/author bef
 msgid "Dismiss"
 msgstr "Dismiss"
 
+#: routes/_app/profile.tsx:81
+msgid "Display name"
+msgstr "Display name"
+
 #. placeholder {0}: new Date(item.dueDate).toLocaleDateString()
 #: routes/_app/my-books.tsx:169
 msgid "Due {0}"
@@ -733,6 +747,7 @@ msgstr "Edit Book"
 #: routes/_app/admin/members.$memberId.tsx:97
 #: routes/_app/admin/tenants.$libraryId.tsx:197
 #: routes/_app/admin/UsersTable.tsx:41
+#: routes/_app/profile.tsx:94
 #: routes/login.tsx:205
 msgid "Email"
 msgstr "Email"
@@ -780,8 +795,8 @@ msgstr "Environment"
 msgid "Every import is recorded with its source and counts."
 msgstr "Every import is recorded with its source and counts."
 
-#: routes/_app/route.tsx:92
-#: routes/_app/route.tsx:94
+#: routes/_app/route.tsx:105
+#: routes/_app/route.tsx:107
 msgid "Exit reader preview"
 msgstr "Exit reader preview"
 
@@ -861,7 +876,7 @@ msgstr "Importing…"
 msgid "Inactive"
 msgstr "Inactive"
 
-#: routes/_app/AppSidebar.tsx:110
+#: routes/_app/AppSidebar.tsx:115
 msgid "Install app"
 msgstr "Install app"
 
@@ -1084,7 +1099,7 @@ msgstr "Notifications"
 msgid "on behalf of {0}"
 msgstr "on behalf of {0}"
 
-#: routes/_app/AppSidebar.tsx:60
+#: routes/_app/AppSidebar.tsx:61
 msgid "OpenBookCorner"
 msgstr "OpenBookCorner"
 
@@ -1154,7 +1169,7 @@ msgstr "Plan"
 msgid "Preview — {0}"
 msgstr "Preview — {0}"
 
-#: routes/_app/route.tsx:92
+#: routes/_app/route.tsx:105
 msgid "Preview as a reader"
 msgstr "Preview as a reader"
 
@@ -1166,6 +1181,14 @@ msgstr "Previous"
 #: routes/_app/books/index.tsx:127
 msgid "Price"
 msgstr "Price"
+
+#: routes/_app/AppSidebar.tsx:109
+msgid "Profile"
+msgstr "Profile"
+
+#: routes/_app/profile.tsx:54
+msgid "Profile updated."
+msgstr "Profile updated."
 
 #: routes/_app/books/$bookId.tsx:138
 msgid "Published"
@@ -1195,10 +1218,11 @@ msgstr "Read-only system information (super admin)."
 #: routes/_app/admin/tenants.$libraryId.tsx:214
 #: routes/_app/admin/UsersTable.tsx:29
 #: routes/_app/nav.tsx:60
+#: routes/_app/profile.tsx:26
 msgid "Reader"
 msgstr "Reader"
 
-#: routes/_app/route.tsx:94
+#: routes/_app/route.tsx:107
 msgid "Reader preview"
 msgstr "Reader preview"
 
@@ -1235,6 +1259,7 @@ msgstr "Returning…"
 #: routes/_app/admin/members.tsx:183
 #: routes/_app/admin/tenants.$libraryId.tsx:198
 #: routes/_app/admin/UsersTable.tsx:43
+#: routes/_app/profile.tsx:98
 msgid "Role"
 msgstr "Role"
 
@@ -1244,6 +1269,7 @@ msgstr "Room"
 
 #: routes/_app/admin/tenants.$libraryId.tsx:335
 #: routes/_app/books/$bookId.edit.tsx:137
+#: routes/_app/profile.tsx:105
 msgid "Save changes"
 msgstr "Save changes"
 
@@ -1254,6 +1280,7 @@ msgstr "Save settings"
 #: routes/_app/admin/settings.tsx:153
 #: routes/_app/admin/tenants.$libraryId.tsx:335
 #: routes/_app/books/$bookId.edit.tsx:137
+#: routes/_app/profile.tsx:105
 msgid "Saving…"
 msgstr "Saving…"
 
@@ -1380,11 +1407,11 @@ msgstr "Sign in as them"
 msgid "Sign in to your library"
 msgstr "Sign in to your library"
 
-#: routes/_app/AppSidebar.tsx:115
+#: routes/_app/AppSidebar.tsx:120
 msgid "Sign out"
 msgstr "Sign out"
 
-#: routes/_app/AppSidebar.tsx:105
+#: routes/_app/AppSidebar.tsx:104
 msgid "Signed in as {userName}"
 msgstr "Signed in as {userName}"
 
@@ -1441,6 +1468,7 @@ msgstr "success"
 
 #: routes/_app/admin/tenants.$libraryId.tsx:211
 #: routes/_app/admin/UsersTable.tsx:27
+#: routes/_app/profile.tsx:22
 msgid "Super admin"
 msgstr "Super admin"
 

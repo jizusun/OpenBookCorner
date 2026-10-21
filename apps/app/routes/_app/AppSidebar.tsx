@@ -1,6 +1,6 @@
 import { Link, useLocation } from '@tanstack/react-router'
 import { Trans } from '@lingui/react/macro'
-import { ChevronsUpDown, LogOut, Download } from 'lucide-react'
+import { ChevronsUpDown, LogOut, Download, User } from 'lucide-react'
 import {
   Sidebar,
   SidebarContent,
@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { navGroupsFor, homeFor } from './nav'
+import { UserAvatar } from '@/components/UserAvatar'
 
 export interface AppSidebarProps {
   role: string | null | undefined
@@ -94,9 +95,7 @@ export function AppSidebar({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton size="lg" data-testid="user-menu">
-                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium">
-                    {userName.slice(0, 1).toUpperCase()}
-                  </span>
+                  <UserAvatar name={userName} size="sm" />
                   <span className="truncate group-data-[collapsible=icon]:hidden">{userName}</span>
                   <ChevronsUpDown className="ml-auto size-4 group-data-[collapsible=icon]:hidden" />
                 </SidebarMenuButton>
@@ -104,6 +103,12 @@ export function AppSidebar({
               <DropdownMenuContent side="top" align="start" className="w-56">
                 <DropdownMenuLabel className="truncate"><Trans>Signed in as {userName}</Trans></DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem asChild data-testid="profile-link">
+                  <Link to="/profile">
+                    <User />
+                    <Trans>Profile</Trans>
+                  </Link>
+                </DropdownMenuItem>
                 {canInstall && (
                   <DropdownMenuItem onClick={onInstall} data-testid="install-button">
                     <Download />

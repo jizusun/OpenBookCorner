@@ -162,6 +162,10 @@ msgstr "15 天以上"
 msgid "8–14 days"
 msgstr "8–14 天"
 
+#: routes/_app/profile.tsx:75
+msgid "Account"
+msgstr "账户"
+
 #: routes/_app/admin/AuditTable.tsx:49
 msgid "Action"
 msgstr "操作"
@@ -234,6 +238,7 @@ msgstr "地址"
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:213
 #: routes/_app/admin/UsersTable.tsx:28
+#: routes/_app/profile.tsx:24
 msgid "Admin"
 msgstr "管理员"
 
@@ -593,6 +598,11 @@ msgstr "扫描无法启动，请手动输入 ISBN。"
 msgid "Could not update the library."
 msgstr "更新图书馆失败。"
 
+#: routes/_app/profile.tsx:48
+#: routes/_app/profile.tsx:56
+msgid "Could not update your profile."
+msgstr "无法更新你的资料。"
+
 #. placeholder {0}: book.title
 #. placeholder {0}: item.title
 #: components/books/BookCard.tsx:41
@@ -699,6 +709,10 @@ msgstr "已从 Open Library 自动填写，保存前可修改书名/作者。"
 msgid "Dismiss"
 msgstr "关闭"
 
+#: routes/_app/profile.tsx:81
+msgid "Display name"
+msgstr "显示名称"
+
 #. placeholder {0}: new Date(item.dueDate).toLocaleDateString()
 #: routes/_app/my-books.tsx:169
 msgid "Due {0}"
@@ -733,6 +747,7 @@ msgstr "编辑图书"
 #: routes/_app/admin/members.$memberId.tsx:97
 #: routes/_app/admin/tenants.$libraryId.tsx:197
 #: routes/_app/admin/UsersTable.tsx:41
+#: routes/_app/profile.tsx:94
 #: routes/login.tsx:205
 msgid "Email"
 msgstr "邮箱"
@@ -780,8 +795,8 @@ msgstr "运行环境"
 msgid "Every import is recorded with its source and counts."
 msgstr "每次导入都会记录来源和数量。"
 
-#: routes/_app/route.tsx:92
-#: routes/_app/route.tsx:94
+#: routes/_app/route.tsx:105
+#: routes/_app/route.tsx:107
 msgid "Exit reader preview"
 msgstr "退出读者预览"
 
@@ -861,7 +876,7 @@ msgstr "导入中…"
 msgid "Inactive"
 msgstr "已停用"
 
-#: routes/_app/AppSidebar.tsx:110
+#: routes/_app/AppSidebar.tsx:115
 msgid "Install app"
 msgstr "安装应用"
 
@@ -1084,7 +1099,7 @@ msgstr "通知"
 msgid "on behalf of {0}"
 msgstr "代 {0}"
 
-#: routes/_app/AppSidebar.tsx:60
+#: routes/_app/AppSidebar.tsx:61
 msgid "OpenBookCorner"
 msgstr "开卷角"
 
@@ -1154,7 +1169,7 @@ msgstr "会员计划"
 msgid "Preview — {0}"
 msgstr "预览 — {0}"
 
-#: routes/_app/route.tsx:92
+#: routes/_app/route.tsx:105
 msgid "Preview as a reader"
 msgstr "以读者身份预览"
 
@@ -1166,6 +1181,14 @@ msgstr "上一页"
 #: routes/_app/books/index.tsx:127
 msgid "Price"
 msgstr "价格"
+
+#: routes/_app/AppSidebar.tsx:109
+msgid "Profile"
+msgstr "个人资料"
+
+#: routes/_app/profile.tsx:54
+msgid "Profile updated."
+msgstr "资料已更新。"
 
 #: routes/_app/books/$bookId.tsx:138
 msgid "Published"
@@ -1195,10 +1218,11 @@ msgstr "只读系统信息（超级管理员）。"
 #: routes/_app/admin/tenants.$libraryId.tsx:214
 #: routes/_app/admin/UsersTable.tsx:29
 #: routes/_app/nav.tsx:60
+#: routes/_app/profile.tsx:26
 msgid "Reader"
 msgstr "普通成员"
 
-#: routes/_app/route.tsx:94
+#: routes/_app/route.tsx:107
 msgid "Reader preview"
 msgstr "读者预览"
 
@@ -1235,6 +1259,7 @@ msgstr "归还中…"
 #: routes/_app/admin/members.tsx:183
 #: routes/_app/admin/tenants.$libraryId.tsx:198
 #: routes/_app/admin/UsersTable.tsx:43
+#: routes/_app/profile.tsx:98
 msgid "Role"
 msgstr "权限"
 
@@ -1244,6 +1269,7 @@ msgstr "房号"
 
 #: routes/_app/admin/tenants.$libraryId.tsx:335
 #: routes/_app/books/$bookId.edit.tsx:137
+#: routes/_app/profile.tsx:105
 msgid "Save changes"
 msgstr "保存修改"
 
@@ -1254,6 +1280,7 @@ msgstr "保存设置"
 #: routes/_app/admin/settings.tsx:153
 #: routes/_app/admin/tenants.$libraryId.tsx:335
 #: routes/_app/books/$bookId.edit.tsx:137
+#: routes/_app/profile.tsx:105
 msgid "Saving…"
 msgstr "保存中…"
 
@@ -1380,11 +1407,11 @@ msgstr "以其身份登录"
 msgid "Sign in to your library"
 msgstr "登录你的图书馆"
 
-#: routes/_app/AppSidebar.tsx:115
+#: routes/_app/AppSidebar.tsx:120
 msgid "Sign out"
 msgstr "退出登录"
 
-#: routes/_app/AppSidebar.tsx:105
+#: routes/_app/AppSidebar.tsx:104
 msgid "Signed in as {userName}"
 msgstr "已登录：{userName}"
 
@@ -1441,6 +1468,7 @@ msgstr "成功"
 
 #: routes/_app/admin/tenants.$libraryId.tsx:211
 #: routes/_app/admin/UsersTable.tsx:27
+#: routes/_app/profile.tsx:22
 msgid "Super admin"
 msgstr "超级管理员"
 
