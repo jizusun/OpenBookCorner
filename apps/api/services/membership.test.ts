@@ -1,6 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest'
+import { eq } from 'drizzle-orm'
 
 import { createTestDb, seedLibrary, seedUser, type Database } from '@obc/db/testing'
+import { membership, user } from '@obc/db'
 import { MembershipService, validateJoinAnswers } from './membership'
 
 describe('validateJoinAnswers (pure)', () => {
@@ -79,5 +81,42 @@ describe('MembershipService', () => {
     await svc.upsertActive('u1', 'lib-a', 'library_admin')
     expect((await svc.activeMembership('u1', 'lib-a'))?.role).toBe('library_admin')
     expect(await svc.activeMembership('u1', 'lib-b')).toBeNull()
+  })
+
+  it('listUserLibraries returns active memberships with names + active flag', async () => {
+    const svc = new MembershipService(db)
+    await svc.upsertActive('u1', 'lib-a', 'library_admin')
+    await svc.upsertActive('u1', 'lib-b', 'library_reader')
+    await db.update(user).set({ activeLibraryId: 'lib-b' }).where(eq(user.id, 'u1'))
+    const libs = await svc.listUserLibraries('u1')
+    expect(libs).toHaveLength(2)
+    const b = libs.find((l) => l.libraryId === 'lib-b')!
+    expect(b.active).toBe(true)
+    expect(b.role).toBe('library_reader')
+    expect(libs.find((l) => l.libraryId === 'lib-a')!.active).toBe(false)
+  })
+
+  it('listUserLibraries excludes suspended/removed memberships', async () => {
+    const svc = new MembershipService(db)
+    await svc.upsertActive('u1', 'lib-a', 'library_reader')
+    await db.update(membership).set({ status: 'suspended' }).where(eq(membership.libraryId, 'lib-a'))
+    expect(await svc.listUserLibraries('u1')).toHaveLength(0)
+  })
+
+  it('switchActive only succeeds for a library the user actively belongs to', async () => {
+    const svc = new MembershipService(db)
+    await svc.upsertActive('u1', 'lib-a', 'library_reader')
+    expect(await svc.switchActive('u1', 'lib-a')).toBe(true)
+    expect(await svc.switchActive('u1', 'lib-b')).toBe(false) // not a member
+  })
+
+  it('createLibraryAsAdmin creates the library, an admin membership, and sets it active', async () => {
+    const svc = new MembershipService(db)
+    const res = await svc.createLibraryAsAdmin('u1', { name: 'Acme Books', emailDomains: ['@acme.com'] })
+    expect(res.id).toBeTruthy()
+    const libs = await svc.listUserLibraries('u1')
+    const created = libs.find((l) => l.libraryId === res.id)!
+    expect(created.role).toBe('library_admin')
+    expect(created.active).toBe(true)
   })
 })

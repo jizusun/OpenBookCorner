@@ -7,6 +7,7 @@ import { borrowingApp } from './borrowing'
 import { feedbackApp } from './feedback'
 import { libraryApp } from './library'
 import { memberApp } from './member'
+import { membershipApp } from './membership'
 import { tenantApp } from './tenant'
 
 /**
@@ -22,6 +23,7 @@ export const apiApp = new Hono()
   .route('/borrowing', borrowingApp)
   .route('/library', libraryApp)
   .route('/member', memberApp)
+  .route('/membership', membershipApp)
   .route('/feedback', feedbackApp)
   .route('/tenant', tenantApp)
   .route('/admin', adminApp)

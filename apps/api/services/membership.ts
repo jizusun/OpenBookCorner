@@ -1,6 +1,21 @@
 import { and, eq } from 'drizzle-orm'
 
-import { membership, joinField, type Database, type Membership, type JoinField } from '@obc/db'
+import {
+  membership,
+  joinField,
+  libraries,
+  user,
+  type Database,
+  type Membership,
+  type JoinField,
+} from '@obc/db'
+
+export interface UserLibraryRow {
+  libraryId: string
+  name: string
+  role: 'library_admin' | 'library_reader'
+  active: boolean
+}
 
 /**
  * Multi-library membership (ADR 0009). A membership is the relationship between
@@ -65,6 +80,93 @@ export class MembershipService {
       (await this.db.select().from(joinField).where(eq(joinField.libraryId, libraryId)).all?.()) ?? []
     return rows.sort((a, b) => a.position - b.position)
   }
+
+  /**
+   * The libraries a user belongs to (active memberships only), with the
+   * library name + role + whether it's the user's currently-active one. Drives
+   * the top-left switcher and the post-signup "create or join" empty state.
+   */
+  async listUserLibraries(userId: string): Promise<UserLibraryRow[]> {
+    const u = await this.db
+      .select({ activeLibraryId: user.activeLibraryId })
+      .from(user)
+      .where(eq(user.id, userId))
+      .get?.()
+    const activeId = u?.activeLibraryId ?? null
+    const rows =
+      (await this.db
+        .select({
+          libraryId: membership.libraryId,
+          role: membership.role,
+          status: membership.status,
+          name: libraries.name,
+        })
+        .from(membership)
+        .innerJoin(libraries, eq(membership.libraryId, libraries.id))
+        .where(eq(membership.userId, userId))
+        .all?.()) ?? []
+    return rows
+      .filter((r) => r.status === 'active')
+      .map((r) => ({
+        libraryId: r.libraryId,
+        name: r.name,
+        role: r.role as 'library_admin' | 'library_reader',
+        active: r.libraryId === activeId,
+      }))
+  }
+
+  /**
+   * Set the user's active library. Requires an ACTIVE membership there
+   * (prevents switching into a library you don't belong to — isolation).
+   */
+  async switchActive(userId: string, libraryId: string): Promise<boolean> {
+    const m = await this.activeMembership(userId, libraryId)
+    if (!m) return false
+    await this.db.update(user).set({ activeLibraryId: libraryId }).where(eq(user.id, userId))
+    return true
+  }
+
+  /**
+   * Create a library and make the creator its admin, in one step: insert the
+   * library, create an ACTIVE admin membership, and set it as the user's active
+   * library. Returns the new library id/slug.
+   */
+  async createLibraryAsAdmin(
+    userId: string,
+    input: { name: string; emailDomains: string[] },
+  ): Promise<{ id: string; slug: string | null }> {
+    const id = crypto.randomUUID()
+    const now = new Date().toISOString()
+    const slug = slugifyUnique(input.name)
+    await this.db.insert(libraries).values({
+      id,
+      name: input.name,
+      slug,
+      emailDomains: input.emailDomains,
+      settings: { borrowingPeriodDays: 14, maxBooksPerReader: 5, allowExtensions: false },
+      isActive: true,
+      visibility: 'private',
+      createdAt: now,
+      updatedAt: now,
+    })
+    await this.upsertActive(userId, id, 'library_admin')
+    await this.db.update(user).set({ activeLibraryId: id }).where(eq(user.id, userId))
+    return { id, slug }
+  }
+}
+
+/** Minimal slug derivation for a newly-created library (uniqueness best-effort). */
+function slugifyUnique(name: string): string | null {
+  const base = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 34)
+    .replace(/-+$/g, '')
+  if (base.length < 2) return null
+  // Append a short random suffix to avoid collisions without a DB round-trip.
+  const suffix = Math.random().toString(36).slice(2, 6)
+  return `${base}-${suffix}`
 }
 
 export interface JoinAnswerError {
