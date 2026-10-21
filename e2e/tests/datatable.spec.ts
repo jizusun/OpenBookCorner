@@ -8,7 +8,7 @@ async function loginSuper(page: Page) {
   await page.goto('/login', { waitUntil: 'domcontentloaded' })
   await page.getByLabel('Email').fill('super@demo.test')
   await page.getByLabel('Password').fill('password123')
-  await page.getByRole('button', { name: 'Sign In' }).click()
+  await page.getByTestId('signin-submit').click()
   await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible()
 }
 
@@ -19,10 +19,13 @@ test.describe('DataTable behaviors (Users)', () => {
     await expect(page.getByTestId('users-table')).toBeVisible()
 
     const firstBefore = await page.getByTestId(/^user-row-/).first().getAttribute('data-testid')
-    // Click the Name sort header twice (asc then desc).
+    // Click the Name sort header and wait for the table to re-render.
     await page.getByTestId('sort-name').click()
+    await page.getByTestId('users-table').waitFor({ state: 'visible' })
+    await page.waitForTimeout(200) // allow react-table re-render
     const firstAsc = await page.getByTestId(/^user-row-/).first().getAttribute('data-testid')
     await page.getByTestId('sort-name').click()
+    await page.waitForTimeout(200)
     const firstDesc = await page.getByTestId(/^user-row-/).first().getAttribute('data-testid')
 
     // Sorting works if asc and desc put a different row first.
