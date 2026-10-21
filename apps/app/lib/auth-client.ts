@@ -30,6 +30,7 @@ interface AuthClientFacade {
   signIn: { email: (args: { email: string; password: string }) => Promise<SignInResult> }
   signOut: () => Promise<unknown>
   signUp: { email: (args: { email: string; password: string; name: string }) => Promise<unknown> }
+  updateUser: (args: { name?: string }) => Promise<{ error?: { message?: string } | null }>
   useSession: () => {
     data?: { user?: Record<string, unknown>; session?: { impersonatedBy?: string | null } } | null
     isPending?: boolean
