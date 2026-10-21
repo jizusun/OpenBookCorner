@@ -209,14 +209,17 @@ export function LoginPage({ slug }: { slug?: string } = {}) {
           </p>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          {/* method="post" is a semantic hint for password managers (Bitwarden,
+              1Password, etc.) that this is a login form. The real submission is
+              handled by onSubmit; the browser's default POST is prevented. */}
+          <form onSubmit={handleSubmit} method="post" className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email"><Trans>Email</Trans></Label>
               <Input
                 id="email"
                 name="email"
                 type="email"
-                autoComplete="email"
+                autoComplete="username"
                 placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
