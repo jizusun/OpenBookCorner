@@ -10,6 +10,7 @@ function identity(user: AuthUser) {
     email: user.email,
     name: user.name,
     libraryId: user.libraryId ?? null,
+    activeLibraryId: user.activeLibraryId ?? user.libraryId ?? null,
     role: user.role ?? 'library_reader',
   }
 }

@@ -134,6 +134,7 @@ msgid "{total} users"
 msgstr "共 {total} 位用户"
 
 #: routes/_app/admin/tenants.index.tsx:107
+#: routes/_app/welcome.tsx:129
 msgid "@acme.com, @acme.io"
 msgstr "@acme.com, @acme.io"
 
@@ -355,6 +356,10 @@ msgstr "可借 · {0}/{1}"
 msgid "Available · {available} of {total}"
 msgstr "可借 · {available}/{total}"
 
+#: routes/_app/discover.tsx:36
+msgid "Back"
+msgstr "返回"
+
 #: routes/_app/books/$bookId.tsx:90
 #: routes/_app/books/add.tsx:121
 msgid "Back to catalog"
@@ -458,6 +463,10 @@ msgstr "品牌色"
 msgid "Browse catalog"
 msgstr "浏览书目"
 
+#: routes/_app/welcome.tsx:83
+msgid "Browse public libraries and request to join, or open an invite link."
+msgstr "浏览公开图书馆并申请加入，或打开邀请链接。"
+
 #: routes/_app/admin/feedback.tsx:16
 msgid "Bug"
 msgstr "问题反馈"
@@ -488,6 +497,7 @@ msgstr "摄像头权限被拒绝，请允许访问或手动输入 ISBN。"
 #: routes/_app/admin/tenants.$libraryId.tsx:136
 #: routes/_app/admin/tenants.index.tsx:84
 #: routes/_app/books/$bookId.edit.tsx:144
+#: routes/_app/welcome.tsx:106
 msgid "Cancel"
 msgstr "取消"
 
@@ -563,6 +573,7 @@ msgid "Could not add the member."
 msgstr "无法添加成员。"
 
 #: routes/_app/admin/tenants.index.tsx:38
+#: routes/_app/welcome.tsx:37
 msgid "Could not create the library."
 msgstr "创建图书馆失败。"
 
@@ -622,12 +633,21 @@ msgstr "《{0}》封面"
 
 #: routes/_app/admin/tenants.index.tsx:77
 #: routes/_app/admin/tenants.index.tsx:79
+#: routes/_app/welcome.tsx:62
+#: routes/_app/welcome.tsx:70
+#: routes/_app/welcome.tsx:99
+#: routes/_app/welcome.tsx:101
 msgid "Create a library"
 msgstr "创建图书馆"
 
 #: routes/_app/admin/tenants.index.tsx:87
+#: routes/_app/welcome.tsx:109
 msgid "Create library"
 msgstr "创建图书馆"
+
+#: routes/_app/LibrarySwitcher.tsx:77
+msgid "Create or join a library"
+msgstr "创建或加入图书馆"
 
 #: routes/_app/admin/TenantsTable.tsx:90
 msgid "Create the first one."
@@ -638,6 +658,7 @@ msgid "Created tenant"
 msgstr "创建租户"
 
 #: routes/_app/admin/tenants.index.tsx:87
+#: routes/_app/welcome.tsx:109
 msgid "Creating…"
 msgstr "创建中…"
 
@@ -714,6 +735,11 @@ msgstr "简介"
 msgid "Details auto-filled from Open Library. You can edit the title/author before saving."
 msgstr "已从 Open Library 自动填写，保存前可修改书名/作者。"
 
+#: routes/_app/discover.tsx:24
+#: routes/_app/welcome.tsx:90
+msgid "Discover libraries"
+msgstr "发现图书馆"
+
 #: components/Toast.tsx:79
 msgid "Dismiss"
 msgstr "关闭"
@@ -766,6 +792,10 @@ msgstr "邮箱"
 msgid "Email domains"
 msgstr "邮箱域名"
 
+#: routes/_app/welcome.tsx:123
+msgid "Email domains (comma-separated, optional)"
+msgstr "邮箱域名（逗号分隔，可选）"
+
 #: routes/_app/admin/tenants.index.tsx:101
 msgid "Email domains (comma-separated)"
 msgstr "邮箱域名（用逗号分隔）"
@@ -804,8 +834,8 @@ msgstr "运行环境"
 msgid "Every import is recorded with its source and counts."
 msgstr "每次导入都会记录来源和数量。"
 
-#: routes/_app/route.tsx:99
-#: routes/_app/route.tsx:101
+#: routes/_app/route.tsx:109
+#: routes/_app/route.tsx:111
 msgid "Exit reader preview"
 msgstr "退出读者预览"
 
@@ -836,6 +866,7 @@ msgid "Fetch"
 msgstr "获取"
 
 #: routes/_app/admin/tenants.index.tsx:80
+#: routes/_app/welcome.tsx:102
 msgid "Give the library a name and the email domains its members use."
 msgstr "为图书馆取个名字，并填写成员使用的邮箱域名。"
 
@@ -910,6 +941,10 @@ msgstr "网上未找到该 ISBN，请手动填写书名和作者。"
 msgid "ISBN: {0}"
 msgstr "ISBN：{0}"
 
+#: routes/_app/welcome.tsx:78
+msgid "Join a library"
+msgstr "加入图书馆"
+
 #: routes/_app/admin/members.$memberId.tsx:108
 msgid "Joined"
 msgstr "入馆日期"
@@ -917,6 +952,10 @@ msgstr "入馆日期"
 #: routes/_app/admin/members.tsx:119
 msgid "Joined date"
 msgstr "入馆日期"
+
+#: routes/_app/LibrarySwitcher.tsx:56
+msgid "Libraries"
+msgstr "图书馆"
 
 #: routes/_app/nav.tsx:46
 msgid "Library"
@@ -927,6 +966,7 @@ msgid "Library Catalog"
 msgstr "图书馆书目"
 
 #: routes/_app/admin/tenants.index.tsx:32
+#: routes/_app/welcome.tsx:30
 msgid "Library created."
 msgstr "图书馆已创建。"
 
@@ -936,6 +976,7 @@ msgstr "图书馆已删除。"
 
 #: routes/_app/admin/settings.tsx:106
 #: routes/_app/admin/tenants.index.tsx:95
+#: routes/_app/welcome.tsx:117
 msgid "Library name"
 msgstr "图书馆名称"
 
@@ -1109,6 +1150,10 @@ msgstr "备注"
 msgid "Nothing needs chasing right now."
 msgstr "目前没有需要催还的图书。"
 
+#: routes/_app/discover.tsx:32
+msgid "Nothing to show yet"
+msgstr "暂无内容"
+
 #: components/Toast.tsx:46
 msgid "Notifications"
 msgstr "通知"
@@ -1118,7 +1163,7 @@ msgstr "通知"
 msgid "on behalf of {0}"
 msgstr "代 {0}"
 
-#: routes/_app/AppSidebar.tsx:58
+#: routes/_app/AppSidebar.tsx:60
 msgid "OpenBookCorner"
 msgstr "开卷角"
 
@@ -1192,7 +1237,7 @@ msgstr "会员计划"
 msgid "Preview — {0}"
 msgstr "预览 — {0}"
 
-#: routes/_app/route.tsx:99
+#: routes/_app/route.tsx:109
 msgid "Preview as a reader"
 msgstr "以读者身份预览"
 
@@ -1213,6 +1258,14 @@ msgstr "个人资料"
 #: routes/_app/profile.tsx:59
 msgid "Profile updated."
 msgstr "资料已更新。"
+
+#: routes/_app/discover.tsx:27
+msgid "Public libraries you can request to join will appear here."
+msgstr "你可以申请加入的公开图书馆会显示在这里。"
+
+#: routes/_app/discover.tsx:33
+msgid "Public library discovery is coming soon."
+msgstr "公开图书馆发现功能即将推出。"
 
 #: routes/_app/books/$bookId.tsx:138
 msgid "Published"
@@ -1246,7 +1299,7 @@ msgstr "只读系统信息（超级管理员）。"
 msgid "Reader"
 msgstr "普通成员"
 
-#: routes/_app/route.tsx:101
+#: routes/_app/route.tsx:111
 msgid "Reader preview"
 msgstr "读者预览"
 
@@ -1488,6 +1541,10 @@ msgstr "排序"
 msgid "Source: {0}"
 msgstr "来源：{0}"
 
+#: routes/_app/welcome.tsx:67
+msgid "Start a new library and become its admin."
+msgstr "创建一个新图书馆并成为其管理员。"
+
 #: routes/_app/admin/AuditTable.tsx:15
 msgid "Started impersonation"
 msgstr "开始模拟登录"
@@ -1717,6 +1774,10 @@ msgstr "无法处理这次归还，可能已经还过了。"
 msgid "Welcome back"
 msgstr "欢迎回来"
 
+#: routes/_app/welcome.tsx:51
+msgid "Welcome to OpenBookCorner"
+msgstr "欢迎使用 OpenBookCorner"
+
 #: routes/_app/admin/feedback.tsx:44
 msgid "What readers are asking for — use this to prioritize features."
 msgstr "读者的需求与建议，可据此排定功能优先级。"
@@ -1760,6 +1821,10 @@ msgstr "你没有添加图书的权限。"
 #: lib/errors.ts:14
 msgid "You have an overdue book. Please return it before borrowing more."
 msgstr "你有逾期未还的书，请先归还再借阅。"
+
+#: routes/_app/welcome.tsx:54
+msgid "You're not part of any library yet. Create one, or join an existing one."
+msgstr "你还没有加入任何图书馆。创建一个，或加入已有的。"
 
 #: lib/errors.ts:13
 msgid "You've reached your borrowing limit. Return a book before borrowing another."

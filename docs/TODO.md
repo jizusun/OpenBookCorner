@@ -79,7 +79,7 @@ Branch: `feat/impersonation`. Tick items as they land (commit hash in parens).
 - [ ] 1. Schema + migration + backfill: `membership`, `user.active_library_id`,
       `libraries.visibility`, `invite`, `join_request`, `join_field`.
 - [x] 2. Tenant resolution → active membership (tenant guard) + isolation tests (mw.integration).
-- [ ] 3. Create-library + post-signup "create or join" empty state + active-library switcher.
+- [x] 3. Create-library + post-signup "create or join" welcome + active-library switcher (discover is a placeholder; step 4 fills it in).
 - [ ] 4. Discover public libraries + request-to-join (button) + admin approval queue.
 - [ ] 5. Custom join-form builder/renderer + required-field + company-email verification.
 - [ ] 6. Invite links (create/revoke/expiry/max-use) + join-via-invite (QR-able).
