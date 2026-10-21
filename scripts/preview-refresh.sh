@@ -4,11 +4,10 @@
 # WHAT IT DOES (idempotent):
 #   1. vite build (apps/app)
 #   2. Renew the Tailscale TLS cert (tailscale cert, no-op if unchanged)
-#   3. Cleanly restart wrangler dev --local on :8787 with APP_ORIGIN=HTTPS
-#   4. Keep a Node HTTPS reverse proxy (Tailscale cert) on :8443 -> 127.0.0.1:8787
-#      (wrangler binds localhost-only; the TLS proxy makes it reachable over
-#      Tailscale as HTTPS — required for Bitwarden autofill + secure cookies)
-#   5. Keep the local D1 state (seeded demo users) — does NOT wipe .wrangler/state
+#   3. Cleanly restart wrangler dev --local on :8787
+#      --persist-to .wrangler/state-preview  ← ISOLATED from the E2E state
+#   4. Keep a Node HTTPS reverse proxy (Tailscale cert) on :8443 -> :8787
+#   5. DATA IS NEVER WIPED — preview DB persists across restarts
 #
 # USAGE:  scripts/preview-refresh.sh
 # ACCESS: https://x13-arch.taild2386.ts.net:8443/
@@ -25,6 +24,8 @@ SECRET="local-preview-secret-at-least-32-chars!!"
 CERT="/tmp/tscerts/$HOST.crt"
 KEY="/tmp/tscerts/$HOST.key"
 PROXY_SCRIPT="/tmp/https-proxy.cjs"
+# Isolated state dir — E2E uses .wrangler/state-e2e, preview uses state-preview.
+PREVIEW_STATE=".wrangler/state-preview"
 
 export PATH="$HOME/.local/share/mise/shims:/home/jizu/.local/share/mise/installs/node/24.22.0/bin:$PATH"
 export NO_PROXY=localhost,127.0.0.1
@@ -36,11 +37,10 @@ echo "==> [1/5] vite build"
 
 echo "==> [2/5] Tailscale TLS cert"
 mkdir -p /tmp/tscerts
-tailscale cert --cert-file "$CERT" --key-file "$KEY" "$HOST" 2>&1 | head -1 || {
-  echo "    WARNING: cert issue failed (check tailscale HTTPS setting)"; }
+tailscale cert --cert-file "$CERT" --key-file "$KEY" "$HOST" 2>&1 | head -1 || true
 openssl x509 -in "$CERT" -noout -enddate 2>/dev/null | sed 's/^/    /'
 
-echo "==> [3/5] restart worker on :$PORT"
+echo "==> [3/5] restart worker on :$PORT (state: $APP_DIR/$PREVIEW_STATE)"
 for wp in $(pgrep -x workerd); do
   pp=$(ps -o ppid= -p "$wp" 2>/dev/null | tr -d ' ')
   [ -n "$pp" ] && [ "$pp" != "1" ] && kill -9 "$pp" 2>/dev/null
@@ -51,7 +51,13 @@ for i in $(seq 1 15); do
   [ "$n" = "0" ] && break
   pkill -9 -x workerd 2>/dev/null; sleep 1
 done
+
+# Apply migrations to the PREVIEW DB (idempotent — safe on every refresh).
+( cd "$APP_DIR" && echo y | bunx wrangler d1 migrations apply openbookcorner \
+    --local --persist-to "$PREVIEW_STATE" >/dev/null 2>&1 ) && echo "    migrations ok"
+
 setsid bash -c "cd '$APP_DIR' && exec bunx wrangler dev --local --port $PORT \
+  --persist-to '$PREVIEW_STATE' \
   --var ENVIRONMENT:development --var APP_ORIGIN:$ORIGIN --var BETTER_AUTH_SECRET:$SECRET \
   >/tmp/obc-preview.log 2>&1" </dev/null >/dev/null 2>&1 &
 disown
@@ -63,7 +69,6 @@ done
 [ "$up" = "1" ] || { echo "    WORKER DID NOT COME UP:"; grep -iE 'error|ready on' /tmp/obc-preview.log | tail -5; exit 1; }
 
 echo "==> [4/5] HTTPS proxy :$HTTPS_PORT -> :$PORT"
-# Write the proxy script if missing
 cat > "$PROXY_SCRIPT" << 'JS'
 const https=require('https'),http=require('http'),fs=require('fs')
 const [,,CERT,KEY,BIND_IP,BIND_PORT,DST_PORT]=process.argv
@@ -76,7 +81,6 @@ https.createServer(opts,(req,res)=>{
 }).listen(+BIND_PORT,BIND_IP,()=>console.log(`TLS ${BIND_IP}:${BIND_PORT}->${DST_PORT}`))
 JS
 TS_IP=$(tailscale ip -4 2>/dev/null | head -1 || echo "127.0.0.1")
-# Kill old proxy on this port
 FP=$( (ss -ltnp 2>/dev/null || netstat -ltnp 2>/dev/null) | grep ":$HTTPS_PORT " | grep -oE 'pid=[0-9]+' | head -1 | cut -d= -f2)
 [ -n "$FP" ] && kill -9 "$FP" 2>/dev/null
 sleep 1
@@ -89,3 +93,4 @@ echo "    local  /login: $(curl -s -m5 -o /dev/null -w '%{http_code}' http://127
 echo "    HTTPS  /login: $(curl -s -m6 -o /dev/null -w '%{http_code}' $ORIGIN/login)"
 echo ""
 echo "Preview ready: $ORIGIN/   (HTTPS ✓  demo: reader@/admin@/super@demo.test / password123)"
+echo "Preview DB:    $APP_DIR/$PREVIEW_STATE  (never wiped by E2E)"
