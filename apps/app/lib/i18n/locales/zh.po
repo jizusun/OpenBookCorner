@@ -197,7 +197,7 @@ msgid "Active"
 msgstr "已启用"
 
 #: routes/_app/admin/activity.tsx:28
-#: routes/_app/nav.tsx:58
+#: routes/_app/nav.tsx:71
 msgid "Activity"
 msgstr "活动"
 
@@ -214,7 +214,7 @@ msgid "Add a book or adjust the filters."
 msgstr "添加一本图书，或调整筛选条件。"
 
 #: routes/_app/admin/join-form.tsx:103
-#: routes/_app/admin/settings.tsx:196
+#: routes/_app/admin/settings.tsx:210
 msgid "Add a field"
 msgstr "添加字段"
 
@@ -232,13 +232,13 @@ msgstr "添加图书"
 
 #: routes/_app/admin/join-form.tsx:70
 #: routes/_app/admin/join-form.tsx:109
-#: routes/_app/admin/settings.tsx:162
-#: routes/_app/admin/settings.tsx:202
+#: routes/_app/admin/settings.tsx:176
+#: routes/_app/admin/settings.tsx:216
 msgid "Add field"
 msgstr "添加字段"
 
 #: routes/_app/admin/join-form.tsx:101
-#: routes/_app/admin/settings.tsx:195
+#: routes/_app/admin/settings.tsx:209
 msgid "Add join form field"
 msgstr "添加加入表单字段"
 
@@ -249,7 +249,7 @@ msgstr "添加读者"
 
 #: routes/_app/admin/AddUserDialog.tsx:55
 #: routes/_app/admin/join-form.tsx:109
-#: routes/_app/admin/settings.tsx:202
+#: routes/_app/admin/settings.tsx:216
 #: routes/_app/books/add.tsx:188
 msgid "Adding…"
 msgstr "添加中…"
@@ -333,17 +333,17 @@ msgstr "所有租户"
 msgid "All users across every tenant (super admin)."
 msgstr "所有租户的全部用户（超级管理员）。"
 
-#: routes/_app/admin/settings.tsx:140
+#: routes/_app/admin/settings.tsx:154
 msgid "Allow renewals/extensions"
 msgstr "允许续借"
 
 #: routes/_app/admin/join-form.tsx:76
-#: routes/_app/admin/settings.tsx:169
+#: routes/_app/admin/settings.tsx:183
 msgid "Anyone can request to join without filling extra info."
 msgstr "任何人都可以直接申请加入，无需填写额外信息。"
 
 #: routes/_app/admin/join-form.tsx:104
-#: routes/_app/admin/settings.tsx:197
+#: routes/_app/admin/settings.tsx:211
 msgid "Applicants must fill this field before submitting a request."
 msgstr "申请人在提交申请前必须填写此字段。"
 
@@ -489,7 +489,7 @@ msgstr "借阅人："
 msgid "Borrower"
 msgstr "借阅人"
 
-#: routes/_app/admin/settings.tsx:128
+#: routes/_app/admin/settings.tsx:142
 msgid "Borrowing period (days)"
 msgstr "借阅期限（天）"
 
@@ -540,7 +540,7 @@ msgstr "摄像头权限被拒绝，请允许访问或手动输入 ISBN。"
 #: routes/_app/admin/AddUserDialog.tsx:52
 #: routes/_app/admin/invites.tsx:111
 #: routes/_app/admin/join-form.tsx:107
-#: routes/_app/admin/settings.tsx:200
+#: routes/_app/admin/settings.tsx:214
 #: routes/_app/admin/tenants.$libraryId.tsx:139
 #: routes/_app/admin/tenants.index.tsx:84
 #: routes/_app/books/$bookId.edit.tsx:144
@@ -558,7 +558,7 @@ msgid "Cannot delete a library that still has members or books."
 msgstr "该图书馆仍有成员或书籍，无法删除。"
 
 #: routes/_app/nav.tsx:51
-#: routes/_app/nav.tsx:69
+#: routes/_app/nav.tsx:83
 msgid "Catalog"
 msgstr "书目"
 
@@ -590,6 +590,10 @@ msgstr "关闭扫描"
 #: routes/_app/books/$bookId.tsx:158
 msgid "Code"
 msgstr "馆内编码"
+
+#: routes/_app/admin/settings.tsx:224
+msgid "Common fields"
+msgstr "常用字段"
 
 #: routes/signup.tsx:129
 msgid "Confirm password"
@@ -653,7 +657,7 @@ msgstr "无法读取该文件，请确认是番薯借阅的 Excel 导出文件�
 msgid "Could not save changes. Please try again."
 msgstr "保存失败，请重试。"
 
-#: routes/_app/admin/settings.tsx:76
+#: routes/_app/admin/settings.tsx:90
 msgid "Could not save settings. Check the values and try again."
 msgstr "保存失败，请检查数值后重试。"
 
@@ -817,7 +821,7 @@ msgstr "简介"
 msgid "Details auto-filled from Open Library. You can edit the title/author before saving."
 msgstr "已从 Open Library 自动填写，保存前可修改书名/作者。"
 
-#: routes/_app/nav.tsx:70
+#: routes/_app/nav.tsx:84
 msgid "Discover"
 msgstr "发现"
 
@@ -831,7 +835,7 @@ msgid "Dismiss"
 msgstr "关闭"
 
 #: routes/_app/admin/join-form.tsx:122
-#: routes/_app/admin/settings.tsx:215
+#: routes/_app/admin/settings.tsx:245
 msgid "Display label"
 msgstr "显示标签"
 
@@ -893,7 +897,7 @@ msgid "Email domains (comma-separated)"
 msgstr "邮箱域名（用逗号分隔）"
 
 #. placeholder {0}: lib?.emailDomains.join(', ') ?? ''
-#: routes/_app/admin/settings.tsx:118
+#: routes/_app/admin/settings.tsx:132
 msgid "Email domains: {0}"
 msgstr "邮箱域名：{0}"
 
@@ -951,7 +955,7 @@ msgstr "到期"
 msgid "Expiry date"
 msgstr "到期日期"
 
-#: routes/_app/admin/settings.tsx:158
+#: routes/_app/admin/settings.tsx:172
 msgid "Extra fields applicants fill before requesting to join."
 msgstr "申请加入前需要填写的额外字段。"
 
@@ -965,7 +969,7 @@ msgid "Feature request"
 msgstr "功能建议"
 
 #: components/FeedbackButton.tsx:74
-#: routes/_app/nav.tsx:55
+#: routes/_app/nav.tsx:70
 msgid "Feedback"
 msgstr "反馈"
 
@@ -974,17 +978,17 @@ msgid "Fetch"
 msgstr "获取"
 
 #: routes/_app/admin/join-form.tsx:48
-#: routes/_app/admin/settings.tsx:96
+#: routes/_app/admin/settings.tsx:110
 msgid "Field added."
 msgstr "字段已添加。"
 
 #: routes/_app/admin/join-form.tsx:118
-#: routes/_app/admin/settings.tsx:210
+#: routes/_app/admin/settings.tsx:240
 msgid "Field key"
 msgstr "字段键"
 
 #: routes/_app/admin/join-form.tsx:57
-#: routes/_app/admin/settings.tsx:103
+#: routes/_app/admin/settings.tsx:117
 msgid "Field removed."
 msgstr "字段已移除。"
 
@@ -1006,7 +1010,7 @@ msgid "https://…fanshujieyue.com/…/librarydata_….xls"
 msgstr "https://…fanshujieyue.com/…/librarydata_….xls"
 
 #: routes/_app/admin/import.tsx:233
-#: routes/_app/nav.tsx:59
+#: routes/_app/nav.tsx:73
 msgid "Import"
 msgstr "导入"
 
@@ -1069,7 +1073,7 @@ msgid "Invite link revoked."
 msgstr "邀请链接已撤销。"
 
 #: routes/_app/admin/invites.tsx:60
-#: routes/_app/nav.tsx:57
+#: routes/_app/nav.tsx:62
 msgid "Invite links"
 msgstr "邀请链接"
 
@@ -1094,7 +1098,7 @@ msgid "Join a library"
 msgstr "加入图书馆"
 
 #: routes/_app/admin/join-form.tsx:64
-#: routes/_app/admin/settings.tsx:156
+#: routes/_app/admin/settings.tsx:170
 msgid "Join form"
 msgstr "加入表单"
 
@@ -1103,7 +1107,7 @@ msgid "Join library"
 msgstr "加入图书馆"
 
 #: routes/_app/admin/join-requests.tsx:46
-#: routes/_app/nav.tsx:56
+#: routes/_app/nav.tsx:61
 msgid "Join requests"
 msgstr "加入申请"
 
@@ -1119,7 +1123,7 @@ msgstr "入馆日期"
 msgid "Joining…"
 msgstr "加入中…"
 
-#: routes/_app/admin/settings.tsx:116
+#: routes/_app/admin/settings.tsx:130
 #: routes/_app/nav.tsx:49
 msgid "Library"
 msgstr "图书馆"
@@ -1137,7 +1141,7 @@ msgstr "图书馆已创建。"
 msgid "Library deleted."
 msgstr "图书馆已删除。"
 
-#: routes/_app/admin/settings.tsx:124
+#: routes/_app/admin/settings.tsx:138
 #: routes/_app/admin/tenants.index.tsx:95
 #: routes/_app/welcome.tsx:117
 msgid "Library name"
@@ -1161,7 +1165,7 @@ msgstr "加载中"
 
 #: components/InfiniteList.tsx:66
 #: routes/_app/admin/members.tsx:162
-#: routes/_app/admin/settings.tsx:107
+#: routes/_app/admin/settings.tsx:121
 #: routes/_app/books/$bookId.edit.tsx:89
 #: routes/join.$token.tsx:39
 msgid "Loading…"
@@ -1195,7 +1199,7 @@ msgstr "查询失败，请手动填写书名和作者。"
 msgid "Manage libraries across the system (super admin)."
 msgstr "管理系统内的所有图书馆（超级管理员）。"
 
-#: routes/_app/admin/settings.tsx:133
+#: routes/_app/admin/settings.tsx:147
 msgid "Max books per reader"
 msgstr "每位读者最多可借"
 
@@ -1224,8 +1228,16 @@ msgstr "会员起始"
 msgid "Member until"
 msgstr "会员到期"
 
+#: routes/_app/nav.tsx:59
+msgid "Members"
+msgstr "成员"
+
+#: routes/_app/nav.tsx:68
+msgid "More"
+msgstr "更多"
+
 #: routes/_app/my-books.tsx:94
-#: routes/_app/nav.tsx:67
+#: routes/_app/nav.tsx:81
 msgid "My Books"
 msgstr "我的借阅"
 
@@ -1287,7 +1299,7 @@ msgid "No cover"
 msgstr "暂无封面"
 
 #: routes/_app/admin/join-form.tsx:75
-#: routes/_app/admin/settings.tsx:168
+#: routes/_app/admin/settings.tsx:182
 msgid "No custom fields"
 msgstr "暂无自定义字段"
 
@@ -1499,7 +1511,7 @@ msgstr "只读系统信息（超级管理员）。"
 #: routes/_app/admin/UsersTable.tsx:32
 #: routes/_app/LibrarySwitcher.tsx:33
 #: routes/_app/LibrarySwitcher.tsx:77
-#: routes/_app/nav.tsx:65
+#: routes/_app/nav.tsx:79
 #: routes/_app/profile.tsx:26
 #: routes/_app/route.tsx:34
 msgid "Reader"
@@ -1549,8 +1561,8 @@ msgstr "申请加入 {libraryName}"
 
 #: routes/_app/admin/join-form.tsx:89
 #: routes/_app/admin/join-form.tsx:136
-#: routes/_app/admin/settings.tsx:180
-#: routes/_app/admin/settings.tsx:231
+#: routes/_app/admin/settings.tsx:194
+#: routes/_app/admin/settings.tsx:261
 msgid "Required"
 msgstr "必填"
 
@@ -1601,18 +1613,18 @@ msgstr "每页行数"
 msgid "Save changes"
 msgstr "保存修改"
 
-#: routes/_app/admin/settings.tsx:145
+#: routes/_app/admin/settings.tsx:159
 msgid "Save settings"
 msgstr "保存设置"
 
-#: routes/_app/admin/settings.tsx:145
+#: routes/_app/admin/settings.tsx:159
 #: routes/_app/admin/tenants.$libraryId.tsx:338
 #: routes/_app/books/$bookId.edit.tsx:137
 #: routes/_app/profile.tsx:110
 msgid "Saving…"
 msgstr "保存中…"
 
-#: routes/_app/nav.tsx:68
+#: routes/_app/nav.tsx:82
 msgid "Scan"
 msgstr "扫码"
 
@@ -1713,13 +1725,13 @@ msgstr "发送中…"
 msgid "Series"
 msgstr "系列"
 
-#: routes/_app/admin/settings.tsx:111
-#: routes/_app/nav.tsx:54
+#: routes/_app/admin/settings.tsx:125
+#: routes/_app/nav.tsx:72
 msgid "Settings"
 msgstr "设置"
 
-#: routes/_app/admin/settings.tsx:74
-#: routes/_app/admin/settings.tsx:143
+#: routes/_app/admin/settings.tsx:88
+#: routes/_app/admin/settings.tsx:157
 msgid "Settings saved."
 msgstr "设置已保存。"
 
@@ -1991,7 +2003,7 @@ msgstr "换个关键词或筛选条件试试。"
 
 #: components/FeedbackButton.tsx:96
 #: routes/_app/admin/join-form.tsx:127
-#: routes/_app/admin/settings.tsx:221
+#: routes/_app/admin/settings.tsx:251
 msgid "Type"
 msgstr "类型"
 
@@ -2025,12 +2037,12 @@ msgid "uses"
 msgstr "次"
 
 #: routes/_app/admin/join-form.tsx:90
-#: routes/_app/admin/settings.tsx:181
+#: routes/_app/admin/settings.tsx:195
 msgid "Verify email"
 msgstr "验证邮箱"
 
 #: routes/_app/admin/join-form.tsx:141
-#: routes/_app/admin/settings.tsx:236
+#: routes/_app/admin/settings.tsx:266
 msgid "Verify email ownership"
 msgstr "验证邮箱归属"
 

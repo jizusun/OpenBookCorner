@@ -21,19 +21,13 @@ describe('navGroupsFor', () => {
     ])
   })
 
-  it('library_admin (no reader preview) → Library group with admin pages', () => {
+  it('library_admin (no reader preview) → 3 Library groups', () => {
     const groups = navGroupsFor('library_admin', false)
-    expect(groups.map((g) => g.id)).toEqual(['library'])
+    expect(groups.map((g) => g.id)).toEqual(['library', 'library-members', 'library-more'])
     expect(ids(groups)).toEqual([
-      '/books',
-      '/admin/members',
-      '/admin/overdue',
-      '/admin/settings',
-      '/admin/feedback',
-      '/admin/join-requests',
-      '/admin/invites',
-      '/admin/activity',
-      '/admin/import',
+      '/books', '/admin/members', '/admin/overdue',          // Library
+      '/admin/join-requests', '/admin/invites',              // Members
+      '/admin/feedback', '/admin/activity', '/admin/settings', '/admin/import', // More
     ])
   })
 
