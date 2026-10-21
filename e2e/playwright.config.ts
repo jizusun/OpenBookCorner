@@ -39,7 +39,7 @@ export default defineConfig({
     // Build SPA assets, migrate+seed local D1, then run the single worker. The
     // worker serves ./dist (assets) + /api/* + /covers/* from one origin.
     command:
-      'bash -c "cd ../apps/app && bun run build && bash ../../e2e/prepare-local.sh && bunx wrangler dev --local --port 8787 --var ENVIRONMENT:development --var APP_ORIGIN:http://localhost:8787 --var BETTER_AUTH_SECRET:dev-e2e-secret-at-least-32-chars-long!!"',
+      'bash -c "cd ../apps/app && bun run build && bash ../../e2e/prepare-local.sh && bunx wrangler dev --local --port 8787 --persist-to .wrangler/state-e2e --var ENVIRONMENT:development --var APP_ORIGIN:http://localhost:8787 --var BETTER_AUTH_SECRET:dev-e2e-secret-at-least-32-chars-long!!"',
     url: 'http://localhost:8787/health',
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,
