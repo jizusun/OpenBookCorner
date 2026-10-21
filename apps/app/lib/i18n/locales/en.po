@@ -197,7 +197,7 @@ msgid "Active"
 msgstr "Active"
 
 #: routes/_app/admin/activity.tsx:28
-#: routes/_app/nav.tsx:60
+#: routes/_app/nav.tsx:58
 msgid "Activity"
 msgstr "Activity"
 
@@ -214,6 +214,7 @@ msgid "Add a book or adjust the filters."
 msgstr "Add a book or adjust the filters."
 
 #: routes/_app/admin/join-form.tsx:103
+#: routes/_app/admin/settings.tsx:196
 msgid "Add a field"
 msgstr "Add a field"
 
@@ -231,10 +232,13 @@ msgstr "Add Book"
 
 #: routes/_app/admin/join-form.tsx:70
 #: routes/_app/admin/join-form.tsx:109
+#: routes/_app/admin/settings.tsx:162
+#: routes/_app/admin/settings.tsx:202
 msgid "Add field"
 msgstr "Add field"
 
 #: routes/_app/admin/join-form.tsx:101
+#: routes/_app/admin/settings.tsx:195
 msgid "Add join form field"
 msgstr "Add join form field"
 
@@ -245,6 +249,7 @@ msgstr "Add reader"
 
 #: routes/_app/admin/AddUserDialog.tsx:55
 #: routes/_app/admin/join-form.tsx:109
+#: routes/_app/admin/settings.tsx:202
 #: routes/_app/books/add.tsx:188
 msgid "Adding…"
 msgstr "Adding…"
@@ -328,15 +333,17 @@ msgstr "All tenants"
 msgid "All users across every tenant (super admin)."
 msgstr "All users across every tenant (super admin)."
 
-#: routes/_app/admin/settings.tsx:144
+#: routes/_app/admin/settings.tsx:140
 msgid "Allow renewals/extensions"
 msgstr "Allow renewals/extensions"
 
 #: routes/_app/admin/join-form.tsx:76
+#: routes/_app/admin/settings.tsx:169
 msgid "Anyone can request to join without filling extra info."
 msgstr "Anyone can request to join without filling extra info."
 
 #: routes/_app/admin/join-form.tsx:104
+#: routes/_app/admin/settings.tsx:197
 msgid "Applicants must fill this field before submitting a request."
 msgstr "Applicants must fill this field before submitting a request."
 
@@ -354,7 +361,7 @@ msgid "At least 8 characters"
 msgstr "At least 8 characters"
 
 #: routes/_app/admin/audit.tsx:70
-#: routes/_app/nav.tsx:43
+#: routes/_app/nav.tsx:42
 msgid "Audit log"
 msgstr "Audit log"
 
@@ -435,7 +442,7 @@ msgstr "Book suggestion"
 #: routes/_app/admin/overview.tsx:65
 #: routes/_app/admin/tenants.$libraryId.tsx:152
 #: routes/_app/admin/TenantsTable.tsx:52
-#: routes/_app/nav.tsx:42
+#: routes/_app/nav.tsx:41
 msgid "Books"
 msgstr "Books"
 
@@ -482,7 +489,7 @@ msgstr "Borrowed by "
 msgid "Borrower"
 msgstr "Borrower"
 
-#: routes/_app/admin/settings.tsx:112
+#: routes/_app/admin/settings.tsx:128
 msgid "Borrowing period (days)"
 msgstr "Borrowing period (days)"
 
@@ -533,6 +540,7 @@ msgstr "Camera permission denied. Allow camera access or enter the ISBN manually
 #: routes/_app/admin/AddUserDialog.tsx:52
 #: routes/_app/admin/invites.tsx:111
 #: routes/_app/admin/join-form.tsx:107
+#: routes/_app/admin/settings.tsx:200
 #: routes/_app/admin/tenants.$libraryId.tsx:139
 #: routes/_app/admin/tenants.index.tsx:84
 #: routes/_app/books/$bookId.edit.tsx:144
@@ -549,8 +557,8 @@ msgstr "Cancel scan"
 msgid "Cannot delete a library that still has members or books."
 msgstr "Cannot delete a library that still has members or books."
 
-#: routes/_app/nav.tsx:52
-#: routes/_app/nav.tsx:71
+#: routes/_app/nav.tsx:51
+#: routes/_app/nav.tsx:69
 msgid "Catalog"
 msgstr "Catalog"
 
@@ -582,10 +590,6 @@ msgstr "Close scanner"
 #: routes/_app/books/$bookId.tsx:158
 msgid "Code"
 msgstr "Code"
-
-#: routes/_app/admin/settings.tsx:96
-msgid "Configuration"
-msgstr "Configuration"
 
 #: routes/signup.tsx:129
 msgid "Confirm password"
@@ -649,7 +653,7 @@ msgstr "Could not read this file. Make sure it is a 番薯借阅 Excel export (.
 msgid "Could not save changes. Please try again."
 msgstr "Could not save changes. Please try again."
 
-#: routes/_app/admin/settings.tsx:75
+#: routes/_app/admin/settings.tsx:76
 msgid "Could not save settings. Check the values and try again."
 msgstr "Could not save settings. Check the values and try again."
 
@@ -813,7 +817,7 @@ msgstr "Description"
 msgid "Details auto-filled from Open Library. You can edit the title/author before saving."
 msgstr "Details auto-filled from Open Library. You can edit the title/author before saving."
 
-#: routes/_app/nav.tsx:72
+#: routes/_app/nav.tsx:70
 msgid "Discover"
 msgstr "Discover"
 
@@ -827,6 +831,7 @@ msgid "Dismiss"
 msgstr "Dismiss"
 
 #: routes/_app/admin/join-form.tsx:122
+#: routes/_app/admin/settings.tsx:215
 msgid "Display label"
 msgstr "Display label"
 
@@ -888,7 +893,7 @@ msgid "Email domains (comma-separated)"
 msgstr "Email domains (comma-separated)"
 
 #. placeholder {0}: lib?.emailDomains.join(', ') ?? ''
-#: routes/_app/admin/settings.tsx:99
+#: routes/_app/admin/settings.tsx:118
 msgid "Email domains: {0}"
 msgstr "Email domains: {0}"
 
@@ -946,6 +951,10 @@ msgstr "Expiry"
 msgid "Expiry date"
 msgstr "Expiry date"
 
+#: routes/_app/admin/settings.tsx:158
+msgid "Extra fields applicants fill before requesting to join."
+msgstr "Extra fields applicants fill before requesting to join."
+
 #: routes/_app/admin/import.tsx:294
 msgid "failed"
 msgstr "failed"
@@ -956,7 +965,7 @@ msgid "Feature request"
 msgstr "Feature request"
 
 #: components/FeedbackButton.tsx:74
-#: routes/_app/nav.tsx:56
+#: routes/_app/nav.tsx:55
 msgid "Feedback"
 msgstr "Feedback"
 
@@ -965,14 +974,17 @@ msgid "Fetch"
 msgstr "Fetch"
 
 #: routes/_app/admin/join-form.tsx:48
+#: routes/_app/admin/settings.tsx:96
 msgid "Field added."
 msgstr "Field added."
 
 #: routes/_app/admin/join-form.tsx:118
+#: routes/_app/admin/settings.tsx:210
 msgid "Field key"
 msgstr "Field key"
 
 #: routes/_app/admin/join-form.tsx:57
+#: routes/_app/admin/settings.tsx:103
 msgid "Field removed."
 msgstr "Field removed."
 
@@ -994,7 +1006,7 @@ msgid "https://…fanshujieyue.com/…/librarydata_….xls"
 msgstr "https://…fanshujieyue.com/…/librarydata_….xls"
 
 #: routes/_app/admin/import.tsx:233
-#: routes/_app/nav.tsx:61
+#: routes/_app/nav.tsx:59
 msgid "Import"
 msgstr "Import"
 
@@ -1057,7 +1069,7 @@ msgid "Invite link revoked."
 msgstr "Invite link revoked."
 
 #: routes/_app/admin/invites.tsx:60
-#: routes/_app/nav.tsx:59
+#: routes/_app/nav.tsx:57
 msgid "Invite links"
 msgstr "Invite links"
 
@@ -1082,7 +1094,7 @@ msgid "Join a library"
 msgstr "Join a library"
 
 #: routes/_app/admin/join-form.tsx:64
-#: routes/_app/nav.tsx:58
+#: routes/_app/admin/settings.tsx:156
 msgid "Join form"
 msgstr "Join form"
 
@@ -1091,7 +1103,7 @@ msgid "Join library"
 msgstr "Join library"
 
 #: routes/_app/admin/join-requests.tsx:46
-#: routes/_app/nav.tsx:57
+#: routes/_app/nav.tsx:56
 msgid "Join requests"
 msgstr "Join requests"
 
@@ -1107,7 +1119,8 @@ msgstr "Joined date"
 msgid "Joining…"
 msgstr "Joining…"
 
-#: routes/_app/nav.tsx:50
+#: routes/_app/admin/settings.tsx:116
+#: routes/_app/nav.tsx:49
 msgid "Library"
 msgstr "Library"
 
@@ -1124,15 +1137,11 @@ msgstr "Library created."
 msgid "Library deleted."
 msgstr "Library deleted."
 
-#: routes/_app/admin/settings.tsx:106
+#: routes/_app/admin/settings.tsx:124
 #: routes/_app/admin/tenants.index.tsx:95
 #: routes/_app/welcome.tsx:117
 msgid "Library name"
 msgstr "Library name"
-
-#: routes/_app/admin/settings.tsx:91
-msgid "Library Settings"
-msgstr "Library Settings"
 
 #: routes/_app/admin/tenants.$libraryId.tsx:69
 msgid "Library updated."
@@ -1152,7 +1161,7 @@ msgstr "Loading"
 
 #: components/InfiniteList.tsx:66
 #: routes/_app/admin/members.tsx:162
-#: routes/_app/admin/settings.tsx:84
+#: routes/_app/admin/settings.tsx:107
 #: routes/_app/books/$bookId.edit.tsx:89
 #: routes/join.$token.tsx:39
 msgid "Loading…"
@@ -1186,7 +1195,7 @@ msgstr "Lookup failed. Enter the title and author manually."
 msgid "Manage libraries across the system (super admin)."
 msgstr "Manage libraries across the system (super admin)."
 
-#: routes/_app/admin/settings.tsx:126
+#: routes/_app/admin/settings.tsx:133
 msgid "Max books per reader"
 msgstr "Max books per reader"
 
@@ -1216,7 +1225,7 @@ msgid "Member until"
 msgstr "Member until"
 
 #: routes/_app/my-books.tsx:94
-#: routes/_app/nav.tsx:69
+#: routes/_app/nav.tsx:67
 msgid "My Books"
 msgstr "My Books"
 
@@ -1278,6 +1287,7 @@ msgid "No cover"
 msgstr "No cover"
 
 #: routes/_app/admin/join-form.tsx:75
+#: routes/_app/admin/settings.tsx:168
 msgid "No custom fields"
 msgstr "No custom fields"
 
@@ -1363,7 +1373,7 @@ msgstr "Other"
 msgid "Out"
 msgstr "Out"
 
-#: routes/_app/nav.tsx:54
+#: routes/_app/nav.tsx:53
 msgid "Overdue"
 msgstr "Overdue"
 
@@ -1373,7 +1383,7 @@ msgstr "Overdue Books"
 
 #: routes/_app/admin/overview.tsx:55
 #: routes/_app/admin/tenants.$libraryId.tsx:136
-#: routes/_app/nav.tsx:39
+#: routes/_app/nav.tsx:38
 msgid "Overview"
 msgstr "Overview"
 
@@ -1489,7 +1499,7 @@ msgstr "Read-only system information (super admin)."
 #: routes/_app/admin/UsersTable.tsx:32
 #: routes/_app/LibrarySwitcher.tsx:33
 #: routes/_app/LibrarySwitcher.tsx:77
-#: routes/_app/nav.tsx:67
+#: routes/_app/nav.tsx:65
 #: routes/_app/profile.tsx:26
 #: routes/_app/route.tsx:34
 msgid "Reader"
@@ -1500,7 +1510,7 @@ msgid "Reader preview"
 msgstr "Reader preview"
 
 #: routes/_app/admin/members.tsx:80
-#: routes/_app/nav.tsx:53
+#: routes/_app/nav.tsx:52
 msgid "Readers"
 msgstr "Readers"
 
@@ -1539,6 +1549,8 @@ msgstr "Request to join {libraryName}"
 
 #: routes/_app/admin/join-form.tsx:89
 #: routes/_app/admin/join-form.tsx:136
+#: routes/_app/admin/settings.tsx:180
+#: routes/_app/admin/settings.tsx:231
 msgid "Required"
 msgstr "Required"
 
@@ -1589,18 +1601,18 @@ msgstr "Rows per page"
 msgid "Save changes"
 msgstr "Save changes"
 
-#: routes/_app/admin/settings.tsx:153
+#: routes/_app/admin/settings.tsx:145
 msgid "Save settings"
 msgstr "Save settings"
 
-#: routes/_app/admin/settings.tsx:153
+#: routes/_app/admin/settings.tsx:145
 #: routes/_app/admin/tenants.$libraryId.tsx:338
 #: routes/_app/books/$bookId.edit.tsx:137
 #: routes/_app/profile.tsx:110
 msgid "Saving…"
 msgstr "Saving…"
 
-#: routes/_app/nav.tsx:70
+#: routes/_app/nav.tsx:68
 msgid "Scan"
 msgstr "Scan"
 
@@ -1701,12 +1713,13 @@ msgstr "Sending…"
 msgid "Series"
 msgstr "Series"
 
-#: routes/_app/nav.tsx:55
+#: routes/_app/admin/settings.tsx:111
+#: routes/_app/nav.tsx:54
 msgid "Settings"
 msgstr "Settings"
 
-#: routes/_app/admin/settings.tsx:73
-#: routes/_app/admin/settings.tsx:149
+#: routes/_app/admin/settings.tsx:74
+#: routes/_app/admin/settings.tsx:143
 msgid "Settings saved."
 msgstr "Settings saved."
 
@@ -1836,7 +1849,7 @@ msgstr "Switch to dark mode"
 msgid "Switch to light mode"
 msgstr "Switch to light mode"
 
-#: routes/_app/nav.tsx:37
+#: routes/_app/nav.tsx:36
 msgid "System"
 msgstr "System"
 
@@ -1845,7 +1858,7 @@ msgid "System actions (tenant changes, impersonation) will appear here."
 msgstr "System actions (tenant changes, impersonation) will appear here."
 
 #: routes/_app/admin/system.tsx:23
-#: routes/_app/nav.tsx:44
+#: routes/_app/nav.tsx:43
 msgid "System settings"
 msgstr "System settings"
 
@@ -1885,7 +1898,7 @@ msgstr "Tenant not found"
 #: routes/_app/admin/overview.tsx:63
 #: routes/_app/admin/overview.tsx:82
 #: routes/_app/admin/tenants.index.tsx:53
-#: routes/_app/nav.tsx:40
+#: routes/_app/nav.tsx:39
 msgid "Tenants"
 msgstr "Tenants"
 
@@ -1978,6 +1991,7 @@ msgstr "Try adjusting the search or filters."
 
 #: components/FeedbackButton.tsx:96
 #: routes/_app/admin/join-form.tsx:127
+#: routes/_app/admin/settings.tsx:221
 msgid "Type"
 msgstr "Type"
 
@@ -2002,7 +2016,7 @@ msgstr "User Feedback"
 #: routes/_app/admin/tenants.$libraryId.tsx:184
 #: routes/_app/admin/TenantsTable.tsx:51
 #: routes/_app/admin/users.tsx:36
-#: routes/_app/nav.tsx:41
+#: routes/_app/nav.tsx:40
 msgid "Users"
 msgstr "Users"
 
@@ -2011,10 +2025,12 @@ msgid "uses"
 msgstr "uses"
 
 #: routes/_app/admin/join-form.tsx:90
+#: routes/_app/admin/settings.tsx:181
 msgid "Verify email"
 msgstr "Verify email"
 
 #: routes/_app/admin/join-form.tsx:141
+#: routes/_app/admin/settings.tsx:236
 msgid "Verify email ownership"
 msgstr "Verify email ownership"
 
