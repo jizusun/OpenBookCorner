@@ -795,8 +795,8 @@ msgstr "Environment"
 msgid "Every import is recorded with its source and counts."
 msgstr "Every import is recorded with its source and counts."
 
-#: routes/_app/route.tsx:105
-#: routes/_app/route.tsx:107
+#: routes/_app/route.tsx:99
+#: routes/_app/route.tsx:101
 msgid "Exit reader preview"
 msgstr "Exit reader preview"
 
@@ -876,7 +876,7 @@ msgstr "Importing…"
 msgid "Inactive"
 msgstr "Inactive"
 
-#: routes/_app/AppSidebar.tsx:115
+#: components/UserMenu.tsx:54
 msgid "Install app"
 msgstr "Install app"
 
@@ -1099,7 +1099,7 @@ msgstr "Notifications"
 msgid "on behalf of {0}"
 msgstr "on behalf of {0}"
 
-#: routes/_app/AppSidebar.tsx:61
+#: routes/_app/AppSidebar.tsx:39
 msgid "OpenBookCorner"
 msgstr "OpenBookCorner"
 
@@ -1169,7 +1169,7 @@ msgstr "Plan"
 msgid "Preview — {0}"
 msgstr "Preview — {0}"
 
-#: routes/_app/route.tsx:105
+#: routes/_app/route.tsx:99
 msgid "Preview as a reader"
 msgstr "Preview as a reader"
 
@@ -1182,7 +1182,7 @@ msgstr "Previous"
 msgid "Price"
 msgstr "Price"
 
-#: routes/_app/AppSidebar.tsx:109
+#: components/UserMenu.tsx:48
 msgid "Profile"
 msgstr "Profile"
 
@@ -1222,7 +1222,7 @@ msgstr "Read-only system information (super admin)."
 msgid "Reader"
 msgstr "Reader"
 
-#: routes/_app/route.tsx:107
+#: routes/_app/route.tsx:101
 msgid "Reader preview"
 msgstr "Reader preview"
 
@@ -1407,11 +1407,11 @@ msgstr "Sign in as them"
 msgid "Sign in to your library"
 msgstr "Sign in to your library"
 
-#: routes/_app/AppSidebar.tsx:120
+#: components/UserMenu.tsx:59
 msgid "Sign out"
 msgstr "Sign out"
 
-#: routes/_app/AppSidebar.tsx:104
+#: components/UserMenu.tsx:42
 msgid "Signed in as {userName}"
 msgstr "Signed in as {userName}"
 

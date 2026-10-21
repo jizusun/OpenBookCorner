@@ -1,10 +1,8 @@
 import { Link, useLocation } from '@tanstack/react-router'
 import { Trans } from '@lingui/react/macro'
-import { ChevronsUpDown, LogOut, Download, User } from 'lucide-react'
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -13,39 +11,19 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { navGroupsFor, homeFor } from './nav'
-import { UserAvatar } from '@/components/UserAvatar'
 
 export interface AppSidebarProps {
   role: string | null | undefined
   readerPreview: boolean
-  userName: string
-  onLogout: () => void
-  canInstall: boolean
-  onInstall: () => void
 }
 
 /**
- * shadcn-admin-style sidebar: brand header, role-grouped nav (via the pure
- * navGroupsFor), and a footer user menu (name + Install + Sign out). Active
- * state comes from the router location; nav labels are <Trans> nodes.
+ * shadcn-admin-style sidebar: brand header + role-grouped nav (via the pure
+ * navGroupsFor). Active state comes from the router location; nav labels are
+ * <Trans> nodes. The account menu lives in the top bar (UserMenu), not here.
  */
-export function AppSidebar({
-  role,
-  readerPreview,
-  userName,
-  onLogout,
-  canInstall,
-  onInstall,
-}: AppSidebarProps) {
+export function AppSidebar({ role, readerPreview }: AppSidebarProps) {
   const groups = navGroupsFor(role, readerPreview)
   const home = homeFor(role, readerPreview)
   const { pathname } = useLocation()
@@ -88,42 +66,6 @@ export function AppSidebar({
           </SidebarGroup>
         ))}
       </SidebarContent>
-
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton size="lg" data-testid="user-menu">
-                  <UserAvatar name={userName} size="sm" />
-                  <span className="truncate group-data-[collapsible=icon]:hidden">{userName}</span>
-                  <ChevronsUpDown className="ml-auto size-4 group-data-[collapsible=icon]:hidden" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent side="top" align="start" className="w-56">
-                <DropdownMenuLabel className="truncate"><Trans>Signed in as {userName}</Trans></DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild data-testid="profile-link">
-                  <Link to="/profile">
-                    <User />
-                    <Trans>Profile</Trans>
-                  </Link>
-                </DropdownMenuItem>
-                {canInstall && (
-                  <DropdownMenuItem onClick={onInstall} data-testid="install-button">
-                    <Download />
-                    <Trans>Install app</Trans>
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuItem onClick={onLogout} data-testid="logout">
-                  <LogOut />
-                  <Trans>Sign out</Trans>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
     </Sidebar>
   )
 }

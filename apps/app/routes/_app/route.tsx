@@ -12,6 +12,7 @@ import { LanguageToggle } from '@/components/LanguageToggle'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { setReaderPreview, useReaderPreview } from '@/lib/view-mode'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+import { UserMenu } from '@/components/UserMenu'
 import { AppSidebar } from './AppSidebar'
 
 export const Route = createFileRoute('/_app')({
@@ -83,14 +84,7 @@ function AppLayout() {
         onExit={handleExitImpersonation}
       />
       <SidebarProvider>
-        <AppSidebar
-          role={user.role}
-          readerPreview={readerPreview}
-          userName={user.name}
-          onLogout={handleLogout}
-          canInstall={canInstall}
-          onInstall={install}
-        />
+        <AppSidebar role={user.role} readerPreview={readerPreview} />
         <SidebarInset>
           <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
             <SidebarTrigger data-testid="sidebar-toggle" />
@@ -109,6 +103,12 @@ function AppLayout() {
               )}
               <LanguageToggle />
               <ThemeToggle />
+              <UserMenu
+                userName={user.name}
+                onLogout={handleLogout}
+                canInstall={canInstall}
+                onInstall={install}
+              />
             </div>
           </header>
           <main className="mx-auto w-full max-w-5xl flex-1 p-4">

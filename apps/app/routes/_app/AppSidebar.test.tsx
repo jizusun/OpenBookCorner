@@ -1,7 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeAll } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import {
   RouterProvider,
   createRootRoute,
@@ -32,10 +31,6 @@ function renderSidebar(props: Partial<AppSidebarProps> = {}) {
   const full: AppSidebarProps = {
     role: 'super_admin',
     readerPreview: false,
-    userName: 'Root',
-    onLogout: vi.fn(),
-    canInstall: false,
-    onInstall: vi.fn(),
     ...props,
   }
   const rootRoute = createRootRoute({
@@ -79,13 +74,5 @@ describe('AppSidebar', () => {
     expect(await screen.findByTestId('nav-/my-books')).toBeInTheDocument()
     expect(screen.getByTestId('nav-/scan')).toBeInTheDocument()
     expect(screen.queryByTestId('nav-/admin/overview')).toBeNull()
-  })
-
-  it('user menu triggers logout', async () => {
-    const props = renderSidebar()
-    await userEvent.click(await screen.findByTestId('user-menu'))
-    expect(await screen.findByTestId('profile-link')).toBeInTheDocument()
-    await userEvent.click(await screen.findByTestId('logout'))
-    expect(props.onLogout).toHaveBeenCalledTimes(1)
   })
 })
