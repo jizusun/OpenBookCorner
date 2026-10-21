@@ -197,7 +197,7 @@ msgid "Active"
 msgstr "Active"
 
 #: routes/_app/admin/activity.tsx:28
-#: routes/_app/nav.tsx:58
+#: routes/_app/nav.tsx:60
 msgid "Activity"
 msgstr "Activity"
 
@@ -351,7 +351,7 @@ msgid "At least 8 characters"
 msgstr "At least 8 characters"
 
 #: routes/_app/admin/audit.tsx:70
-#: routes/_app/nav.tsx:42
+#: routes/_app/nav.tsx:43
 msgid "Audit log"
 msgstr "Audit log"
 
@@ -361,6 +361,14 @@ msgstr "Audit log"
 #: routes/_app/books/index.tsx:125
 msgid "Author"
 msgstr "Author"
+
+#: routes/_app/admin/invites.tsx:88
+msgid "Auto-join"
+msgstr "Auto-join"
+
+#: routes/_app/admin/invites.tsx:128
+msgid "Auto-join (skip admin approval)"
+msgstr "Auto-join (skip admin approval)"
 
 #: routes/_app/books/index.tsx:126
 msgid "Availability"
@@ -424,7 +432,7 @@ msgstr "Book suggestion"
 #: routes/_app/admin/overview.tsx:65
 #: routes/_app/admin/tenants.$libraryId.tsx:152
 #: routes/_app/admin/TenantsTable.tsx:52
-#: routes/_app/nav.tsx:41
+#: routes/_app/nav.tsx:42
 msgid "Books"
 msgstr "Books"
 
@@ -520,6 +528,7 @@ msgstr "Camera permission denied. Allow camera access or enter the ISBN manually
 
 #: components/FeedbackButton.tsx:86
 #: routes/_app/admin/AddUserDialog.tsx:52
+#: routes/_app/admin/invites.tsx:111
 #: routes/_app/admin/join-form.tsx:107
 #: routes/_app/admin/tenants.$libraryId.tsx:139
 #: routes/_app/admin/tenants.index.tsx:84
@@ -537,8 +546,8 @@ msgstr "Cancel scan"
 msgid "Cannot delete a library that still has members or books."
 msgstr "Cannot delete a library that still has members or books."
 
-#: routes/_app/nav.tsx:51
-#: routes/_app/nav.tsx:69
+#: routes/_app/nav.tsx:52
+#: routes/_app/nav.tsx:71
 msgid "Catalog"
 msgstr "Catalog"
 
@@ -672,10 +681,27 @@ msgstr "Cover of {0}"
 msgid "Create a library"
 msgstr "Create a library"
 
+#: routes/_app/admin/invites.tsx:74
+msgid "Create a link to share with prospective members."
+msgstr "Create a link to share with prospective members."
+
+#: routes/_app/admin/invites.tsx:108
+msgid "Create an invite link"
+msgstr "Create an invite link"
+
+#: routes/_app/admin/invites.tsx:106
+msgid "Create invite link"
+msgstr "Create invite link"
+
 #: routes/_app/admin/tenants.index.tsx:87
 #: routes/_app/welcome.tsx:109
 msgid "Create library"
 msgstr "Create library"
+
+#: routes/_app/admin/invites.tsx:66
+#: routes/_app/admin/invites.tsx:113
+msgid "Create link"
+msgstr "Create link"
 
 #: routes/_app/LibrarySwitcher.tsx:77
 msgid "Create or join a library"
@@ -689,6 +715,7 @@ msgstr "Create the first one."
 msgid "Created tenant"
 msgstr "Created tenant"
 
+#: routes/_app/admin/invites.tsx:113
 #: routes/_app/admin/tenants.index.tsx:87
 #: routes/_app/welcome.tsx:109
 msgid "Creating…"
@@ -767,7 +794,7 @@ msgstr "Description"
 msgid "Details auto-filled from Open Library. You can edit the title/author before saving."
 msgstr "Details auto-filled from Open Library. You can edit the title/author before saving."
 
-#: routes/_app/nav.tsx:70
+#: routes/_app/nav.tsx:72
 msgid "Discover"
 msgstr "Discover"
 
@@ -879,6 +906,10 @@ msgstr "Every import is recorded with its source and counts."
 msgid "Exit reader preview"
 msgstr "Exit reader preview"
 
+#: routes/_app/admin/invites.tsx:136
+msgid "Expires in days (optional)"
+msgstr "Expires in days (optional)"
+
 #: routes/_app/admin/members.tsx:198
 msgid "Expiry"
 msgstr "Expiry"
@@ -897,7 +928,7 @@ msgid "Feature request"
 msgstr "Feature request"
 
 #: components/FeedbackButton.tsx:74
-#: routes/_app/nav.tsx:55
+#: routes/_app/nav.tsx:56
 msgid "Feedback"
 msgstr "Feedback"
 
@@ -935,7 +966,7 @@ msgid "https://…fanshujieyue.com/…/librarydata_….xls"
 msgstr "https://…fanshujieyue.com/…/librarydata_….xls"
 
 #: routes/_app/admin/import.tsx:233
-#: routes/_app/nav.tsx:59
+#: routes/_app/nav.tsx:61
 msgid "Import"
 msgstr "Import"
 
@@ -981,6 +1012,27 @@ msgstr "Inactive"
 msgid "Install app"
 msgstr "Install app"
 
+#: routes/join.$token.tsx:45
+msgid "Invalid or expired invite"
+msgstr "Invalid or expired invite"
+
+#: routes/_app/admin/invites.tsx:53
+msgid "Invite link copied."
+msgstr "Invite link copied."
+
+#: routes/_app/admin/invites.tsx:40
+msgid "Invite link created."
+msgstr "Invite link created."
+
+#: routes/_app/admin/invites.tsx:44
+msgid "Invite link revoked."
+msgstr "Invite link revoked."
+
+#: routes/_app/admin/invites.tsx:60
+#: routes/_app/nav.tsx:59
+msgid "Invite links"
+msgstr "Invite links"
+
 #: routes/_app/admin/BooksTable.tsx:26
 #: routes/_app/books/$bookId.edit.tsx:109
 #: routes/_app/books/add.tsx:136
@@ -1002,12 +1054,16 @@ msgid "Join a library"
 msgstr "Join a library"
 
 #: routes/_app/admin/join-form.tsx:64
-#: routes/_app/nav.tsx:57
+#: routes/_app/nav.tsx:58
 msgid "Join form"
 msgstr "Join form"
 
+#: routes/join.$token.tsx:75
+msgid "Join library"
+msgstr "Join library"
+
 #: routes/_app/admin/join-requests.tsx:46
-#: routes/_app/nav.tsx:56
+#: routes/_app/nav.tsx:57
 msgid "Join requests"
 msgstr "Join requests"
 
@@ -1019,11 +1075,15 @@ msgstr "Joined"
 msgid "Joined date"
 msgstr "Joined date"
 
+#: routes/join.$token.tsx:72
+msgid "Joining…"
+msgstr "Joining…"
+
 #: routes/_app/LibrarySwitcher.tsx:56
 msgid "Libraries"
 msgstr "Libraries"
 
-#: routes/_app/nav.tsx:49
+#: routes/_app/nav.tsx:50
 msgid "Library"
 msgstr "Library"
 
@@ -1070,6 +1130,7 @@ msgstr "Loading"
 #: routes/_app/admin/members.tsx:162
 #: routes/_app/admin/settings.tsx:84
 #: routes/_app/books/$bookId.edit.tsx:89
+#: routes/join.$token.tsx:39
 msgid "Loading…"
 msgstr "Loading…"
 
@@ -1105,6 +1166,10 @@ msgstr "Manage libraries across the system (super admin)."
 msgid "Max books per reader"
 msgstr "Max books per reader"
 
+#: routes/_app/admin/invites.tsx:132
+msgid "Max uses (optional)"
+msgstr "Max uses (optional)"
+
 #: routes/_app/admin/members.tsx:61
 msgid "Member added."
 msgstr "Member added."
@@ -1127,7 +1192,7 @@ msgid "Member until"
 msgstr "Member until"
 
 #: routes/_app/my-books.tsx:94
-#: routes/_app/nav.tsx:67
+#: routes/_app/nav.tsx:69
 msgid "My Books"
 msgstr "My Books"
 
@@ -1140,6 +1205,10 @@ msgstr "My Books"
 #: routes/_app/admin/UsersTable.tsx:43
 msgid "Name"
 msgstr "Name"
+
+#: routes/_app/admin/invites.tsx:87
+msgid "Needs approval"
+msgstr "Needs approval"
 
 #: routes/_app/admin/join-requests.tsx:59
 msgid "New join requests will appear here."
@@ -1195,6 +1264,10 @@ msgstr "No extra information required."
 #: routes/_app/admin/feedback.tsx:57
 msgid "No feedback yet"
 msgstr "No feedback yet"
+
+#: routes/_app/admin/invites.tsx:73
+msgid "No invite links"
+msgstr "No invite links"
 
 #: routes/_app/admin/TenantsTable.tsx:90
 msgid "No libraries yet"
@@ -1266,7 +1339,7 @@ msgstr "Other"
 msgid "Out"
 msgstr "Out"
 
-#: routes/_app/nav.tsx:53
+#: routes/_app/nav.tsx:54
 msgid "Overdue"
 msgstr "Overdue"
 
@@ -1276,7 +1349,7 @@ msgstr "Overdue Books"
 
 #: routes/_app/admin/overview.tsx:55
 #: routes/_app/admin/tenants.$libraryId.tsx:136
-#: routes/_app/nav.tsx:38
+#: routes/_app/nav.tsx:39
 msgid "Overview"
 msgstr "Overview"
 
@@ -1389,7 +1462,7 @@ msgstr "Read-only system information (super admin)."
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:217
 #: routes/_app/admin/UsersTable.tsx:32
-#: routes/_app/nav.tsx:65
+#: routes/_app/nav.tsx:67
 #: routes/_app/profile.tsx:26
 msgid "Reader"
 msgstr "Reader"
@@ -1399,7 +1472,7 @@ msgid "Reader preview"
 msgstr "Reader preview"
 
 #: routes/_app/admin/members.tsx:80
-#: routes/_app/nav.tsx:52
+#: routes/_app/nav.tsx:53
 msgid "Readers"
 msgstr "Readers"
 
@@ -1462,6 +1535,10 @@ msgstr "Returned — thanks!"
 msgid "Returning…"
 msgstr "Returning…"
 
+#: routes/_app/admin/invites.tsx:86
+msgid "Revoked"
+msgstr "Revoked"
+
 #: routes/_app/admin/members.tsx:183
 #: routes/_app/admin/tenants.$libraryId.tsx:201
 #: routes/_app/admin/users.tsx:66
@@ -1495,7 +1572,7 @@ msgstr "Save settings"
 msgid "Saving…"
 msgstr "Saving…"
 
-#: routes/_app/nav.tsx:68
+#: routes/_app/nav.tsx:70
 msgid "Scan"
 msgstr "Scan"
 
@@ -1596,7 +1673,7 @@ msgstr "Sending…"
 msgid "Series"
 msgstr "Series"
 
-#: routes/_app/nav.tsx:54
+#: routes/_app/nav.tsx:55
 msgid "Settings"
 msgstr "Settings"
 
@@ -1604,6 +1681,10 @@ msgstr "Settings"
 #: routes/_app/admin/settings.tsx:149
 msgid "Settings saved."
 msgstr "Settings saved."
+
+#: routes/_app/admin/invites.tsx:62
+msgid "Share these links so people can request to join the library."
+msgstr "Share these links so people can request to join the library."
 
 #: routes/_app/admin/AddUserDialog.tsx:101
 msgid "Share this with the user; they can change it after signing in."
@@ -1629,6 +1710,10 @@ msgstr "Sign in"
 #: routes/_app/admin/MemberImpersonateButton.tsx:51
 msgid "Sign in as them"
 msgstr "Sign in as them"
+
+#: routes/join.$token.tsx:82
+msgid "Sign in to join"
+msgstr "Sign in to join"
 
 #: routes/login.tsx:101
 #: routes/login.tsx:112
@@ -1696,6 +1781,7 @@ msgid "Student no."
 msgstr "Student no."
 
 #: routes/_app/discover.tsx:79
+#: routes/join.$token.tsx:74
 msgid "Submit request"
 msgstr "Submit request"
 
@@ -1726,7 +1812,7 @@ msgstr "Switch to dark mode"
 msgid "Switch to light mode"
 msgstr "Switch to light mode"
 
-#: routes/_app/nav.tsx:36
+#: routes/_app/nav.tsx:37
 msgid "System"
 msgstr "System"
 
@@ -1735,7 +1821,7 @@ msgid "System actions (tenant changes, impersonation) will appear here."
 msgstr "System actions (tenant changes, impersonation) will appear here."
 
 #: routes/_app/admin/system.tsx:23
-#: routes/_app/nav.tsx:43
+#: routes/_app/nav.tsx:44
 msgid "System settings"
 msgstr "System settings"
 
@@ -1775,7 +1861,7 @@ msgstr "Tenant not found"
 #: routes/_app/admin/overview.tsx:63
 #: routes/_app/admin/overview.tsx:82
 #: routes/_app/admin/tenants.index.tsx:53
-#: routes/_app/nav.tsx:39
+#: routes/_app/nav.tsx:40
 msgid "Tenants"
 msgstr "Tenants"
 
@@ -1825,6 +1911,10 @@ msgstr "This book is not in your library’s catalog yet. Ask a librarian to add
 #: routes/_app/discover.tsx:101
 msgid "This email will need to be verified."
 msgstr "This email will need to be verified."
+
+#: routes/join.$token.tsx:46
+msgid "This invite link is no longer valid."
+msgstr "This invite link is no longer valid."
 
 #: routes/_app/admin/members.$memberId.tsx:53
 msgid "This member already has a login."
@@ -1888,9 +1978,13 @@ msgstr "User Feedback"
 #: routes/_app/admin/tenants.$libraryId.tsx:184
 #: routes/_app/admin/TenantsTable.tsx:51
 #: routes/_app/admin/users.tsx:36
-#: routes/_app/nav.tsx:40
+#: routes/_app/nav.tsx:41
 msgid "Users"
 msgstr "Users"
+
+#: routes/_app/admin/invites.tsx:89
+msgid "uses"
+msgstr "uses"
 
 #: routes/_app/admin/join-form.tsx:90
 msgid "Verify email"
@@ -1976,9 +2070,21 @@ msgstr "You do not have permission to add books."
 msgid "You have an overdue book. Please return it before borrowing more."
 msgstr "You have an overdue book. Please return it before borrowing more."
 
+#: routes/join.$token.tsx:79
+msgid "You need to sign in first."
+msgstr "You need to sign in first."
+
+#: routes/join.$token.tsx:65
+msgid "You'll be added immediately."
+msgstr "You'll be added immediately."
+
 #: routes/_app/welcome.tsx:54
 msgid "You're not part of any library yet. Create one, or join an existing one."
 msgstr "You're not part of any library yet. Create one, or join an existing one."
+
+#: routes/join.$token.tsx:55
+msgid "You've been invited to join"
+msgstr "You've been invited to join"
 
 #: lib/errors.ts:13
 msgid "You've reached your borrowing limit. Return a book before borrowing another."
@@ -1987,3 +2093,7 @@ msgstr "You've reached your borrowing limit. Return a book before borrowing anot
 #: components/FeedbackButton.tsx:111
 msgid "Your feedback"
 msgstr "Your feedback"
+
+#: routes/join.$token.tsx:61
+msgid "Your request will need approval from the library admin."
+msgstr "Your request will need approval from the library admin."

@@ -234,6 +234,20 @@ const call = {
     json<Ok<(typeof client.join.admin.fields)[':id']['$delete']>>(
       client.join.admin.fields[':id'].$delete({ param: { id: i.id } }),
     ),
+  'invite.resolve': (i: { token: string }) =>
+    json<Ok<(typeof client.invites.resolve)[':token']['$get']>>(
+      client.invites.resolve[':token'].$get({ param: { token: i.token } }),
+    ),
+  'invite.use': (i: { token: string; answers?: Record<string, string> }) =>
+    json<Ok<typeof client.invites.use.$post>>(client.invites.use.$post({ json: i })),
+  'invite.adminList': () =>
+    json<Ok<(typeof client.admin.invites)['$get']>>(client.admin.invites.$get()),
+  'invite.create': (i: { role?: 'library_admin' | 'library_reader'; requiresApproval?: boolean; maxUses?: number; expiresInDays?: number }) =>
+    json<Ok<(typeof client.admin.invites)['$post']>>(client.admin.invites.$post({ json: i })),
+  'invite.revoke': (i: { id: string }) =>
+    json<Ok<(typeof client.admin.invites)[':id']['$delete']>>(
+      client.admin.invites[':id'].$delete({ param: { id: i.id } }),
+    ),
 }
 
 type Endpoint = keyof typeof call
@@ -330,6 +344,13 @@ export const api = {
     adminFields: node('join.adminFields'),
     addField: node('join.addField'),
     removeField: node('join.removeField'),
+  },
+  invite: {
+    resolve: node('invite.resolve'),
+    use: node('invite.use'),
+    adminList: node('invite.adminList'),
+    create: node('invite.create'),
+    revoke: node('invite.revoke'),
   },
 }
 
