@@ -584,6 +584,10 @@ msgstr "Code"
 msgid "Configuration"
 msgstr "Configuration"
 
+#: routes/signup.tsx:109
+msgid "Confirm password"
+msgstr "Confirm password"
+
 #: routes/_app/books/add.tsx:170
 msgid "Copies"
 msgstr "Copies"
@@ -609,7 +613,7 @@ msgstr "Could not add the book. Please check the fields and try again."
 msgid "Could not add the member."
 msgstr "Could not add the member."
 
-#: routes/login.tsx:201
+#: routes/signup.tsx:41
 msgid "Could not create account. That email may already be registered."
 msgstr "Could not create account. That email may already be registered."
 
@@ -689,10 +693,13 @@ msgstr "Create a library"
 msgid "Create a link to share with prospective members."
 msgstr "Create a link to share with prospective members."
 
-#: routes/login.tsx:238
-#: routes/login.tsx:283
+#: routes/signup.tsx:127
 msgid "Create account"
 msgstr "Create account"
+
+#: routes/signup.tsx:54
+msgid "Create an account"
+msgstr "Create an account"
 
 #: routes/_app/admin/invites.tsx:108
 msgid "Create an invite link"
@@ -727,7 +734,7 @@ msgstr "Created tenant"
 #: routes/_app/admin/invites.tsx:113
 #: routes/_app/admin/tenants.index.tsx:87
 #: routes/_app/welcome.tsx:109
-#: routes/login.tsx:282
+#: routes/signup.tsx:123
 msgid "Creating…"
 msgstr "Creating…"
 
@@ -825,6 +832,10 @@ msgstr "Display label"
 msgid "Display name"
 msgstr "Display name"
 
+#: routes/login.tsx:203
+msgid "Don't have an account? <0>Sign up</0>"
+msgstr "Don't have an account? <0>Sign up</0>"
+
 #. placeholder {0}: new Date(item.dueDate).toLocaleDateString()
 #: routes/_app/my-books.tsx:169
 msgid "Due {0}"
@@ -860,7 +871,8 @@ msgstr "Edit Book"
 #: routes/_app/admin/tenants.$libraryId.tsx:200
 #: routes/_app/admin/UsersTable.tsx:44
 #: routes/_app/profile.tsx:99
-#: routes/login.tsx:258
+#: routes/login.tsx:214
+#: routes/signup.tsx:84
 msgid "Email"
 msgstr "Email"
 
@@ -898,6 +910,14 @@ msgstr "Enable login for {0}"
 #: routes/_app/admin/members.$memberId.tsx:121
 msgid "Enabled"
 msgstr "Enabled"
+
+#: routes/signup.tsx:60
+msgid "Enter your details to create an account. Already have an account? <0>Sign in</0>"
+msgstr "Enter your details to create an account. Already have an account? <0>Sign in</0>"
+
+#: routes/login.tsx:202
+msgid "Enter your email and password to sign in."
+msgstr "Enter your email and password to sign in."
 
 #: routes/_app/books/$bookId.tsx:202
 msgid "Entered"
@@ -1213,7 +1233,7 @@ msgstr "My Books"
 #: routes/_app/admin/tenants.$libraryId.tsx:317
 #: routes/_app/admin/TenantsTable.tsx:28
 #: routes/_app/admin/UsersTable.tsx:43
-#: routes/login.tsx:245
+#: routes/signup.tsx:72
 msgid "Name"
 msgstr "Name"
 
@@ -1376,9 +1396,14 @@ msgstr "Page {pageNum} of {pageTotal}"
 msgid "Pages"
 msgstr "Pages"
 
-#: routes/login.tsx:269
+#: routes/login.tsx:225
+#: routes/signup.tsx:96
 msgid "Password"
 msgstr "Password"
+
+#: routes/signup.tsx:29
+msgid "Passwords don't match."
+msgstr "Passwords don't match."
 
 #: routes/_app/admin/SystemInfo.tsx:43
 msgid "Path-based — each tenant is served at /t/:slug"
@@ -1714,8 +1739,7 @@ msgstr "Shelved"
 msgid "showing the first {shown} — refine upstream search to see the rest"
 msgstr "showing the first {shown} — refine upstream search to see the rest"
 
-#: routes/login.tsx:230
-#: routes/login.tsx:283
+#: routes/login.tsx:238
 msgid "Sign in"
 msgstr "Sign in"
 
@@ -1740,7 +1764,7 @@ msgstr "Sign out"
 msgid "Signed in as {userName}"
 msgstr "Signed in as {userName}"
 
-#: routes/login.tsx:282
+#: routes/login.tsx:238
 msgid "Signing in…"
 msgstr "Signing in…"
 
@@ -1887,8 +1911,8 @@ msgstr "Thanks for your feedback! 🎉"
 msgid "That email is already in use."
 msgstr "That email is already in use."
 
-#: routes/login.tsx:161
-#: routes/login.tsx:184
+#: routes/login.tsx:159
+#: routes/login.tsx:182
 msgid "That email or password doesn’t match. Please try again."
 msgstr "That email or password doesn’t match. Please try again."
 
@@ -2106,7 +2130,7 @@ msgstr "You've reached your borrowing limit. Return a book before borrowing anot
 msgid "Your feedback"
 msgstr "Your feedback"
 
-#: routes/login.tsx:252
+#: routes/signup.tsx:79
 msgid "Your name"
 msgstr "Your name"
 
