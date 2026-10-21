@@ -1,8 +1,11 @@
 import { createFileRoute, Outlet, redirect, useRouter } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
+import { ShieldCheck, BookOpen } from 'lucide-react'
 import { authClient, useSession } from '@/lib/auth-client'
 import { impersonationState } from '@/lib/impersonation'
-import { ensureRequireMe } from '@/lib/api'
+import { ensureRequireMe, api } from '@/lib/api'
 import { queryClient } from '@/lib/query'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ImpersonationBanner } from '@/components/ImpersonationBanner'
 import { FeedbackButton } from '@/components/FeedbackButton'
@@ -14,6 +17,26 @@ import { setReaderPreview, useReaderPreview } from '@/lib/view-mode'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { UserMenu } from '@/components/UserMenu'
 import { AppSidebar } from './AppSidebar'
+
+/** Shows the active library name + the user's role in a subtle badge. */
+function CurrentLibraryBadge({ role }: { role: string }) {
+  const { data: libs } = useQuery(api.membership.mine.queryOptions())
+  const active = libs?.find((l) => l.active)
+  if (!active) return null
+  const isAdmin = role === 'library_admin'
+  return (
+    <div className="hidden items-center gap-1.5 sm:flex" data-testid="current-library-badge">
+      <span className="max-w-[160px] truncate text-sm text-muted-foreground">{active.name}</span>
+      <Badge variant={isAdmin ? 'default' : 'secondary'} className="h-5 gap-1 px-1.5 text-[10px]">
+        {isAdmin ? (
+          <><ShieldCheck className="size-3" /><Trans>Admin</Trans></>
+        ) : (
+          <><BookOpen className="size-3" /><Trans>Reader</Trans></>
+        )}
+      </Badge>
+    </div>
+  )
+}
 
 export const Route = createFileRoute('/_app')({
   // Server-validated auth: requireMe throws if unauthenticated.
@@ -98,6 +121,11 @@ function AppLayout() {
         <SidebarInset>
           <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
             <SidebarTrigger data-testid="sidebar-toggle" />
+            {/* Current library + role indicator — always visible so the user
+                knows which library they're in and what they can do. */}
+            {user.role !== 'super_admin' && (
+              <CurrentLibraryBadge role={user.role} />
+            )}
             <div className="ml-auto flex items-center gap-2">
               {isLibraryAdmin && (
                 <Button
