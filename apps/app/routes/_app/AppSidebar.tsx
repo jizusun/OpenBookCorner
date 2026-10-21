@@ -14,6 +14,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 import { navGroupsFor, homeFor } from './nav'
+import { LibrarySwitcher } from './LibrarySwitcher'
 
 export interface AppSidebarProps {
   role: string | null | undefined
@@ -47,17 +48,22 @@ export function AppSidebar({ role, readerPreview }: AppSidebarProps) {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <Link
-          to={home}
-          className="flex items-center gap-2 px-2 py-1.5 font-semibold"
-        >
-          <span className="flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
-            📚
-          </span>
-          <span className="truncate group-data-[collapsible=icon]:hidden">
-            <Trans>OpenBookCorner</Trans>
-          </span>
-        </Link>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <LibrarySwitcher
+              brandFallback={
+                <Link to={home} className="flex items-center gap-2 px-2 py-1.5 font-semibold">
+                  <span className="flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
+                    📚
+                  </span>
+                  <span className="truncate group-data-[collapsible=icon]:hidden">
+                    <Trans>OpenBookCorner</Trans>
+                  </span>
+                </Link>
+              }
+            />
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
 
       <SidebarContent>

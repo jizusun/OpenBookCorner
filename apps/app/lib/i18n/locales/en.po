@@ -134,6 +134,7 @@ msgid "{total} users"
 msgstr "{total} users"
 
 #: routes/_app/admin/tenants.index.tsx:107
+#: routes/_app/welcome.tsx:129
 msgid "@acme.com, @acme.io"
 msgstr "@acme.com, @acme.io"
 
@@ -355,6 +356,10 @@ msgstr "Available · {0} of {1}"
 msgid "Available · {available} of {total}"
 msgstr "Available · {available} of {total}"
 
+#: routes/_app/discover.tsx:36
+msgid "Back"
+msgstr "Back"
+
 #: routes/_app/books/$bookId.tsx:90
 #: routes/_app/books/add.tsx:121
 msgid "Back to catalog"
@@ -458,6 +463,10 @@ msgstr "Brand color"
 msgid "Browse catalog"
 msgstr "Browse catalog"
 
+#: routes/_app/welcome.tsx:83
+msgid "Browse public libraries and request to join, or open an invite link."
+msgstr "Browse public libraries and request to join, or open an invite link."
+
 #: routes/_app/admin/feedback.tsx:16
 msgid "Bug"
 msgstr "Bug"
@@ -488,6 +497,7 @@ msgstr "Camera permission denied. Allow camera access or enter the ISBN manually
 #: routes/_app/admin/tenants.$libraryId.tsx:136
 #: routes/_app/admin/tenants.index.tsx:84
 #: routes/_app/books/$bookId.edit.tsx:144
+#: routes/_app/welcome.tsx:106
 msgid "Cancel"
 msgstr "Cancel"
 
@@ -563,6 +573,7 @@ msgid "Could not add the member."
 msgstr "Could not add the member."
 
 #: routes/_app/admin/tenants.index.tsx:38
+#: routes/_app/welcome.tsx:37
 msgid "Could not create the library."
 msgstr "Could not create the library."
 
@@ -622,12 +633,21 @@ msgstr "Cover of {0}"
 
 #: routes/_app/admin/tenants.index.tsx:77
 #: routes/_app/admin/tenants.index.tsx:79
+#: routes/_app/welcome.tsx:62
+#: routes/_app/welcome.tsx:70
+#: routes/_app/welcome.tsx:99
+#: routes/_app/welcome.tsx:101
 msgid "Create a library"
 msgstr "Create a library"
 
 #: routes/_app/admin/tenants.index.tsx:87
+#: routes/_app/welcome.tsx:109
 msgid "Create library"
 msgstr "Create library"
+
+#: routes/_app/LibrarySwitcher.tsx:77
+msgid "Create or join a library"
+msgstr "Create or join a library"
 
 #: routes/_app/admin/TenantsTable.tsx:90
 msgid "Create the first one."
@@ -638,6 +658,7 @@ msgid "Created tenant"
 msgstr "Created tenant"
 
 #: routes/_app/admin/tenants.index.tsx:87
+#: routes/_app/welcome.tsx:109
 msgid "Creating…"
 msgstr "Creating…"
 
@@ -714,6 +735,11 @@ msgstr "Description"
 msgid "Details auto-filled from Open Library. You can edit the title/author before saving."
 msgstr "Details auto-filled from Open Library. You can edit the title/author before saving."
 
+#: routes/_app/discover.tsx:24
+#: routes/_app/welcome.tsx:90
+msgid "Discover libraries"
+msgstr "Discover libraries"
+
 #: components/Toast.tsx:79
 msgid "Dismiss"
 msgstr "Dismiss"
@@ -766,6 +792,10 @@ msgstr "Email"
 msgid "Email domains"
 msgstr "Email domains"
 
+#: routes/_app/welcome.tsx:123
+msgid "Email domains (comma-separated, optional)"
+msgstr "Email domains (comma-separated, optional)"
+
 #: routes/_app/admin/tenants.index.tsx:101
 msgid "Email domains (comma-separated)"
 msgstr "Email domains (comma-separated)"
@@ -804,8 +834,8 @@ msgstr "Environment"
 msgid "Every import is recorded with its source and counts."
 msgstr "Every import is recorded with its source and counts."
 
-#: routes/_app/route.tsx:99
-#: routes/_app/route.tsx:101
+#: routes/_app/route.tsx:109
+#: routes/_app/route.tsx:111
 msgid "Exit reader preview"
 msgstr "Exit reader preview"
 
@@ -836,6 +866,7 @@ msgid "Fetch"
 msgstr "Fetch"
 
 #: routes/_app/admin/tenants.index.tsx:80
+#: routes/_app/welcome.tsx:102
 msgid "Give the library a name and the email domains its members use."
 msgstr "Give the library a name and the email domains its members use."
 
@@ -910,6 +941,10 @@ msgstr "ISBN not found online. Enter the title and author manually."
 msgid "ISBN: {0}"
 msgstr "ISBN: {0}"
 
+#: routes/_app/welcome.tsx:78
+msgid "Join a library"
+msgstr "Join a library"
+
 #: routes/_app/admin/members.$memberId.tsx:108
 msgid "Joined"
 msgstr "Joined"
@@ -917,6 +952,10 @@ msgstr "Joined"
 #: routes/_app/admin/members.tsx:119
 msgid "Joined date"
 msgstr "Joined date"
+
+#: routes/_app/LibrarySwitcher.tsx:56
+msgid "Libraries"
+msgstr "Libraries"
 
 #: routes/_app/nav.tsx:46
 msgid "Library"
@@ -927,6 +966,7 @@ msgid "Library Catalog"
 msgstr "Library Catalog"
 
 #: routes/_app/admin/tenants.index.tsx:32
+#: routes/_app/welcome.tsx:30
 msgid "Library created."
 msgstr "Library created."
 
@@ -936,6 +976,7 @@ msgstr "Library deleted."
 
 #: routes/_app/admin/settings.tsx:106
 #: routes/_app/admin/tenants.index.tsx:95
+#: routes/_app/welcome.tsx:117
 msgid "Library name"
 msgstr "Library name"
 
@@ -1109,6 +1150,10 @@ msgstr "Note"
 msgid "Nothing needs chasing right now."
 msgstr "Nothing needs chasing right now."
 
+#: routes/_app/discover.tsx:32
+msgid "Nothing to show yet"
+msgstr "Nothing to show yet"
+
 #: components/Toast.tsx:46
 msgid "Notifications"
 msgstr "Notifications"
@@ -1118,7 +1163,7 @@ msgstr "Notifications"
 msgid "on behalf of {0}"
 msgstr "on behalf of {0}"
 
-#: routes/_app/AppSidebar.tsx:58
+#: routes/_app/AppSidebar.tsx:60
 msgid "OpenBookCorner"
 msgstr "OpenBookCorner"
 
@@ -1192,7 +1237,7 @@ msgstr "Plan"
 msgid "Preview — {0}"
 msgstr "Preview — {0}"
 
-#: routes/_app/route.tsx:99
+#: routes/_app/route.tsx:109
 msgid "Preview as a reader"
 msgstr "Preview as a reader"
 
@@ -1213,6 +1258,14 @@ msgstr "Profile"
 #: routes/_app/profile.tsx:59
 msgid "Profile updated."
 msgstr "Profile updated."
+
+#: routes/_app/discover.tsx:27
+msgid "Public libraries you can request to join will appear here."
+msgstr "Public libraries you can request to join will appear here."
+
+#: routes/_app/discover.tsx:33
+msgid "Public library discovery is coming soon."
+msgstr "Public library discovery is coming soon."
 
 #: routes/_app/books/$bookId.tsx:138
 msgid "Published"
@@ -1246,7 +1299,7 @@ msgstr "Read-only system information (super admin)."
 msgid "Reader"
 msgstr "Reader"
 
-#: routes/_app/route.tsx:101
+#: routes/_app/route.tsx:111
 msgid "Reader preview"
 msgstr "Reader preview"
 
@@ -1488,6 +1541,10 @@ msgstr "Sort"
 msgid "Source: {0}"
 msgstr "Source: {0}"
 
+#: routes/_app/welcome.tsx:67
+msgid "Start a new library and become its admin."
+msgstr "Start a new library and become its admin."
+
 #: routes/_app/admin/AuditTable.tsx:15
 msgid "Started impersonation"
 msgstr "Started impersonation"
@@ -1717,6 +1774,10 @@ msgstr "We could not process this return. It may already be returned."
 msgid "Welcome back"
 msgstr "Welcome back"
 
+#: routes/_app/welcome.tsx:51
+msgid "Welcome to OpenBookCorner"
+msgstr "Welcome to OpenBookCorner"
+
 #: routes/_app/admin/feedback.tsx:44
 msgid "What readers are asking for — use this to prioritize features."
 msgstr "What readers are asking for — use this to prioritize features."
@@ -1760,6 +1821,10 @@ msgstr "You do not have permission to add books."
 #: lib/errors.ts:14
 msgid "You have an overdue book. Please return it before borrowing more."
 msgstr "You have an overdue book. Please return it before borrowing more."
+
+#: routes/_app/welcome.tsx:54
+msgid "You're not part of any library yet. Create one, or join an existing one."
+msgstr "You're not part of any library yet. Create one, or join an existing one."
 
 #: lib/errors.ts:13
 msgid "You've reached your borrowing limit. Return a book before borrowing another."
