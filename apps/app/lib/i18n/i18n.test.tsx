@@ -3,21 +3,23 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { render, screen, waitFor, cleanup } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { i18n } from '@lingui/core'
-import { Trans, useLingui } from '@lingui/react/macro'
+import { Trans } from '@lingui/react/macro'
 
 import { I18nProvider, useLocale } from './index'
 import { messages as zhMessages } from './locales/zh'
 
 function Probe() {
-  const { t } = useLingui()
   const { locale, setLocale } = useLocale()
+  const userName = 'Ada'
   return (
     <div>
       <span data-testid="locale">{locale}</span>
       <span data-testid="title">
         <Trans>Welcome back</Trans>
       </span>
-      <span data-testid="greeting">{t`Signed in as ${'Ada'}`}</span>
+      <span data-testid="greeting">
+        <Trans>Signed in as {userName}</Trans>
+      </span>
       <button onClick={() => setLocale('en')}>en</button>
       <button onClick={() => setLocale('zh')}>zh</button>
     </div>

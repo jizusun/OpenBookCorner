@@ -11,7 +11,11 @@ async function login(page: Page, email: string, password: string) {
 }
 
 async function logout(page: Page) {
-  await page.getByRole('button', { name: 'Sign out' }).click()
+  const menu = page.getByTestId('user-menu')
+  await menu.click()
+  const item = page.getByTestId('logout')
+  await item.waitFor({ state: 'visible' })
+  await item.click()
   await expect(page).toHaveURL(/\/login$/)
 }
 
