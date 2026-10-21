@@ -584,7 +584,7 @@ msgstr "Code"
 msgid "Configuration"
 msgstr "Configuration"
 
-#: routes/signup.tsx:109
+#: routes/signup.tsx:96
 msgid "Confirm password"
 msgstr "Confirm password"
 
@@ -613,7 +613,7 @@ msgstr "Could not add the book. Please check the fields and try again."
 msgid "Could not add the member."
 msgstr "Could not add the member."
 
-#: routes/signup.tsx:41
+#: routes/signup.tsx:40
 msgid "Could not create account. That email may already be registered."
 msgstr "Could not create account. That email may already be registered."
 
@@ -693,11 +693,11 @@ msgstr "Create a library"
 msgid "Create a link to share with prospective members."
 msgstr "Create a link to share with prospective members."
 
-#: routes/signup.tsx:127
+#: routes/signup.tsx:114
 msgid "Create account"
 msgstr "Create account"
 
-#: routes/signup.tsx:54
+#: routes/signup.tsx:53
 msgid "Create an account"
 msgstr "Create an account"
 
@@ -734,7 +734,7 @@ msgstr "Created tenant"
 #: routes/_app/admin/invites.tsx:113
 #: routes/_app/admin/tenants.index.tsx:87
 #: routes/_app/welcome.tsx:109
-#: routes/signup.tsx:123
+#: routes/signup.tsx:110
 msgid "Creating…"
 msgstr "Creating…"
 
@@ -872,7 +872,7 @@ msgstr "Edit Book"
 #: routes/_app/admin/UsersTable.tsx:44
 #: routes/_app/profile.tsx:99
 #: routes/login.tsx:214
-#: routes/signup.tsx:84
+#: routes/signup.tsx:71
 msgid "Email"
 msgstr "Email"
 
@@ -911,7 +911,7 @@ msgstr "Enable login for {0}"
 msgid "Enabled"
 msgstr "Enabled"
 
-#: routes/signup.tsx:60
+#: routes/signup.tsx:59
 msgid "Enter your details to create an account. Already have an account? <0>Sign in</0>"
 msgstr "Enter your details to create an account. Already have an account? <0>Sign in</0>"
 
@@ -1233,7 +1233,6 @@ msgstr "My Books"
 #: routes/_app/admin/tenants.$libraryId.tsx:317
 #: routes/_app/admin/TenantsTable.tsx:28
 #: routes/_app/admin/UsersTable.tsx:43
-#: routes/signup.tsx:72
 msgid "Name"
 msgstr "Name"
 
@@ -1397,11 +1396,11 @@ msgid "Pages"
 msgstr "Pages"
 
 #: routes/login.tsx:225
-#: routes/signup.tsx:96
+#: routes/signup.tsx:83
 msgid "Password"
 msgstr "Password"
 
-#: routes/signup.tsx:29
+#: routes/signup.tsx:28
 msgid "Passwords don't match."
 msgstr "Passwords don't match."
 
@@ -2129,10 +2128,6 @@ msgstr "You've reached your borrowing limit. Return a book before borrowing anot
 #: components/FeedbackButton.tsx:111
 msgid "Your feedback"
 msgstr "Your feedback"
-
-#: routes/signup.tsx:79
-msgid "Your name"
-msgstr "Your name"
 
 #: routes/join.$token.tsx:61
 msgid "Your request will need approval from the library admin."
