@@ -29,7 +29,7 @@ export NO_PROXY=localhost,127.0.0.1
 unset https_proxy http_proxy HTTPS_PROXY HTTP_PROXY 2>/dev/null || true
 
 echo "==> [1/4] vite build"
-( cd "$APP_DIR" && node_modules/.bin/tsr generate >/dev/null 2>&1; bun run build >/tmp/obc-build.log 2>&1 ) \
+( cd "$APP_DIR" && node_modules/.bin/tsr generate >/dev/null 2>&1 && bun run build >/tmp/obc-build.log 2>&1 ) \
   && echo "    build ok" || { echo "    BUILD FAILED:"; tail -15 /tmp/obc-build.log; exit 1; }
 
 echo "==> [2/4] restart worker on :$PORT"
@@ -55,7 +55,7 @@ for i in $(seq 1 30); do
 done
 [ "$up" = "1" ] || { echo "    WORKER DID NOT COME UP:"; grep -iE 'error|ready on' /tmp/obc-preview.log | tail -5; exit 1; }
 
-echo "==> [3/4] ensure forwarder 0.0.0.0:$PUB -> 127.0.0.1:$PORT"
+echo "==> [3/4] ensure forwarder on the tailscale IP :$PUB -> 127.0.0.1:$PORT"
 if [ "$( (ss -ltn 2>/dev/null || netstat -ltn 2>/dev/null) | grep -c ":$PUB" )" = "0" ]; then
   cat > "$FWD" <<'JS'
 const net=require('net');
@@ -63,7 +63,7 @@ const [,,IP,PORT,DST]=process.argv;
 net.createServer(c=>{const u=net.connect(Number(DST),'127.0.0.1');c.pipe(u);u.pipe(c);c.on('error',()=>u.destroy());u.on('error',()=>c.destroy());})
 .listen(Number(PORT),IP,()=>console.log(`fwd ${IP}:${PORT} -> 127.0.0.1:${DST}`));
 JS
-  setsid node "$FWD" 0.0.0.0 "$PUB" "$PORT" >/tmp/obc-fwd.log 2>&1 </dev/null &
+  TS_IP=$(tailscale ip -4 2>/dev/null | head -1 || echo 127.0.0.1); setsid node "$FWD" "$TS_IP" "$PUB" "$PORT" >/tmp/obc-fwd.log 2>&1 </dev/null &
   disown
   sleep 2
   echo "    forwarder started"

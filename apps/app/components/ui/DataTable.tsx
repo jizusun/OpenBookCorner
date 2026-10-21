@@ -137,9 +137,9 @@ export function DataTable<T>(props: DataTableProps<T>) {
   const faceted = toolbar?.faceted ?? []
   const facetValueById = useMemo(() => {
     const m = new Map<string, (row: T) => string>()
-    for (const f of faceted) m.set(f.columnId, f.value)
+    for (const f of toolbar?.faceted ?? []) m.set(f.columnId, f.value)
     return m
-  }, [faceted])
+  }, [toolbar?.faceted])
 
   const tableColumns = useMemo<ColumnDef<T>[]>(() => {
     const defs: ColumnDef<T>[] = []
@@ -472,7 +472,6 @@ function SortHeader<T>({ table, columnId, children }: { table: AnyTable<T>; colu
       type="button"
       className="-ml-1 inline-flex items-center gap-1 rounded px-1 py-0.5 hover:bg-accent/60"
       onClick={() => col.toggleSorting()}
-      aria-sort={sorted === 'asc' ? 'ascending' : sorted === 'desc' ? 'descending' : 'none'}
       data-testid={`sort-${columnId}`}
     >
       {children}
@@ -514,8 +513,21 @@ function VisibleTable<T>({
             <TableRow key={hg.id}>
               {hg.headers.map((h) => {
                 const node = flexRender(h.column.columnDef.header, h.getContext())
+                const sorted = h.column.getIsSorted()
                 return (
-                  <TableHead key={h.id} className="font-medium text-muted-foreground">
+                  <TableHead
+                    key={h.id}
+                    className="font-medium text-muted-foreground"
+                    aria-sort={
+                      !h.column.getCanSort()
+                        ? undefined
+                        : sorted === 'asc'
+                          ? 'ascending'
+                          : sorted === 'desc'
+                            ? 'descending'
+                            : 'none'
+                    }
+                  >
                     {h.column.getCanSort() ? (
                       <SortHeader table={table} columnId={h.column.id}>
                         {node}

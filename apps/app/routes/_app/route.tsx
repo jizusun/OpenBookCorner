@@ -111,9 +111,9 @@ function AppLayout() {
               />
             </div>
           </header>
-          <main className="mx-auto w-full max-w-5xl flex-1 p-4">
+          <div className="mx-auto w-full max-w-5xl flex-1 p-4">
             <Outlet />
-          </main>
+          </div>
         </SidebarInset>
       </SidebarProvider>
       <FeedbackButton />

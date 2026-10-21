@@ -22,6 +22,7 @@ function AdminBooksPage() {
   const { data, isLoading } = useQuery(api.admin.books.queryOptions({ page: 1, limit: ALL }))
   const rows = (data?.items ?? []) as AdminBookRow[]
   const total = data?.total ?? rows.length
+  const shown = rows.length
 
   return (
     <div className="space-y-6">
@@ -37,6 +38,14 @@ function AdminBooksPage() {
       {!isLoading && (
         <p className="text-sm text-muted-foreground">
           <Trans>{total} books</Trans>
+          {total > rows.length ? (
+            <>
+              {' · '}
+              <span className="text-amber-600 dark:text-amber-500">
+                <Trans>showing the first {shown} — refine upstream search to see the rest</Trans>
+              </span>
+            </>
+          ) : null}
         </p>
       )}
 

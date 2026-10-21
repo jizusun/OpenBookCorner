@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { authClient } from '@/lib/auth-client'
@@ -31,6 +31,7 @@ function roleLabel(role: string) {
 
 function ProfilePage() {
   const { user } = Route.useRouteContext()
+  const router = useRouter()
   const queryClient = useQueryClient()
   const toast = useToast()
   const { t } = useLingui()
@@ -48,9 +49,13 @@ function ProfilePage() {
         toast.error(res.error.message ?? t`Could not update your profile.`)
         return
       }
-      // Refresh the cached identity so the sidebar + header pick up the new name.
-      await queryClient.invalidateQueries(api.auth.requireMe.queryOptions())
+      // The sidebar/header/profile read `user` from the route context (populated
+      // by the route's beforeLoad via ensureRequireMe). Invalidating the query
+      // cache alone won't refresh that context, so: refetch the identity, then
+      // invalidate the router to re-run beforeLoad with the fresh cached value.
       await queryClient.invalidateQueries({ queryKey: ['auth'] })
+      await queryClient.refetchQueries(api.auth.requireMe.queryOptions())
+      await router.invalidate()
       toast.success(t`Profile updated.`)
     } catch {
       toast.error(t`Could not update your profile.`)
