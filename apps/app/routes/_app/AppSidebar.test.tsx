@@ -84,6 +84,7 @@ describe('AppSidebar', () => {
   it('user menu triggers logout', async () => {
     const props = renderSidebar()
     await userEvent.click(await screen.findByTestId('user-menu'))
+    expect(await screen.findByTestId('profile-link')).toBeInTheDocument()
     await userEvent.click(await screen.findByTestId('logout'))
     expect(props.onLogout).toHaveBeenCalledTimes(1)
   })
