@@ -19,7 +19,6 @@ function SignUpPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
-  const [name, setName] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
 
@@ -32,7 +31,7 @@ function SignUpPage() {
     setError(null)
     setPending(true)
     try {
-      await signUp.email({ email, password, name: name.trim() || email.split('@')[0]! })
+      await signUp.email({ email, password, name: email.split('@')[0]! })
       queryClient.clear()
       setReaderPreview(false)
       // New user has no active library → welcome screen (ADR 0009).
@@ -68,18 +67,6 @@ function SignUpPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="su-name"><Trans>Name</Trans></Label>
-              <Input
-                id="su-name"
-                type="text"
-                autoComplete="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder={t`Your name`}
-                data-testid="signup-name"
-              />
-            </div>
             <div className="space-y-2">
               <Label htmlFor="su-email"><Trans>Email</Trans></Label>
               <Input
