@@ -6,22 +6,28 @@ import { fetchConfig, isDemoVisible } from '@/lib/config'
 import { queryClient } from '@/lib/query'
 import { setReaderPreview } from '@/lib/view-mode'
 import { Trans, useLingui } from '@lingui/react/macro'
+import { Loader2, LogIn } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { PasswordInput } from '@/components/password-input'
 import { LanguageToggle } from '@/components/LanguageToggle'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
 
 export const Route = createFileRoute('/login')({ component: () => <LoginPage /> })
 
 const DEMO_PASSWORD = 'password123'
 
-/**
- * Demo accounts for the click-to-fill helper. NON-PRODUCTION only (gated by the
- * caller). Scoped by tenant slug: a tenant login page shows only that tenant's
- * two accounts; the apex login shows all (incl. super admin). Credentials match
- * the seed (db/scripts/seed-users.sh).
- */
 interface DemoUser {
   label: string
   email: string
@@ -40,7 +46,6 @@ const SUPER_DEMO: DemoUser = { label: 'Super Admin', email: 'super@demo.test' }
 
 function demoUsersFor(slug: string | undefined): DemoUser[] {
   if (slug) return DEMO_BY_SLUG[slug] ?? []
-  // Apex: all tenants' accounts + the super admin.
   return [SUPER_DEMO, ...DEMO_BY_SLUG.acme!, ...DEMO_BY_SLUG.globex!]
 }
 
@@ -77,24 +82,12 @@ function DemoAccounts({
   )
 }
 
-/**
- * Login header. When `branding` is present (the request Host resolved to a
- * tenant subdomain), show the tenant's logo + name + welcome line. Otherwise
- * show the standard unbranded "Welcome back" header (apex / unknown host).
- *
- * Purely presentational — it selects WHICH branding to show, never what the
- * server authorizes.
- */
 export function LoginHeader({ branding }: { branding: TenantBranding | null }) {
   if (branding) {
     return (
       <div className="min-w-0">
         {branding.logoUrl && (
-          <img
-            src={branding.logoUrl}
-            alt={branding.name}
-            className="mb-3 h-10 w-auto object-contain"
-          />
+          <img src={branding.logoUrl} alt={branding.name} className="mb-3 h-10 w-auto object-contain" />
         )}
         <CardTitle data-testid="branded-name">{branding.name}</CardTitle>
         <p className="text-sm text-muted-foreground">
@@ -105,87 +98,67 @@ export function LoginHeader({ branding }: { branding: TenantBranding | null }) {
   }
   return (
     <div>
-      <CardTitle>
-        <Trans>Welcome back</Trans>
-      </CardTitle>
-      <p className="text-sm text-muted-foreground">
-        <Trans>Sign in to your library</Trans>
-      </p>
+      <CardTitle><Trans>Welcome back</Trans></CardTitle>
+      <p className="text-sm text-muted-foreground"><Trans>Sign in to your library</Trans></p>
     </div>
   )
 }
 
-/** Demo accounts helper — only shown on the standard (unbranded) login. */
+const loginSchema = z.object({
+  email: z.string().email({ message: 'Please enter a valid email.' }),
+  password: z.string().min(1, 'Please enter your password.'),
+})
+type LoginValues = z.infer<typeof loginSchema>
+
+/**
+ * Login form matching shadcn-admin's UserAuthForm:
+ * react-hook-form + zod (FormMessage under each field), PasswordInput
+ * (Eye/EyeOff toggle), Loader2 + LogIn icon on submit button.
+ */
 export function LoginPage({ slug }: { slug?: string } = {}) {
   const router = useRouter()
   const { t } = useLingui()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [pending, setPending] = useState(false)
-  // Tenant branding for THIS host, resolved pre-auth. `null` = apex/unknown host
-  // → standard unbranded login (with demo accounts).
   const [branding, setBranding] = useState<TenantBranding | null>(null)
-  // Whether to show the click-to-fill demo accounts (NON-PRODUCTION only; fails
-  // closed to hidden if the config can't be resolved).
   const [demoVisible, setDemoVisible] = useState(false)
+
+  const form = useForm<LoginValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: '', password: '' },
+  })
 
   useEffect(() => {
     let active = true
-    void fetchBranding(slug).then((b) => {
-      if (active) setBranding(b)
-    })
-    void fetchConfig().then((cfg) => {
-      if (active) setDemoVisible(isDemoVisible(cfg))
-    })
-    return () => {
-      active = false
-    }
+    void fetchBranding(slug).then((b) => { if (active) setBranding(b) })
+    void fetchConfig().then((cfg) => { if (active) setDemoVisible(isDemoVisible(cfg)) })
+    return () => { active = false }
   }, [slug])
 
   function fillDemo(demoEmail: string, demoPassword: string) {
-    setEmail(demoEmail)
-    setPassword(demoPassword)
-    setError(null)
+    form.setValue('email', demoEmail)
+    form.setValue('password', demoPassword)
+    form.clearErrors()
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setError(null)
-    setPending(true)
+  async function onSubmit(data: LoginValues) {
     try {
-      const res = await signIn.email({ email, password })
+      const res = await signIn.email({ email: data.email, password: data.password })
       if (res.error) {
-        setError(t`That email or password doesn’t match. Please try again.`)
+        form.setError('email', { message: t`That email or password doesn't match. Please try again.` })
         return
       }
-      // Clear any cached queries from a PREVIOUS session before routing. Without
-      // this, the cached `auth.requireMe` (resolved via ensureQueryData with a
-      // staleTime) would serve the prior user's identity to the new user — e.g.
-      // a reader signing in right after an admin would be shown as that admin.
+      // Clear cached queries from a previous session before routing.
       queryClient.clear()
-      // Route to the role's default view and reset the stored view mode so a
-      // stale value from a previous session doesn't misroute. Branding is
-      // presentational only — it does NOT change this role-based routing.
-      const role = (res.data?.user as { role?: string } | undefined)?.role
-      // Role determines the surface; clear any stale reader-preview from a prior
-      // session so a library admin starts in the admin surface.
       setReaderPreview(false)
-      if (role === 'super_admin') {
-        await router.navigate({ to: '/admin/overview' })
-      } else if (role === 'library_admin') {
-        await router.navigate({ to: '/books' })
-      } else {
-        await router.navigate({ to: '/my-books' })
-      }
+      const role = (res.data?.user as { role?: string } | undefined)?.role
+      if (role === 'super_admin') await router.navigate({ to: '/admin/overview' })
+      else if (role === 'library_admin') await router.navigate({ to: '/books' })
+      else await router.navigate({ to: '/my-books' })
     } catch {
-      setError(t`That email or password doesn’t match. Please try again.`)
-    } finally {
-      setPending(false)
+      form.setError('email', { message: t`That email or password doesn't match. Please try again.` })
     }
   }
 
-  // Accent the primary button with the tenant's brand color when present.
+  const isLoading = form.formState.isSubmitting
   const accentStyle = branding?.brandColor
     ? ({ backgroundColor: branding.brandColor } as React.CSSProperties)
     : undefined
@@ -199,8 +172,8 @@ export function LoginPage({ slug }: { slug?: string } = {}) {
             <LanguageToggle />
           </div>
           <p className="text-sm text-muted-foreground">
-            <Trans>Enter your email and password to sign in.</Trans>{' '}
             <Trans>
+              Enter your email and password to sign in.{' '}
               Don't have an account?{' '}
               <Link to="/signup" className="underline underline-offset-4 hover:text-primary">
                 Sign up
@@ -209,44 +182,58 @@ export function LoginPage({ slug }: { slug?: string } = {}) {
           </p>
         </CardHeader>
         <CardContent>
-          {/* method="post" is a semantic hint for password managers (Bitwarden,
-              1Password, etc.) that this is a login form. The real submission is
-              handled by onSubmit; the browser's default POST is prevented. */}
-          <form onSubmit={handleSubmit} method="post" className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email"><Trans>Email</Trans></Label>
-              <Input
-                id="email"
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} method="post" className="grid gap-3">
+              <FormField
+                control={form.control}
                 name="email"
-                type="email"
-                autoComplete="username"
-                placeholder="name@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel><Trans>Email</Trans></FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="name@example.com"
+                        autoComplete="username"
+                        data-testid="email-input"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password"><Trans>Password</Trans></Label>
-              <Input
-                id="password"
+              <FormField
+                control={form.control}
                 name="password"
-                type="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel><Trans>Password</Trans></FormLabel>
+                    <FormControl>
+                      <PasswordInput
+                        placeholder="••••••••"
+                        autoComplete="current-password"
+                        data-testid="password-input"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button type="submit" className="w-full" disabled={pending} style={accentStyle}
-              data-testid="signin-submit">
-              {pending ? <Trans>Signing in…</Trans> : <Trans>Sign in</Trans>}
-            </Button>
-          </form>
+              <Button
+                className="mt-2 w-full"
+                disabled={isLoading}
+                style={accentStyle}
+                data-testid="signin-submit"
+              >
+                {isLoading ? <Loader2 className="animate-spin" /> : <LogIn className="size-4" />}
+                <Trans>Sign in</Trans>
+              </Button>
+            </form>
+          </Form>
 
-          {/* Click-to-fill demo accounts — ONLY in non-production. Apex shows
-              all (incl. super admin); a tenant page shows only that tenant's. */}
+          {/* Click-to-fill demo accounts — ONLY in non-production. */}
           {demoVisible && <DemoAccounts slug={slug} onFill={fillDemo} />}
         </CardContent>
       </Card>
