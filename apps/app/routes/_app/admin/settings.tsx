@@ -31,6 +31,20 @@ const FIELD_TYPES = [
   { value: 'select', label: 'Select' },
 ] as const
 
+/** Common fields derived from 番薯 member schema — admins can pick one preset
+ *  instead of typing key/label from scratch. */
+const FIELD_PRESETS = [
+  { key: 'employee_no', label: '工号', type: 'text' as const },
+  { key: 'department', label: '部门', type: 'text' as const },
+  { key: 'student_no', label: '学号', type: 'text' as const },
+  { key: 'class_name', label: '班级', type: 'text' as const },
+  { key: 'company_email', label: '公司邮箱', type: 'email' as const },
+  { key: 'phone', label: '手机号', type: 'text' as const },
+  { key: 'member_no', label: '会员号', type: 'text' as const },
+  { key: 'room_no', label: '房号', type: 'text' as const },
+  { key: 'address', label: '地址', type: 'text' as const },
+]
+
 function SettingsPage() {
   const queryClient = useQueryClient()
   const toast = useToast()
@@ -205,6 +219,22 @@ function SettingsPage() {
         }>
         <form id="join-field-form" className="space-y-4"
           onSubmit={(e) => { e.preventDefault(); addField.mutate({ key: fKey.trim(), label: fLabel.trim(), type: fType, required: fRequired, verifyEmail: fVerify }) }}>
+          {/* Presets: one-click fill from common 番薯 member fields */}
+          <div className="space-y-1.5">
+            <p className="text-xs text-muted-foreground"><Trans>Common fields</Trans></p>
+            <div className="flex flex-wrap gap-1.5">
+              {FIELD_PRESETS.map((p) => (
+                <button
+                  key={p.key}
+                  type="button"
+                  className="rounded-md border bg-muted/60 px-2 py-1 text-xs hover:bg-muted"
+                  onClick={() => { setFKey(p.key); setFLabel(p.label); setFType(p.type); setFVerify(p.type === 'email') }}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
               <Label htmlFor="jf-key"><Trans>Field key</Trans></Label>

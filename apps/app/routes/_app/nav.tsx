@@ -26,7 +26,7 @@ export interface NavItem {
 }
 
 export interface NavGroup {
-  id: 'system' | 'library' | 'reader'
+  id: 'system' | 'library' | 'library-members' | 'library-more' | 'reader'
   label: ReactNode
   items: NavItem[]
 }
@@ -44,18 +44,32 @@ const SYSTEM: NavGroup = {
   ],
 }
 
-const LIBRARY: NavGroup = {
+const LIBRARY_MAIN: NavGroup = {
   id: 'library',
   label: <Trans>Library</Trans>,
   items: [
     { to: '/books', label: <Trans>Catalog</Trans>, icon: BookOpen },
     { to: '/admin/members', label: <Trans>Readers</Trans>, icon: Users },
     { to: '/admin/overdue', label: <Trans>Overdue</Trans>, icon: ListChecks },
-    { to: '/admin/settings', label: <Trans>Settings</Trans>, icon: Settings },
-    { to: '/admin/feedback', label: <Trans>Feedback</Trans>, icon: MessageSquare },
+  ],
+}
+
+const LIBRARY_MEMBERS: NavGroup = {
+  id: 'library-members',
+  label: <Trans>Members</Trans>,
+  items: [
     { to: '/admin/join-requests', label: <Trans>Join requests</Trans>, icon: MailOpen },
     { to: '/admin/invites', label: <Trans>Invite links</Trans>, icon: Link2 },
+  ],
+}
+
+const LIBRARY_MORE: NavGroup = {
+  id: 'library-more',
+  label: <Trans>More</Trans>,
+  items: [
+    { to: '/admin/feedback', label: <Trans>Feedback</Trans>, icon: MessageSquare },
     { to: '/admin/activity', label: <Trans>Activity</Trans>, icon: ClipboardList },
+    { to: '/admin/settings', label: <Trans>Settings</Trans>, icon: Settings },
     { to: '/admin/import', label: <Trans>Import</Trans>, icon: Upload },
   ],
 }
@@ -83,7 +97,7 @@ export function navGroupsFor(
   readerPreview: boolean,
 ): NavGroup[] {
   if (role === 'super_admin') return [SYSTEM]
-  if (role === 'library_admin') return readerPreview ? [READER] : [LIBRARY]
+  if (role === 'library_admin') return readerPreview ? [READER] : [LIBRARY_MAIN, LIBRARY_MEMBERS, LIBRARY_MORE]
   return [READER]
 }
 
