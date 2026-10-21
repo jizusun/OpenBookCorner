@@ -205,7 +205,7 @@ test.describe('Admin', () => {
   test('admin can open Settings', async ({ page }) => {
     await login(page, 'admin@demo.test', 'Library Catalog')
     await page.getByRole('link', { name: 'Settings' }).first().click()
-    await expect(page.getByRole('heading', { name: 'Library Settings' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible()
     await expect(page.getByLabel('Library name')).toBeVisible()
   })
 
