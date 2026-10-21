@@ -76,11 +76,20 @@ function TenantsIndexPage() {
         onClose={() => setDialogOpen(false)}
         ariaLabel={t`Create a library`}
         data-testid="create-tenant-dialog"
+        title={<Trans>Create a library</Trans>}
+        description={<Trans>Give the library a name and the email domains its members use.</Trans>}
+        footer={
+          <>
+            <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
+              <Trans>Cancel</Trans>
+            </Button>
+            <Button type="submit" form="create-tenant-form" disabled={create.isPending}>
+              {create.isPending ? <Trans>Creating…</Trans> : <Trans>Create library</Trans>}
+            </Button>
+          </>
+        }
       >
-        <form onSubmit={submit} className="space-y-4" data-testid="create-tenant-form">
-          <h2 className="text-lg font-semibold">
-            <Trans>Create a library</Trans>
-          </h2>
+        <form onSubmit={submit} className="space-y-4" data-testid="create-tenant-form" id="create-tenant-form">
           <div className="space-y-2">
             <Label htmlFor="t-name">
               <Trans>Library name</Trans>
@@ -98,14 +107,6 @@ function TenantsIndexPage() {
               placeholder={t`@acme.com, @acme.io`}
               required
             />
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button type="button" variant="ghost" onClick={() => setDialogOpen(false)}>
-              <Trans>Cancel</Trans>
-            </Button>
-            <Button type="submit" disabled={create.isPending}>
-              {create.isPending ? <Trans>Creating…</Trans> : <Trans>Create library</Trans>}
-            </Button>
           </div>
         </form>
       </Modal>

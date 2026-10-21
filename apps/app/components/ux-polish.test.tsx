@@ -10,6 +10,16 @@ import { RouteProgress } from '@/components/RouteProgress'
 import { SlowHint } from '@/components/ui/skeleton'
 import { I18nProvider } from '@/lib/i18n'
 
+// Radix (AlertDialog) needs these in jsdom
+if (typeof globalThis.ResizeObserver === 'undefined') {
+  // @ts-expect-error test shim
+  globalThis.ResizeObserver = class { observe() {} unobserve() {} disconnect() {} }
+}
+// @ts-expect-error test shim
+Element.prototype.hasPointerCapture = Element.prototype.hasPointerCapture || (() => false)
+// @ts-expect-error test shim
+Element.prototype.scrollIntoView = Element.prototype.scrollIntoView || (() => {})
+
 describe('RouteProgress (transition indicator)', () => {
   it('renders a slim top progress bar with a status role', () => {
     render(
@@ -115,10 +125,10 @@ describe('ConfirmDialog', () => {
     const { rerender } = render(
       <ConfirmDialog open={false} title="Delete?" onConfirm={() => {}} onCancel={() => {}} />,
     )
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
 
     rerender(<ConfirmDialog open title="Delete?" onConfirm={() => {}} onCancel={() => {}} />)
-    expect(screen.getByRole('dialog', { name: 'Delete?' })).toBeInTheDocument()
+    expect(screen.getByRole('alertdialog', { name: 'Delete?' })).toBeInTheDocument()
   })
 
   it('calls onConfirm and onCancel', async () => {

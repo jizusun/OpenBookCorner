@@ -393,7 +393,7 @@ test.describe('Feedback (any role)', () => {
     await expect(textarea).toHaveValue(msg)
     await expect(textarea).toBeFocused()
 
-    await page.getByTestId('feedback-form').getByRole('button', { name: 'Send' }).click()
+    await page.getByRole('button', { name: 'Send' }).click()
     await expect(page.getByText(/Thanks for your feedback/i)).toBeVisible()
   })
 
@@ -407,7 +407,7 @@ test.describe('Feedback (any role)', () => {
     await textarea.click()
     await textarea.pressSequentially('The Three-Body Problem', { delay: 15 })
     await expect(textarea).toHaveValue('The Three-Body Problem')
-    await page.getByTestId('feedback-form').getByRole('button', { name: 'Send' }).click()
+    await page.getByRole('button', { name: 'Send' }).click()
     await expect(page.getByText(/Thanks for your feedback/i)).toBeVisible()
   })
 })
