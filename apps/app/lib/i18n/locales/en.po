@@ -197,7 +197,7 @@ msgid "Active"
 msgstr "Active"
 
 #: routes/_app/admin/activity.tsx:28
-#: routes/_app/nav.tsx:56
+#: routes/_app/nav.tsx:58
 msgid "Activity"
 msgstr "Activity"
 
@@ -213,6 +213,10 @@ msgstr "Add"
 msgid "Add a book or adjust the filters."
 msgstr "Add a book or adjust the filters."
 
+#: routes/_app/admin/join-form.tsx:103
+msgid "Add a field"
+msgstr "Add a field"
+
 #: routes/_app/admin/tenants.$libraryId.tsx:187
 #: routes/_app/admin/tenants.$libraryId.tsx:260
 msgid "Add admin"
@@ -225,12 +229,22 @@ msgstr "Add admin"
 msgid "Add Book"
 msgstr "Add Book"
 
+#: routes/_app/admin/join-form.tsx:70
+#: routes/_app/admin/join-form.tsx:109
+msgid "Add field"
+msgstr "Add field"
+
+#: routes/_app/admin/join-form.tsx:101
+msgid "Add join form field"
+msgstr "Add join form field"
+
 #: routes/_app/admin/members.tsx:89
 #: routes/_app/admin/members.tsx:260
 msgid "Add reader"
 msgstr "Add reader"
 
 #: routes/_app/admin/AddUserDialog.tsx:55
+#: routes/_app/admin/join-form.tsx:109
 #: routes/_app/books/add.tsx:188
 msgid "Adding…"
 msgstr "Adding…"
@@ -315,6 +329,14 @@ msgstr "All users across every tenant (super admin)."
 msgid "Allow renewals/extensions"
 msgstr "Allow renewals/extensions"
 
+#: routes/_app/admin/join-form.tsx:76
+msgid "Anyone can request to join without filling extra info."
+msgstr "Anyone can request to join without filling extra info."
+
+#: routes/_app/admin/join-form.tsx:104
+msgid "Applicants must fill this field before submitting a request."
+msgstr "Applicants must fill this field before submitting a request."
+
 #: routes/_app/admin/join-requests.tsx:89
 msgid "Approve"
 msgstr "Approve"
@@ -329,7 +351,7 @@ msgid "At least 8 characters"
 msgstr "At least 8 characters"
 
 #: routes/_app/admin/audit.tsx:70
-#: routes/_app/nav.tsx:41
+#: routes/_app/nav.tsx:42
 msgid "Audit log"
 msgstr "Audit log"
 
@@ -360,7 +382,7 @@ msgstr "Available · {0} of {1}"
 msgid "Available · {available} of {total}"
 msgstr "Available · {available} of {total}"
 
-#: routes/_app/discover.tsx:51
+#: routes/_app/discover.tsx:133
 msgid "Back"
 msgstr "Back"
 
@@ -402,7 +424,7 @@ msgstr "Book suggestion"
 #: routes/_app/admin/overview.tsx:65
 #: routes/_app/admin/tenants.$libraryId.tsx:152
 #: routes/_app/admin/TenantsTable.tsx:52
-#: routes/_app/nav.tsx:40
+#: routes/_app/nav.tsx:41
 msgid "Books"
 msgstr "Books"
 
@@ -498,9 +520,11 @@ msgstr "Camera permission denied. Allow camera access or enter the ISBN manually
 
 #: components/FeedbackButton.tsx:86
 #: routes/_app/admin/AddUserDialog.tsx:52
+#: routes/_app/admin/join-form.tsx:107
 #: routes/_app/admin/tenants.$libraryId.tsx:139
 #: routes/_app/admin/tenants.index.tsx:84
 #: routes/_app/books/$bookId.edit.tsx:144
+#: routes/_app/discover.tsx:77
 #: routes/_app/welcome.tsx:106
 msgid "Cancel"
 msgstr "Cancel"
@@ -513,8 +537,8 @@ msgstr "Cancel scan"
 msgid "Cannot delete a library that still has members or books."
 msgstr "Cannot delete a library that still has members or books."
 
-#: routes/_app/nav.tsx:50
-#: routes/_app/nav.tsx:67
+#: routes/_app/nav.tsx:51
+#: routes/_app/nav.tsx:69
 msgid "Catalog"
 msgstr "Catalog"
 
@@ -617,7 +641,7 @@ msgstr "Could not send feedback. Please try again."
 msgid "Could not start the scanner. Enter the ISBN manually."
 msgstr "Could not start the scanner. Enter the ISBN manually."
 
-#: routes/_app/discover.tsx:35
+#: routes/_app/discover.tsx:53
 msgid "Could not submit request."
 msgstr "Could not submit request."
 
@@ -743,11 +767,11 @@ msgstr "Description"
 msgid "Details auto-filled from Open Library. You can edit the title/author before saving."
 msgstr "Details auto-filled from Open Library. You can edit the title/author before saving."
 
-#: routes/_app/nav.tsx:68
+#: routes/_app/nav.tsx:70
 msgid "Discover"
 msgstr "Discover"
 
-#: routes/_app/discover.tsx:44
+#: routes/_app/discover.tsx:127
 #: routes/_app/welcome.tsx:90
 msgid "Discover libraries"
 msgstr "Discover libraries"
@@ -755,6 +779,10 @@ msgstr "Discover libraries"
 #: components/Toast.tsx:79
 msgid "Dismiss"
 msgstr "Dismiss"
+
+#: routes/_app/admin/join-form.tsx:122
+msgid "Display label"
+msgstr "Display label"
 
 #: routes/_app/profile.tsx:86
 msgid "Display name"
@@ -869,13 +897,29 @@ msgid "Feature request"
 msgstr "Feature request"
 
 #: components/FeedbackButton.tsx:74
-#: routes/_app/nav.tsx:54
+#: routes/_app/nav.tsx:55
 msgid "Feedback"
 msgstr "Feedback"
 
 #: routes/_app/admin/import.tsx:183
 msgid "Fetch"
 msgstr "Fetch"
+
+#: routes/_app/admin/join-form.tsx:48
+msgid "Field added."
+msgstr "Field added."
+
+#: routes/_app/admin/join-form.tsx:118
+msgid "Field key"
+msgstr "Field key"
+
+#: routes/_app/admin/join-form.tsx:57
+msgid "Field removed."
+msgstr "Field removed."
+
+#: routes/_app/admin/join-form.tsx:66
+msgid "Fields applicants must fill before requesting to join this library."
+msgstr "Fields applicants must fill before requesting to join this library."
 
 #: routes/_app/admin/tenants.index.tsx:80
 #: routes/_app/welcome.tsx:102
@@ -891,7 +935,7 @@ msgid "https://…fanshujieyue.com/…/librarydata_….xls"
 msgstr "https://…fanshujieyue.com/…/librarydata_….xls"
 
 #: routes/_app/admin/import.tsx:233
-#: routes/_app/nav.tsx:57
+#: routes/_app/nav.tsx:59
 msgid "Import"
 msgstr "Import"
 
@@ -957,8 +1001,13 @@ msgstr "ISBN: {0}"
 msgid "Join a library"
 msgstr "Join a library"
 
+#: routes/_app/admin/join-form.tsx:64
+#: routes/_app/nav.tsx:57
+msgid "Join form"
+msgstr "Join form"
+
 #: routes/_app/admin/join-requests.tsx:46
-#: routes/_app/nav.tsx:55
+#: routes/_app/nav.tsx:56
 msgid "Join requests"
 msgstr "Join requests"
 
@@ -974,7 +1023,7 @@ msgstr "Joined date"
 msgid "Libraries"
 msgstr "Libraries"
 
-#: routes/_app/nav.tsx:48
+#: routes/_app/nav.tsx:49
 msgid "Library"
 msgstr "Library"
 
@@ -1078,7 +1127,7 @@ msgid "Member until"
 msgstr "Member until"
 
 #: routes/_app/my-books.tsx:94
-#: routes/_app/nav.tsx:65
+#: routes/_app/nav.tsx:67
 msgid "My Books"
 msgstr "My Books"
 
@@ -1135,6 +1184,14 @@ msgstr "No camera found. Enter the ISBN manually."
 msgid "No cover"
 msgstr "No cover"
 
+#: routes/_app/admin/join-form.tsx:75
+msgid "No custom fields"
+msgstr "No custom fields"
+
+#: routes/_app/discover.tsx:108
+msgid "No extra information required."
+msgstr "No extra information required."
+
 #: routes/_app/admin/feedback.tsx:57
 msgid "No feedback yet"
 msgstr "No feedback yet"
@@ -1155,11 +1212,11 @@ msgstr "No overdue books in this range"
 msgid "No pending requests"
 msgstr "No pending requests"
 
-#: routes/_app/discover.tsx:61
+#: routes/_app/discover.tsx:141
 msgid "No public libraries are available to join at the moment."
 msgstr "No public libraries are available to join at the moment."
 
-#: routes/_app/discover.tsx:60
+#: routes/_app/discover.tsx:140
 msgid "No public libraries found"
 msgstr "No public libraries found"
 
@@ -1209,7 +1266,7 @@ msgstr "Other"
 msgid "Out"
 msgstr "Out"
 
-#: routes/_app/nav.tsx:52
+#: routes/_app/nav.tsx:53
 msgid "Overdue"
 msgstr "Overdue"
 
@@ -1219,7 +1276,7 @@ msgstr "Overdue Books"
 
 #: routes/_app/admin/overview.tsx:55
 #: routes/_app/admin/tenants.$libraryId.tsx:136
-#: routes/_app/nav.tsx:37
+#: routes/_app/nav.tsx:38
 msgid "Overview"
 msgstr "Overview"
 
@@ -1265,6 +1322,15 @@ msgstr "placeholder"
 msgid "Plan"
 msgstr "Plan"
 
+#. placeholder {0}: msgs ?? ''
+#: routes/_app/discover.tsx:49
+msgid "Please fill all required fields. {0}"
+msgstr "Please fill all required fields. {0}"
+
+#: routes/_app/discover.tsx:72
+msgid "Please fill in the required information."
+msgstr "Please fill in the required information."
+
 #. placeholder {0}: fileName ?? ''
 #: routes/_app/admin/import.tsx:200
 msgid "Preview — {0}"
@@ -1292,7 +1358,7 @@ msgstr "Profile"
 msgid "Profile updated."
 msgstr "Profile updated."
 
-#: routes/_app/discover.tsx:47
+#: routes/_app/discover.tsx:129
 msgid "Public libraries you can request to join."
 msgstr "Public libraries you can request to join."
 
@@ -1323,7 +1389,7 @@ msgstr "Read-only system information (super admin)."
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:217
 #: routes/_app/admin/UsersTable.tsx:32
-#: routes/_app/nav.tsx:63
+#: routes/_app/nav.tsx:65
 #: routes/_app/profile.tsx:26
 msgid "Reader"
 msgstr "Reader"
@@ -1333,7 +1399,7 @@ msgid "Reader preview"
 msgstr "Reader preview"
 
 #: routes/_app/admin/members.tsx:80
-#: routes/_app/nav.tsx:51
+#: routes/_app/nav.tsx:52
 msgid "Readers"
 msgstr "Readers"
 
@@ -1357,13 +1423,23 @@ msgstr "Request approved."
 msgid "Request rejected."
 msgstr "Request rejected."
 
-#: routes/_app/discover.tsx:28
+#: routes/_app/discover.tsx:41
 msgid "Request submitted. The library admin will review it."
 msgstr "Request submitted. The library admin will review it."
 
-#: routes/_app/discover.tsx:79
+#: routes/_app/discover.tsx:154
 msgid "Request to join"
 msgstr "Request to join"
+
+#: routes/_app/discover.tsx:67
+#: routes/_app/discover.tsx:69
+msgid "Request to join {libraryName}"
+msgstr "Request to join {libraryName}"
+
+#: routes/_app/admin/join-form.tsx:89
+#: routes/_app/admin/join-form.tsx:136
+msgid "Required"
+msgstr "Required"
 
 #: components/ui/DataTable.tsx:327
 msgid "Reset"
@@ -1419,7 +1495,7 @@ msgstr "Save settings"
 msgid "Saving…"
 msgstr "Saving…"
 
-#: routes/_app/nav.tsx:66
+#: routes/_app/nav.tsx:68
 msgid "Scan"
 msgstr "Scan"
 
@@ -1508,6 +1584,10 @@ msgstr "Send"
 msgid "Send feedback"
 msgstr "Send feedback"
 
+#: routes/_app/discover.tsx:73
+msgid "Send your request to the library admin for approval."
+msgstr "Send your request to the library admin for approval."
+
 #: components/FeedbackButton.tsx:89
 msgid "Sending…"
 msgstr "Sending…"
@@ -1516,7 +1596,7 @@ msgstr "Sending…"
 msgid "Series"
 msgstr "Series"
 
-#: routes/_app/nav.tsx:53
+#: routes/_app/nav.tsx:54
 msgid "Settings"
 msgstr "Settings"
 
@@ -1615,6 +1695,14 @@ msgstr "Stopped impersonation"
 msgid "Student no."
 msgstr "Student no."
 
+#: routes/_app/discover.tsx:79
+msgid "Submit request"
+msgstr "Submit request"
+
+#: routes/_app/discover.tsx:79
+msgid "Submitting…"
+msgstr "Submitting…"
+
 #: routes/_app/admin/import.tsx:294
 msgid "success"
 msgstr "success"
@@ -1638,7 +1726,7 @@ msgstr "Switch to dark mode"
 msgid "Switch to light mode"
 msgstr "Switch to light mode"
 
-#: routes/_app/nav.tsx:35
+#: routes/_app/nav.tsx:36
 msgid "System"
 msgstr "System"
 
@@ -1647,7 +1735,7 @@ msgid "System actions (tenant changes, impersonation) will appear here."
 msgstr "System actions (tenant changes, impersonation) will appear here."
 
 #: routes/_app/admin/system.tsx:23
-#: routes/_app/nav.tsx:42
+#: routes/_app/nav.tsx:43
 msgid "System settings"
 msgstr "System settings"
 
@@ -1687,7 +1775,7 @@ msgstr "Tenant not found"
 #: routes/_app/admin/overview.tsx:63
 #: routes/_app/admin/overview.tsx:82
 #: routes/_app/admin/tenants.index.tsx:53
-#: routes/_app/nav.tsx:38
+#: routes/_app/nav.tsx:39
 msgid "Tenants"
 msgstr "Tenants"
 
@@ -1734,6 +1822,10 @@ msgstr "This book is currently borrowed by someone else."
 msgid "This book is not in your library’s catalog yet. Ask a librarian to add it."
 msgstr "This book is not in your library’s catalog yet. Ask a librarian to add it."
 
+#: routes/_app/discover.tsx:101
+msgid "This email will need to be verified."
+msgstr "This email will need to be verified."
+
 #: routes/_app/admin/members.$memberId.tsx:53
 msgid "This member already has a login."
 msgstr "This member already has a login."
@@ -1771,6 +1863,7 @@ msgid "Try adjusting the search or filters."
 msgstr "Try adjusting the search or filters."
 
 #: components/FeedbackButton.tsx:96
+#: routes/_app/admin/join-form.tsx:127
 msgid "Type"
 msgstr "Type"
 
@@ -1795,9 +1888,17 @@ msgstr "User Feedback"
 #: routes/_app/admin/tenants.$libraryId.tsx:184
 #: routes/_app/admin/TenantsTable.tsx:51
 #: routes/_app/admin/users.tsx:36
-#: routes/_app/nav.tsx:39
+#: routes/_app/nav.tsx:40
 msgid "Users"
 msgstr "Users"
+
+#: routes/_app/admin/join-form.tsx:90
+msgid "Verify email"
+msgstr "Verify email"
+
+#: routes/_app/admin/join-form.tsx:141
+msgid "Verify email ownership"
+msgstr "Verify email ownership"
 
 #: components/ui/DataTable.tsx:440
 msgid "View"
@@ -1847,17 +1948,13 @@ msgstr "Working…"
 msgid "Yes"
 msgstr "Yes"
 
-#: routes/_app/discover.tsx:33
+#: routes/_app/discover.tsx:51
 msgid "You already have a pending request for this library."
 msgstr "You already have a pending request for this library."
 
 #: lib/errors.ts:19
 msgid "You appear to be offline. Connect to the internet and try again."
 msgstr "You appear to be offline. Connect to the internet and try again."
-
-#: routes/_app/discover.tsx:34
-msgid "You are already a member of this library."
-msgstr "You are already a member of this library."
 
 #: components/ImpersonationBanner.tsx:35
 msgid "You are impersonating another user. Actions are recorded."
