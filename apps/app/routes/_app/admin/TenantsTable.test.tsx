@@ -45,8 +45,10 @@ describe('TenantsTable', () => {
 
   it('has NO per-row action buttons (actions live on the detail page)', async () => {
     renderTable({ rows, loading: false })
-    const table = await screen.findByTestId('tenant-table')
-    expect(within(table).queryAllByRole('button')).toHaveLength(0)
+    // Header cells may hold sort buttons now; assert no action buttons inside
+    // the data rows themselves.
+    const row = await screen.findByTestId('tenant-row-lib-a')
+    expect(within(row).queryAllByRole('button')).toHaveLength(0)
   })
 
   it('drills into the detail page: tenant name links to /admin/tenants/$id', async () => {

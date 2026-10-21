@@ -61,7 +61,15 @@ function TenantsIndexPage() {
         </Button>
       </div>
 
-      <TenantsTable rows={(tenants ?? []) as TenantRow[]} loading={isLoading} />
+      <TenantsTable
+        rows={(tenants ?? []) as TenantRow[]}
+        loading={isLoading}
+        searchPlaceholder={t`Search by name or slug…`}
+        searchAria={t`Search tenants`}
+        statusLabel={t`Status`}
+        activeLabel={t`Active`}
+        inactiveLabel={t`Inactive`}
+      />
 
       <Modal
         open={dialogOpen}

@@ -64,3 +64,13 @@ Branch: `feat/impersonation`. Tick items as they land (commit hash in parens).
 - [x] Reader enable-login (member detail, 1f9a2dc).
 - [x] Server-side impersonation guard — only readers (891c789).
   (UI allow-list done; belt-and-suspenders).
+
+## DataTable (ADR 0008) follow-ups
+- [ ] Admin Users/Books lists are now **client-side** (fetch up to 200, table does
+      sort/search/filter/pagination). Switch back to **server mode**
+      (`manualPagination`/`manualSorting`) when any tenant's users or books exceed
+      ~200 rows. DataTable already reserves the escape hatches.
+- [ ] Wire real **bulk actions** per table (framework + one reference action exist;
+      e.g. bulk (de)activate tenants, bulk delete books) against the real APIs.
+- [ ] Consider migrating AuditTable (still server-paginated with its own
+      tenant/action filters) onto the DataTable toolbar once a server-mode path lands.
