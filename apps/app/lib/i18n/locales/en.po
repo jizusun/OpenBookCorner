@@ -788,7 +788,7 @@ msgstr "Deleting…"
 msgid "Demo accounts"
 msgstr "Demo accounts"
 
-#: routes/login.tsx:59
+#: routes/login.tsx:64
 msgid "Demo accounts (non-production) — tap to fill in"
 msgstr "Demo accounts (non-production) — tap to fill in"
 
@@ -831,10 +831,6 @@ msgstr "Display label"
 msgid "Display name"
 msgstr "Display name"
 
-#: routes/login.tsx:203
-msgid "Don't have an account? <0>Sign up</0>"
-msgstr "Don't have an account? <0>Sign up</0>"
-
 #. placeholder {0}: new Date(item.dueDate).toLocaleDateString()
 #: routes/_app/my-books.tsx:169
 msgid "Due {0}"
@@ -870,7 +866,7 @@ msgstr "Edit Book"
 #: routes/_app/admin/tenants.$libraryId.tsx:200
 #: routes/_app/admin/UsersTable.tsx:44
 #: routes/_app/profile.tsx:99
-#: routes/login.tsx:214
+#: routes/login.tsx:192
 #: routes/signup.tsx:93
 msgid "Email"
 msgstr "Email"
@@ -914,9 +910,9 @@ msgstr "Enabled"
 msgid "Enter your email and password to create an account. Already have an account? <0>Sign in</0>"
 msgstr "Enter your email and password to create an account. Already have an account? <0>Sign in</0>"
 
-#: routes/login.tsx:202
-msgid "Enter your email and password to sign in."
-msgstr "Enter your email and password to sign in."
+#: routes/login.tsx:175
+msgid "Enter your email and password to sign in. Don't have an account? <0>Sign up</0>"
+msgstr "Enter your email and password to sign in. Don't have an account? <0>Sign up</0>"
 
 #: routes/_app/books/$bookId.tsx:202
 msgid "Entered"
@@ -1394,7 +1390,7 @@ msgstr "Page {pageNum} of {pageTotal}"
 msgid "Pages"
 msgstr "Pages"
 
-#: routes/login.tsx:225
+#: routes/login.tsx:211
 #: routes/signup.tsx:111
 msgid "Password"
 msgstr "Password"
@@ -1733,7 +1729,7 @@ msgstr "Shelved"
 msgid "showing the first {shown} — refine upstream search to see the rest"
 msgstr "showing the first {shown} — refine upstream search to see the rest"
 
-#: routes/login.tsx:238
+#: routes/login.tsx:231
 msgid "Sign in"
 msgstr "Sign in"
 
@@ -1745,8 +1741,8 @@ msgstr "Sign in as them"
 msgid "Sign in to join"
 msgstr "Sign in to join"
 
-#: routes/login.tsx:101
-#: routes/login.tsx:112
+#: routes/login.tsx:94
+#: routes/login.tsx:102
 msgid "Sign in to your library"
 msgstr "Sign in to your library"
 
@@ -1757,10 +1753,6 @@ msgstr "Sign out"
 #: components/UserMenu.tsx:42
 msgid "Signed in as {userName}"
 msgstr "Signed in as {userName}"
-
-#: routes/login.tsx:238
-msgid "Signing in…"
-msgstr "Signing in…"
 
 #: components/ui/skeleton.tsx:51
 msgid "Slow network — still loading, hang tight…"
@@ -1905,10 +1897,10 @@ msgstr "Thanks for your feedback! 🎉"
 msgid "That email is already in use."
 msgstr "That email is already in use."
 
-#: routes/login.tsx:159
-#: routes/login.tsx:182
-msgid "That email or password doesn’t match. Please try again."
-msgstr "That email or password doesn’t match. Please try again."
+#: routes/login.tsx:146
+#: routes/login.tsx:157
+msgid "That email or password doesn't match. Please try again."
+msgstr "That email or password doesn't match. Please try again."
 
 #: routes/_app/admin/tenants.$libraryId.tsx:76
 msgid "That slug is already taken."
@@ -2044,7 +2036,7 @@ msgstr "Visible (non-production)"
 msgid "We could not process this return. It may already be returned."
 msgstr "We could not process this return. It may already be returned."
 
-#: routes/login.tsx:109
+#: routes/login.tsx:101
 msgid "Welcome back"
 msgstr "Welcome back"
 
