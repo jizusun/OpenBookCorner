@@ -1,4 +1,5 @@
 import { Link, useLocation } from '@tanstack/react-router'
+import { useEffect, useRef } from 'react'
 import { Trans } from '@lingui/react/macro'
 import {
   Sidebar,
@@ -10,6 +11,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from '@/components/ui/sidebar'
 import { navGroupsFor, homeFor } from './nav'
 
@@ -27,11 +29,28 @@ export function AppSidebar({ role, readerPreview }: AppSidebarProps) {
   const groups = navGroupsFor(role, readerPreview)
   const home = homeFor(role, readerPreview)
   const { pathname } = useLocation()
+  const { isMobile, setOpenMobile } = useSidebar()
+
+  // On mobile the sidebar is an overlay drawer (Sheet). After navigating it
+  // should close itself so the user lands on the page they tapped — otherwise
+  // the drawer stays open over the content. We close on pathname change (not a
+  // link onClick, which doesn't fire reliably through the asChild Slot). On
+  // desktop it's a persistent rail, so this is a no-op (isMobile is false).
+  const prevPath = useRef(pathname)
+  useEffect(() => {
+    if (pathname !== prevPath.current) {
+      prevPath.current = pathname
+      if (isMobile) setOpenMobile(false)
+    }
+  }, [pathname, isMobile, setOpenMobile])
 
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <Link to={home} className="flex items-center gap-2 px-2 py-1.5 font-semibold">
+        <Link
+          to={home}
+          className="flex items-center gap-2 px-2 py-1.5 font-semibold"
+        >
           <span className="flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
             📚
           </span>
