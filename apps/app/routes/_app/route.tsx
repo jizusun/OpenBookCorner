@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, redirect, useRouter } from '@tanstack/react-router'
-import { authClient, signOut, useSession } from '@/lib/auth-client'
+import { authClient, useSession } from '@/lib/auth-client'
 import { impersonationState } from '@/lib/impersonation'
 import { ensureRequireMe } from '@/lib/api'
 import { queryClient } from '@/lib/query'
@@ -50,9 +50,22 @@ function AppLayout() {
   }
 
   async function handleLogout() {
-    await signOut()
-    queryClient.clear()
-    await router.navigate({ to: '/login' })
+    // Better Auth's sign-out endpoint requires a JSON body; the client can send
+    // an empty body which the server rejects with 400 "Invalid JSON" (login then
+    // appears stuck). POST an explicit `{}` so the session is actually cleared.
+    // Wrap in try/finally so the user is always returned to /login even if the
+    // network call fails.
+    try {
+      await fetch('/api/auth/sign-out', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: '{}',
+      })
+    } finally {
+      queryClient.clear()
+      await router.navigate({ to: '/login' })
+    }
   }
 
   // Library-admin-only "Reader preview": browse as a member (not a view switch).
