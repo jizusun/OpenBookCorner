@@ -39,7 +39,7 @@ const formSchema = z
 
 type FormValues = z.infer<typeof formSchema>
 
-function SignUpPage() {
+export function SignUpPage() {
   const router = useRouter()
   const { t } = useLingui()
 
