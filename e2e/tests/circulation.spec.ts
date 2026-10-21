@@ -6,10 +6,10 @@ import { test, expect, type Page } from '@playwright/test'
 
 async function login(page: Page, email: string, landingHeading = 'My Books') {
   await page.goto('/login', { waitUntil: 'domcontentloaded' })
-  await expect(page.getByRole('button', { name: 'Sign In' })).toBeVisible()
+  await expect(page.getByTestId('signin-submit')).toBeVisible()
   await page.getByLabel('Email').fill(email)
   await page.getByLabel('Password').fill('password123')
-  await page.getByRole('button', { name: 'Sign In' }).click()
+  await page.getByTestId('signin-submit').click()
   await expect(page.getByRole('heading', { name: landingHeading })).toBeVisible()
 }
 
@@ -51,7 +51,7 @@ test.describe('Theme (primary contrast — regression)', () => {
   // utility. Assert readable contrast on both a <button> and a button-styled <a>.
   test('primary Sign In button has readable text (WCAG AA)', async ({ page }) => {
     await page.goto('/login', { waitUntil: 'domcontentloaded' })
-    const btn = page.getByRole('button', { name: 'Sign In' })
+    const btn = page.getByTestId('signin-submit')
     await expect(btn).toBeVisible()
     expect(await contrastOf(btn)).toBeGreaterThanOrEqual(4.5)
   })
@@ -76,7 +76,7 @@ test.describe('App shell', () => {
 
   test('loader is removed once the app mounts', async ({ page }) => {
     await page.goto('/login', { waitUntil: 'domcontentloaded' })
-    await expect(page.getByRole('button', { name: 'Sign In' })).toBeVisible()
+    await expect(page.getByTestId('signin-submit')).toBeVisible()
     await expect(page.locator('#app-loader')).toHaveCount(0)
   })
 })
@@ -84,7 +84,7 @@ test.describe('App shell', () => {
 test.describe('Auth', () => {
   test('login page renders without the auth-client crash (regression)', async ({ page }) => {
     await page.goto('/login', { waitUntil: 'domcontentloaded' })
-    await expect(page.getByRole('button', { name: 'Sign In' })).toBeVisible()
+    await expect(page.getByTestId('signin-submit')).toBeVisible()
     await expect(page.getByText('Welcome back')).toBeVisible()
     await expect(page.getByText(/Something went wrong/i)).toHaveCount(0)
     await expect(page.getByText(/Invalid base URL/i)).toHaveCount(0)
@@ -94,19 +94,19 @@ test.describe('Auth', () => {
     await page.goto('/login', { waitUntil: 'domcontentloaded' })
     await page.getByLabel('Email').fill('reader@demo.test')
     await page.getByLabel('Password').fill('wrongpassword')
-    await page.getByRole('button', { name: 'Sign In' }).click()
+    await page.getByTestId('signin-submit').click()
     await expect(page.getByText(/doesn.t match|Invalid email or password/i)).toBeVisible()
   })
 
   test('unauthenticated visit redirects to login', async ({ page }) => {
     await page.goto('/my-books', { waitUntil: 'domcontentloaded' })
-    await expect(page.getByRole('button', { name: 'Sign In' })).toBeVisible()
+    await expect(page.getByTestId('signin-submit')).toBeVisible()
   })
 
   test('anonymous /t/:slug/ redirects to that tenant login (no 404)', async ({ page }) => {
     await page.goto('/t/acme/', { waitUntil: 'domcontentloaded' })
     await expect(page).toHaveURL(/\/t\/acme\/login$/)
-    await expect(page.getByRole('button', { name: 'Sign In' })).toBeVisible()
+    await expect(page.getByTestId('signin-submit')).toBeVisible()
   })
 
   test('reader does not see admin nav links', async ({ page }) => {
@@ -164,7 +164,7 @@ test.describe('Admin', () => {
     await page.goto('/login', { waitUntil: 'domcontentloaded' })
     await page.getByLabel('Email').fill('admin@demo.test')
     await page.getByLabel('Password').fill('password123')
-    await page.getByRole('button', { name: 'Sign In' }).click()
+    await page.getByTestId('signin-submit').click()
     // Admin default landing is the catalog, not My Books.
     await expect(page.getByRole('heading', { name: 'Library Catalog' })).toBeVisible()
     await expect(page.getByRole('link', { name: 'My Books' })).toHaveCount(0)
@@ -176,7 +176,7 @@ test.describe('Admin', () => {
     await page.goto('/login', { waitUntil: 'domcontentloaded' })
     await page.getByLabel('Email').fill('admin@demo.test')
     await page.getByLabel('Password').fill('password123')
-    await page.getByRole('button', { name: 'Sign In' }).click()
+    await page.getByTestId('signin-submit').click()
     await expect(page.getByRole('heading', { name: 'Library Catalog' })).toBeVisible()
     await expect(page.getByRole('button', { name: 'Borrow' })).toHaveCount(0)
     await expect(page.getByRole('link', { name: 'Add Book' }).first()).toBeVisible()
@@ -300,7 +300,7 @@ test.describe('Super admin (tenant management)', () => {
     await page.goto('/login', { waitUntil: 'domcontentloaded' })
     await page.getByLabel('Email').fill('super@demo.test')
     await page.getByLabel('Password').fill('password123')
-    await page.getByRole('button', { name: 'Sign In' }).click()
+    await page.getByTestId('signin-submit').click()
     // Super admin now lands on the system Overview dashboard.
     await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible()
     // Navigate to the Tenants page via the System nav.
@@ -315,7 +315,7 @@ test.describe('Super admin (tenant management)', () => {
     await page.goto('/login', { waitUntil: 'domcontentloaded' })
     await page.getByLabel('Email').fill('super@demo.test')
     await page.getByLabel('Password').fill('password123')
-    await page.getByRole('button', { name: 'Sign In' }).click()
+    await page.getByTestId('signin-submit').click()
     await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible()
     await page.getByRole('link', { name: 'Tenants' }).first().click()
     await expect(page.getByRole('heading', { name: 'Tenants' })).toBeVisible()
@@ -335,7 +335,7 @@ test.describe('Super admin (tenant management)', () => {
     await page.goto('/login', { waitUntil: 'domcontentloaded' })
     await page.getByLabel('Email').fill('super@demo.test')
     await page.getByLabel('Password').fill('password123')
-    await page.getByRole('button', { name: 'Sign In' }).click()
+    await page.getByTestId('signin-submit').click()
     await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible()
     await page.getByRole('link', { name: 'Tenants' }).first().click()
     await expect(page.getByRole('heading', { name: 'Tenants' })).toBeVisible()
@@ -351,7 +351,7 @@ test.describe('Super admin (tenant management)', () => {
     await page.goto('/login', { waitUntil: 'domcontentloaded' })
     await page.getByLabel('Email').fill('super@demo.test')
     await page.getByLabel('Password').fill('password123')
-    await page.getByRole('button', { name: 'Sign In' }).click()
+    await page.getByTestId('signin-submit').click()
     await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible()
     // Click the "Books" stat card (3rd card) → the global books list page.
     await page.getByTestId('stat-card').nth(2).click()
@@ -363,7 +363,7 @@ test.describe('Super admin (tenant management)', () => {
     await page.goto('/login', { waitUntil: 'domcontentloaded' })
     await page.getByLabel('Email').fill('super@demo.test')
     await page.getByLabel('Password').fill('password123')
-    await page.getByRole('button', { name: 'Sign In' }).click()
+    await page.getByTestId('signin-submit').click()
     await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible()
     // The three-state view switch is retired; the super admin uses the system
     // console + impersonation, not a role/scope switch.

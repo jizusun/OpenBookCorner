@@ -12,7 +12,7 @@ async function loginSuper(page: Page) {
   await page.goto('/login', { waitUntil: 'domcontentloaded' })
   await page.getByLabel('Email').fill('super@demo.test')
   await page.getByLabel('Password').fill('password123')
-  await page.getByRole('button', { name: 'Sign In' }).click()
+  await page.getByTestId('signin-submit').click()
   await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible()
 }
 
@@ -46,7 +46,7 @@ test.describe('Impersonation (super admin)', () => {
     await page.goto('/login', { waitUntil: 'domcontentloaded' })
     await page.getByLabel('Email').fill('admin@demo.test')
     await page.getByLabel('Password').fill('password123')
-    await page.getByRole('button', { name: 'Sign In' }).click()
+    await page.getByTestId('signin-submit').click()
     await expect(page.getByRole('heading', { name: 'Library Catalog' })).toBeVisible()
 
     await page.getByRole('link', { name: 'Readers' }).first().click()
@@ -59,7 +59,7 @@ test.describe('Impersonation (super admin)', () => {
     await page.goto('/login', { waitUntil: 'domcontentloaded' })
     await page.getByLabel('Email').fill('super@demo.test')
     await page.getByLabel('Password').fill('password123')
-    await page.getByRole('button', { name: 'Sign In' }).click()
+    await page.getByTestId('signin-submit').click()
     await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible()
     await page.getByRole('link', { name: 'Users' }).first().click()
     await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible()

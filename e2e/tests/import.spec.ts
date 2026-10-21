@@ -5,7 +5,7 @@ async function login(page: Page, email: string, landingHeading = 'My Books') {
   await page.goto('/login', { waitUntil: 'domcontentloaded' })
   await page.getByLabel('Email').fill(email)
   await page.getByLabel('Password').fill('password123')
-  await page.getByRole('button', { name: 'Sign In' }).click()
+  await page.getByTestId('signin-submit').click()
   await expect(page.getByRole('heading', { name: landingHeading })).toBeVisible()
 }
 
