@@ -57,6 +57,8 @@ export function createAuth(db: Database, env: Env): Auth {
     user: {
       additionalFields: {
         libraryId: { type: 'string', required: false, input: false },
+        // ADR 0009: the user's currently-selected library (drives tenant scope).
+        activeLibraryId: { type: 'string', required: false, input: false },
         role: {
           type: 'string',
           required: false,
@@ -158,6 +160,7 @@ export type Auth = ReturnType<typeof betterAuth>
 type SessionResponse = Auth['$Infer']['Session']
 export type AuthUser = SessionResponse['user'] & {
   libraryId?: string | null
+  activeLibraryId?: string | null
   role?: string | null
 }
 export type AuthSession = SessionResponse['session']

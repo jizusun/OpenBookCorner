@@ -1,7 +1,8 @@
 import { createMiddleware } from 'hono/factory'
+import { and, eq } from 'drizzle-orm'
 
 import type { Auth, AuthSession, AuthUser } from './auth'
-import type { Database } from '@obc/db'
+import { membership, type Database } from '@obc/db'
 import type { Env } from './env'
 
 /** Cloudflare native Rate Limiting binding (unsafe ratelimit). */
@@ -75,19 +76,57 @@ export const sessionAuth = createMiddleware<{ Variables: AuthedVars }>(async (c,
 })
 
 /**
- * Requires an authenticated session scoped to a tenant (library). Derives
- * `libraryId` + `role` from the session for multi-tenant isolation. Must be
+ * Requires an authenticated session scoped to a tenant (library). Resolves the
+ * tenant from the user's selected `activeLibraryId` (ADR 0009) and verifies the
+ * user holds an ACTIVE membership in it — the role comes from that membership,
+ * not the user row. super_admin is platform-scoped and bypasses the membership
+ * check. During the 0009 transition we fall back to the legacy `user.libraryId`
+ * when `activeLibraryId` is unset or a membership row isn't present yet. Must be
  * chained AFTER `sessionAuth`.
  */
 export const tenant = createMiddleware<{ Variables: TenantVars }>(async (c, next) => {
   const user = c.get('user')
-  const libraryId = user.libraryId
+  const db = c.get('db')
+  const libraryId = user.activeLibraryId ?? user.libraryId
   if (!libraryId) {
     return c.json({ error: 'NO_LIBRARY_ACCESS' }, 403)
   }
-  c.set('libraryId', libraryId)
-  c.set('role', user.role ?? 'library_reader')
-  await next()
+
+  // super_admin: platform scope — no membership required.
+  if (user.role === 'super_admin') {
+    c.set('libraryId', libraryId)
+    c.set('role', 'super_admin')
+    await next()
+    return
+  }
+
+  // Resolve the user's active membership in this library (the isolation gate).
+  const m = await db
+    .select({ role: membership.role, status: membership.status })
+    .from(membership)
+    .where(and(eq(membership.userId, user.id), eq(membership.libraryId, libraryId)))
+    .get?.()
+
+  if (m) {
+    if (m.status !== 'active') {
+      return c.json({ error: 'NO_LIBRARY_ACCESS' }, 403)
+    }
+    c.set('libraryId', libraryId)
+    c.set('role', m.role)
+    await next()
+    return
+  }
+
+  // Transition fallback: legacy user whose membership row isn't present yet but
+  // whose user.libraryId still matches the target.
+  if (user.libraryId === libraryId) {
+    c.set('libraryId', libraryId)
+    c.set('role', user.role ?? 'library_reader')
+    await next()
+    return
+  }
+
+  return c.json({ error: 'NO_LIBRARY_ACCESS' }, 403)
 })
 
 /** Requires a tenant member with an admin role. Chain AFTER `tenant`. */
