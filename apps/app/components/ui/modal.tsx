@@ -1,98 +1,32 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 
 interface ModalProps {
   open: boolean
   onClose: () => void
-  /** Accessible label for the dialog (used as aria-label when no titled header is present). */
+  /** Accessible label for the dialog (used as the visually-hidden dialog title). */
   ariaLabel: string
   children: ReactNode
   'data-testid'?: string
 }
 
 /**
- * Accessible modal: Esc to close, click-outside to close, focus trap, and
- * autofocus of the first focusable element. Restores focus to the trigger on close.
+ * Accessible modal built on the shadcn/Radix Dialog: overlay + animation, Esc
+ * and outside-click to close, focus trap, and focus restore are handled by
+ * Radix. The public API (open/onClose/ariaLabel/children/data-testid) is
+ * unchanged so existing call sites keep working. Callers render their own
+ * heading inside `children`; `ariaLabel` is exposed as a visually-hidden
+ * DialogTitle to satisfy Radix's a11y requirement.
  */
 export function Modal({ open, onClose, ariaLabel, children, ...rest }: ModalProps) {
-  const panelRef = useRef<HTMLDivElement>(null)
-  const previouslyFocused = useRef<HTMLElement | null>(null)
-
-  // Keep the latest onClose in a ref so the focus/trap effect depends ONLY on
-  // `open`. If `onClose` were a dependency, a parent that recreates the handler
-  // on every render (e.g. a form updating state on each keystroke) would re-run
-  // this effect and re-autofocus the first element — stealing focus mid-typing.
-  const onCloseRef = useRef(onClose)
-  useEffect(() => {
-    onCloseRef.current = onClose
-  }, [onClose])
-
-  useEffect(() => {
-    if (!open) return
-    previouslyFocused.current = document.activeElement as HTMLElement | null
-
-    const panel = panelRef.current
-    // Autofocus the first focusable element (or the panel itself).
-    const focusables = () =>
-      panel
-        ? Array.from(
-            panel.querySelectorAll<HTMLElement>(
-              'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])',
-            ),
-          ).filter((el) => el.offsetParent !== null)
-        : []
-    const first = focusables()[0]
-    ;(first ?? panel)?.focus()
-
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') {
-        e.preventDefault()
-        onCloseRef.current()
-        return
-      }
-      if (e.key === 'Tab') {
-        const items = focusables()
-        if (items.length === 0) return
-        const firstEl = items[0]
-        const lastEl = items[items.length - 1]
-        if (!firstEl || !lastEl) return
-        if (e.shiftKey && document.activeElement === firstEl) {
-          e.preventDefault()
-          lastEl.focus()
-        } else if (!e.shiftKey && document.activeElement === lastEl) {
-          e.preventDefault()
-          firstEl.focus()
-        }
-      }
-    }
-
-    document.addEventListener('keydown', onKeyDown)
-    return () => {
-      document.removeEventListener('keydown', onKeyDown)
-      previouslyFocused.current?.focus?.()
-    }
-  }, [open])
-
-  if (!open) return null
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
-      onClick={onClose}
-    >
-      <div
-        ref={panelRef}
-        tabIndex={-1}
-        role="dialog"
-        aria-modal="true"
-        aria-label={ariaLabel}
-        className="w-full max-w-md rounded-lg border bg-card p-6 shadow-xl outline-none"
-        onClick={(e) => e.stopPropagation()}
-        data-testid={rest['data-testid']}
-      >
+    <Dialog open={open} onOpenChange={(next) => (!next ? onClose() : undefined)}>
+      <DialogContent data-testid={rest['data-testid']} className="sm:max-w-md">
+        <DialogTitle className="sr-only">{ariaLabel}</DialogTitle>
         {children}
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   )
 }
 
