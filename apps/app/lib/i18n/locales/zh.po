@@ -795,8 +795,8 @@ msgstr "运行环境"
 msgid "Every import is recorded with its source and counts."
 msgstr "每次导入都会记录来源和数量。"
 
-#: routes/_app/route.tsx:105
-#: routes/_app/route.tsx:107
+#: routes/_app/route.tsx:99
+#: routes/_app/route.tsx:101
 msgid "Exit reader preview"
 msgstr "退出读者预览"
 
@@ -876,7 +876,7 @@ msgstr "导入中…"
 msgid "Inactive"
 msgstr "已停用"
 
-#: routes/_app/AppSidebar.tsx:115
+#: components/UserMenu.tsx:54
 msgid "Install app"
 msgstr "安装应用"
 
@@ -1099,7 +1099,7 @@ msgstr "通知"
 msgid "on behalf of {0}"
 msgstr "代 {0}"
 
-#: routes/_app/AppSidebar.tsx:61
+#: routes/_app/AppSidebar.tsx:39
 msgid "OpenBookCorner"
 msgstr "开卷角"
 
@@ -1169,7 +1169,7 @@ msgstr "会员计划"
 msgid "Preview — {0}"
 msgstr "预览 — {0}"
 
-#: routes/_app/route.tsx:105
+#: routes/_app/route.tsx:99
 msgid "Preview as a reader"
 msgstr "以读者身份预览"
 
@@ -1182,7 +1182,7 @@ msgstr "上一页"
 msgid "Price"
 msgstr "价格"
 
-#: routes/_app/AppSidebar.tsx:109
+#: components/UserMenu.tsx:48
 msgid "Profile"
 msgstr "个人资料"
 
@@ -1222,7 +1222,7 @@ msgstr "只读系统信息（超级管理员）。"
 msgid "Reader"
 msgstr "普通成员"
 
-#: routes/_app/route.tsx:107
+#: routes/_app/route.tsx:101
 msgid "Reader preview"
 msgstr "读者预览"
 
@@ -1407,11 +1407,11 @@ msgstr "以其身份登录"
 msgid "Sign in to your library"
 msgstr "登录你的图书馆"
 
-#: routes/_app/AppSidebar.tsx:120
+#: components/UserMenu.tsx:59
 msgid "Sign out"
 msgstr "退出登录"
 
-#: routes/_app/AppSidebar.tsx:104
+#: components/UserMenu.tsx:42
 msgid "Signed in as {userName}"
 msgstr "已登录：{userName}"
 
