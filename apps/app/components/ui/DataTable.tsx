@@ -196,7 +196,7 @@ export function DataTable<T>(props: DataTableProps<T>) {
       })
     })
     return defs
-  }, [columns, enableRowSelection, testId, facetValueById]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [columns, enableRowSelection, testId, facetValueById])
 
   const table = useReactTable({
     data: rows,
@@ -554,8 +554,8 @@ function VisibleTable<T>({
 }
 
 function Pagination<T>({ table, testId }: { table: AnyTable<T>; testId: string }) {
-  const pi = table.getState().pagination.pageIndex
-  const pc = table.getPageCount()
+  const pageNum = table.getState().pagination.pageIndex + 1
+  const pageTotal = table.getPageCount()
   return (
     <div className="flex items-center justify-between gap-2" data-testid={`${testId}-pagination`}>
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -581,7 +581,7 @@ function Pagination<T>({ table, testId }: { table: AnyTable<T>; testId: string }
       <div className="flex items-center gap-3 text-sm">
         <span data-testid={`${testId}-page-indicator`}>
           <Trans>
-            Page {pi + 1} of {pc}
+            Page {pageNum} of {pageTotal}
           </Trans>
         </span>
         <Button

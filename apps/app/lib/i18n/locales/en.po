@@ -1145,14 +1145,13 @@ msgstr "Overdue Books"
 msgid "Overview"
 msgstr "Overview"
 
-#. placeholder {0}: pi + 1
-#: components/ui/DataTable.tsx:583
-msgid "Page {0} of {pc}"
-msgstr "Page {0} of {pc}"
-
 #: components/ui/Pager.tsx:23
 msgid "Page {page}"
 msgstr "Page {page}"
+
+#: components/ui/DataTable.tsx:583
+msgid "Page {pageNum} of {pageTotal}"
+msgstr "Page {pageNum} of {pageTotal}"
 
 #: routes/_app/books/$bookId.tsx:176
 msgid "Pages"

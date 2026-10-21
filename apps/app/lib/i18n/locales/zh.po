@@ -1145,14 +1145,13 @@ msgstr "逾期图书"
 msgid "Overview"
 msgstr "概况"
 
-#. placeholder {0}: pi + 1
-#: components/ui/DataTable.tsx:583
-msgid "Page {0} of {pc}"
-msgstr "第 {0} / {pc} 页"
-
 #: components/ui/Pager.tsx:23
 msgid "Page {page}"
 msgstr "第 {page} 页"
+
+#: components/ui/DataTable.tsx:583
+msgid "Page {pageNum} of {pageTotal}"
+msgstr "第 {pageNum} / {pageTotal} 页"
 
 #: routes/_app/books/$bookId.tsx:176
 msgid "Pages"
