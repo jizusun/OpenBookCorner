@@ -86,6 +86,6 @@ Branch: `feat/impersonation`. Tick items as they land (commit hash in parens).
 
 ## Stable-ID links (slug is mutable) — IN PR #21 (ADR 0009)
 - [x] Invite links use a token-only URL /join/<token> (no slug/id).
-- [ ] Tenant login/share link: add a permanent ID-based URL /t/<libraryId>/login
+- [x] Tenant login/share link: permanent ID-based URL /t/<libraryId>/login (slug stays as alias); branding resolver accepts id-or-slug. DONE.
       alongside the readable /t/<slug>/login (slug = optional alias; renaming it
       breaks only the alias). Branding resolver accepts id OR slug (try id first).
