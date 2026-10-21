@@ -1,224 +1,166 @@
-# OpenBookCorner — Feature Inventory
+# OpenBookCorner — Feature List
 
-Structured catalogue of every implemented feature. Update this file whenever
-a feature ships. Features are grouped by role / surface, then by functional
-area. Status symbols: ✅ shipped · ⚠️ partial (noted) · 🔜 planned (in TODO).
+> Update this file every time a new feature ships.
+> Status: ✅ shipped · ⚠️ partial/noted · 🔜 planned
 
-Last updated: 2026-10-22
-
----
-
-## 1. Authentication & Accounts
-
-| Feature | Detail | Status |
-|---|---|---|
-| Self-registration | `/signup` — email + password + confirm. shadcn-admin form (react-hook-form + zod, PasswordInput with Eye/EyeOff toggle, Loader2 icon) | ✅ |
-| Sign in | `/login` — react-hook-form + zod, PasswordInput, Loader2+LogIn icon, "Don't have an account?" cross-link. Bitwarden/1Password autofill: `name`, `autocomplete=username/current-password`, `method=post` | ✅ |
-| Sign out | User menu → Sign out. Posts `{}` to Better Auth `/sign-out` so session is actually invalidated (fixes empty-body 400 bug) | ✅ |
-| Tenant-branded login | `/t/<slug>/login` or `/t/<libraryId>/login` — shows library logo/name/welcome message. Stable ID-based URL never breaks on slug rename; slug stays as a readable alias (`getByIdOrSlug`) | ✅ |
-| Password show/hide | `PasswordInput` component with Eye/EyeOff toggle on all password fields | ✅ |
-| Profile page | `/profile` — display name edit (Better Auth `updateUser`), avatar, email, role badge. Saves → refetches identity + `router.invalidate()` so sidebar/header update immediately | ✅ |
-| Initials avatar | `UserAvatar` — deterministic colour per name (stable hash → 7-colour palette), initials (up to 2 letters), three sizes | ✅ |
-| Post-signup empty state | `/welcome` — new user with no active library sees "Create a library" or "Discover libraries" cards | ✅ |
+_Last updated: 2026-10-22_
 
 ---
 
-## 2. Multi-Library Membership (ADR 0009)
+## 账户与认证
 
-| Feature | Detail | Status |
-|---|---|---|
-| Multi-library membership | A user can belong to multiple libraries simultaneously. Memberships stored in `membership` table (userId × libraryId × role × status). Role is per-library (admin in one, reader in another) | ✅ |
-| Create library | Any signed-in user can create a library and becomes its `library_admin` (membership row created, `active_library_id` set) | ✅ |
-| Library switcher | Top-left sidebar dropdown lists all the user's active libraries with role badge (Admin/Reader). Switching persists `active_library_id` server-side and reloads the app | ✅ |
-| Role badge in header | Top bar shows `[Library Name] · Admin/Reader` badge (desktop) so the user always knows their current permission level | ✅ |
-| Tenant isolation | `tenant` middleware resolves role from the active membership, not from `user.role`. `super_admin` bypasses (platform scope). Transition fallback for legacy single-library users | ✅ |
-| Discover public libraries | `/discover` — lists public libraries the user doesn't already belong to. Each card has "Request to join" | ✅ |
-| Request to join | Users submit a join request (button or invite link). Requests are pending until an admin approves or rejects | ✅ |
-| Admin approval queue | `/admin/join-requests` — pending requests with Approve / Reject buttons. Approving creates an active membership | ✅ |
-| Custom join forms | Per-library join form fields (key, label, type, required, verifyEmail). Presets from 番薯 member schema: 工号/部门/学号/班级/公司邮箱/手机号/会员号/房号/地址. Admin manages in Settings | ✅ |
-| Company-email verification gate | Join form field with `verifyEmail=true` prevents submit until the email is confirmed. UI shows note; full OTP email send in Phase 2 | ⚠️ |
-| Invite links | `/admin/invites` — create token-only invite links (`/join/<token>`). Options: auto-join (skip approval) or requires-approval, max uses, expiry days, role. Admin can revoke | ✅ |
-| Invite link landing | `/join/<token>` — public page shows library name and join / submit-request button. Prompts unauthenticated users to sign in first | ✅ |
-| Stable invite URLs | Invite links use a random token only (no slug or library ID) — immutable, never breaks on slug rename, unguessable | ✅ |
-| Membership lifecycle | `active / suspended / removed` states. Suspended/removed users cannot access the library | ✅ |
+- ✅ **自助注册** — `/signup`，邮箱 + 密码 + 确认密码，shadcn-admin 风格表单（react-hook-form + zod，PasswordInput 显/隐密码切换，提交时 Loader2 动画）
+- ✅ **登录** — `/login`，同样的表单规范，支持 Bitwarden / 1Password 自动填充（`name`、`autocomplete=username/current-password`、`method=post`），"没有账户？注册"交叉链接
+- ✅ **登出** — 顶栏账户菜单 → 登出，正确终止 Better Auth session（修复了空 body 400 的问题）
+- ✅ **个人资料页** — `/profile`，修改显示名称，保存后侧栏/顶栏实时刷新
+- ✅ **头像** — 基于姓名初始字母 + 确定性配色（同一人永远同色）
+- ✅ **品牌化租户登录页** — `/t/<libraryId>/login`，展示图书馆 Logo/名称/欢迎语；同时支持 `/t/<slug>/login`（slug 作为可读别名，改 slug 只影响别名，永久链接不失效）
+- ✅ **密码显示/隐藏** — 所有密码输入框统一使用 `PasswordInput` 组件（眼睛图标切换）
 
 ---
 
-## 3. Reader Surface
+## 多馆成员制（ADR 0009）
 
-| Feature | Detail | Status |
-|---|---|---|
-| Book catalog | `/books` — searchable, filterable list with cover images, availability badges. Book detail page | ✅ |
-| Borrow & return | One-click borrow from catalog or scan page. Return from My Books | ✅ |
-| My Books | `/my-books` — active loans with due dates, overdue highlight, return button | ✅ |
-| Scan to borrow | `/scan` — type or scan an ISBN to borrow in one step (camera API, Phase 2: WeChat wx.scanCode) | ✅ |
-| Overdue indicator | Overdue loans shown in red in My Books | ✅ |
-| Discover libraries | `/discover` — find public libraries and request to join | ✅ |
-| Reader nav groups | Sidebar: My Books / Scan / Catalog / Discover | ✅ |
+OpenBookCorner 允许一个用户同时属于多个图书馆，并且在不同图书馆拥有不同角色。
 
----
+### 加入图书馆
 
-## 4. Library Admin Surface
+- ✅ **新建图书馆** — 登录后可创建新馆，创建者自动成为该馆管理员
+- ✅ **发现公开图书馆** — `/discover`，列出所有 `visibility=public` 的馆，点击"申请加入"提交申请
+- ✅ **邀请链接** — 管理员生成 `/join/<token>` 链接（token-only，不含 slug/id，不会因改馆名失效）。支持：自动加入（免审批）或需审批两种模式、最大使用次数、有效期、撤销
+- ✅ **邀请落地页** — `/join/<token>` 展示目标馆名称，已登录用户可直接申请/加入，未登录则引导先注册
 
-### 4.1 Catalog
+### 新用户引导
 
-| Feature | Detail | Status |
-|---|---|---|
-| Book list | Sortable/searchable/filterable admin books table. Client-side DataTable (sort by title/author/etc., search, column visibility, pagination) | ✅ |
-| Add book | ISBN lookup → auto-fill from Open Library / Google Books. Manual entry fallback | ✅ |
-| Edit book | Edit title, author, ISBN, copies, cover | ✅ |
-| Multiple copies | `quantity` + `availableCount` fields; borrowing decrements, returning increments | ✅ |
-| Cover images | Uploaded to Cloudflare R2, served via `/covers/:key` | ✅ |
+- ✅ **空状态欢迎页** — `/welcome`，新注册用户无所属馆时看到"创建图书馆"或"发现图书馆"两个选项
+- ✅ **自动跳转** — 没有活跃图书馆的普通用户访问任何页面都自动跳到 `/welcome`
 
-### 4.2 Readers (Members)
+### 切换与权限
 
-| Feature | Detail | Status |
-|---|---|---|
-| Members list | Sortable/searchable/faceted DataTable. Member detail page with loan history | ✅ |
-| Add reader | Create a reader account directly from the admin UI (`AddUserDialog`) | ✅ |
-| Enable login | Provision a login account for an existing roster entry (`enable-login` flow, ADR 0006) | ✅ |
-| Impersonate reader | Sign in as a reader to reproduce issues. Persistent banner, time-boxed session, one-click exit, full audit trail. Super admin only; readers only (admins cannot be impersonated) | ✅ |
-
-### 4.3 Circulation
-
-| Feature | Detail | Status |
-|---|---|---|
-| Overdue list | `/admin/overdue` — all overdue loans in the library | ✅ |
-| Activity log | `/admin/activity` — recent changes in this library (via audit log filtered by libraryId) | ✅ |
-
-### 4.4 Members & Access
-
-| Feature | Detail | Status |
-|---|---|---|
-| Join requests | Approve / reject incoming requests | ✅ |
-| Invite links | Create, list, revoke invite links (auto-join or approval-required) | ✅ |
-| Join form builder | Add/remove custom fields for join requests. Presets for 工号/部门/学号/班级/邮箱 etc. | ✅ |
-
-### 4.5 Feedback & Communication
-
-| Feature | Detail | Status |
-|---|---|---|
-| Feedback inbox | `/admin/feedback` — reader-submitted feedback (feature requests, book suggestions, bugs) | ✅ |
-| Feedback button | Floating bottom-right button visible to all authenticated users | ✅ |
-| Email sending | Needed for join-form email verification, overdue reminders, welcome emails | 🔜 Phase 2 (recommend Resend) |
-
-### 4.6 Import
-
-| Feature | Detail | Status |
-|---|---|---|
-| 番薯 import | Upload a 番薯 (Fanshu) `.xls` export → preview counts → import books / members / loans / reviews / purchase requests in one step | ✅ |
-| Import history | Lists previous import runs with status and counts | ✅ |
-
-### 4.7 Settings
-
-| Feature | Detail | Status |
-|---|---|---|
-| Library settings | Name, borrowing period, max books per reader, allow extensions | ✅ |
-| Join form settings | Manage per-library join form fields (in the Settings page) | ✅ |
-
-### 4.8 Nav & UI
-
-| Feature | Detail | Status |
-|---|---|---|
-| Grouped sidebar nav | 3 labelled groups: Library (Catalog/Readers/Overdue) · Members (Join requests/Invites) · More (Feedback/Activity/Settings/Import) | ✅ |
-| Reader preview | Library admin can preview the catalog as a reader sees it (toggle in top bar) | ✅ |
+- ✅ **图书馆切换器** — 左上角下拉菜单，列出所有所属馆并标注角色（管理员/读者），切换后服务端持久化 `active_library_id`，界面立即刷新
+- ✅ **顶栏权限标识** — 顶栏显示当前馆名 + 角色徽标（Admin / Reader），始终可见
+- ✅ **角色隔离** — `tenant` 中间件从 membership 表读取当前馆的实际角色，而不是 `user.role` 全局字段（解决了建馆后显示为读者的 bug）
 
 ---
 
-## 5. Super Admin Surface
+## 读者功能
 
-| Feature | Detail | Status |
-|---|---|---|
-| Overview dashboard | Stat cards (tenant/user/book counts), each drills down to its list. Recent system activity | ✅ |
-| Tenants list | Sortable/searchable/faceted (by Status) DataTable. Create, edit, (de)activate, delete | ✅ |
-| Tenant detail | Members list, users list, Add admin button, edit branding (slug, logo, brand colour, welcome message), delete with confirmation | ✅ |
-| Stable login link | Tenant admin page copies `/t/<libraryId>/login` — permanent link; slug is a readable alias that also resolves | ✅ |
-| Users list | All login accounts across tenants. Sortable/searchable, Role faceted filter | ✅ |
-| Cross-tenant books | All books across all tenants | ✅ |
-| Audit log | Append-only system-wide audit log. Filter by tenant + action. Paginated | ✅ |
-| System settings | `/admin/system` — system-level configuration | ✅ |
-| Impersonation | Sign in as any reader, time-boxed, audited (ADR 0004). Impersonation banner with Back button | ✅ |
-| System nav | Single "System" group: Overview / Tenants / Users / Books / Audit log / System settings | ✅ |
+每位加入图书馆的成员都能使用以下功能。
 
----
+- ✅ **书目浏览** — `/books`，可搜索/筛选/查看书籍详情和封面
+- ✅ **借书/还书** — 一键借阅，从"我的书"归还
+- ✅ **我的书** — `/my-books`，查看当前借阅、到期日、逾期高亮
+- ✅ **扫码借书** — `/scan`，输入或扫描 ISBN 一步借书
+- ✅ **发现图书馆** — `/discover`，找到并申请加入感兴趣的公开馆
 
-## 6. Shell & Navigation
+### 读者侧栏导航
 
-| Feature | Detail | Status |
-|---|---|---|
-| Sidebar shell | shadcn-admin-style left sidebar (ADR 0007): brand header, grouped nav, collapsible icon rail on desktop, mobile overlay drawer | ✅ |
-| Mobile drawer | Drawer closes automatically after navigating (pathname-change effect) | ✅ |
-| Library switcher | Top-left dropdown: all user's libraries with role badges. Switch persists server-side | ✅ |
-| Role/library indicator | Top bar badge shows current library name + Admin/Reader role | ✅ |
-| Top-right account menu | Avatar button → Profile / Install app / Sign out (`UserMenu`) | ✅ |
-| Language toggle | EN / 简体中文 switch. Persists in localStorage. All UI strings translated | ✅ |
-| Dark mode | Light/dark theme toggle (ThemeToggle) | ✅ |
-| PWA / installable | Web App Manifest, install prompt (top-right menu when available) | ✅ |
+我的书 · 扫码 · 书目 · 发现
 
 ---
 
-## 7. DataTable (ADR 0008)
+## 图书馆管理员功能
 
-All admin list pages use the shared `DataTable` on `@tanstack/react-table`.
+图书馆管理员负责日常运营：书籍、读者、加入流程、设置。
 
-| Feature | Detail | Status |
-|---|---|---|
-| Column sorting | Click header to cycle none→asc→desc. `aria-sort` on `<th>` | ✅ |
-| Toolbar search | Keyword filter across specified columns | ✅ |
-| Faceted filters | Multi-select with option counts (e.g. Role, Status) | ✅ |
-| Column visibility | "View" dropdown to show/hide columns | ✅ |
-| Client pagination | Page size selector + prev/next + "Page x of y" | ✅ |
-| Row selection | Checkbox column + "N selected" bulk-action bar | ✅ |
-| Bulk actions | Framework + bar UI shipped; specific actions (batch delete etc.) need batch API endpoints | ⚠️ |
-| Reset | Clears all active filters/search | ✅ |
+### 书目管理
+
+- ✅ **书籍列表** — 可排序/搜索/筛选的数据表，支持按标题/作者/馆排序，列显隐，分页
+- ✅ **添加书籍** — ISBN 查询自动填入元数据（Open Library / Google Books），支持手动录入
+- ✅ **多副本** — 每本书可设置数量，借出/归还自动增减可用数
+- ✅ **封面图片** — 上传封面存入 Cloudflare R2
+
+### 读者管理
+
+- ✅ **读者名册** — 可搜索/排序的读者列表，点击查看详情和借阅历史
+- ✅ **直接添加读者** — 管理员在 UI 直接为读者创建登录账号
+- ✅ **开通登录** — 为名册里已有的成员（如番薯导入的）开通登录账号（ADR 0006）
+- ✅ **模拟登录** — 以读者身份登录复现问题，顶部持续显示横幅，一键退出，全程审计（仅读者可被模拟，不含管理员）
+
+### 流通与运营
+
+- ✅ **逾期管理** — 查看本馆所有逾期借阅
+- ✅ **活动日志** — 本馆近期操作记录
+- ✅ **读者反馈** — 查看读者提交的功能建议/问题反馈
+
+### 成员准入
+
+- ✅ **加入申请** — 审批读者的加入申请（批准 → 自动创建 membership，拒绝 → 关闭申请）
+- ✅ **邀请链接管理** — 生成/撤销邀请链接，设置免审批或需审批、次数上限、有效期
+- ✅ **自定义加入表单** — 在"设置"里配置申请加入时必填的字段，内置预置字段（工号/部门/学号/班级/公司邮箱/手机号/会员号/房号/地址）；公司邮箱可标记需验证（Phase 2 通过邮件发 OTP）
+
+### 数据导入
+
+- ✅ **番薯导入** — 上传番薯（Fanshu）`.xls` 导出文件，预览导入数量，一键导入书籍/成员/借阅记录/评论/荐购
+- ✅ **导入历史** — 查看历次导入的状态和数量
+
+### 设置
+
+- ✅ **图书馆设置** — 名称、借阅周期（天数）、每人最多借阅数量、是否允许续借
+- ✅ **加入表单** — 管理自定义字段（已并入设置页，不再是独立入口）
+
+### 管理员侧栏导航
+
+分为三个分组（参考 shadcn-admin 的多分组结构）：
+- **Library** — 书目 · 读者 · 逾期
+- **Members** — 加入申请 · 邀请链接
+- **More** — 反馈 · 活动 · 设置 · 导入
 
 ---
 
-## 8. Dialogs & UI Primitives
+## 超级管理员功能
 
-| Feature | Detail | Status |
-|---|---|---|
-| shadcn Dialog | `Modal` backed by Radix `Dialog` — structured `DialogHeader`/`DialogTitle`/`DialogDescription`/`DialogFooter` matching shadcn-admin | ✅ |
-| Alert Dialog | `ConfirmDialog` backed by Radix `AlertDialog` — semantic destructive confirm | ✅ |
-| Password input | `PasswordInput` — show/hide toggle (Eye/EyeOff), matches shadcn-admin exactly | ✅ |
-| Form validation | `react-hook-form` + `zod` on login + signup. `FormField`/`FormMessage` inline errors | ✅ |
-| Toast notifications | Custom `ToastProvider` (success / error / info). Auto-dismiss | ✅ |
-| Empty states | `EmptyState` — icon + title + description for zero-data views | ✅ |
-| Skeleton loaders | Page/list/form/detail skeleton variants | ✅ |
-| `UserAvatar` | Initials + deterministic colour | ✅ |
+平台级管理，跨所有租户。
 
----
+- ✅ **概览仪表板** — 全系统租户/用户/书籍数量统计卡，点击下钻，近期系统活动
+- ✅ **租户管理** — 创建/编辑/启停/删除图书馆，品牌定制（slug/logo/主题色/欢迎语），查看成员和用户
+- ✅ **永久登录链接** — 租户详情页提供 `/t/<libraryId>/login` 的永久链接（改 slug 不失效）
+- ✅ **跨租户用户目录** — 所有馆的登录账号，可搜索，Role faceted 筛选
+- ✅ **跨租户书籍** — 全系统书目
+- ✅ **全局审计日志** — 不可变的全系统操作记录，支持按租户/操作类型筛选，分页
+- ✅ **模拟登录** — 以任意读者身份登录（超管专属），时间限制，全程审计，横幅+一键退出
 
-## 9. Infrastructure & Developer Experience
+### 超管侧栏导航
 
-| Feature | Detail | Status |
-|---|---|---|
-| Stack | React 19, TanStack Router (file-based) + Query, Hono API, Better Auth, Drizzle ORM, Cloudflare Workers + D1 + R2, Bun monorepo | ✅ |
-| Type-safe API | `hc<Api>` typed client; end-to-end inference from route → service → frontend | ✅ |
-| Bilingual i18n | `@lingui/react` — EN source + zh-Hans translations. `i18n:extract --clean` CI gate | ✅ |
-| Audit log | Append-only `audit_logs` table (ADR 0005). Every privileged action logged server-side | ✅ |
-| Multi-tenancy | All queries scoped by `libraryId`. `tenant` middleware derives scope from active membership | ✅ |
-| Testing pyramid | Unit (pure models + services) · Integration (Hono test harness) · Component (RTL + jsdom) · E2E (Playwright). 235 unit+int · 146 component · 35 E2E | ✅ |
-| CI | GitHub Actions: typecheck · test · build · E2E · CodeQL · Preview deploy | ✅ |
-| Preview deploys | Each PR deploys to `https://preview.openbookcorner.jizu.dev` (shared preview Worker, seeded demo users) | ✅ |
-| Local HTTPS preview | Tailscale cert + Node TLS proxy. `scripts/preview-refresh.sh` builds + restarts worker + renews cert | ✅ |
-| Tenant subdomains | `/t/<slug>/` path-based branding (ADR 0003). Stable ID-based login URL (ADR 0009) | ✅ |
-| ADRs | 9 Architecture Decision Records documenting all major choices | ✅ |
+System 分组：概览 · 租户 · 用户 · 书籍 · 审计日志 · 系统设置
 
 ---
 
-## 10. Planned / Phase 2
+## 界面与体验
 
-| Feature | Notes |
-|---|---|
-| Email sending | Join-form email verification OTP, overdue reminders, welcome emails. Recommend **Resend** (free tier 3k/month, Cloudflare Workers SDK) |
-| Bulk actions (tables) | Batch delete/activate via batch API endpoints |
-| Client pagination >200 rows | Users/Books lists currently cap at 200 (API max). Switch to `manualPagination` when dataset grows |
-| WeChat OAuth + `wx.scanCode` | Phase 2 China deployment (ADR 0001) |
-| Server-mode DataTable | `manualPagination`/`manualSorting` escape hatches already in DataTable |
-| Real bulk action per table | Framework ships; needs batch API endpoints |
-| AuditTable DataTable upgrade | Still server-paginated; migrate to DataTable toolbar when server-mode lands |
-| Forgot password flow | Not implemented; Better Auth supports it |
-| Email verification on sign-up | `requireEmailVerification: false` currently; enable when email sending is ready |
-| Command palette (⌘K) | Global search/navigation (shadcn-admin feature, tracked in backlog) |
-| Public library discovery (full) | `/discover` is a placeholder; filter/search/pagination when more libraries exist |
+- ✅ **shadcn-admin 风格侧栏** — 左侧固定侧栏，分组导航，桌面端可折叠为图标栏，移动端覆盖抽屉（点击导航项自动关闭）（ADR 0007）
+- ✅ **顶栏** — 侧栏开关 · 图书馆+角色标识 · 读者预览开关（管理员专用） · 语言切换 · 深浅主题 · 头像账户菜单
+- ✅ **账户菜单** — 右上角头像 → 个人资料 · 安装应用 · 退出登录
+- ✅ **数据表格（ADR 0008）** — 所有管理员列表页共用：列排序（aria-sort）、工具栏搜索、Faceted 多选筛选（带计数）、列显隐（View 菜单）、客户端分页、行选择+批量操作栏、Reset
+- ✅ **对话框** — shadcn/Radix Dialog（有结构化 Header/Footer）+ AlertDialog（确认操作）
+- ✅ **表单验证** — react-hook-form + zod，FormMessage 在字段下方即时显示错误
+- ✅ **反馈按钮** — 所有页面右下角浮动，读者/管理员均可提交
+- ✅ **中英双语** — Lingui i18n，所有界面文字均有中文翻译，随时切换
+- ✅ **深浅主题** — Light / Dark 模式
+- ✅ **PWA 可安装** — Web App Manifest，桌面/手机均可安装为应用
+
+---
+
+## 基础设施
+
+- ✅ **技术栈** — React 19 · TanStack Router + Query · Hono · Better Auth · Drizzle ORM · Cloudflare Workers + D1 + R2 · Bun monorepo
+- ✅ **端到端类型安全** — `hc<Api>` 类型化客户端，路由 → 服务 → 前端完整类型推断
+- ✅ **多租户隔离** — 所有查询必须带 `libraryId`，`tenant` 中间件强制执行，membership 表作为权限来源
+- ✅ **不可变审计日志** — 服务端写入，不可修改/删除（ADR 0005）
+- ✅ **测试金字塔** — 单元（纯函数/服务）· 集成（Hono harness）· 组件（RTL+jsdom）· E2E（Playwright）
+- ✅ **CI/CD** — GitHub Actions：类型检查 · 测试 · 构建 · E2E · CodeQL · PR 预览部署
+- ✅ **本地 HTTPS 预览** — Tailscale 证书 + TLS 反向代理，`scripts/preview-refresh.sh` 一键构建+重启+续签
+- ✅ **架构决策记录** — 9 份 ADR，记录所有重要技术/产品决策
+
+---
+
+## 待实现（Phase 2）
+
+- 🔜 **邮件发送** — 加入表单邮箱验证 OTP、逾期提醒、欢迎邮件。推荐 **Resend**（免费 3000/月，官方 Cloudflare Workers SDK）
+- 🔜 **批量操作** — 表格行选择+批量栏框架已就绪，需后端批量 API 端点（批量删除/启停等）
+- 🔜 **命令面板 ⌘K** — 全局导航/搜索（shadcn-admin 标志功能）
+- 🔜 **公开馆发现（完整版）** — `/discover` 目前只是基础列表，后续加搜索/分页/筛选
+- 🔜 **服务端分页（大数据集）** — Users/Books 目前客户端分页上限 200 条，超出时切回服务端模式
+- 🔜 **微信 OAuth + wx.scanCode** — Phase 2 中国部署（ADR 0001）
+- 🔜 **忘记密码** — Better Auth 支持，待接入邮件服务后启用
+- 🔜 **注册时邮箱验证** — 当前关闭，待邮件服务就绪后开启
