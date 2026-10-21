@@ -197,7 +197,7 @@ msgid "Active"
 msgstr "Active"
 
 #: routes/_app/admin/activity.tsx:28
-#: routes/_app/nav.tsx:53
+#: routes/_app/nav.tsx:56
 msgid "Activity"
 msgstr "Activity"
 
@@ -315,6 +315,10 @@ msgstr "All users across every tenant (super admin)."
 msgid "Allow renewals/extensions"
 msgstr "Allow renewals/extensions"
 
+#: routes/_app/admin/join-requests.tsx:89
+msgid "Approve"
+msgstr "Approve"
+
 #: routes/_app/admin/members.tsx:130
 #: routes/_app/books/index.tsx:137
 msgid "Ascending"
@@ -325,7 +329,7 @@ msgid "At least 8 characters"
 msgstr "At least 8 characters"
 
 #: routes/_app/admin/audit.tsx:70
-#: routes/_app/nav.tsx:39
+#: routes/_app/nav.tsx:41
 msgid "Audit log"
 msgstr "Audit log"
 
@@ -356,7 +360,7 @@ msgstr "Available · {0} of {1}"
 msgid "Available · {available} of {total}"
 msgstr "Available · {available} of {total}"
 
-#: routes/_app/discover.tsx:36
+#: routes/_app/discover.tsx:51
 msgid "Back"
 msgstr "Back"
 
@@ -398,7 +402,7 @@ msgstr "Book suggestion"
 #: routes/_app/admin/overview.tsx:65
 #: routes/_app/admin/tenants.$libraryId.tsx:152
 #: routes/_app/admin/TenantsTable.tsx:52
-#: routes/_app/nav.tsx:38
+#: routes/_app/nav.tsx:40
 msgid "Books"
 msgstr "Books"
 
@@ -509,8 +513,8 @@ msgstr "Cancel scan"
 msgid "Cannot delete a library that still has members or books."
 msgstr "Cannot delete a library that still has members or books."
 
-#: routes/_app/nav.tsx:48
-#: routes/_app/nav.tsx:64
+#: routes/_app/nav.tsx:50
+#: routes/_app/nav.tsx:67
 msgid "Catalog"
 msgstr "Catalog"
 
@@ -612,6 +616,10 @@ msgstr "Could not send feedback. Please try again."
 #: components/barcode/IsbnScanner.tsx:121
 msgid "Could not start the scanner. Enter the ISBN manually."
 msgstr "Could not start the scanner. Enter the ISBN manually."
+
+#: routes/_app/discover.tsx:35
+msgid "Could not submit request."
+msgstr "Could not submit request."
 
 #: routes/_app/admin/tenants.$libraryId.tsx:64
 #: routes/_app/admin/tenants.$libraryId.tsx:79
@@ -735,7 +743,11 @@ msgstr "Description"
 msgid "Details auto-filled from Open Library. You can edit the title/author before saving."
 msgstr "Details auto-filled from Open Library. You can edit the title/author before saving."
 
-#: routes/_app/discover.tsx:24
+#: routes/_app/nav.tsx:68
+msgid "Discover"
+msgstr "Discover"
+
+#: routes/_app/discover.tsx:44
 #: routes/_app/welcome.tsx:90
 msgid "Discover libraries"
 msgstr "Discover libraries"
@@ -857,7 +869,7 @@ msgid "Feature request"
 msgstr "Feature request"
 
 #: components/FeedbackButton.tsx:74
-#: routes/_app/nav.tsx:52
+#: routes/_app/nav.tsx:54
 msgid "Feedback"
 msgstr "Feedback"
 
@@ -879,7 +891,7 @@ msgid "https://…fanshujieyue.com/…/librarydata_….xls"
 msgstr "https://…fanshujieyue.com/…/librarydata_….xls"
 
 #: routes/_app/admin/import.tsx:233
-#: routes/_app/nav.tsx:54
+#: routes/_app/nav.tsx:57
 msgid "Import"
 msgstr "Import"
 
@@ -945,6 +957,11 @@ msgstr "ISBN: {0}"
 msgid "Join a library"
 msgstr "Join a library"
 
+#: routes/_app/admin/join-requests.tsx:46
+#: routes/_app/nav.tsx:55
+msgid "Join requests"
+msgstr "Join requests"
+
 #: routes/_app/admin/members.$memberId.tsx:108
 msgid "Joined"
 msgstr "Joined"
@@ -957,7 +974,7 @@ msgstr "Joined date"
 msgid "Libraries"
 msgstr "Libraries"
 
-#: routes/_app/nav.tsx:46
+#: routes/_app/nav.tsx:48
 msgid "Library"
 msgstr "Library"
 
@@ -1061,7 +1078,7 @@ msgid "Member until"
 msgstr "Member until"
 
 #: routes/_app/my-books.tsx:94
-#: routes/_app/nav.tsx:62
+#: routes/_app/nav.tsx:65
 msgid "My Books"
 msgstr "My Books"
 
@@ -1074,6 +1091,10 @@ msgstr "My Books"
 #: routes/_app/admin/UsersTable.tsx:43
 msgid "Name"
 msgstr "Name"
+
+#: routes/_app/admin/join-requests.tsx:59
+msgid "New join requests will appear here."
+msgstr "New join requests will appear here."
 
 #: components/ui/DataTable.tsx:615
 #: components/ui/Pager.tsx:26
@@ -1130,6 +1151,18 @@ msgstr "No members yet"
 msgid "No overdue books in this range"
 msgstr "No overdue books in this range"
 
+#: routes/_app/admin/join-requests.tsx:58
+msgid "No pending requests"
+msgstr "No pending requests"
+
+#: routes/_app/discover.tsx:61
+msgid "No public libraries are available to join at the moment."
+msgstr "No public libraries are available to join at the moment."
+
+#: routes/_app/discover.tsx:60
+msgid "No public libraries found"
+msgstr "No public libraries found"
+
 #: components/ui/DataTable.tsx:390
 msgid "No results."
 msgstr "No results."
@@ -1149,10 +1182,6 @@ msgstr "Note"
 #: routes/_app/admin/overdue.tsx:83
 msgid "Nothing needs chasing right now."
 msgstr "Nothing needs chasing right now."
-
-#: routes/_app/discover.tsx:32
-msgid "Nothing to show yet"
-msgstr "Nothing to show yet"
 
 #: components/Toast.tsx:46
 msgid "Notifications"
@@ -1180,7 +1209,7 @@ msgstr "Other"
 msgid "Out"
 msgstr "Out"
 
-#: routes/_app/nav.tsx:50
+#: routes/_app/nav.tsx:52
 msgid "Overdue"
 msgstr "Overdue"
 
@@ -1190,7 +1219,7 @@ msgstr "Overdue Books"
 
 #: routes/_app/admin/overview.tsx:55
 #: routes/_app/admin/tenants.$libraryId.tsx:136
-#: routes/_app/nav.tsx:35
+#: routes/_app/nav.tsx:37
 msgid "Overview"
 msgstr "Overview"
 
@@ -1213,6 +1242,10 @@ msgstr "Password"
 #: routes/_app/admin/SystemInfo.tsx:43
 msgid "Path-based — each tenant is served at /t/:slug"
 msgstr "Path-based — each tenant is served at /t/:slug"
+
+#: routes/_app/admin/join-requests.tsx:49
+msgid "Pending requests from users who want to join this library."
+msgstr "Pending requests from users who want to join this library."
 
 #: routes/_app/admin/SystemInfo.tsx:46
 msgid "Per-tenant settings live on each tenant's detail page."
@@ -1259,13 +1292,9 @@ msgstr "Profile"
 msgid "Profile updated."
 msgstr "Profile updated."
 
-#: routes/_app/discover.tsx:27
-msgid "Public libraries you can request to join will appear here."
-msgstr "Public libraries you can request to join will appear here."
-
-#: routes/_app/discover.tsx:33
-msgid "Public library discovery is coming soon."
-msgstr "Public library discovery is coming soon."
+#: routes/_app/discover.tsx:47
+msgid "Public libraries you can request to join."
+msgstr "Public libraries you can request to join."
 
 #: routes/_app/books/$bookId.tsx:138
 msgid "Published"
@@ -1294,7 +1323,7 @@ msgstr "Read-only system information (super admin)."
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:217
 #: routes/_app/admin/UsersTable.tsx:32
-#: routes/_app/nav.tsx:60
+#: routes/_app/nav.tsx:63
 #: routes/_app/profile.tsx:26
 msgid "Reader"
 msgstr "Reader"
@@ -1304,7 +1333,7 @@ msgid "Reader preview"
 msgstr "Reader preview"
 
 #: routes/_app/admin/members.tsx:80
-#: routes/_app/nav.tsx:49
+#: routes/_app/nav.tsx:51
 msgid "Readers"
 msgstr "Readers"
 
@@ -1315,6 +1344,26 @@ msgstr "Recent activity"
 #: routes/_app/admin/activity.tsx:31
 msgid "Recent changes in your library."
 msgstr "Recent changes in your library."
+
+#: routes/_app/admin/join-requests.tsx:98
+msgid "Reject"
+msgstr "Reject"
+
+#: routes/_app/admin/join-requests.tsx:30
+msgid "Request approved."
+msgstr "Request approved."
+
+#: routes/_app/admin/join-requests.tsx:37
+msgid "Request rejected."
+msgstr "Request rejected."
+
+#: routes/_app/discover.tsx:28
+msgid "Request submitted. The library admin will review it."
+msgstr "Request submitted. The library admin will review it."
+
+#: routes/_app/discover.tsx:79
+msgid "Request to join"
+msgstr "Request to join"
 
 #: components/ui/DataTable.tsx:327
 msgid "Reset"
@@ -1370,7 +1419,7 @@ msgstr "Save settings"
 msgid "Saving…"
 msgstr "Saving…"
 
-#: routes/_app/nav.tsx:63
+#: routes/_app/nav.tsx:66
 msgid "Scan"
 msgstr "Scan"
 
@@ -1467,7 +1516,7 @@ msgstr "Sending…"
 msgid "Series"
 msgstr "Series"
 
-#: routes/_app/nav.tsx:51
+#: routes/_app/nav.tsx:53
 msgid "Settings"
 msgstr "Settings"
 
@@ -1589,7 +1638,7 @@ msgstr "Switch to dark mode"
 msgid "Switch to light mode"
 msgstr "Switch to light mode"
 
-#: routes/_app/nav.tsx:33
+#: routes/_app/nav.tsx:35
 msgid "System"
 msgstr "System"
 
@@ -1598,7 +1647,7 @@ msgid "System actions (tenant changes, impersonation) will appear here."
 msgstr "System actions (tenant changes, impersonation) will appear here."
 
 #: routes/_app/admin/system.tsx:23
-#: routes/_app/nav.tsx:40
+#: routes/_app/nav.tsx:42
 msgid "System settings"
 msgstr "System settings"
 
@@ -1638,7 +1687,7 @@ msgstr "Tenant not found"
 #: routes/_app/admin/overview.tsx:63
 #: routes/_app/admin/overview.tsx:82
 #: routes/_app/admin/tenants.index.tsx:53
-#: routes/_app/nav.tsx:36
+#: routes/_app/nav.tsx:38
 msgid "Tenants"
 msgstr "Tenants"
 
@@ -1746,7 +1795,7 @@ msgstr "User Feedback"
 #: routes/_app/admin/tenants.$libraryId.tsx:184
 #: routes/_app/admin/TenantsTable.tsx:51
 #: routes/_app/admin/users.tsx:36
-#: routes/_app/nav.tsx:37
+#: routes/_app/nav.tsx:39
 msgid "Users"
 msgstr "Users"
 
@@ -1798,9 +1847,17 @@ msgstr "Working…"
 msgid "Yes"
 msgstr "Yes"
 
+#: routes/_app/discover.tsx:33
+msgid "You already have a pending request for this library."
+msgstr "You already have a pending request for this library."
+
 #: lib/errors.ts:19
 msgid "You appear to be offline. Connect to the internet and try again."
 msgstr "You appear to be offline. Connect to the internet and try again."
+
+#: routes/_app/discover.tsx:34
+msgid "You are already a member of this library."
+msgstr "You are already a member of this library."
 
 #: components/ImpersonationBanner.tsx:35
 msgid "You are impersonating another user. Actions are recorded."

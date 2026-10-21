@@ -4,8 +4,10 @@ import {
   BookOpen,
   Building2,
   ClipboardList,
+  Compass,
   LayoutDashboard,
   ListChecks,
+  MailOpen,
   ScanLine,
   Settings,
   Upload,
@@ -50,6 +52,7 @@ const LIBRARY: NavGroup = {
     { to: '/admin/overdue', label: <Trans>Overdue</Trans>, icon: ListChecks },
     { to: '/admin/settings', label: <Trans>Settings</Trans>, icon: Settings },
     { to: '/admin/feedback', label: <Trans>Feedback</Trans>, icon: MessageSquare },
+    { to: '/admin/join-requests', label: <Trans>Join requests</Trans>, icon: MailOpen },
     { to: '/admin/activity', label: <Trans>Activity</Trans>, icon: ClipboardList },
     { to: '/admin/import', label: <Trans>Import</Trans>, icon: Upload },
   ],
@@ -62,6 +65,7 @@ const READER: NavGroup = {
     { to: '/my-books', label: <Trans>My Books</Trans>, icon: Library },
     { to: '/scan', label: <Trans>Scan</Trans>, icon: ScanLine },
     { to: '/books', label: <Trans>Catalog</Trans>, icon: BookOpen },
+    { to: '/discover', label: <Trans>Discover</Trans>, icon: Compass },
   ],
 }
 

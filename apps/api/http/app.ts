@@ -8,6 +8,7 @@ import { feedbackApp } from './feedback'
 import { libraryApp } from './library'
 import { memberApp } from './member'
 import { membershipApp } from './membership'
+import { joinRequestApp } from './join-request'
 import { tenantApp } from './tenant'
 
 /**
@@ -24,6 +25,7 @@ export const apiApp = new Hono()
   .route('/library', libraryApp)
   .route('/member', memberApp)
   .route('/membership', membershipApp)
+  .route('/join', joinRequestApp)
   .route('/feedback', feedbackApp)
   .route('/tenant', tenantApp)
   .route('/admin', adminApp)
