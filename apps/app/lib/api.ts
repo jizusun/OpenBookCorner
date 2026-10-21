@@ -194,6 +194,14 @@ const call = {
         },
       }),
     ),
+  'membership.mine': () =>
+    json<Ok<typeof client.membership.mine.$get>>(client.membership.mine.$get()),
+  'membership.createLibrary': (i: { name: string; emailDomains: string[] }) =>
+    json<Ok<(typeof client.membership)['create-library']['$post']>>(
+      client.membership['create-library'].$post({ json: i }),
+    ),
+  'membership.switch': (i: { libraryId: string }) =>
+    json<Ok<typeof client.membership.switch.$post>>(client.membership.switch.$post({ json: i })),
 }
 
 type Endpoint = keyof typeof call
@@ -274,6 +282,11 @@ export const api = {
     overview: node('admin.overview'),
     audit: node('admin.audit'),
     books: node('admin.books'),
+  },
+  membership: {
+    mine: node('membership.mine'),
+    createLibrary: node('membership.createLibrary'),
+    switch: node('membership.switch'),
   },
 }
 
