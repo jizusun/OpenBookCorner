@@ -202,6 +202,22 @@ const call = {
     ),
   'membership.switch': (i: { libraryId: string }) =>
     json<Ok<typeof client.membership.switch.$post>>(client.membership.switch.$post({ json: i })),
+  'join.discover': () =>
+    json<Ok<typeof client.join.discover.$get>>(client.join.discover.$get()),
+  'join.request': (i: { libraryId: string; answers?: Record<string, string> }) =>
+    json<Ok<typeof client.join.request.$post>>(client.join.request.$post({ json: i })),
+  'join.adminRequests': () =>
+    json<Ok<(typeof client.join.admin)['requests']['$get']>>(
+      client.join.admin.requests.$get(),
+    ),
+  'join.approve': (i: { requestId: string }) =>
+    json<Ok<(typeof client.join.admin)['approve']['$post']>>(
+      client.join.admin.approve.$post({ json: i }),
+    ),
+  'join.reject': (i: { requestId: string }) =>
+    json<Ok<(typeof client.join.admin)['reject']['$post']>>(
+      client.join.admin.reject.$post({ json: i }),
+    ),
 }
 
 type Endpoint = keyof typeof call
@@ -287,6 +303,13 @@ export const api = {
     mine: node('membership.mine'),
     createLibrary: node('membership.createLibrary'),
     switch: node('membership.switch'),
+  },
+  join: {
+    discover: node('join.discover'),
+    request: node('join.request'),
+    adminRequests: node('join.adminRequests'),
+    approve: node('join.approve'),
+    reject: node('join.reject'),
   },
 }
 

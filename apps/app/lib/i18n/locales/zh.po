@@ -197,7 +197,7 @@ msgid "Active"
 msgstr "已启用"
 
 #: routes/_app/admin/activity.tsx:28
-#: routes/_app/nav.tsx:53
+#: routes/_app/nav.tsx:56
 msgid "Activity"
 msgstr "活动"
 
@@ -315,6 +315,10 @@ msgstr "所有租户的全部用户（超级管理员）。"
 msgid "Allow renewals/extensions"
 msgstr "允许续借"
 
+#: routes/_app/admin/join-requests.tsx:89
+msgid "Approve"
+msgstr "批准"
+
 #: routes/_app/admin/members.tsx:130
 #: routes/_app/books/index.tsx:137
 msgid "Ascending"
@@ -325,7 +329,7 @@ msgid "At least 8 characters"
 msgstr "至少 8 个字符"
 
 #: routes/_app/admin/audit.tsx:70
-#: routes/_app/nav.tsx:39
+#: routes/_app/nav.tsx:41
 msgid "Audit log"
 msgstr "审计日志"
 
@@ -356,7 +360,7 @@ msgstr "可借 · {0}/{1}"
 msgid "Available · {available} of {total}"
 msgstr "可借 · {available}/{total}"
 
-#: routes/_app/discover.tsx:36
+#: routes/_app/discover.tsx:51
 msgid "Back"
 msgstr "返回"
 
@@ -398,7 +402,7 @@ msgstr "荐书"
 #: routes/_app/admin/overview.tsx:65
 #: routes/_app/admin/tenants.$libraryId.tsx:152
 #: routes/_app/admin/TenantsTable.tsx:52
-#: routes/_app/nav.tsx:38
+#: routes/_app/nav.tsx:40
 msgid "Books"
 msgstr "藏书"
 
@@ -509,8 +513,8 @@ msgstr "取消扫描"
 msgid "Cannot delete a library that still has members or books."
 msgstr "该图书馆仍有成员或书籍，无法删除。"
 
-#: routes/_app/nav.tsx:48
-#: routes/_app/nav.tsx:64
+#: routes/_app/nav.tsx:50
+#: routes/_app/nav.tsx:67
 msgid "Catalog"
 msgstr "书目"
 
@@ -612,6 +616,10 @@ msgstr "发送失败，请重试。"
 #: components/barcode/IsbnScanner.tsx:121
 msgid "Could not start the scanner. Enter the ISBN manually."
 msgstr "扫描无法启动，请手动输入 ISBN。"
+
+#: routes/_app/discover.tsx:35
+msgid "Could not submit request."
+msgstr "无法提交申请。"
 
 #: routes/_app/admin/tenants.$libraryId.tsx:64
 #: routes/_app/admin/tenants.$libraryId.tsx:79
@@ -735,7 +743,11 @@ msgstr "简介"
 msgid "Details auto-filled from Open Library. You can edit the title/author before saving."
 msgstr "已从 Open Library 自动填写，保存前可修改书名/作者。"
 
-#: routes/_app/discover.tsx:24
+#: routes/_app/nav.tsx:68
+msgid "Discover"
+msgstr "发现"
+
+#: routes/_app/discover.tsx:44
 #: routes/_app/welcome.tsx:90
 msgid "Discover libraries"
 msgstr "发现图书馆"
@@ -857,7 +869,7 @@ msgid "Feature request"
 msgstr "功能建议"
 
 #: components/FeedbackButton.tsx:74
-#: routes/_app/nav.tsx:52
+#: routes/_app/nav.tsx:54
 msgid "Feedback"
 msgstr "反馈"
 
@@ -879,7 +891,7 @@ msgid "https://…fanshujieyue.com/…/librarydata_….xls"
 msgstr "https://…fanshujieyue.com/…/librarydata_….xls"
 
 #: routes/_app/admin/import.tsx:233
-#: routes/_app/nav.tsx:54
+#: routes/_app/nav.tsx:57
 msgid "Import"
 msgstr "导入"
 
@@ -945,6 +957,11 @@ msgstr "ISBN：{0}"
 msgid "Join a library"
 msgstr "加入图书馆"
 
+#: routes/_app/admin/join-requests.tsx:46
+#: routes/_app/nav.tsx:55
+msgid "Join requests"
+msgstr "加入申请"
+
 #: routes/_app/admin/members.$memberId.tsx:108
 msgid "Joined"
 msgstr "入馆日期"
@@ -957,7 +974,7 @@ msgstr "入馆日期"
 msgid "Libraries"
 msgstr "图书馆"
 
-#: routes/_app/nav.tsx:46
+#: routes/_app/nav.tsx:48
 msgid "Library"
 msgstr "图书馆"
 
@@ -1061,7 +1078,7 @@ msgid "Member until"
 msgstr "会员到期"
 
 #: routes/_app/my-books.tsx:94
-#: routes/_app/nav.tsx:62
+#: routes/_app/nav.tsx:65
 msgid "My Books"
 msgstr "我的借阅"
 
@@ -1074,6 +1091,10 @@ msgstr "我的借阅"
 #: routes/_app/admin/UsersTable.tsx:43
 msgid "Name"
 msgstr "姓名"
+
+#: routes/_app/admin/join-requests.tsx:59
+msgid "New join requests will appear here."
+msgstr "新的加入申请将显示在这里。"
 
 #: components/ui/DataTable.tsx:615
 #: components/ui/Pager.tsx:26
@@ -1130,6 +1151,18 @@ msgstr "暂无成员"
 msgid "No overdue books in this range"
 msgstr "该区间没有逾期图书"
 
+#: routes/_app/admin/join-requests.tsx:58
+msgid "No pending requests"
+msgstr "暂无待处理申请"
+
+#: routes/_app/discover.tsx:61
+msgid "No public libraries are available to join at the moment."
+msgstr "目前没有可申请加入的公开图书馆。"
+
+#: routes/_app/discover.tsx:60
+msgid "No public libraries found"
+msgstr "未找到公开图书馆"
+
 #: components/ui/DataTable.tsx:390
 msgid "No results."
 msgstr "无结果。"
@@ -1149,10 +1182,6 @@ msgstr "备注"
 #: routes/_app/admin/overdue.tsx:83
 msgid "Nothing needs chasing right now."
 msgstr "目前没有需要催还的图书。"
-
-#: routes/_app/discover.tsx:32
-msgid "Nothing to show yet"
-msgstr "暂无内容"
 
 #: components/Toast.tsx:46
 msgid "Notifications"
@@ -1180,7 +1209,7 @@ msgstr "其他"
 msgid "Out"
 msgstr "在借"
 
-#: routes/_app/nav.tsx:50
+#: routes/_app/nav.tsx:52
 msgid "Overdue"
 msgstr "逾期"
 
@@ -1190,7 +1219,7 @@ msgstr "逾期图书"
 
 #: routes/_app/admin/overview.tsx:55
 #: routes/_app/admin/tenants.$libraryId.tsx:136
-#: routes/_app/nav.tsx:35
+#: routes/_app/nav.tsx:37
 msgid "Overview"
 msgstr "概况"
 
@@ -1213,6 +1242,10 @@ msgstr "密码"
 #: routes/_app/admin/SystemInfo.tsx:43
 msgid "Path-based — each tenant is served at /t/:slug"
 msgstr "路径式 —— 每个租户通过 /t/:slug 访问"
+
+#: routes/_app/admin/join-requests.tsx:49
+msgid "Pending requests from users who want to join this library."
+msgstr "希望加入本图书馆的用户提交的待处理申请。"
 
 #: routes/_app/admin/SystemInfo.tsx:46
 msgid "Per-tenant settings live on each tenant's detail page."
@@ -1259,13 +1292,9 @@ msgstr "个人资料"
 msgid "Profile updated."
 msgstr "资料已更新。"
 
-#: routes/_app/discover.tsx:27
-msgid "Public libraries you can request to join will appear here."
-msgstr "你可以申请加入的公开图书馆会显示在这里。"
-
-#: routes/_app/discover.tsx:33
-msgid "Public library discovery is coming soon."
-msgstr "公开图书馆发现功能即将推出。"
+#: routes/_app/discover.tsx:47
+msgid "Public libraries you can request to join."
+msgstr "你可以申请加入的公开图书馆。"
 
 #: routes/_app/books/$bookId.tsx:138
 msgid "Published"
@@ -1294,7 +1323,7 @@ msgstr "只读系统信息（超级管理员）。"
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:217
 #: routes/_app/admin/UsersTable.tsx:32
-#: routes/_app/nav.tsx:60
+#: routes/_app/nav.tsx:63
 #: routes/_app/profile.tsx:26
 msgid "Reader"
 msgstr "普通成员"
@@ -1304,7 +1333,7 @@ msgid "Reader preview"
 msgstr "读者预览"
 
 #: routes/_app/admin/members.tsx:80
-#: routes/_app/nav.tsx:49
+#: routes/_app/nav.tsx:51
 msgid "Readers"
 msgstr "读者"
 
@@ -1315,6 +1344,26 @@ msgstr "近期动态"
 #: routes/_app/admin/activity.tsx:31
 msgid "Recent changes in your library."
 msgstr "本馆的近期变更。"
+
+#: routes/_app/admin/join-requests.tsx:98
+msgid "Reject"
+msgstr "拒绝"
+
+#: routes/_app/admin/join-requests.tsx:30
+msgid "Request approved."
+msgstr "申请已批准。"
+
+#: routes/_app/admin/join-requests.tsx:37
+msgid "Request rejected."
+msgstr "申请已拒绝。"
+
+#: routes/_app/discover.tsx:28
+msgid "Request submitted. The library admin will review it."
+msgstr "申请已提交，图书馆管理员将进行审核。"
+
+#: routes/_app/discover.tsx:79
+msgid "Request to join"
+msgstr "申请加入"
 
 #: components/ui/DataTable.tsx:327
 msgid "Reset"
@@ -1370,7 +1419,7 @@ msgstr "保存设置"
 msgid "Saving…"
 msgstr "保存中…"
 
-#: routes/_app/nav.tsx:63
+#: routes/_app/nav.tsx:66
 msgid "Scan"
 msgstr "扫码"
 
@@ -1467,7 +1516,7 @@ msgstr "发送中…"
 msgid "Series"
 msgstr "系列"
 
-#: routes/_app/nav.tsx:51
+#: routes/_app/nav.tsx:53
 msgid "Settings"
 msgstr "设置"
 
@@ -1589,7 +1638,7 @@ msgstr "切换到深色模式"
 msgid "Switch to light mode"
 msgstr "切换到浅色模式"
 
-#: routes/_app/nav.tsx:33
+#: routes/_app/nav.tsx:35
 msgid "System"
 msgstr "系统"
 
@@ -1598,7 +1647,7 @@ msgid "System actions (tenant changes, impersonation) will appear here."
 msgstr "系统操作（租户变更、模拟登录）会显示在这里。"
 
 #: routes/_app/admin/system.tsx:23
-#: routes/_app/nav.tsx:40
+#: routes/_app/nav.tsx:42
 msgid "System settings"
 msgstr "系统设置"
 
@@ -1638,7 +1687,7 @@ msgstr "未找到租户"
 #: routes/_app/admin/overview.tsx:63
 #: routes/_app/admin/overview.tsx:82
 #: routes/_app/admin/tenants.index.tsx:53
-#: routes/_app/nav.tsx:36
+#: routes/_app/nav.tsx:38
 msgid "Tenants"
 msgstr "租户"
 
@@ -1746,7 +1795,7 @@ msgstr "用户反馈"
 #: routes/_app/admin/tenants.$libraryId.tsx:184
 #: routes/_app/admin/TenantsTable.tsx:51
 #: routes/_app/admin/users.tsx:36
-#: routes/_app/nav.tsx:37
+#: routes/_app/nav.tsx:39
 msgid "Users"
 msgstr "用户"
 
@@ -1798,9 +1847,17 @@ msgstr "处理中…"
 msgid "Yes"
 msgstr "是"
 
+#: routes/_app/discover.tsx:33
+msgid "You already have a pending request for this library."
+msgstr "你已向该图书馆提交了一个待处理的申请。"
+
 #: lib/errors.ts:19
 msgid "You appear to be offline. Connect to the internet and try again."
 msgstr "你似乎已离线，请连接网络后重试。"
+
+#: routes/_app/discover.tsx:34
+msgid "You are already a member of this library."
+msgstr "你已经是该图书馆的成员。"
 
 #: components/ImpersonationBanner.tsx:35
 msgid "You are impersonating another user. Actions are recorded."

@@ -30,6 +30,7 @@ describe('navGroupsFor', () => {
       '/admin/overdue',
       '/admin/settings',
       '/admin/feedback',
+      '/admin/join-requests',
       '/admin/activity',
       '/admin/import',
     ])
@@ -38,13 +39,13 @@ describe('navGroupsFor', () => {
   it('library_admin WITH reader preview → the Reader group (browsing as a member)', () => {
     const groups = navGroupsFor('library_admin', true)
     expect(groups.map((g) => g.id)).toEqual(['reader'])
-    expect(ids(groups)).toEqual(['/my-books', '/scan', '/books'])
+    expect(ids(groups)).toEqual(['/my-books', '/scan', '/books', '/discover'])
   })
 
   it('library_reader → the Reader group', () => {
     const groups = navGroupsFor('library_reader', false)
     expect(groups.map((g) => g.id)).toEqual(['reader'])
-    expect(ids(groups)).toEqual(['/my-books', '/scan', '/books'])
+    expect(ids(groups)).toEqual(['/my-books', '/scan', '/books', '/discover'])
   })
 
   it('every item has a stable key, a label node, and a route', () => {
