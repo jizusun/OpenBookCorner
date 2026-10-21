@@ -584,7 +584,7 @@ msgstr "Code"
 msgid "Configuration"
 msgstr "Configuration"
 
-#: routes/signup.tsx:96
+#: routes/signup.tsx:129
 msgid "Confirm password"
 msgstr "Confirm password"
 
@@ -613,7 +613,7 @@ msgstr "Could not add the book. Please check the fields and try again."
 msgid "Could not add the member."
 msgstr "Could not add the member."
 
-#: routes/signup.tsx:40
+#: routes/signup.tsx:61
 msgid "Could not create account. That email may already be registered."
 msgstr "Could not create account. That email may already be registered."
 
@@ -693,11 +693,11 @@ msgstr "Create a library"
 msgid "Create a link to share with prospective members."
 msgstr "Create a link to share with prospective members."
 
-#: routes/signup.tsx:114
+#: routes/signup.tsx:144
 msgid "Create account"
 msgstr "Create account"
 
-#: routes/signup.tsx:53
+#: routes/signup.tsx:71
 msgid "Create an account"
 msgstr "Create an account"
 
@@ -734,7 +734,6 @@ msgstr "Created tenant"
 #: routes/_app/admin/invites.tsx:113
 #: routes/_app/admin/tenants.index.tsx:87
 #: routes/_app/welcome.tsx:109
-#: routes/signup.tsx:110
 msgid "Creating…"
 msgstr "Creating…"
 
@@ -872,7 +871,7 @@ msgstr "Edit Book"
 #: routes/_app/admin/UsersTable.tsx:44
 #: routes/_app/profile.tsx:99
 #: routes/login.tsx:214
-#: routes/signup.tsx:71
+#: routes/signup.tsx:93
 msgid "Email"
 msgstr "Email"
 
@@ -911,9 +910,9 @@ msgstr "Enable login for {0}"
 msgid "Enabled"
 msgstr "Enabled"
 
-#: routes/signup.tsx:59
-msgid "Enter your details to create an account. Already have an account? <0>Sign in</0>"
-msgstr "Enter your details to create an account. Already have an account? <0>Sign in</0>"
+#: routes/signup.tsx:76
+msgid "Enter your email and password to create an account. Already have an account? <0>Sign in</0>"
+msgstr "Enter your email and password to create an account. Already have an account? <0>Sign in</0>"
 
 #: routes/login.tsx:202
 msgid "Enter your email and password to sign in."
@@ -1396,13 +1395,9 @@ msgid "Pages"
 msgstr "Pages"
 
 #: routes/login.tsx:225
-#: routes/signup.tsx:83
+#: routes/signup.tsx:111
 msgid "Password"
 msgstr "Password"
-
-#: routes/signup.tsx:28
-msgid "Passwords don't match."
-msgstr "Passwords don't match."
 
 #: routes/_app/admin/SystemInfo.tsx:43
 msgid "Path-based — each tenant is served at /t/:slug"

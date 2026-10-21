@@ -214,8 +214,10 @@ export function LoginPage({ slug }: { slug?: string } = {}) {
               <Label htmlFor="email"><Trans>Email</Trans></Label>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 autoComplete="email"
+                placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -225,6 +227,7 @@ export function LoginPage({ slug }: { slug?: string } = {}) {
               <Label htmlFor="password"><Trans>Password</Trans></Label>
               <Input
                 id="password"
+                name="password"
                 type="password"
                 autoComplete="current-password"
                 value={password}

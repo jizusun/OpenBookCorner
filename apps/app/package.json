@@ -17,6 +17,7 @@
     "typecheck": "lingui compile --typescript && tsc --build"
   },
   "dependencies": {
+    "@hookform/resolvers": "3.9.0",
     "@lingui/core": "^5",
     "@lingui/react": "^5",
     "@obc/api": "workspace:*",
@@ -40,6 +41,7 @@
     "radix-ui": "^1.8.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-hook-form": "7.54.2",
     "tailwind-merge": "^2.6.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
     "zod": "^3.24.1"
