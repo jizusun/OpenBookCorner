@@ -609,6 +609,10 @@ msgstr "添加失败，请检查填写内容后重试。"
 msgid "Could not add the member."
 msgstr "无法添加成员。"
 
+#: routes/login.tsx:201
+msgid "Could not create account. That email may already be registered."
+msgstr "无法创建账户，该邮箱可能已被注册。"
+
 #: routes/_app/admin/tenants.index.tsx:38
 #: routes/_app/welcome.tsx:37
 msgid "Could not create the library."
@@ -685,6 +689,11 @@ msgstr "创建图书馆"
 msgid "Create a link to share with prospective members."
 msgstr "创建链接分享给潜在成员。"
 
+#: routes/login.tsx:238
+#: routes/login.tsx:283
+msgid "Create account"
+msgstr "创建账户"
+
 #: routes/_app/admin/invites.tsx:108
 msgid "Create an invite link"
 msgstr "创建邀请链接"
@@ -718,6 +727,7 @@ msgstr "创建租户"
 #: routes/_app/admin/invites.tsx:113
 #: routes/_app/admin/tenants.index.tsx:87
 #: routes/_app/welcome.tsx:109
+#: routes/login.tsx:282
 msgid "Creating…"
 msgstr "创建中…"
 
@@ -850,7 +860,7 @@ msgstr "编辑图书"
 #: routes/_app/admin/tenants.$libraryId.tsx:200
 #: routes/_app/admin/UsersTable.tsx:44
 #: routes/_app/profile.tsx:99
-#: routes/login.tsx:205
+#: routes/login.tsx:258
 msgid "Email"
 msgstr "邮箱"
 
@@ -1203,6 +1213,7 @@ msgstr "我的借阅"
 #: routes/_app/admin/tenants.$libraryId.tsx:317
 #: routes/_app/admin/TenantsTable.tsx:28
 #: routes/_app/admin/UsersTable.tsx:43
+#: routes/login.tsx:245
 msgid "Name"
 msgstr "姓名"
 
@@ -1365,7 +1376,7 @@ msgstr "第 {pageNum} / {pageTotal} 页"
 msgid "Pages"
 msgstr "页数"
 
-#: routes/login.tsx:216
+#: routes/login.tsx:269
 msgid "Password"
 msgstr "密码"
 
@@ -1703,7 +1714,8 @@ msgstr "是否上架"
 msgid "showing the first {shown} — refine upstream search to see the rest"
 msgstr "仅显示前 {shown} 条 — 请在上游搜索中细化以查看其余"
 
-#: routes/login.tsx:228
+#: routes/login.tsx:230
+#: routes/login.tsx:283
 msgid "Sign in"
 msgstr "登录"
 
@@ -1728,7 +1740,7 @@ msgstr "退出登录"
 msgid "Signed in as {userName}"
 msgstr "已登录：{userName}"
 
-#: routes/login.tsx:228
+#: routes/login.tsx:282
 msgid "Signing in…"
 msgstr "登录中…"
 
@@ -1875,8 +1887,8 @@ msgstr "感谢你的反馈！🎉"
 msgid "That email is already in use."
 msgstr "该邮箱已被使用。"
 
-#: routes/login.tsx:159
-#: routes/login.tsx:182
+#: routes/login.tsx:161
+#: routes/login.tsx:184
 msgid "That email or password doesn’t match. Please try again."
 msgstr "邮箱或密码不正确，请重试。"
 
@@ -2093,6 +2105,10 @@ msgstr "你已达到借阅上限，先还一本再借吧。"
 #: components/FeedbackButton.tsx:111
 msgid "Your feedback"
 msgstr "你的反馈"
+
+#: routes/login.tsx:252
+msgid "Your name"
+msgstr "你的名字"
 
 #: routes/join.$token.tsx:61
 msgid "Your request will need approval from the library admin."

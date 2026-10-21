@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { signIn } from '@/lib/auth-client'
+import { signIn, signUp } from '@/lib/auth-client'
 import { fetchBranding, type TenantBranding } from '@/lib/branding'
 import { fetchConfig, isDemoVisible } from '@/lib/config'
 import { queryClient } from '@/lib/query'
@@ -119,8 +119,10 @@ export function LoginHeader({ branding }: { branding: TenantBranding | null }) {
 export function LoginPage({ slug }: { slug?: string } = {}) {
   const router = useRouter()
   const { t } = useLingui()
+  const [mode, setMode] = useState<'signin' | 'signup'>('signin')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [name, setName] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
   // Tenant branding for THIS host, resolved pre-auth. `null` = apex/unknown host
@@ -185,6 +187,23 @@ export function LoginPage({ slug }: { slug?: string } = {}) {
     }
   }
 
+  async function handleSignUp(e: React.FormEvent) {
+    e.preventDefault()
+    setError(null)
+    setPending(true)
+    try {
+      await signUp.email({ email, password, name: name.trim() || email.split('@')[0]! })
+      // After sign-up the user has no active library → /welcome (ADR 0009).
+      queryClient.clear()
+      setReaderPreview(false)
+      await router.navigate({ to: '/welcome' })
+    } catch {
+      setError(t`Could not create account. That email may already be registered.`)
+    } finally {
+      setPending(false)
+    }
+  }
+
   // Accent the primary button with the tenant's brand color when present.
   const accentStyle = branding?.brandColor
     ? ({ backgroundColor: branding.brandColor } as React.CSSProperties)
@@ -200,7 +219,41 @@ export function LoginPage({ slug }: { slug?: string } = {}) {
           </div>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Mode toggle: Sign in / Create account */}
+          <div className="mb-4 flex rounded-md border p-1">
+            <button
+              type="button"
+              onClick={() => { setMode('signin'); setError(null) }}
+              className={`flex-1 rounded px-3 py-1.5 text-sm font-medium transition-colors ${mode === 'signin' ? 'bg-background shadow' : 'text-muted-foreground hover:text-foreground'}`}
+              data-testid="mode-signin"
+            >
+              <Trans>Sign in</Trans>
+            </button>
+            <button
+              type="button"
+              onClick={() => { setMode('signup'); setError(null) }}
+              className={`flex-1 rounded px-3 py-1.5 text-sm font-medium transition-colors ${mode === 'signup' ? 'bg-background shadow' : 'text-muted-foreground hover:text-foreground'}`}
+              data-testid="mode-signup"
+            >
+              <Trans>Create account</Trans>
+            </button>
+          </div>
+
+          <form onSubmit={mode === 'signup' ? handleSignUp : handleSubmit} className="space-y-4">
+            {mode === 'signup' && (
+              <div className="space-y-2">
+                <Label htmlFor="name"><Trans>Name</Trans></Label>
+                <Input
+                  id="name"
+                  type="text"
+                  autoComplete="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder={t`Your name`}
+                  data-testid="name-input"
+                />
+              </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="email"><Trans>Email</Trans></Label>
               <Input
@@ -217,15 +270,18 @@ export function LoginPage({ slug }: { slug?: string } = {}) {
               <Input
                 id="password"
                 type="password"
-                autoComplete="current-password"
+                autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
             {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button type="submit" className="w-full" disabled={pending} style={accentStyle}>
-              {pending ? <Trans>Signing in…</Trans> : <Trans>Sign in</Trans>}
+            <Button type="submit" className="w-full" disabled={pending} style={accentStyle}
+              data-testid={mode === 'signup' ? 'signup-submit' : 'signin-submit'}>
+              {pending
+                ? mode === 'signup' ? <Trans>Creating…</Trans> : <Trans>Signing in…</Trans>
+                : mode === 'signup' ? <Trans>Create account</Trans> : <Trans>Sign in</Trans>}
             </Button>
           </form>
 
