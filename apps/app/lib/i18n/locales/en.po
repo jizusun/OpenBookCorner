@@ -100,7 +100,7 @@ msgstr "{0} users · {1} books"
 msgid "{0}d"
 msgstr "{0}d"
 
-#: components/ui/DataTable.tsx:629
+#: components/ui/DataTable.tsx:641
 msgid "{count} selected"
 msgstr "{count} selected"
 
@@ -120,7 +120,7 @@ msgstr "{n, plural, one {Overdue by # day} other {Overdue by # days}}"
 msgid "{overdue} overdue"
 msgstr "{overdue} overdue"
 
-#: routes/_app/admin/books.tsx:39
+#: routes/_app/admin/books.tsx:40
 #: routes/_app/books/index.tsx:181
 msgid "{total} books"
 msgstr "{total} books"
@@ -129,7 +129,7 @@ msgstr "{total} books"
 msgid "{total} entries"
 msgstr "{total} entries"
 
-#: routes/_app/admin/users.tsx:44
+#: routes/_app/admin/users.tsx:45
 msgid "{total} users"
 msgstr "{total} users"
 
@@ -166,7 +166,7 @@ msgstr "15+ days"
 msgid "8–14 days"
 msgstr "8–14 days"
 
-#: routes/_app/profile.tsx:75
+#: routes/_app/profile.tsx:80
 msgid "Account"
 msgstr "Account"
 
@@ -269,7 +269,7 @@ msgstr "All {0} copies borrowed"
 msgid "All actions"
 msgstr "All actions"
 
-#: routes/_app/admin/books.tsx:33
+#: routes/_app/admin/books.tsx:34
 msgid "All books across every tenant (super admin)."
 msgstr "All books across every tenant (super admin)."
 
@@ -306,7 +306,7 @@ msgstr "All source fields"
 msgid "All tenants"
 msgstr "All tenants"
 
-#: routes/_app/admin/users.tsx:38
+#: routes/_app/admin/users.tsx:39
 msgid "All users across every tenant (super admin)."
 msgstr "All users across every tenant (super admin)."
 
@@ -389,7 +389,7 @@ msgstr "Book not found."
 msgid "Book suggestion"
 msgstr "Book suggestion"
 
-#: routes/_app/admin/books.tsx:30
+#: routes/_app/admin/books.tsx:31
 #: routes/_app/admin/overview.tsx:65
 #: routes/_app/admin/tenants.$libraryId.tsx:149
 #: routes/_app/admin/TenantsTable.tsx:52
@@ -520,7 +520,7 @@ msgstr "Class"
 msgid "CLC"
 msgstr "CLC"
 
-#: components/ui/DataTable.tsx:645
+#: components/ui/DataTable.tsx:657
 msgid "Clear"
 msgstr "Clear"
 
@@ -607,8 +607,8 @@ msgstr "Could not start the scanner. Enter the ISBN manually."
 msgid "Could not update the library."
 msgstr "Could not update the library."
 
-#: routes/_app/profile.tsx:48
-#: routes/_app/profile.tsx:56
+#: routes/_app/profile.tsx:49
+#: routes/_app/profile.tsx:61
 msgid "Could not update your profile."
 msgstr "Could not update your profile."
 
@@ -718,7 +718,7 @@ msgstr "Details auto-filled from Open Library. You can edit the title/author bef
 msgid "Dismiss"
 msgstr "Dismiss"
 
-#: routes/_app/profile.tsx:81
+#: routes/_app/profile.tsx:86
 msgid "Display name"
 msgstr "Display name"
 
@@ -756,7 +756,7 @@ msgstr "Edit Book"
 #: routes/_app/admin/members.$memberId.tsx:97
 #: routes/_app/admin/tenants.$libraryId.tsx:197
 #: routes/_app/admin/UsersTable.tsx:44
-#: routes/_app/profile.tsx:94
+#: routes/_app/profile.tsx:99
 #: routes/login.tsx:205
 msgid "Email"
 msgstr "Email"
@@ -1034,7 +1034,7 @@ msgstr "My Books"
 msgid "Name"
 msgstr "Name"
 
-#: components/ui/DataTable.tsx:603
+#: components/ui/DataTable.tsx:615
 #: components/ui/Pager.tsx:26
 msgid "Next"
 msgstr "Next"
@@ -1153,7 +1153,7 @@ msgstr "Overview"
 msgid "Page {page}"
 msgstr "Page {page}"
 
-#: components/ui/DataTable.tsx:583
+#: components/ui/DataTable.tsx:595
 msgid "Page {pageNum} of {pageTotal}"
 msgstr "Page {pageNum} of {pageTotal}"
 
@@ -1196,7 +1196,7 @@ msgstr "Preview — {0}"
 msgid "Preview as a reader"
 msgstr "Preview as a reader"
 
-#: components/ui/DataTable.tsx:594
+#: components/ui/DataTable.tsx:606
 #: components/ui/Pager.tsx:20
 msgid "Previous"
 msgstr "Previous"
@@ -1210,7 +1210,7 @@ msgstr "Price"
 msgid "Profile"
 msgstr "Profile"
 
-#: routes/_app/profile.tsx:54
+#: routes/_app/profile.tsx:59
 msgid "Profile updated."
 msgstr "Profile updated."
 
@@ -1286,9 +1286,9 @@ msgstr "Returning…"
 
 #: routes/_app/admin/members.tsx:183
 #: routes/_app/admin/tenants.$libraryId.tsx:198
-#: routes/_app/admin/users.tsx:57
+#: routes/_app/admin/users.tsx:66
 #: routes/_app/admin/UsersTable.tsx:46
-#: routes/_app/profile.tsx:98
+#: routes/_app/profile.tsx:103
 msgid "Role"
 msgstr "Role"
 
@@ -1296,13 +1296,13 @@ msgstr "Role"
 msgid "Room"
 msgstr "Room"
 
-#: components/ui/DataTable.tsx:563
+#: components/ui/DataTable.tsx:575
 msgid "Rows per page"
 msgstr "Rows per page"
 
 #: routes/_app/admin/tenants.$libraryId.tsx:335
 #: routes/_app/books/$bookId.edit.tsx:137
-#: routes/_app/profile.tsx:105
+#: routes/_app/profile.tsx:110
 msgid "Save changes"
 msgstr "Save changes"
 
@@ -1313,7 +1313,7 @@ msgstr "Save settings"
 #: routes/_app/admin/settings.tsx:153
 #: routes/_app/admin/tenants.$libraryId.tsx:335
 #: routes/_app/books/$bookId.edit.tsx:137
-#: routes/_app/profile.tsx:105
+#: routes/_app/profile.tsx:110
 msgid "Saving…"
 msgstr "Saving…"
 
@@ -1356,7 +1356,7 @@ msgstr "Scan to Borrow"
 msgid "Search"
 msgstr "Search"
 
-#: routes/_app/admin/books.tsx:47
+#: routes/_app/admin/books.tsx:56
 msgid "Search books"
 msgstr "Search books"
 
@@ -1364,7 +1364,7 @@ msgstr "Search books"
 msgid "Search by name / phone / member no…"
 msgstr "Search by name / phone / member no…"
 
-#: routes/_app/admin/users.tsx:55
+#: routes/_app/admin/users.tsx:64
 msgid "Search by name or email…"
 msgstr "Search by name or email…"
 
@@ -1380,7 +1380,7 @@ msgstr "Search by title or author"
 msgid "Search by title or author…"
 msgstr "Search by title or author…"
 
-#: routes/_app/admin/books.tsx:46
+#: routes/_app/admin/books.tsx:55
 msgid "Search by title, author or ISBN…"
 msgstr "Search by title, author or ISBN…"
 
@@ -1392,7 +1392,7 @@ msgstr "Search members"
 msgid "Search tenants"
 msgstr "Search tenants"
 
-#: routes/_app/admin/users.tsx:56
+#: routes/_app/admin/users.tsx:65
 msgid "Search users"
 msgstr "Search users"
 
@@ -1434,6 +1434,11 @@ msgstr "Shelf"
 #: routes/_app/books/$bookId.tsx:196
 msgid "Shelved"
 msgstr "Shelved"
+
+#: routes/_app/admin/books.tsx:45
+#: routes/_app/admin/users.tsx:50
+msgid "showing the first {shown} — refine upstream search to see the rest"
+msgstr "showing the first {shown} — refine upstream search to see the rest"
 
 #: routes/login.tsx:228
 msgid "Sign in"
@@ -1683,7 +1688,7 @@ msgstr "User Feedback"
 #: routes/_app/admin/tenants.$libraryId.tsx:145
 #: routes/_app/admin/tenants.$libraryId.tsx:181
 #: routes/_app/admin/TenantsTable.tsx:51
-#: routes/_app/admin/users.tsx:35
+#: routes/_app/admin/users.tsx:36
 #: routes/_app/nav.tsx:37
 msgid "Users"
 msgstr "Users"
