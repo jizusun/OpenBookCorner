@@ -140,6 +140,15 @@ server-validated, support **expiry**, **max uses**, and **revocation**; a
 revoked/expired/over-used token is refused. `requires_approval` lets a library
 choose "invite = auto-join" vs "invite still needs approval".
 
+**Share-safe links use the stable id, not the slug.** The same mutability
+concern applies to the tenant **login/share link**: the canonical URL is
+**`/t/<libraryId>/login`** (the id is immutable, so a printed/shared link never
+breaks), while `/t/<slug>/login` remains a convenient **readable alias** that
+also resolves (renaming the slug only breaks the alias, as expected). The public
+branding resolver accepts **either** key — it tries the id first, then the slug
+(`TenantBrandingService.getByIdOrSlug`). The tenant admin UI surfaces the
+id-based URL as the copyable login link.
+
 ### 5. Custom join forms
 
 Each library defines the fields an applicant must provide:

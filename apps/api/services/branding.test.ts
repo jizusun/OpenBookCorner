@@ -67,3 +67,25 @@ describe('TenantBrandingService.getBySlug', () => {
     expect(await new TenantBrandingService(db).getBySlug('gone')).toBeNull()
   })
 })
+
+describe('TenantBrandingService.getByIdOrSlug', () => {
+  it('resolves by the stable library id', async () => {
+    const b = await new TenantBrandingService(db).getByIdOrSlug('lib-acme')
+    expect(b?.name).toBe('Library lib-acme')
+  })
+
+  it('falls back to the slug when the key is not an id', async () => {
+    const b = await new TenantBrandingService(db).getByIdOrSlug('acme')
+    expect(b?.name).toBe('Library lib-acme')
+  })
+
+  it('returns null for an unknown key (neither id nor slug)', async () => {
+    expect(await new TenantBrandingService(db).getByIdOrSlug('nope')).toBeNull()
+  })
+
+  it('returns null for an inactive tenant by id or slug', async () => {
+    const svc = new TenantBrandingService(db)
+    expect(await svc.getByIdOrSlug('lib-inactive')).toBeNull()
+    expect(await svc.getByIdOrSlug('gone')).toBeNull()
+  })
+})

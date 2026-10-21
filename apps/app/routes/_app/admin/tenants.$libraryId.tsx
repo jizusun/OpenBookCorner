@@ -107,7 +107,10 @@ function TenantDetailPage() {
     )
   }
 
-  const loginUrl = tenant.slug ? `${window.location.origin}/t/${tenant.slug}/login` : null
+  // Permanent, share-safe login link uses the stable library id (ADR 0009) —
+  // it never breaks when the slug is renamed. The slug remains a readable alias
+  // (shown as a code chip above) that also resolves.
+  const loginUrl = `${window.location.origin}/t/${tenant.id}/login`
 
   return (
     <div className="space-y-6">

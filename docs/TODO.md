@@ -83,3 +83,9 @@ Branch: `feat/impersonation`. Tick items as they land (commit hash in parens).
 - [ ] 4. Discover public libraries + request-to-join (button) + admin approval queue.
 - [ ] 5. Custom join-form builder/renderer + required-field + company-email verification.
 - [ ] 6. Invite links (create/revoke/expiry/max-use) + join-via-invite via token-only URL /join/<token> (QR-able; no slug/id).
+
+## Stable-ID links (slug is mutable) — IN PR #21 (ADR 0009)
+- [x] Invite links use a token-only URL /join/<token> (no slug/id).
+- [ ] Tenant login/share link: add a permanent ID-based URL /t/<libraryId>/login
+      alongside the readable /t/<slug>/login (slug = optional alias; renaming it
+      breaks only the alias). Branding resolver accepts id OR slug (try id first).
