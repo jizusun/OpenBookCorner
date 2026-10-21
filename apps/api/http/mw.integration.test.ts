@@ -56,6 +56,84 @@ describe('tenant guard', () => {
   })
 })
 
+describe('tenant guard — active membership (ADR 0009)', () => {
+  // membership() helper: insert a membership row directly.
+  async function addMembership(
+    userId: string,
+    libraryId: string,
+    role: 'library_admin' | 'library_reader',
+    status: 'active' | 'suspended' | 'removed' = 'active',
+  ) {
+    const { membership } = await import('@obc/db')
+    await db.insert(membership).values({
+      id: `m-${userId}-${libraryId}`,
+      userId,
+      libraryId,
+      role,
+      status,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    })
+  }
+
+  it('allows a user with an ACTIVE membership in their active library', async () => {
+    await seedUser(db, 'm-reader', 'lib-a', 'library_reader')
+    await addMembership('m-reader', 'lib-a', 'library_reader', 'active')
+    const app = createTestServer({
+      db,
+      session: { id: 'm-reader', activeLibraryId: 'lib-a', libraryId: null, role: 'library_reader' },
+    })
+    expect((await app.request(req('/api/book'))).status).toBe(200)
+  })
+
+  it('403s when the membership in the active library is suspended', async () => {
+    await seedUser(db, 'm-susp', 'lib-a', 'library_reader')
+    await addMembership('m-susp', 'lib-a', 'library_reader', 'suspended')
+    const app = createTestServer({
+      db,
+      session: { id: 'm-susp', activeLibraryId: 'lib-a', libraryId: null, role: 'library_reader' },
+    })
+    const res = await app.request(req('/api/book'))
+    expect(res.status).toBe(403)
+    expect(await res.json()).toEqual({ error: 'NO_LIBRARY_ACCESS' })
+  })
+
+  it('403s when the active library has no membership for the user (isolation)', async () => {
+    await seedLibrary(db, 'lib-b')
+    await seedUser(db, 'm-other', 'lib-a', 'library_reader')
+    await addMembership('m-other', 'lib-a', 'library_reader', 'active')
+    // active library is B, but the user is only a member of A → blocked.
+    const app = createTestServer({
+      db,
+      session: { id: 'm-other', activeLibraryId: 'lib-b', libraryId: null, role: 'library_reader' },
+    })
+    expect((await app.request(req('/api/book'))).status).toBe(403)
+  })
+
+  it('derives the role from the membership: admin in B can POST a book while reader in A cannot', async () => {
+    await seedLibrary(db, 'lib-b')
+    await seedUser(db, 'm-multi', 'lib-a', 'library_reader')
+    await addMembership('m-multi', 'lib-a', 'library_reader', 'active')
+    await addMembership('m-multi', 'lib-b', 'library_admin', 'active')
+    const body = JSON.stringify({ isbn: '9780000000009', title: 'X', author: 'Y' })
+    const headers = { 'content-type': 'application/json' }
+
+    // active = A (reader) → admin-only POST forbidden
+    const asReader = createTestServer({
+      db,
+      session: { id: 'm-multi', activeLibraryId: 'lib-a', libraryId: null, role: 'library_reader' },
+    })
+    expect((await asReader.request(req('/api/book', { method: 'POST', headers, body }))).status).toBe(403)
+
+    // active = B (admin) → POST allowed
+    const asAdmin = createTestServer({
+      db,
+      session: { id: 'm-multi', activeLibraryId: 'lib-b', libraryId: null, role: 'library_reader' },
+    })
+    expect((await asAdmin.request(req('/api/book', { method: 'POST', headers, body }))).status).toBe(200)
+  })
+})
+
 describe('admin guard', () => {
   it('returns 403 FORBIDDEN for a member hitting an admin-only route', async () => {
     const app = createTestServer({

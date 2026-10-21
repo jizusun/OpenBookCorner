@@ -27,6 +27,7 @@ export interface StubSessionUser {
   email?: string
   name?: string
   libraryId?: string | null
+  activeLibraryId?: string | null
   role?: string | null
 }
 
@@ -56,6 +57,7 @@ export function createStubAuth(session: StubSessionUser | null, db?: Database): 
             email: session.email ?? `${session.id}@test.com`,
             name: session.name ?? session.id,
             libraryId: session.libraryId ?? null,
+            activeLibraryId: session.activeLibraryId ?? null,
             role: session.role ?? null,
           } as unknown as AuthUser,
           session: { id: `sess-${session.id}`, userId: session.id } as unknown as AuthSession,

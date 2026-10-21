@@ -78,7 +78,7 @@ Branch: `feat/impersonation`. Tick items as they land (commit hash in parens).
 ## Self-signup + multi-library membership (ADR 0009) — in progress
 - [ ] 1. Schema + migration + backfill: `membership`, `user.active_library_id`,
       `libraries.visibility`, `invite`, `join_request`, `join_field`.
-- [ ] 2. Tenant resolution → active membership (tenantProcedure/adminProcedure) + isolation tests.
+- [x] 2. Tenant resolution → active membership (tenant guard) + isolation tests (mw.integration).
 - [ ] 3. Create-library + post-signup "create or join" empty state + active-library switcher.
 - [ ] 4. Discover public libraries + request-to-join (button) + admin approval queue.
 - [ ] 5. Custom join-form builder/renderer + required-field + company-email verification.
