@@ -122,10 +122,23 @@ invite
   created_at
 ```
 
-Invite URL: `/(t)/<slug>/join?invite=<token>` (QR-encodable). Security: tokens
-are random + server-validated, support **expiry**, **max uses**, and
-**revocation**; a revoked/expired/over-used token is refused. `requires_approval`
-lets a library choose "invite = auto-join" vs "invite still needs approval".
+Invite URL: **`/join/<token>`** (QR-encodable). The URL carries **only the
+`token`** — not the library slug or id. Rationale:
+
+- The token is already the random, unique, server-validated credential; it
+  resolves to `invite → library_id` on its own. Putting the slug/id in the URL
+  is redundant and can disagree with the token (hand-edited URL).
+- A **slug is mutable** (admins can rename it, ADR 0003) and **nullable**, so a
+  slug-based link would break printed/shared links/QRs after a rename and can't
+  be formed for a slug-less library. The token is immutable for the invite's
+  life.
+- No need to expose the internal library **id** in the URL either.
+
+The landing page resolves the token server-side and shows the target library's
+name for confirmation before the user submits. Security: tokens are random +
+server-validated, support **expiry**, **max uses**, and **revocation**; a
+revoked/expired/over-used token is refused. `requires_approval` lets a library
+choose "invite = auto-join" vs "invite still needs approval".
 
 ### 5. Custom join forms
 
