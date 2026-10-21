@@ -31,6 +31,7 @@ describe('navGroupsFor', () => {
       '/admin/settings',
       '/admin/feedback',
       '/admin/join-requests',
+      '/admin/join-form',
       '/admin/activity',
       '/admin/import',
     ])

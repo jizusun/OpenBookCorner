@@ -218,6 +218,22 @@ const call = {
     json<Ok<(typeof client.join.admin)['reject']['$post']>>(
       client.join.admin.reject.$post({ json: i }),
     ),
+  'join.fields': (i: { libraryId: string }) =>
+    json<Ok<(typeof client.join.fields)[':libraryId']['$get']>>(
+      client.join.fields[':libraryId'].$get({ param: { libraryId: i.libraryId } }),
+    ),
+  'join.adminFields': () =>
+    json<Ok<(typeof client.join.admin)['fields']['$get']>>(
+      client.join.admin.fields.$get(),
+    ),
+  'join.addField': (i: { key: string; label: string; type: 'text' | 'email' | 'select'; required?: boolean; verifyEmail?: boolean; options?: string[] }) =>
+    json<Ok<(typeof client.join.admin)['fields']['$post']>>(
+      client.join.admin.fields.$post({ json: i }),
+    ),
+  'join.removeField': (i: { id: string }) =>
+    json<Ok<(typeof client.join.admin.fields)[':id']['$delete']>>(
+      client.join.admin.fields[':id'].$delete({ param: { id: i.id } }),
+    ),
 }
 
 type Endpoint = keyof typeof call
@@ -310,6 +326,10 @@ export const api = {
     adminRequests: node('join.adminRequests'),
     approve: node('join.approve'),
     reject: node('join.reject'),
+    fields: node('join.fields'),
+    adminFields: node('join.adminFields'),
+    addField: node('join.addField'),
+    removeField: node('join.removeField'),
   },
 }
 
