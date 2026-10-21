@@ -26,9 +26,12 @@ export const serverApp = new Hono<{ Variables: BaseVars }>()
   // data. This is the ONLY place the slug is used server-side — it is NOT an
   // auth boundary (isolation is the session `libraryId`).
   .get('/api/public/branding', async (c) => {
-    const slug = c.req.query('slug')
-    if (!slug) return c.json(null)
-    const branding = await new TenantBrandingService(c.get('db')).getBySlug(slug)
+    // The `/t/<key>` segment may be a stable library id (permanent link) or a
+    // human-readable slug (mutable alias). Accept either (ADR 0009). `?slug=`
+    // is kept as an alias for the param for backward compatibility.
+    const key = c.req.query('key') ?? c.req.query('slug')
+    if (!key) return c.json(null)
+    const branding = await new TenantBrandingService(c.get('db')).getByIdOrSlug(key)
     return c.json(branding)
   })
   // Public, non-secret runtime config for the SPA. Exposes ONLY the environment
