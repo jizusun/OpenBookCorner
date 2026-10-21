@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
-import { describe, it, expect, vi, beforeAll } from 'vitest'
+import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import {
   RouterProvider,
   createRootRoute,
@@ -10,6 +11,14 @@ import {
 import { I18nProvider } from '@/lib/i18n'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { AppSidebar, type AppSidebarProps } from './AppSidebar'
+
+// Spyable sidebar context: keep the real sidebar components/provider, but let
+// each test control isMobile + observe setOpenMobile (the close-on-nav behavior).
+const sidebarState = { isMobile: false, setOpenMobile: vi.fn() }
+vi.mock('@/components/ui/sidebar', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/components/ui/sidebar')>()
+  return { ...actual, useSidebar: () => ({ ...actual.useSidebar(), ...sidebarState }) }
+})
 
 beforeAll(() => {
   // shadcn sidebar uses matchMedia (use-mobile); jsdom needs a stub.
@@ -25,6 +34,11 @@ beforeAll(() => {
       dispatchEvent: vi.fn(),
     })),
   )
+})
+
+beforeEach(() => {
+  sidebarState.isMobile = false
+  sidebarState.setOpenMobile = vi.fn()
 })
 
 function renderSidebar(props: Partial<AppSidebarProps> = {}) {
@@ -74,5 +88,21 @@ describe('AppSidebar', () => {
     expect(await screen.findByTestId('nav-/my-books')).toBeInTheDocument()
     expect(screen.getByTestId('nav-/scan')).toBeInTheDocument()
     expect(screen.queryByTestId('nav-/admin/overview')).toBeNull()
+  })
+
+  it('closes the mobile drawer after a nav link is tapped', async () => {
+    sidebarState.isMobile = true
+    sidebarState.setOpenMobile = vi.fn()
+    renderSidebar({ role: 'library_reader' })
+    await userEvent.click(await screen.findByTestId('nav-/scan'))
+    expect(sidebarState.setOpenMobile).toHaveBeenCalledWith(false)
+  })
+
+  it('does NOT close the persistent rail on desktop', async () => {
+    sidebarState.isMobile = false
+    sidebarState.setOpenMobile = vi.fn()
+    renderSidebar({ role: 'library_reader' })
+    await userEvent.click(await screen.findByTestId('nav-/scan'))
+    expect(sidebarState.setOpenMobile).not.toHaveBeenCalled()
   })
 })
