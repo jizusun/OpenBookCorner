@@ -78,6 +78,13 @@
       "when": 1792383600000,
       "tag": "0011_add_user_ban_fields",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1792596308387,
+      "tag": "0012_volatile_bromley",
+      "breakpoints": true
     }
   ]
 }

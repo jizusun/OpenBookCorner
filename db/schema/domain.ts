@@ -20,6 +20,11 @@ export const libraries = sqliteTable('libraries', {
   emailDomains: text('email_domains', { mode: 'json' }).$type<string[]>().notNull(),
   settings: text('settings', { mode: 'json' }).$type<LibrarySettings>().notNull(),
   isActive: integer('is_active', { mode: 'boolean' }).notNull().default(true),
+  // Discoverability (ADR 0009): public libraries appear in the discover list and
+  // accept join requests; private libraries are reachable only via invite link.
+  visibility: text('visibility', { enum: ['public', 'private'] })
+    .notNull()
+    .default('private'),
   // Per-tenant subdomain + branding (ADR 0003). `slug` is the subdomain label
   // (unique); branding fields feed the pre-auth customized login page.
   slug: text('slug').unique(),
@@ -217,6 +222,105 @@ export const auditLogs = sqliteTable('audit_logs', {
   createdAt: text('created_at').notNull().default(sql`CURRENT_TIMESTAMP`),
 })
 
+// --- ADR 0009: self-signup + multi-library membership ---
+
+/**
+ * Membership = the relationship between a user and a library (ADR 0009). A user
+ * may hold several memberships (admin in one library, reader in another). This
+ * replaces the single `user.libraryId`/`user.role` as the source of truth for a
+ * user's role in a library. `super_admin` is platform-scoped (on `user`), NOT a
+ * membership. `joinFields` snapshots the custom join-form answers at approval.
+ */
+export const membership = sqliteTable('membership', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  libraryId: text('library_id')
+    .notNull()
+    .references(() => libraries.id),
+  role: text('role', { enum: ['library_admin', 'library_reader'] })
+    .notNull()
+    .default('library_reader'),
+  status: text('status', { enum: ['active', 'suspended', 'removed'] })
+    .notNull()
+    .default('active'),
+  joinFields: text('join_fields', { mode: 'json' }).$type<Record<string, string>>(),
+  createdAt: text('created_at').notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text('updated_at').notNull().default(sql`CURRENT_TIMESTAMP`),
+})
+
+/**
+ * A request by a user to join a library (ADR 0009), via a "Request to join"
+ * button or an invite link. Distinct from an active membership: a pending
+ * request carries NO permissions until an admin approves it. `answers` holds the
+ * custom join-form submission; snapshotted onto membership.joinFields on approve.
+ */
+export const joinRequest = sqliteTable('join_request', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  libraryId: text('library_id')
+    .notNull()
+    .references(() => libraries.id),
+  via: text('via', { enum: ['button', 'invite'] }).notNull().default('button'),
+  inviteId: text('invite_id'),
+  answers: text('answers', { mode: 'json' }).$type<Record<string, string>>(),
+  status: text('status', { enum: ['pending', 'approved', 'rejected', 'cancelled'] })
+    .notNull()
+    .default('pending'),
+  decidedBy: text('decided_by').references(() => user.id),
+  createdAt: text('created_at').notNull().default(sql`CURRENT_TIMESTAMP`),
+  decidedAt: text('decided_at'),
+})
+
+/**
+ * Invite link to a library (ADR 0009). `token` is the random URL-safe secret in
+ * the shareable/QR link. Supports expiry, max uses, and revocation.
+ * `requiresApproval=false` lets the holder join immediately (else it creates a
+ * pending join_request).
+ */
+export const invite = sqliteTable('invite', {
+  id: text('id').primaryKey(),
+  libraryId: text('library_id')
+    .notNull()
+    .references(() => libraries.id),
+  token: text('token').notNull().unique(),
+  role: text('role', { enum: ['library_admin', 'library_reader'] })
+    .notNull()
+    .default('library_reader'),
+  requiresApproval: integer('requires_approval', { mode: 'boolean' }).notNull().default(true),
+  maxUses: integer('max_uses'),
+  usedCount: integer('used_count').notNull().default(0),
+  expiresAt: integer('expires_at', { mode: 'timestamp' }),
+  revoked: integer('revoked', { mode: 'boolean' }).notNull().default(false),
+  createdBy: text('created_by')
+    .notNull()
+    .references(() => user.id),
+  createdAt: text('created_at').notNull().default(sql`CURRENT_TIMESTAMP`),
+})
+
+/**
+ * A field a library requires applicants to fill on its join form (ADR 0009).
+ * `verifyEmail` (for type=email) requires the applicant to prove ownership of
+ * the address before the request can be submitted (e.g. a company email).
+ */
+export const joinField = sqliteTable('join_field', {
+  id: text('id').primaryKey(),
+  libraryId: text('library_id')
+    .notNull()
+    .references(() => libraries.id),
+  key: text('key').notNull(),
+  label: text('label').notNull(),
+  type: text('type', { enum: ['text', 'email', 'select'] }).notNull().default('text'),
+  required: integer('required', { mode: 'boolean' }).notNull().default(true),
+  verifyEmail: integer('verify_email', { mode: 'boolean' }).notNull().default(false),
+  options: text('options', { mode: 'json' }).$type<string[]>(),
+  position: integer('position').notNull().default(0),
+  createdAt: text('created_at').notNull().default(sql`CURRENT_TIMESTAMP`),
+})
+
 // --- Relations ---
 export const librariesRelations = relations(libraries, ({ many }) => ({
   books: many(books),
@@ -247,3 +351,7 @@ export type BorrowTransaction = typeof borrowTransactions.$inferSelect
 export type Feedback = typeof feedback.$inferSelect
 export type ImportRun = typeof importRuns.$inferSelect
 export type AuditLog = typeof auditLogs.$inferSelect
+export type Membership = typeof membership.$inferSelect
+export type JoinRequest = typeof joinRequest.$inferSelect
+export type Invite = typeof invite.$inferSelect
+export type JoinField = typeof joinField.$inferSelect
