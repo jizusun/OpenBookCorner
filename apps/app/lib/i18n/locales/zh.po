@@ -197,7 +197,7 @@ msgid "Active"
 msgstr "已启用"
 
 #: routes/_app/admin/activity.tsx:28
-#: routes/_app/nav.tsx:58
+#: routes/_app/nav.tsx:60
 msgid "Activity"
 msgstr "活动"
 
@@ -351,7 +351,7 @@ msgid "At least 8 characters"
 msgstr "至少 8 个字符"
 
 #: routes/_app/admin/audit.tsx:70
-#: routes/_app/nav.tsx:42
+#: routes/_app/nav.tsx:43
 msgid "Audit log"
 msgstr "审计日志"
 
@@ -361,6 +361,14 @@ msgstr "审计日志"
 #: routes/_app/books/index.tsx:125
 msgid "Author"
 msgstr "作者"
+
+#: routes/_app/admin/invites.tsx:88
+msgid "Auto-join"
+msgstr "直接加入"
+
+#: routes/_app/admin/invites.tsx:128
+msgid "Auto-join (skip admin approval)"
+msgstr "直接加入（无需管理员审批）"
 
 #: routes/_app/books/index.tsx:126
 msgid "Availability"
@@ -424,7 +432,7 @@ msgstr "荐书"
 #: routes/_app/admin/overview.tsx:65
 #: routes/_app/admin/tenants.$libraryId.tsx:152
 #: routes/_app/admin/TenantsTable.tsx:52
-#: routes/_app/nav.tsx:41
+#: routes/_app/nav.tsx:42
 msgid "Books"
 msgstr "藏书"
 
@@ -520,6 +528,7 @@ msgstr "摄像头权限被拒绝，请允许访问或手动输入 ISBN。"
 
 #: components/FeedbackButton.tsx:86
 #: routes/_app/admin/AddUserDialog.tsx:52
+#: routes/_app/admin/invites.tsx:111
 #: routes/_app/admin/join-form.tsx:107
 #: routes/_app/admin/tenants.$libraryId.tsx:139
 #: routes/_app/admin/tenants.index.tsx:84
@@ -537,8 +546,8 @@ msgstr "取消扫描"
 msgid "Cannot delete a library that still has members or books."
 msgstr "该图书馆仍有成员或书籍，无法删除。"
 
-#: routes/_app/nav.tsx:51
-#: routes/_app/nav.tsx:69
+#: routes/_app/nav.tsx:52
+#: routes/_app/nav.tsx:71
 msgid "Catalog"
 msgstr "书目"
 
@@ -672,10 +681,27 @@ msgstr "《{0}》封面"
 msgid "Create a library"
 msgstr "创建图书馆"
 
+#: routes/_app/admin/invites.tsx:74
+msgid "Create a link to share with prospective members."
+msgstr "创建链接分享给潜在成员。"
+
+#: routes/_app/admin/invites.tsx:108
+msgid "Create an invite link"
+msgstr "创建邀请链接"
+
+#: routes/_app/admin/invites.tsx:106
+msgid "Create invite link"
+msgstr "创建邀请链接"
+
 #: routes/_app/admin/tenants.index.tsx:87
 #: routes/_app/welcome.tsx:109
 msgid "Create library"
 msgstr "创建图书馆"
+
+#: routes/_app/admin/invites.tsx:66
+#: routes/_app/admin/invites.tsx:113
+msgid "Create link"
+msgstr "创建链接"
 
 #: routes/_app/LibrarySwitcher.tsx:77
 msgid "Create or join a library"
@@ -689,6 +715,7 @@ msgstr "先创建第一个。"
 msgid "Created tenant"
 msgstr "创建租户"
 
+#: routes/_app/admin/invites.tsx:113
 #: routes/_app/admin/tenants.index.tsx:87
 #: routes/_app/welcome.tsx:109
 msgid "Creating…"
@@ -767,7 +794,7 @@ msgstr "简介"
 msgid "Details auto-filled from Open Library. You can edit the title/author before saving."
 msgstr "已从 Open Library 自动填写，保存前可修改书名/作者。"
 
-#: routes/_app/nav.tsx:70
+#: routes/_app/nav.tsx:72
 msgid "Discover"
 msgstr "发现"
 
@@ -879,6 +906,10 @@ msgstr "每次导入都会记录来源和数量。"
 msgid "Exit reader preview"
 msgstr "退出读者预览"
 
+#: routes/_app/admin/invites.tsx:136
+msgid "Expires in days (optional)"
+msgstr "过期天数（可选）"
+
 #: routes/_app/admin/members.tsx:198
 msgid "Expiry"
 msgstr "到期"
@@ -897,7 +928,7 @@ msgid "Feature request"
 msgstr "功能建议"
 
 #: components/FeedbackButton.tsx:74
-#: routes/_app/nav.tsx:55
+#: routes/_app/nav.tsx:56
 msgid "Feedback"
 msgstr "反馈"
 
@@ -935,7 +966,7 @@ msgid "https://…fanshujieyue.com/…/librarydata_….xls"
 msgstr "https://…fanshujieyue.com/…/librarydata_….xls"
 
 #: routes/_app/admin/import.tsx:233
-#: routes/_app/nav.tsx:59
+#: routes/_app/nav.tsx:61
 msgid "Import"
 msgstr "导入"
 
@@ -981,6 +1012,27 @@ msgstr "已停用"
 msgid "Install app"
 msgstr "安装应用"
 
+#: routes/join.$token.tsx:45
+msgid "Invalid or expired invite"
+msgstr "邀请无效或已过期"
+
+#: routes/_app/admin/invites.tsx:53
+msgid "Invite link copied."
+msgstr "邀请链接已复制。"
+
+#: routes/_app/admin/invites.tsx:40
+msgid "Invite link created."
+msgstr "邀请链接已创建。"
+
+#: routes/_app/admin/invites.tsx:44
+msgid "Invite link revoked."
+msgstr "邀请链接已撤销。"
+
+#: routes/_app/admin/invites.tsx:60
+#: routes/_app/nav.tsx:59
+msgid "Invite links"
+msgstr "邀请链接"
+
 #: routes/_app/admin/BooksTable.tsx:26
 #: routes/_app/books/$bookId.edit.tsx:109
 #: routes/_app/books/add.tsx:136
@@ -1002,12 +1054,16 @@ msgid "Join a library"
 msgstr "加入图书馆"
 
 #: routes/_app/admin/join-form.tsx:64
-#: routes/_app/nav.tsx:57
+#: routes/_app/nav.tsx:58
 msgid "Join form"
 msgstr "加入表单"
 
+#: routes/join.$token.tsx:75
+msgid "Join library"
+msgstr "加入图书馆"
+
 #: routes/_app/admin/join-requests.tsx:46
-#: routes/_app/nav.tsx:56
+#: routes/_app/nav.tsx:57
 msgid "Join requests"
 msgstr "加入申请"
 
@@ -1019,11 +1075,15 @@ msgstr "入馆日期"
 msgid "Joined date"
 msgstr "入馆日期"
 
+#: routes/join.$token.tsx:72
+msgid "Joining…"
+msgstr "加入中…"
+
 #: routes/_app/LibrarySwitcher.tsx:56
 msgid "Libraries"
 msgstr "图书馆"
 
-#: routes/_app/nav.tsx:49
+#: routes/_app/nav.tsx:50
 msgid "Library"
 msgstr "图书馆"
 
@@ -1070,6 +1130,7 @@ msgstr "加载中"
 #: routes/_app/admin/members.tsx:162
 #: routes/_app/admin/settings.tsx:84
 #: routes/_app/books/$bookId.edit.tsx:89
+#: routes/join.$token.tsx:39
 msgid "Loading…"
 msgstr "加载中…"
 
@@ -1105,6 +1166,10 @@ msgstr "管理系统内的所有图书馆（超级管理员）。"
 msgid "Max books per reader"
 msgstr "每位读者最多可借"
 
+#: routes/_app/admin/invites.tsx:132
+msgid "Max uses (optional)"
+msgstr "最大使用次数（可选）"
+
 #: routes/_app/admin/members.tsx:61
 msgid "Member added."
 msgstr "成员已添加。"
@@ -1127,7 +1192,7 @@ msgid "Member until"
 msgstr "会员到期"
 
 #: routes/_app/my-books.tsx:94
-#: routes/_app/nav.tsx:67
+#: routes/_app/nav.tsx:69
 msgid "My Books"
 msgstr "我的借阅"
 
@@ -1140,6 +1205,10 @@ msgstr "我的借阅"
 #: routes/_app/admin/UsersTable.tsx:43
 msgid "Name"
 msgstr "姓名"
+
+#: routes/_app/admin/invites.tsx:87
+msgid "Needs approval"
+msgstr "需要审批"
 
 #: routes/_app/admin/join-requests.tsx:59
 msgid "New join requests will appear here."
@@ -1195,6 +1264,10 @@ msgstr "无需填写额外信息。"
 #: routes/_app/admin/feedback.tsx:57
 msgid "No feedback yet"
 msgstr "暂无反馈"
+
+#: routes/_app/admin/invites.tsx:73
+msgid "No invite links"
+msgstr "暂无邀请链接"
 
 #: routes/_app/admin/TenantsTable.tsx:90
 msgid "No libraries yet"
@@ -1266,7 +1339,7 @@ msgstr "其他"
 msgid "Out"
 msgstr "在借"
 
-#: routes/_app/nav.tsx:53
+#: routes/_app/nav.tsx:54
 msgid "Overdue"
 msgstr "逾期"
 
@@ -1276,7 +1349,7 @@ msgstr "逾期图书"
 
 #: routes/_app/admin/overview.tsx:55
 #: routes/_app/admin/tenants.$libraryId.tsx:136
-#: routes/_app/nav.tsx:38
+#: routes/_app/nav.tsx:39
 msgid "Overview"
 msgstr "概况"
 
@@ -1389,7 +1462,7 @@ msgstr "只读系统信息（超级管理员）。"
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:217
 #: routes/_app/admin/UsersTable.tsx:32
-#: routes/_app/nav.tsx:65
+#: routes/_app/nav.tsx:67
 #: routes/_app/profile.tsx:26
 msgid "Reader"
 msgstr "普通成员"
@@ -1399,7 +1472,7 @@ msgid "Reader preview"
 msgstr "读者预览"
 
 #: routes/_app/admin/members.tsx:80
-#: routes/_app/nav.tsx:52
+#: routes/_app/nav.tsx:53
 msgid "Readers"
 msgstr "读者"
 
@@ -1462,6 +1535,10 @@ msgstr "已归还，谢谢！"
 msgid "Returning…"
 msgstr "归还中…"
 
+#: routes/_app/admin/invites.tsx:86
+msgid "Revoked"
+msgstr "已撤销"
+
 #: routes/_app/admin/members.tsx:183
 #: routes/_app/admin/tenants.$libraryId.tsx:201
 #: routes/_app/admin/users.tsx:66
@@ -1495,7 +1572,7 @@ msgstr "保存设置"
 msgid "Saving…"
 msgstr "保存中…"
 
-#: routes/_app/nav.tsx:68
+#: routes/_app/nav.tsx:70
 msgid "Scan"
 msgstr "扫码"
 
@@ -1596,7 +1673,7 @@ msgstr "发送中…"
 msgid "Series"
 msgstr "系列"
 
-#: routes/_app/nav.tsx:54
+#: routes/_app/nav.tsx:55
 msgid "Settings"
 msgstr "设置"
 
@@ -1604,6 +1681,10 @@ msgstr "设置"
 #: routes/_app/admin/settings.tsx:149
 msgid "Settings saved."
 msgstr "设置已保存。"
+
+#: routes/_app/admin/invites.tsx:62
+msgid "Share these links so people can request to join the library."
+msgstr "分享这些链接，让他人申请加入图书馆。"
 
 #: routes/_app/admin/AddUserDialog.tsx:101
 msgid "Share this with the user; they can change it after signing in."
@@ -1629,6 +1710,10 @@ msgstr "登录"
 #: routes/_app/admin/MemberImpersonateButton.tsx:51
 msgid "Sign in as them"
 msgstr "以其身份登录"
+
+#: routes/join.$token.tsx:82
+msgid "Sign in to join"
+msgstr "登录后加入"
 
 #: routes/login.tsx:101
 #: routes/login.tsx:112
@@ -1696,6 +1781,7 @@ msgid "Student no."
 msgstr "学号"
 
 #: routes/_app/discover.tsx:79
+#: routes/join.$token.tsx:74
 msgid "Submit request"
 msgstr "提交申请"
 
@@ -1726,7 +1812,7 @@ msgstr "切换到深色模式"
 msgid "Switch to light mode"
 msgstr "切换到浅色模式"
 
-#: routes/_app/nav.tsx:36
+#: routes/_app/nav.tsx:37
 msgid "System"
 msgstr "系统"
 
@@ -1735,7 +1821,7 @@ msgid "System actions (tenant changes, impersonation) will appear here."
 msgstr "系统操作（租户变更、模拟登录）会显示在这里。"
 
 #: routes/_app/admin/system.tsx:23
-#: routes/_app/nav.tsx:43
+#: routes/_app/nav.tsx:44
 msgid "System settings"
 msgstr "系统设置"
 
@@ -1775,7 +1861,7 @@ msgstr "未找到租户"
 #: routes/_app/admin/overview.tsx:63
 #: routes/_app/admin/overview.tsx:82
 #: routes/_app/admin/tenants.index.tsx:53
-#: routes/_app/nav.tsx:39
+#: routes/_app/nav.tsx:40
 msgid "Tenants"
 msgstr "租户"
 
@@ -1825,6 +1911,10 @@ msgstr "这本书还不在你图书馆的书目里，请联系管理员添加。
 #: routes/_app/discover.tsx:101
 msgid "This email will need to be verified."
 msgstr "此邮箱需要验证。"
+
+#: routes/join.$token.tsx:46
+msgid "This invite link is no longer valid."
+msgstr "此邀请链接已失效。"
 
 #: routes/_app/admin/members.$memberId.tsx:53
 msgid "This member already has a login."
@@ -1888,9 +1978,13 @@ msgstr "用户反馈"
 #: routes/_app/admin/tenants.$libraryId.tsx:184
 #: routes/_app/admin/TenantsTable.tsx:51
 #: routes/_app/admin/users.tsx:36
-#: routes/_app/nav.tsx:40
+#: routes/_app/nav.tsx:41
 msgid "Users"
 msgstr "用户"
+
+#: routes/_app/admin/invites.tsx:89
+msgid "uses"
+msgstr "次"
 
 #: routes/_app/admin/join-form.tsx:90
 msgid "Verify email"
@@ -1976,9 +2070,21 @@ msgstr "你没有添加图书的权限。"
 msgid "You have an overdue book. Please return it before borrowing more."
 msgstr "你有逾期未还的书，请先归还再借阅。"
 
+#: routes/join.$token.tsx:79
+msgid "You need to sign in first."
+msgstr "你需要先登录。"
+
+#: routes/join.$token.tsx:65
+msgid "You'll be added immediately."
+msgstr "你将被立即添加。"
+
 #: routes/_app/welcome.tsx:54
 msgid "You're not part of any library yet. Create one, or join an existing one."
 msgstr "你还没有加入任何图书馆。创建一个，或加入已有的。"
+
+#: routes/join.$token.tsx:55
+msgid "You've been invited to join"
+msgstr "你已被邀请加入"
 
 #: lib/errors.ts:13
 msgid "You've reached your borrowing limit. Return a book before borrowing another."
@@ -1987,3 +2093,7 @@ msgstr "你已达到借阅上限，先还一本再借吧。"
 #: components/FeedbackButton.tsx:111
 msgid "Your feedback"
 msgstr "你的反馈"
+
+#: routes/join.$token.tsx:61
+msgid "Your request will need approval from the library admin."
+msgstr "你的申请需要图书馆管理员审批。"
