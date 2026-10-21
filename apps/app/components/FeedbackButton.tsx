@@ -74,14 +74,24 @@ export function FeedbackButton() {
         <span aria-hidden>💬</span> <Trans>Feedback</Trans>
       </button>
 
-      <Modal open={open} onClose={close} ariaLabel={t`Send feedback`}>
-        <form onSubmit={handleSubmit} className="space-y-4" data-testid="feedback-form">
-          <div>
-            <h2 className="text-lg font-semibold"><Trans>Send feedback</Trans></h2>
-            <p className="text-sm text-muted-foreground">
-              <Trans>Tell us what you’d like — features, books to add, or problems.</Trans>
-            </p>
-          </div>
+      <Modal
+        open={open}
+        onClose={close}
+        ariaLabel={t`Send feedback`}
+        title={<Trans>Send feedback</Trans>}
+        description={<Trans>Tell us what you’d like — features, books to add, or problems.</Trans>}
+        footer={
+          <>
+            <Button type="button" variant="outline" onClick={close}>
+              <Trans>Cancel</Trans>
+            </Button>
+            <Button type="submit" form="feedback-form" disabled={pending || !message.trim()}>
+              {pending ? <Trans>Sending…</Trans> : <Trans>Send</Trans>}
+            </Button>
+          </>
+        }
+      >
+        <form onSubmit={handleSubmit} className="space-y-4" data-testid="feedback-form" id="feedback-form">
           <div className="space-y-2">
             <Label htmlFor="fb-category"><Trans>Type</Trans></Label>
             <select
@@ -115,14 +125,6 @@ export function FeedbackButton() {
               {error}
             </p>
           )}
-          <div className="flex gap-2">
-            <Button type="submit" disabled={pending || !message.trim()}>
-              {pending ? <Trans>Sending…</Trans> : <Trans>Send</Trans>}
-            </Button>
-            <Button type="button" variant="ghost" onClick={close}>
-              <Trans>Cancel</Trans>
-            </Button>
-          </div>
         </form>
       </Modal>
     </>

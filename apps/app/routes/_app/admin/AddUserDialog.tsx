@@ -40,9 +40,24 @@ export function AddUserDialog({ open, title, pending, onSubmit, onClose }: AddUs
   }
 
   return (
-    <Modal open={open} onClose={onClose} ariaLabel={title} data-testid="add-user-dialog">
-      <form onSubmit={submit} className="space-y-4">
-        <h2 className="text-lg font-semibold">{title}</h2>
+    <Modal
+      open={open}
+      onClose={onClose}
+      ariaLabel={title}
+      data-testid="add-user-dialog"
+      title={title}
+      footer={
+        <>
+          <Button type="button" variant="outline" onClick={onClose} disabled={pending}>
+            <Trans>Cancel</Trans>
+          </Button>
+          <Button type="submit" form="add-user-form" disabled={pending} data-testid="add-user-submit">
+            {pending ? <Trans>Adding…</Trans> : <Trans>Add</Trans>}
+          </Button>
+        </>
+      }
+    >
+      <form onSubmit={submit} className="space-y-4" id="add-user-form">
         <div className="space-y-2">
           <Label htmlFor="au-email">
             <Trans>Email</Trans>
@@ -85,14 +100,6 @@ export function AddUserDialog({ open, title, pending, onSubmit, onClose }: AddUs
           <p className="text-xs text-muted-foreground">
             <Trans>Share this with the user; they can change it after signing in.</Trans>
           </p>
-        </div>
-        <div className="flex justify-end gap-2">
-          <Button type="button" variant="ghost" onClick={onClose} disabled={pending}>
-            <Trans>Cancel</Trans>
-          </Button>
-          <Button type="submit" disabled={pending} data-testid="add-user-submit">
-            {pending ? <Trans>Adding…</Trans> : <Trans>Add</Trans>}
-          </Button>
         </div>
       </form>
     </Modal>

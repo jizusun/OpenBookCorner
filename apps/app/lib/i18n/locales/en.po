@@ -133,7 +133,7 @@ msgstr "{total} entries"
 msgid "{total} users"
 msgstr "{total} users"
 
-#: routes/_app/admin/tenants.index.tsx:98
+#: routes/_app/admin/tenants.index.tsx:107
 msgid "@acme.com, @acme.io"
 msgstr "@acme.com, @acme.io"
 
@@ -204,7 +204,7 @@ msgstr "Activity"
 msgid "Actor"
 msgstr "Actor"
 
-#: routes/_app/admin/AddUserDialog.tsx:94
+#: routes/_app/admin/AddUserDialog.tsx:55
 msgid "Add"
 msgstr "Add"
 
@@ -229,7 +229,7 @@ msgstr "Add Book"
 msgid "Add reader"
 msgstr "Add reader"
 
-#: routes/_app/admin/AddUserDialog.tsx:94
+#: routes/_app/admin/AddUserDialog.tsx:55
 #: routes/_app/books/add.tsx:188
 msgid "Adding…"
 msgstr "Adding…"
@@ -319,7 +319,7 @@ msgstr "Allow renewals/extensions"
 msgid "Ascending"
 msgstr "Ascending"
 
-#: routes/_app/admin/AddUserDialog.tsx:82
+#: routes/_app/admin/AddUserDialog.tsx:97
 msgid "At least 8 characters"
 msgstr "At least 8 characters"
 
@@ -483,10 +483,10 @@ msgstr "Camera is not available. Enter the ISBN manually."
 msgid "Camera permission denied. Allow camera access or enter the ISBN manually."
 msgstr "Camera permission denied. Allow camera access or enter the ISBN manually."
 
-#: components/FeedbackButton.tsx:123
-#: routes/_app/admin/AddUserDialog.tsx:91
+#: components/FeedbackButton.tsx:86
+#: routes/_app/admin/AddUserDialog.tsx:52
 #: routes/_app/admin/tenants.$libraryId.tsx:136
-#: routes/_app/admin/tenants.index.tsx:104
+#: routes/_app/admin/tenants.index.tsx:84
 #: routes/_app/books/$bookId.edit.tsx:144
 msgid "Cancel"
 msgstr "Cancel"
@@ -621,11 +621,11 @@ msgid "Cover of {0}"
 msgstr "Cover of {0}"
 
 #: routes/_app/admin/tenants.index.tsx:77
-#: routes/_app/admin/tenants.index.tsx:82
+#: routes/_app/admin/tenants.index.tsx:79
 msgid "Create a library"
 msgstr "Create a library"
 
-#: routes/_app/admin/tenants.index.tsx:107
+#: routes/_app/admin/tenants.index.tsx:87
 msgid "Create library"
 msgstr "Create library"
 
@@ -637,7 +637,7 @@ msgstr "Create the first one."
 msgid "Created tenant"
 msgstr "Created tenant"
 
-#: routes/_app/admin/tenants.index.tsx:107
+#: routes/_app/admin/tenants.index.tsx:87
 msgid "Creating…"
 msgstr "Creating…"
 
@@ -739,7 +739,7 @@ msgstr "Due today"
 msgid "e.g. 9780132350884"
 msgstr "e.g. 9780132350884"
 
-#: components/FeedbackButton.tsx:107
+#: components/FeedbackButton.tsx:117
 msgid "e.g. Please add the ability to reserve a borrowed book…"
 msgstr "e.g. Please add the ability to reserve a borrowed book…"
 
@@ -752,7 +752,7 @@ msgstr "Edit"
 msgid "Edit Book"
 msgstr "Edit Book"
 
-#: routes/_app/admin/AddUserDialog.tsx:48
+#: routes/_app/admin/AddUserDialog.tsx:63
 #: routes/_app/admin/members.$memberId.tsx:97
 #: routes/_app/admin/tenants.$libraryId.tsx:197
 #: routes/_app/admin/UsersTable.tsx:44
@@ -766,7 +766,7 @@ msgstr "Email"
 msgid "Email domains"
 msgstr "Email domains"
 
-#: routes/_app/admin/tenants.index.tsx:92
+#: routes/_app/admin/tenants.index.tsx:101
 msgid "Email domains (comma-separated)"
 msgstr "Email domains (comma-separated)"
 
@@ -834,6 +834,10 @@ msgstr "Feedback"
 #: routes/_app/admin/import.tsx:183
 msgid "Fetch"
 msgstr "Fetch"
+
+#: routes/_app/admin/tenants.index.tsx:80
+msgid "Give the library a name and the email domains its members use."
+msgstr "Give the library a name and the email domains its members use."
 
 #: routes/_app/admin/SystemInfo.tsx:34
 msgid "Hidden"
@@ -931,7 +935,7 @@ msgid "Library deleted."
 msgstr "Library deleted."
 
 #: routes/_app/admin/settings.tsx:106
-#: routes/_app/admin/tenants.index.tsx:86
+#: routes/_app/admin/tenants.index.tsx:95
 msgid "Library name"
 msgstr "Library name"
 
@@ -1020,7 +1024,7 @@ msgstr "Member until"
 msgid "My Books"
 msgstr "My Books"
 
-#: routes/_app/admin/AddUserDialog.tsx:61
+#: routes/_app/admin/AddUserDialog.tsx:76
 #: routes/_app/admin/members.tsx:118
 #: routes/_app/admin/members.tsx:180
 #: routes/_app/admin/tenants.$libraryId.tsx:196
@@ -1392,17 +1396,17 @@ msgstr "Search tenants"
 msgid "Search users"
 msgstr "Search users"
 
-#: components/FeedbackButton.tsx:120
+#: components/FeedbackButton.tsx:89
 msgid "Send"
 msgstr "Send"
 
 #: components/FeedbackButton.tsx:71
-#: components/FeedbackButton.tsx:77
 #: components/FeedbackButton.tsx:80
+#: components/FeedbackButton.tsx:81
 msgid "Send feedback"
 msgstr "Send feedback"
 
-#: components/FeedbackButton.tsx:120
+#: components/FeedbackButton.tsx:89
 msgid "Sending…"
 msgstr "Sending…"
 
@@ -1419,7 +1423,7 @@ msgstr "Settings"
 msgid "Settings saved."
 msgstr "Settings saved."
 
-#: routes/_app/admin/AddUserDialog.tsx:86
+#: routes/_app/admin/AddUserDialog.tsx:101
 msgid "Share this with the user; they can change it after signing in."
 msgstr "Share this with the user; they can change it after signing in."
 
@@ -1548,7 +1552,7 @@ msgstr "Target"
 msgid "Tell us what you’d like — features, books to add, or problems."
 msgstr "Tell us what you’d like — features, books to add, or problems."
 
-#: routes/_app/admin/AddUserDialog.tsx:73
+#: routes/_app/admin/AddUserDialog.tsx:88
 msgid "Temporary password"
 msgstr "Temporary password"
 
@@ -1655,7 +1659,7 @@ msgstr "Try a different search."
 msgid "Try adjusting the search or filters."
 msgstr "Try adjusting the search or filters."
 
-#: components/FeedbackButton.tsx:86
+#: components/FeedbackButton.tsx:96
 msgid "Type"
 msgstr "Type"
 
@@ -1756,6 +1760,6 @@ msgstr "You have an overdue book. Please return it before borrowing more."
 msgid "You've reached your borrowing limit. Return a book before borrowing another."
 msgstr "You've reached your borrowing limit. Return a book before borrowing another."
 
-#: components/FeedbackButton.tsx:101
+#: components/FeedbackButton.tsx:111
 msgid "Your feedback"
 msgstr "Your feedback"

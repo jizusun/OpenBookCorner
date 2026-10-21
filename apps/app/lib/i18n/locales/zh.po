@@ -133,7 +133,7 @@ msgstr "共 {total} 条"
 msgid "{total} users"
 msgstr "共 {total} 位用户"
 
-#: routes/_app/admin/tenants.index.tsx:98
+#: routes/_app/admin/tenants.index.tsx:107
 msgid "@acme.com, @acme.io"
 msgstr "@acme.com, @acme.io"
 
@@ -204,7 +204,7 @@ msgstr "活动"
 msgid "Actor"
 msgstr "操作者"
 
-#: routes/_app/admin/AddUserDialog.tsx:94
+#: routes/_app/admin/AddUserDialog.tsx:55
 msgid "Add"
 msgstr "添加"
 
@@ -229,7 +229,7 @@ msgstr "添加图书"
 msgid "Add reader"
 msgstr "添加读者"
 
-#: routes/_app/admin/AddUserDialog.tsx:94
+#: routes/_app/admin/AddUserDialog.tsx:55
 #: routes/_app/books/add.tsx:188
 msgid "Adding…"
 msgstr "添加中…"
@@ -319,7 +319,7 @@ msgstr "允许续借"
 msgid "Ascending"
 msgstr "升序"
 
-#: routes/_app/admin/AddUserDialog.tsx:82
+#: routes/_app/admin/AddUserDialog.tsx:97
 msgid "At least 8 characters"
 msgstr "至少 8 个字符"
 
@@ -483,10 +483,10 @@ msgstr "无法使用摄像头，请手动输入 ISBN。"
 msgid "Camera permission denied. Allow camera access or enter the ISBN manually."
 msgstr "摄像头权限被拒绝，请允许访问或手动输入 ISBN。"
 
-#: components/FeedbackButton.tsx:123
-#: routes/_app/admin/AddUserDialog.tsx:91
+#: components/FeedbackButton.tsx:86
+#: routes/_app/admin/AddUserDialog.tsx:52
 #: routes/_app/admin/tenants.$libraryId.tsx:136
-#: routes/_app/admin/tenants.index.tsx:104
+#: routes/_app/admin/tenants.index.tsx:84
 #: routes/_app/books/$bookId.edit.tsx:144
 msgid "Cancel"
 msgstr "取消"
@@ -621,11 +621,11 @@ msgid "Cover of {0}"
 msgstr "《{0}》封面"
 
 #: routes/_app/admin/tenants.index.tsx:77
-#: routes/_app/admin/tenants.index.tsx:82
+#: routes/_app/admin/tenants.index.tsx:79
 msgid "Create a library"
 msgstr "创建图书馆"
 
-#: routes/_app/admin/tenants.index.tsx:107
+#: routes/_app/admin/tenants.index.tsx:87
 msgid "Create library"
 msgstr "创建图书馆"
 
@@ -637,7 +637,7 @@ msgstr "先创建第一个。"
 msgid "Created tenant"
 msgstr "创建租户"
 
-#: routes/_app/admin/tenants.index.tsx:107
+#: routes/_app/admin/tenants.index.tsx:87
 msgid "Creating…"
 msgstr "创建中…"
 
@@ -739,7 +739,7 @@ msgstr "今天到期"
 msgid "e.g. 9780132350884"
 msgstr "例如 9780132350884"
 
-#: components/FeedbackButton.tsx:107
+#: components/FeedbackButton.tsx:117
 msgid "e.g. Please add the ability to reserve a borrowed book…"
 msgstr "例如：希望能预约已被借走的书…"
 
@@ -752,7 +752,7 @@ msgstr "编辑"
 msgid "Edit Book"
 msgstr "编辑图书"
 
-#: routes/_app/admin/AddUserDialog.tsx:48
+#: routes/_app/admin/AddUserDialog.tsx:63
 #: routes/_app/admin/members.$memberId.tsx:97
 #: routes/_app/admin/tenants.$libraryId.tsx:197
 #: routes/_app/admin/UsersTable.tsx:44
@@ -766,7 +766,7 @@ msgstr "邮箱"
 msgid "Email domains"
 msgstr "邮箱域名"
 
-#: routes/_app/admin/tenants.index.tsx:92
+#: routes/_app/admin/tenants.index.tsx:101
 msgid "Email domains (comma-separated)"
 msgstr "邮箱域名（用逗号分隔）"
 
@@ -834,6 +834,10 @@ msgstr "反馈"
 #: routes/_app/admin/import.tsx:183
 msgid "Fetch"
 msgstr "获取"
+
+#: routes/_app/admin/tenants.index.tsx:80
+msgid "Give the library a name and the email domains its members use."
+msgstr "为图书馆取个名字，并填写成员使用的邮箱域名。"
 
 #: routes/_app/admin/SystemInfo.tsx:34
 msgid "Hidden"
@@ -931,7 +935,7 @@ msgid "Library deleted."
 msgstr "图书馆已删除。"
 
 #: routes/_app/admin/settings.tsx:106
-#: routes/_app/admin/tenants.index.tsx:86
+#: routes/_app/admin/tenants.index.tsx:95
 msgid "Library name"
 msgstr "图书馆名称"
 
@@ -1020,7 +1024,7 @@ msgstr "会员到期"
 msgid "My Books"
 msgstr "我的借阅"
 
-#: routes/_app/admin/AddUserDialog.tsx:61
+#: routes/_app/admin/AddUserDialog.tsx:76
 #: routes/_app/admin/members.tsx:118
 #: routes/_app/admin/members.tsx:180
 #: routes/_app/admin/tenants.$libraryId.tsx:196
@@ -1392,17 +1396,17 @@ msgstr "搜索租户"
 msgid "Search users"
 msgstr "搜索用户"
 
-#: components/FeedbackButton.tsx:120
+#: components/FeedbackButton.tsx:89
 msgid "Send"
 msgstr "发送"
 
 #: components/FeedbackButton.tsx:71
-#: components/FeedbackButton.tsx:77
 #: components/FeedbackButton.tsx:80
+#: components/FeedbackButton.tsx:81
 msgid "Send feedback"
 msgstr "发送反馈"
 
-#: components/FeedbackButton.tsx:120
+#: components/FeedbackButton.tsx:89
 msgid "Sending…"
 msgstr "发送中…"
 
@@ -1419,7 +1423,7 @@ msgstr "设置"
 msgid "Settings saved."
 msgstr "设置已保存。"
 
-#: routes/_app/admin/AddUserDialog.tsx:86
+#: routes/_app/admin/AddUserDialog.tsx:101
 msgid "Share this with the user; they can change it after signing in."
 msgstr "把它告知该用户；登录后可自行修改。"
 
@@ -1548,7 +1552,7 @@ msgstr "对象"
 msgid "Tell us what you’d like — features, books to add, or problems."
 msgstr "告诉我们你的想法——想要的功能、想加的书，或遇到的问题。"
 
-#: routes/_app/admin/AddUserDialog.tsx:73
+#: routes/_app/admin/AddUserDialog.tsx:88
 msgid "Temporary password"
 msgstr "临时密码"
 
@@ -1655,7 +1659,7 @@ msgstr "换个搜索词试试。"
 msgid "Try adjusting the search or filters."
 msgstr "换个关键词或筛选条件试试。"
 
-#: components/FeedbackButton.tsx:86
+#: components/FeedbackButton.tsx:96
 msgid "Type"
 msgstr "类型"
 
@@ -1756,6 +1760,6 @@ msgstr "你有逾期未还的书，请先归还再借阅。"
 msgid "You've reached your borrowing limit. Return a book before borrowing another."
 msgstr "你已达到借阅上限，先还一本再借吧。"
 
-#: components/FeedbackButton.tsx:101
+#: components/FeedbackButton.tsx:111
 msgid "Your feedback"
 msgstr "你的反馈"
