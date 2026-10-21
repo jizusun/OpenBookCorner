@@ -16,6 +16,7 @@ export async function createTestDb(): Promise<Database> {
     CREATE TABLE libraries (
       id TEXT PRIMARY KEY, name TEXT NOT NULL, email_domains TEXT NOT NULL,
       settings TEXT NOT NULL, is_active INTEGER NOT NULL DEFAULT 1,
+      visibility TEXT NOT NULL DEFAULT 'private',
       slug TEXT UNIQUE, logo_url TEXT, brand_color TEXT, login_welcome TEXT,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
@@ -23,6 +24,7 @@ export async function createTestDb(): Promise<Database> {
       id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL UNIQUE,
       email_verified INTEGER NOT NULL DEFAULT 0, image TEXT,
       library_id TEXT, role TEXT NOT NULL DEFAULT 'library_reader',
+      active_library_id TEXT,
       banned INTEGER, ban_reason TEXT, ban_expires INTEGER,
       created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL
     );
@@ -78,6 +80,32 @@ export async function createTestDb(): Promise<Database> {
       id TEXT PRIMARY KEY, actor_user_id TEXT NOT NULL, on_behalf_of_user_id TEXT,
       library_id TEXT, action TEXT NOT NULL, target_type TEXT, target_id TEXT,
       metadata TEXT, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE membership (
+      id TEXT PRIMARY KEY, user_id TEXT NOT NULL, library_id TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'library_reader', status TEXT NOT NULL DEFAULT 'active',
+      join_fields TEXT,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE UNIQUE INDEX membership_user_library_unique ON membership (user_id, library_id);
+    CREATE TABLE join_request (
+      id TEXT PRIMARY KEY, user_id TEXT NOT NULL, library_id TEXT NOT NULL,
+      via TEXT NOT NULL DEFAULT 'button', invite_id TEXT, answers TEXT,
+      status TEXT NOT NULL DEFAULT 'pending', decided_by TEXT,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, decided_at TEXT
+    );
+    CREATE TABLE invite (
+      id TEXT PRIMARY KEY, library_id TEXT NOT NULL, token TEXT NOT NULL UNIQUE,
+      role TEXT NOT NULL DEFAULT 'library_reader', requires_approval INTEGER NOT NULL DEFAULT 1,
+      max_uses INTEGER, used_count INTEGER NOT NULL DEFAULT 0, expires_at INTEGER,
+      revoked INTEGER NOT NULL DEFAULT 0, created_by TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE join_field (
+      id TEXT PRIMARY KEY, library_id TEXT NOT NULL, key TEXT NOT NULL, label TEXT NOT NULL,
+      type TEXT NOT NULL DEFAULT 'text', required INTEGER NOT NULL DEFAULT 1,
+      verify_email INTEGER NOT NULL DEFAULT 0, options TEXT, position INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
   `)
   const db = drizzle(sqlite, { schema }) as unknown as Database

@@ -18,6 +18,10 @@ export const user = sqliteTable('user', {
   // --- OpenBookCorner tenant extension (additionalFields) ---
   libraryId: text('library_id'),
   role: text('role').notNull().default('library_reader'),
+  // ADR 0009: the user's currently-selected library (top-left switcher). Tenant
+  // scope for each request resolves from this + an active membership. The
+  // legacy libraryId/role above are retained one release for rollback.
+  activeLibraryId: text('active_library_id'),
   // --- Better Auth admin plugin fields (read on every session validation) ---
   banned: integer('banned', { mode: 'boolean' }),
   banReason: text('ban_reason'),
