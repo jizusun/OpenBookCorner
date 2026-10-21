@@ -258,7 +258,10 @@ msgstr "Address"
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:216
 #: routes/_app/admin/UsersTable.tsx:31
+#: routes/_app/LibrarySwitcher.tsx:28
+#: routes/_app/LibrarySwitcher.tsx:77
 #: routes/_app/profile.tsx:24
+#: routes/_app/route.tsx:32
 msgid "Admin"
 msgstr "Admin"
 
@@ -719,7 +722,7 @@ msgstr "Create library"
 msgid "Create link"
 msgstr "Create link"
 
-#: routes/_app/LibrarySwitcher.tsx:77
+#: routes/_app/LibrarySwitcher.tsx:109
 msgid "Create or join a library"
 msgstr "Create or join a library"
 
@@ -926,8 +929,8 @@ msgstr "Environment"
 msgid "Every import is recorded with its source and counts."
 msgstr "Every import is recorded with its source and counts."
 
-#: routes/_app/route.tsx:109
-#: routes/_app/route.tsx:111
+#: routes/_app/route.tsx:137
+#: routes/_app/route.tsx:139
 msgid "Exit reader preview"
 msgstr "Exit reader preview"
 
@@ -1103,10 +1106,6 @@ msgstr "Joined date"
 #: routes/join.$token.tsx:72
 msgid "Joining…"
 msgstr "Joining…"
-
-#: routes/_app/LibrarySwitcher.tsx:56
-msgid "Libraries"
-msgstr "Libraries"
 
 #: routes/_app/nav.tsx:50
 msgid "Library"
@@ -1435,7 +1434,7 @@ msgstr "Please fill in the required information."
 msgid "Preview — {0}"
 msgstr "Preview — {0}"
 
-#: routes/_app/route.tsx:109
+#: routes/_app/route.tsx:137
 msgid "Preview as a reader"
 msgstr "Preview as a reader"
 
@@ -1488,12 +1487,15 @@ msgstr "Read-only system information (super admin)."
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:217
 #: routes/_app/admin/UsersTable.tsx:32
+#: routes/_app/LibrarySwitcher.tsx:33
+#: routes/_app/LibrarySwitcher.tsx:77
 #: routes/_app/nav.tsx:67
 #: routes/_app/profile.tsx:26
+#: routes/_app/route.tsx:34
 msgid "Reader"
 msgstr "Reader"
 
-#: routes/_app/route.tsx:111
+#: routes/_app/route.tsx:139
 msgid "Reader preview"
 msgstr "Reader preview"
 
@@ -2115,6 +2117,10 @@ msgstr "You've reached your borrowing limit. Return a book before borrowing anot
 #: components/FeedbackButton.tsx:111
 msgid "Your feedback"
 msgstr "Your feedback"
+
+#: routes/_app/LibrarySwitcher.tsx:86
+msgid "Your libraries"
+msgstr "Your libraries"
 
 #: routes/join.$token.tsx:61
 msgid "Your request will need approval from the library admin."

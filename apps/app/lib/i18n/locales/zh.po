@@ -258,7 +258,10 @@ msgstr "地址"
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:216
 #: routes/_app/admin/UsersTable.tsx:31
+#: routes/_app/LibrarySwitcher.tsx:28
+#: routes/_app/LibrarySwitcher.tsx:77
 #: routes/_app/profile.tsx:24
+#: routes/_app/route.tsx:32
 msgid "Admin"
 msgstr "管理员"
 
@@ -719,7 +722,7 @@ msgstr "创建图书馆"
 msgid "Create link"
 msgstr "创建链接"
 
-#: routes/_app/LibrarySwitcher.tsx:77
+#: routes/_app/LibrarySwitcher.tsx:109
 msgid "Create or join a library"
 msgstr "创建或加入图书馆"
 
@@ -926,8 +929,8 @@ msgstr "运行环境"
 msgid "Every import is recorded with its source and counts."
 msgstr "每次导入都会记录来源和数量。"
 
-#: routes/_app/route.tsx:109
-#: routes/_app/route.tsx:111
+#: routes/_app/route.tsx:137
+#: routes/_app/route.tsx:139
 msgid "Exit reader preview"
 msgstr "退出读者预览"
 
@@ -1103,10 +1106,6 @@ msgstr "入馆日期"
 #: routes/join.$token.tsx:72
 msgid "Joining…"
 msgstr "加入中…"
-
-#: routes/_app/LibrarySwitcher.tsx:56
-msgid "Libraries"
-msgstr "图书馆"
 
 #: routes/_app/nav.tsx:50
 msgid "Library"
@@ -1435,7 +1434,7 @@ msgstr "请填写所需信息。"
 msgid "Preview — {0}"
 msgstr "预览 — {0}"
 
-#: routes/_app/route.tsx:109
+#: routes/_app/route.tsx:137
 msgid "Preview as a reader"
 msgstr "以读者身份预览"
 
@@ -1488,12 +1487,15 @@ msgstr "只读系统信息（超级管理员）。"
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:217
 #: routes/_app/admin/UsersTable.tsx:32
+#: routes/_app/LibrarySwitcher.tsx:33
+#: routes/_app/LibrarySwitcher.tsx:77
 #: routes/_app/nav.tsx:67
 #: routes/_app/profile.tsx:26
+#: routes/_app/route.tsx:34
 msgid "Reader"
 msgstr "普通成员"
 
-#: routes/_app/route.tsx:111
+#: routes/_app/route.tsx:139
 msgid "Reader preview"
 msgstr "读者预览"
 
@@ -2115,6 +2117,10 @@ msgstr "你已达到借阅上限，先还一本再借吧。"
 #: components/FeedbackButton.tsx:111
 msgid "Your feedback"
 msgstr "你的反馈"
+
+#: routes/_app/LibrarySwitcher.tsx:86
+msgid "Your libraries"
+msgstr "你的图书馆"
 
 #: routes/join.$token.tsx:61
 msgid "Your request will need approval from the library admin."
