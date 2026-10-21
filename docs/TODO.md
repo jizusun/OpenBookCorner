@@ -74,3 +74,12 @@ Branch: `feat/impersonation`. Tick items as they land (commit hash in parens).
       e.g. bulk (de)activate tenants, bulk delete books) against the real APIs.
 - [ ] Consider migrating AuditTable (still server-paginated with its own
       tenant/action filters) onto the DataTable toolbar once a server-mode path lands.
+
+## Self-signup + multi-library membership (ADR 0009) — in progress
+- [ ] 1. Schema + migration + backfill: `membership`, `user.active_library_id`,
+      `libraries.visibility`, `invite`, `join_request`, `join_field`.
+- [ ] 2. Tenant resolution → active membership (tenantProcedure/adminProcedure) + isolation tests.
+- [ ] 3. Create-library + post-signup "create or join" empty state + active-library switcher.
+- [ ] 4. Discover public libraries + request-to-join (button) + admin approval queue.
+- [ ] 5. Custom join-form builder/renderer + required-field + company-email verification.
+- [ ] 6. Invite links (create/revoke/expiry/max-use) + join-via-invite (QR-able).
