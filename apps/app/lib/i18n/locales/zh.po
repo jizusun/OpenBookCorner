@@ -100,6 +100,10 @@ msgstr "{0} 位用户 · {1} 本藏书"
 msgid "{0}d"
 msgstr "{0} 天"
 
+#: components/ui/DataTable.tsx:629
+msgid "{count} selected"
+msgstr "已选 {count} 项"
+
 #: routes/_app/my-books.tsx:37
 msgid "{diffDays, plural, one {Due in # day} other {Due in # days}}"
 msgstr "{diffDays, plural, other {还有 # 天到期}}"
@@ -116,7 +120,7 @@ msgstr "{n, plural, other {逾期 # 天}}"
 msgid "{overdue} overdue"
 msgstr "{overdue} 本逾期"
 
-#: routes/_app/admin/books.tsx:59
+#: routes/_app/admin/books.tsx:39
 #: routes/_app/books/index.tsx:181
 msgid "{total} books"
 msgstr "共 {total} 本"
@@ -125,11 +129,11 @@ msgstr "共 {total} 本"
 msgid "{total} entries"
 msgstr "共 {total} 条"
 
-#: routes/_app/admin/users.tsx:63
+#: routes/_app/admin/users.tsx:44
 msgid "{total} users"
 msgstr "共 {total} 位用户"
 
-#: routes/_app/admin/tenants.index.tsx:90
+#: routes/_app/admin/tenants.index.tsx:98
 msgid "@acme.com, @acme.io"
 msgstr "@acme.com, @acme.io"
 
@@ -172,7 +176,7 @@ msgstr "操作"
 
 #: routes/_app/admin/members.tsx:203
 #: routes/_app/admin/tenants.$libraryId.tsx:200
-#: routes/_app/admin/UsersTable.tsx:45
+#: routes/_app/admin/UsersTable.tsx:49
 msgid "Actions"
 msgstr "操作"
 
@@ -186,7 +190,8 @@ msgstr "启用/停用租户"
 
 #: routes/_app/admin/overview.tsx:95
 #: routes/_app/admin/tenants.$libraryId.tsx:121
-#: routes/_app/admin/TenantsTable.tsx:38
+#: routes/_app/admin/tenants.index.tsx:70
+#: routes/_app/admin/TenantsTable.tsx:47
 msgid "Active"
 msgstr "已启用"
 
@@ -237,7 +242,7 @@ msgstr "地址"
 #: routes/_app/admin/members.tsx:140
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:213
-#: routes/_app/admin/UsersTable.tsx:28
+#: routes/_app/admin/UsersTable.tsx:31
 #: routes/_app/profile.tsx:24
 msgid "Admin"
 msgstr "管理员"
@@ -264,7 +269,7 @@ msgstr "{0} 本全部借出"
 msgid "All actions"
 msgstr "所有操作"
 
-#: routes/_app/admin/books.tsx:42
+#: routes/_app/admin/books.tsx:33
 msgid "All books across every tenant (super admin)."
 msgstr "所有租户的全部藏书（超级管理员）。"
 
@@ -301,7 +306,7 @@ msgstr "原始数据 / 全部字段"
 msgid "All tenants"
 msgstr "所有租户"
 
-#: routes/_app/admin/users.tsx:46
+#: routes/_app/admin/users.tsx:38
 msgid "All users across every tenant (super admin)."
 msgstr "所有租户的全部用户（超级管理员）。"
 
@@ -323,7 +328,7 @@ msgstr "至少 8 个字符"
 msgid "Audit log"
 msgstr "审计日志"
 
-#: routes/_app/admin/BooksTable.tsx:22
+#: routes/_app/admin/BooksTable.tsx:24
 #: routes/_app/books/$bookId.edit.tsx:105
 #: routes/_app/books/add.tsx:166
 #: routes/_app/books/index.tsx:125
@@ -335,7 +340,7 @@ msgid "Availability"
 msgstr "可借数量"
 
 #: components/books/BookCard.tsx:73
-#: routes/_app/admin/BooksTable.tsx:25
+#: routes/_app/admin/BooksTable.tsx:29
 #: routes/_app/books/index.tsx:146
 msgid "Available"
 msgstr "可借"
@@ -384,10 +389,10 @@ msgstr "未找到该图书。"
 msgid "Book suggestion"
 msgstr "荐书"
 
-#: routes/_app/admin/books.tsx:39
+#: routes/_app/admin/books.tsx:30
 #: routes/_app/admin/overview.tsx:65
 #: routes/_app/admin/tenants.$libraryId.tsx:149
-#: routes/_app/admin/TenantsTable.tsx:43
+#: routes/_app/admin/TenantsTable.tsx:52
 #: routes/_app/nav.tsx:38
 msgid "Books"
 msgstr "藏书"
@@ -481,7 +486,7 @@ msgstr "摄像头权限被拒绝，请允许访问或手动输入 ISBN。"
 #: components/FeedbackButton.tsx:123
 #: routes/_app/admin/AddUserDialog.tsx:91
 #: routes/_app/admin/tenants.$libraryId.tsx:136
-#: routes/_app/admin/tenants.index.tsx:96
+#: routes/_app/admin/tenants.index.tsx:104
 #: routes/_app/books/$bookId.edit.tsx:144
 msgid "Cancel"
 msgstr "取消"
@@ -514,6 +519,10 @@ msgstr "班级"
 #: routes/_app/books/$bookId.tsx:170
 msgid "CLC"
 msgstr "中图法分类号"
+
+#: components/ui/DataTable.tsx:645
+msgid "Clear"
+msgstr "清除"
 
 #: routes/_app/books/add.tsx:144
 #: routes/_app/scan.tsx:69
@@ -611,16 +620,16 @@ msgstr "无法更新你的资料。"
 msgid "Cover of {0}"
 msgstr "《{0}》封面"
 
-#: routes/_app/admin/tenants.index.tsx:69
-#: routes/_app/admin/tenants.index.tsx:74
+#: routes/_app/admin/tenants.index.tsx:77
+#: routes/_app/admin/tenants.index.tsx:82
 msgid "Create a library"
 msgstr "创建图书馆"
 
-#: routes/_app/admin/tenants.index.tsx:99
+#: routes/_app/admin/tenants.index.tsx:107
 msgid "Create library"
 msgstr "创建图书馆"
 
-#: routes/_app/admin/TenantsTable.tsx:60
+#: routes/_app/admin/TenantsTable.tsx:90
 msgid "Create the first one."
 msgstr "先创建第一个。"
 
@@ -628,7 +637,7 @@ msgstr "先创建第一个。"
 msgid "Created tenant"
 msgstr "创建租户"
 
-#: routes/_app/admin/tenants.index.tsx:99
+#: routes/_app/admin/tenants.index.tsx:107
 msgid "Creating…"
 msgstr "创建中…"
 
@@ -746,7 +755,7 @@ msgstr "编辑图书"
 #: routes/_app/admin/AddUserDialog.tsx:48
 #: routes/_app/admin/members.$memberId.tsx:97
 #: routes/_app/admin/tenants.$libraryId.tsx:197
-#: routes/_app/admin/UsersTable.tsx:41
+#: routes/_app/admin/UsersTable.tsx:44
 #: routes/_app/profile.tsx:94
 #: routes/login.tsx:205
 msgid "Email"
@@ -757,7 +766,7 @@ msgstr "邮箱"
 msgid "Email domains"
 msgstr "邮箱域名"
 
-#: routes/_app/admin/tenants.index.tsx:84
+#: routes/_app/admin/tenants.index.tsx:92
 msgid "Email domains (comma-separated)"
 msgstr "邮箱域名（用逗号分隔）"
 
@@ -872,7 +881,8 @@ msgstr "导入中…"
 
 #: routes/_app/admin/overview.tsx:95
 #: routes/_app/admin/tenants.$libraryId.tsx:121
-#: routes/_app/admin/TenantsTable.tsx:38
+#: routes/_app/admin/tenants.index.tsx:71
+#: routes/_app/admin/TenantsTable.tsx:47
 msgid "Inactive"
 msgstr "已停用"
 
@@ -880,7 +890,7 @@ msgstr "已停用"
 msgid "Install app"
 msgstr "安装应用"
 
-#: routes/_app/admin/BooksTable.tsx:24
+#: routes/_app/admin/BooksTable.tsx:26
 #: routes/_app/books/$bookId.edit.tsx:109
 #: routes/_app/books/add.tsx:136
 #: routes/_app/scan.tsx:61
@@ -921,7 +931,7 @@ msgid "Library deleted."
 msgstr "图书馆已删除。"
 
 #: routes/_app/admin/settings.tsx:106
-#: routes/_app/admin/tenants.index.tsx:78
+#: routes/_app/admin/tenants.index.tsx:86
 msgid "Library name"
 msgstr "图书馆名称"
 
@@ -1015,11 +1025,12 @@ msgstr "我的借阅"
 #: routes/_app/admin/members.tsx:180
 #: routes/_app/admin/tenants.$libraryId.tsx:196
 #: routes/_app/admin/tenants.$libraryId.tsx:314
-#: routes/_app/admin/TenantsTable.tsx:22
-#: routes/_app/admin/UsersTable.tsx:40
+#: routes/_app/admin/TenantsTable.tsx:28
+#: routes/_app/admin/UsersTable.tsx:43
 msgid "Name"
 msgstr "姓名"
 
+#: components/ui/DataTable.tsx:603
 #: components/ui/Pager.tsx:26
 msgid "Next"
 msgstr "下一页"
@@ -1036,7 +1047,7 @@ msgstr "暂无审计记录"
 msgid "No books borrowed yet"
 msgstr "还没有借阅任何书籍"
 
-#: routes/_app/admin/BooksTable.tsx:39
+#: routes/_app/admin/BooksTable.tsx:58
 msgid "No books found"
 msgstr "未找到藏书"
 
@@ -1062,7 +1073,7 @@ msgstr "暂无封面"
 msgid "No feedback yet"
 msgstr "暂无反馈"
 
-#: routes/_app/admin/TenantsTable.tsx:60
+#: routes/_app/admin/TenantsTable.tsx:90
 msgid "No libraries yet"
 msgstr "还没有图书馆"
 
@@ -1074,11 +1085,15 @@ msgstr "暂无成员"
 msgid "No overdue books in this range"
 msgstr "该区间没有逾期图书"
 
+#: components/ui/DataTable.tsx:390
+msgid "No results."
+msgstr "无结果。"
+
 #: routes/_app/admin/tenants.$libraryId.tsx:190
 msgid "No users"
 msgstr "暂无用户"
 
-#: routes/_app/admin/UsersTable.tsx:68
+#: routes/_app/admin/UsersTable.tsx:95
 msgid "No users found"
 msgstr "未找到用户"
 
@@ -1099,7 +1114,7 @@ msgstr "通知"
 msgid "on behalf of {0}"
 msgstr "代 {0}"
 
-#: routes/_app/AppSidebar.tsx:39
+#: routes/_app/AppSidebar.tsx:58
 msgid "OpenBookCorner"
 msgstr "开卷角"
 
@@ -1129,6 +1144,11 @@ msgstr "逾期图书"
 #: routes/_app/nav.tsx:35
 msgid "Overview"
 msgstr "概况"
+
+#. placeholder {0}: pi + 1
+#: components/ui/DataTable.tsx:583
+msgid "Page {0} of {pc}"
+msgstr "第 {0} / {pc} 页"
 
 #: components/ui/Pager.tsx:23
 msgid "Page {page}"
@@ -1173,6 +1193,7 @@ msgstr "预览 — {0}"
 msgid "Preview as a reader"
 msgstr "以读者身份预览"
 
+#: components/ui/DataTable.tsx:594
 #: components/ui/Pager.tsx:20
 msgid "Previous"
 msgstr "上一页"
@@ -1216,7 +1237,7 @@ msgstr "只读系统信息（超级管理员）。"
 #: routes/_app/admin/members.tsx:141
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:214
-#: routes/_app/admin/UsersTable.tsx:29
+#: routes/_app/admin/UsersTable.tsx:32
 #: routes/_app/nav.tsx:60
 #: routes/_app/profile.tsx:26
 msgid "Reader"
@@ -1239,6 +1260,10 @@ msgstr "近期动态"
 msgid "Recent changes in your library."
 msgstr "本馆的近期变更。"
 
+#: components/ui/DataTable.tsx:327
+msgid "Reset"
+msgstr "重置"
+
 #: routes/_app/my-books.tsx:179
 msgid "Return"
 msgstr "归还"
@@ -1258,7 +1283,8 @@ msgstr "归还中…"
 
 #: routes/_app/admin/members.tsx:183
 #: routes/_app/admin/tenants.$libraryId.tsx:198
-#: routes/_app/admin/UsersTable.tsx:43
+#: routes/_app/admin/users.tsx:57
+#: routes/_app/admin/UsersTable.tsx:46
 #: routes/_app/profile.tsx:98
 msgid "Role"
 msgstr "权限"
@@ -1266,6 +1292,10 @@ msgstr "权限"
 #: routes/_app/admin/members.$memberId.tsx:104
 msgid "Room"
 msgstr "房号"
+
+#: components/ui/DataTable.tsx:563
+msgid "Rows per page"
+msgstr "每页行数"
 
 #: routes/_app/admin/tenants.$libraryId.tsx:335
 #: routes/_app/books/$bookId.edit.tsx:137
@@ -1323,7 +1353,7 @@ msgstr "扫码借书"
 msgid "Search"
 msgstr "搜索"
 
-#: routes/_app/admin/books.tsx:49
+#: routes/_app/admin/books.tsx:47
 msgid "Search books"
 msgstr "搜索藏书"
 
@@ -1331,9 +1361,13 @@ msgstr "搜索藏书"
 msgid "Search by name / phone / member no…"
 msgstr "按姓名 / 手机 / 会员号搜索…"
 
-#: routes/_app/admin/users.tsx:52
+#: routes/_app/admin/users.tsx:55
 msgid "Search by name or email…"
 msgstr "按姓名或邮箱搜索…"
+
+#: routes/_app/admin/tenants.index.tsx:67
+msgid "Search by name or slug…"
+msgstr "按名称或标识搜索…"
 
 #: routes/_app/books/index.tsx:106
 msgid "Search by title or author"
@@ -1343,7 +1377,7 @@ msgstr "按书名或作者搜索"
 msgid "Search by title or author…"
 msgstr "按书名或作者搜索…"
 
-#: routes/_app/admin/books.tsx:48
+#: routes/_app/admin/books.tsx:46
 msgid "Search by title, author or ISBN…"
 msgstr "按书名、作者或 ISBN 搜索…"
 
@@ -1351,7 +1385,11 @@ msgstr "按书名、作者或 ISBN 搜索…"
 msgid "Search members"
 msgstr "搜索成员"
 
-#: routes/_app/admin/users.tsx:53
+#: routes/_app/admin/tenants.index.tsx:68
+msgid "Search tenants"
+msgstr "搜索租户"
+
+#: routes/_app/admin/users.tsx:56
 msgid "Search users"
 msgstr "搜索用户"
 
@@ -1424,7 +1462,7 @@ msgid "Slow network — still loading, hang tight…"
 msgstr "网络较慢，仍在加载，请稍候…"
 
 #: routes/_app/admin/tenants.$libraryId.tsx:318
-#: routes/_app/admin/TenantsTable.tsx:33
+#: routes/_app/admin/TenantsTable.tsx:41
 msgid "Slug"
 msgstr "短链标识"
 
@@ -1446,7 +1484,8 @@ msgstr "来源：{0}"
 msgid "Started impersonation"
 msgstr "开始模拟登录"
 
-#: routes/_app/admin/TenantsTable.tsx:35
+#: routes/_app/admin/tenants.index.tsx:69
+#: routes/_app/admin/TenantsTable.tsx:44
 msgid "Status"
 msgstr "状态"
 
@@ -1467,7 +1506,7 @@ msgid "success"
 msgstr "成功"
 
 #: routes/_app/admin/tenants.$libraryId.tsx:211
-#: routes/_app/admin/UsersTable.tsx:27
+#: routes/_app/admin/UsersTable.tsx:30
 #: routes/_app/profile.tsx:22
 msgid "Super admin"
 msgstr "超级管理员"
@@ -1518,8 +1557,8 @@ msgstr "临时密码"
 msgid "Tenancy model"
 msgstr "多租户模型"
 
-#: routes/_app/admin/BooksTable.tsx:23
-#: routes/_app/admin/UsersTable.tsx:42
+#: routes/_app/admin/BooksTable.tsx:25
+#: routes/_app/admin/UsersTable.tsx:45
 msgid "Tenant"
 msgstr "租户"
 
@@ -1593,19 +1632,23 @@ msgstr "将把该图书从书目中移除，且无法撤销。"
 msgid "Time"
 msgstr "时间"
 
-#: routes/_app/admin/BooksTable.tsx:21
+#: routes/_app/admin/BooksTable.tsx:23
 #: routes/_app/books/$bookId.edit.tsx:101
 #: routes/_app/books/add.tsx:162
 #: routes/_app/books/index.tsx:124
 msgid "Title"
 msgstr "书名"
 
+#: components/ui/DataTable.tsx:445
+msgid "Toggle columns"
+msgstr "切换列"
+
 #: routes/_app/books/$bookId.tsx:132
 msgid "Translator"
 msgstr "译者"
 
-#: routes/_app/admin/BooksTable.tsx:39
-#: routes/_app/admin/UsersTable.tsx:68
+#: routes/_app/admin/BooksTable.tsx:58
+#: routes/_app/admin/UsersTable.tsx:95
 msgid "Try a different search."
 msgstr "换个搜索词试试。"
 
@@ -1636,11 +1679,15 @@ msgstr "用户反馈"
 #: routes/_app/admin/overview.tsx:64
 #: routes/_app/admin/tenants.$libraryId.tsx:145
 #: routes/_app/admin/tenants.$libraryId.tsx:181
-#: routes/_app/admin/TenantsTable.tsx:42
-#: routes/_app/admin/users.tsx:43
+#: routes/_app/admin/TenantsTable.tsx:51
+#: routes/_app/admin/users.tsx:35
 #: routes/_app/nav.tsx:37
 msgid "Users"
 msgstr "用户"
+
+#: components/ui/DataTable.tsx:440
+msgid "View"
+msgstr "视图"
 
 #: routes/_app/admin/overview.tsx:74
 msgid "View all →"

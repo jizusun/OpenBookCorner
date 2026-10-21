@@ -1,20 +1,16 @@
-import { useState } from 'react'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { z } from 'zod'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { api } from '@/lib/api'
 import { ListPageSkeleton } from '@/components/ui/skeleton'
-import { SearchBar } from '@/components/ui/SearchBar'
-import { Pager } from '@/components/ui/Pager'
 import { BooksTable, type AdminBookRow } from './BooksTable'
 
-const PAGE_SIZE = 50
-const searchSchema = z.object({ q: z.string().optional() })
+// Client-side table (ADR 0008): fetch the full set and let the DataTable do
+// search / sort / pagination in the browser.
+const ALL = 200
 
 export const Route = createFileRoute('/_app/admin/books')({
   pendingComponent: () => <ListPageSkeleton />,
-  validateSearch: searchSchema,
   beforeLoad: ({ context }) => {
     if (context.user.role !== 'super_admin') throw redirect({ to: '/books' })
   },
@@ -22,15 +18,10 @@ export const Route = createFileRoute('/_app/admin/books')({
 })
 
 function AdminBooksPage() {
-  const { q } = Route.useSearch()
-  const navigate = Route.useNavigate()
   const { t } = useLingui()
-  const [page, setPage] = useState(1)
-
-  const { data, isLoading } = useQuery(api.admin.books.queryOptions({ search: q, page, limit: PAGE_SIZE }))
+  const { data, isLoading } = useQuery(api.admin.books.queryOptions({ page: 1, limit: ALL }))
   const rows = (data?.items ?? []) as AdminBookRow[]
-  const total = data?.total ?? 0
-  const hasMore = page * PAGE_SIZE < total
+  const total = data?.total ?? rows.length
 
   return (
     <div className="space-y-6">
@@ -43,31 +34,17 @@ function AdminBooksPage() {
         </p>
       </div>
 
-      <SearchBar
-        initial={q ?? ''}
-        placeholder={t`Search by title, author or ISBN…`}
-        ariaLabel={t`Search books`}
-        data-testid="admin-book-search"
-        onSearch={(term) => {
-          setPage(1)
-          navigate({ search: () => ({ q: term || undefined }) })
-        }}
-      />
-
       {!isLoading && (
         <p className="text-sm text-muted-foreground">
           <Trans>{total} books</Trans>
         </p>
       )}
 
-      <BooksTable rows={rows} loading={isLoading} />
-
-      <Pager
-        page={page}
-        hasMore={hasMore}
-        onPrev={() => setPage((p) => Math.max(1, p - 1))}
-        onNext={() => setPage((p) => p + 1)}
-        data-testid="books-pager"
+      <BooksTable
+        rows={rows}
+        loading={isLoading}
+        searchPlaceholder={t`Search by title, author or ISBN…`}
+        searchAria={t`Search books`}
       />
     </div>
   )

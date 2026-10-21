@@ -15,11 +15,19 @@ export interface TenantRow {
 export interface TenantsTableProps {
   rows: TenantRow[]
   loading: boolean
+  searchPlaceholder?: string
+  searchAria?: string
+  statusLabel?: string
+  activeLabel?: string
+  inactiveLabel?: string
 }
 
 const columns: Column<TenantRow>[] = [
   {
+    id: 'name',
     header: <Trans>Name</Trans>,
+    sortable: true,
+    sortValue: (tn) => tn.name,
     cell: (tn) => (
       <Link
         to="/admin/tenants/$libraryId"
@@ -30,8 +38,9 @@ const columns: Column<TenantRow>[] = [
       </Link>
     ),
   },
-  { header: <Trans>Slug</Trans>, cell: (tn) => (tn.slug ? `/t/${tn.slug}` : '—'), muted: true },
+  { id: 'slug', header: <Trans>Slug</Trans>, cell: (tn) => (tn.slug ? `/t/${tn.slug}` : '—'), muted: true },
   {
+    id: 'status',
     header: <Trans>Status</Trans>,
     cell: (tn) => (
       <Badge variant={tn.isActive ? 'default' : 'secondary'}>
@@ -39,15 +48,15 @@ const columns: Column<TenantRow>[] = [
       </Badge>
     ),
   },
-  { header: <Trans>Users</Trans>, cell: (tn) => tn.userCount, muted: true },
-  { header: <Trans>Books</Trans>, cell: (tn) => tn.bookCount, muted: true },
+  { id: 'users', header: <Trans>Users</Trans>, cell: (tn) => tn.userCount, muted: true, sortable: true, sortValue: (tn) => tn.userCount },
+  { id: 'books', header: <Trans>Books</Trans>, cell: (tn) => tn.bookCount, muted: true, sortable: true, sortValue: (tn) => tn.bookCount },
 ]
 
 /**
  * Quiet, scannable tenant list (super-admin console). Each row drills into the
  * tenant detail page; no per-row action buttons (those live on the detail page).
  */
-export function TenantsTable({ rows, loading }: TenantsTableProps) {
+export function TenantsTable({ rows, loading, searchPlaceholder, searchAria, activeLabel, inactiveLabel, statusLabel }: TenantsTableProps) {
   return (
     <DataTable<TenantRow>
       rows={rows}
@@ -57,6 +66,27 @@ export function TenantsTable({ rows, loading }: TenantsTableProps) {
       rowTestId={(tn) => `tenant-row-${tn.id}`}
       testId="tenant"
       skeletonRows={2}
+      toolbar={{
+        search: {
+          keys: [(tn) => tn.name, (tn) => tn.slug],
+          placeholder: searchPlaceholder,
+          ariaLabel: searchAria,
+        },
+        faceted: [
+          {
+            columnId: 'status',
+            label: statusLabel ?? 'Status',
+            value: (tn) => (tn.isActive ? 'active' : 'inactive'),
+            options: [
+              { value: 'active', label: activeLabel ?? 'Active' },
+              { value: 'inactive', label: inactiveLabel ?? 'Inactive' },
+            ],
+          },
+        ],
+      }}
+      enableColumnVisibility
+      enablePagination
+      pageSize={20}
       empty={{ icon: '🏛️', title: <Trans>No libraries yet</Trans>, description: <Trans>Create the first one.</Trans> }}
     />
   )
