@@ -56,11 +56,14 @@ export function SignUpPage() {
 
   async function onSubmit(data: FormValues) {
     try {
-      await signUp.email({ email: data.email, password: data.password, name: data.email.split('@')[0]! })
+      const res = await signUp.email({ email: data.email, password: data.password, name: data.email.split('@')[0]! })
+      // Better Auth returns errors in the resolved result, not as a rejection.
+      if ((res as unknown as { error?: { message?: string } })?.error) {
+        form.setError('email', { message: t`Could not create account. That email may already be registered.` })
+        return
+      }
       queryClient.clear()
       setReaderPreview(false)
-      // After sign-up: go to the redirect URL if present (e.g. invite link),
-      // otherwise the welcome screen (no active library yet, ADR 0009).
       await router.navigate({ to: (redirect as '/') ?? '/welcome' })
     } catch {
       form.setError('email', { message: t`Could not create account. That email may already be registered.` })
