@@ -239,13 +239,14 @@ msgstr "添加中…"
 msgid "Address"
 msgstr "地址"
 
+#: routes/_app/admin/library-users.tsx:79
 #: routes/_app/admin/members.$memberId.tsx:86
 #: routes/_app/admin/members.tsx:140
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:216
 #: routes/_app/admin/UsersTable.tsx:31
 #: routes/_app/LibrarySwitcher.tsx:28
-#: routes/_app/LibrarySwitcher.tsx:77
+#: routes/_app/LibrarySwitcher.tsx:87
 #: routes/_app/profile.tsx:24
 #: routes/_app/route.tsx:32
 msgid "Admin"
@@ -644,6 +645,10 @@ msgstr "无法获取该链接，请粘贴番薯借阅的导出链接（https://�
 msgid "Could not read this file. Make sure it is a 番薯借阅 Excel export (.xls/.xlsx)."
 msgstr "无法读取该文件，请确认是番薯借阅的 Excel 导出文件（.xls/.xlsx）。"
 
+#: routes/_app/admin/library-users.tsx:36
+msgid "Could not remove user."
+msgstr "无法移除该用户。"
+
 #: routes/_app/books/$bookId.edit.tsx:83
 msgid "Could not save changes. Please try again."
 msgstr "保存失败，请重试。"
@@ -725,7 +730,7 @@ msgstr "创建图书馆"
 msgid "Create link"
 msgstr "创建链接"
 
-#: routes/_app/LibrarySwitcher.tsx:109
+#: routes/_app/LibrarySwitcher.tsx:133
 msgid "Create or join a library"
 msgstr "创建或加入图书馆"
 
@@ -1076,6 +1081,14 @@ msgstr "邀请链接已撤销。"
 msgid "Invite links"
 msgstr "邀请链接"
 
+#: routes/_app/admin/library-users.tsx:64
+msgid "Invite people using an invite link. They'll appear here after joining."
+msgstr "通过邀请链接邀请成员，他们加入后将显示在这里。"
+
+#: routes/_app/admin/library-users.tsx:54
+msgid "Invite user"
+msgstr "邀请用户"
+
 #: routes/_app/admin/BooksTable.tsx:26
 #: routes/_app/books/$bookId.edit.tsx:109
 #: routes/_app/books/add.tsx:136
@@ -1121,6 +1134,15 @@ msgstr "入馆日期"
 #: routes/join.$token.tsx:72
 msgid "Joining…"
 msgstr "加入中…"
+
+#. placeholder {0}: lib.name
+#: routes/_app/LibrarySwitcher.tsx:118
+msgid "Leave {0}? You will lose access."
+msgstr "确定要退出 {0} 吗？退出后将失去访问权限。"
+
+#: routes/_app/LibrarySwitcher.tsx:114
+msgid "Leave this library"
+msgstr "退出此图书馆"
 
 #: routes/_app/admin/settings.tsx:130
 #: routes/_app/nav.tsx:49
@@ -1238,6 +1260,10 @@ msgstr "位成员"
 #: routes/_app/nav.tsx:59
 msgid "Members"
 msgstr "成员"
+
+#: routes/_app/admin/library-users.tsx:45
+msgid "Members with a login account in this library."
+msgstr "本图书馆中拥有登录账号的成员。"
 
 #: routes/_app/nav.tsx:68
 msgid "More"
@@ -1357,6 +1383,10 @@ msgstr "暂无用户"
 #: routes/_app/admin/UsersTable.tsx:95
 msgid "No users found"
 msgstr "未找到用户"
+
+#: routes/_app/admin/library-users.tsx:63
+msgid "No users yet"
+msgstr "暂无用户"
 
 #: routes/_app/admin/members.$memberId.tsx:111
 msgid "Note"
@@ -1506,13 +1536,14 @@ msgstr "出版社"
 msgid "Read-only system information (super admin)."
 msgstr "只读系统信息（超级管理员）。"
 
+#: routes/_app/admin/library-users.tsx:79
 #: routes/_app/admin/members.$memberId.tsx:86
 #: routes/_app/admin/members.tsx:141
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:217
 #: routes/_app/admin/UsersTable.tsx:32
 #: routes/_app/LibrarySwitcher.tsx:33
-#: routes/_app/LibrarySwitcher.tsx:77
+#: routes/_app/LibrarySwitcher.tsx:87
 #: routes/_app/nav.tsx:79
 #: routes/_app/profile.tsx:26
 #: routes/_app/route.tsx:34
@@ -1524,7 +1555,6 @@ msgid "Reader preview"
 msgstr "读者预览"
 
 #: routes/_app/admin/members.tsx:80
-#: routes/_app/nav.tsx:52
 msgid "Readers"
 msgstr "读者"
 
@@ -1539,6 +1569,10 @@ msgstr "本馆的近期变更。"
 #: routes/_app/admin/join-requests.tsx:98
 msgid "Reject"
 msgstr "拒绝"
+
+#: routes/_app/admin/library-users.tsx:87
+msgid "Remove from library"
+msgstr "从图书馆移除"
 
 #: routes/_app/admin/join-requests.tsx:30
 msgid "Request approved."
@@ -2024,12 +2058,18 @@ msgstr "上传番薯借阅 Excel 导出文件（.xls）。书籍、成员、借�
 msgid "User Feedback"
 msgstr "用户反馈"
 
+#: routes/_app/admin/library-users.tsx:33
+msgid "User removed from this library."
+msgstr "用户已从本图书馆移除。"
+
+#: routes/_app/admin/library-users.tsx:43
 #: routes/_app/admin/overview.tsx:64
 #: routes/_app/admin/tenants.$libraryId.tsx:148
 #: routes/_app/admin/tenants.$libraryId.tsx:184
 #: routes/_app/admin/TenantsTable.tsx:51
 #: routes/_app/admin/users.tsx:36
 #: routes/_app/nav.tsx:40
+#: routes/_app/nav.tsx:52
 msgid "Users"
 msgstr "用户"
 
@@ -2147,7 +2187,7 @@ msgstr "你已达到借阅上限，先还一本再借吧。"
 msgid "Your feedback"
 msgstr "你的反馈"
 
-#: routes/_app/LibrarySwitcher.tsx:86
+#: routes/_app/LibrarySwitcher.tsx:96
 msgid "Your libraries"
 msgstr "你的图书馆"
 

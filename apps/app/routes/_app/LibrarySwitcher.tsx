@@ -1,7 +1,7 @@
 import { useRouter } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Trans } from '@lingui/react/macro'
-import { ChevronsUpDown, Check, Plus, ShieldCheck, BookOpen } from 'lucide-react'
+import { Trans, useLingui } from '@lingui/react/macro'
+import { ChevronsUpDown, Check, Plus, ShieldCheck, BookOpen, LogOut } from 'lucide-react'
 import { api } from '@/lib/api'
 import {
   DropdownMenu,
@@ -45,6 +45,7 @@ function RoleBadge({ role }: { role: string }) {
 export function LibrarySwitcher({ brandFallback }: { brandFallback: React.ReactNode }) {
   const router = useRouter()
   const queryClient = useQueryClient()
+  const { t } = useLingui()
   const { data } = useQuery(api.membership.mine.queryOptions())
   const libraries = data ?? []
   const active = libraries.find((l) => l.active) ?? libraries[0]
@@ -55,6 +56,15 @@ export function LibrarySwitcher({ brandFallback }: { brandFallback: React.ReactN
       queryClient.clear()
       await router.invalidate()
       await router.navigate({ to: '/books' })
+    },
+  })
+
+  const leaveLib = useMutation({
+    ...api.membership.leave.mutationOptions(),
+    onSuccess: async () => {
+      queryClient.clear()
+      await router.invalidate()
+      await router.navigate({ to: '/welcome' })
     },
   })
 
@@ -98,6 +108,20 @@ export function LibrarySwitcher({ brandFallback }: { brandFallback: React.ReactN
             <span className="flex-1 truncate">{lib.name}</span>
             <RoleBadge role={lib.role} />
             {lib.active && <Check className="size-4 shrink-0 text-primary" />}
+            <button
+              type="button"
+              className="ml-1 rounded p-0.5 text-muted-foreground hover:text-destructive"
+              title={t`Leave this library`}
+              data-testid={`leave-lib-${lib.libraryId}`}
+              onClick={(e) => {
+                e.stopPropagation()
+                if (window.confirm(t`Leave ${lib.name}? You will lose access.`)) {
+                  leaveLib.mutate({ libraryId: lib.libraryId })
+                }
+              }}
+            >
+              <LogOut className="size-3.5" />
+            </button>
           </DropdownMenuItem>
         ))}
         <DropdownMenuSeparator />

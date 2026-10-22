@@ -239,13 +239,14 @@ msgstr "Adding…"
 msgid "Address"
 msgstr "Address"
 
+#: routes/_app/admin/library-users.tsx:79
 #: routes/_app/admin/members.$memberId.tsx:86
 #: routes/_app/admin/members.tsx:140
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:216
 #: routes/_app/admin/UsersTable.tsx:31
 #: routes/_app/LibrarySwitcher.tsx:28
-#: routes/_app/LibrarySwitcher.tsx:77
+#: routes/_app/LibrarySwitcher.tsx:87
 #: routes/_app/profile.tsx:24
 #: routes/_app/route.tsx:32
 msgid "Admin"
@@ -644,6 +645,10 @@ msgstr "Could not fetch that URL. Paste a 番薯借阅 export link (https://…f
 msgid "Could not read this file. Make sure it is a 番薯借阅 Excel export (.xls/.xlsx)."
 msgstr "Could not read this file. Make sure it is a 番薯借阅 Excel export (.xls/.xlsx)."
 
+#: routes/_app/admin/library-users.tsx:36
+msgid "Could not remove user."
+msgstr "Could not remove user."
+
 #: routes/_app/books/$bookId.edit.tsx:83
 msgid "Could not save changes. Please try again."
 msgstr "Could not save changes. Please try again."
@@ -725,7 +730,7 @@ msgstr "Create library"
 msgid "Create link"
 msgstr "Create link"
 
-#: routes/_app/LibrarySwitcher.tsx:109
+#: routes/_app/LibrarySwitcher.tsx:133
 msgid "Create or join a library"
 msgstr "Create or join a library"
 
@@ -1076,6 +1081,14 @@ msgstr "Invite link revoked."
 msgid "Invite links"
 msgstr "Invite links"
 
+#: routes/_app/admin/library-users.tsx:64
+msgid "Invite people using an invite link. They'll appear here after joining."
+msgstr "Invite people using an invite link. They'll appear here after joining."
+
+#: routes/_app/admin/library-users.tsx:54
+msgid "Invite user"
+msgstr "Invite user"
+
 #: routes/_app/admin/BooksTable.tsx:26
 #: routes/_app/books/$bookId.edit.tsx:109
 #: routes/_app/books/add.tsx:136
@@ -1121,6 +1134,15 @@ msgstr "Joined date"
 #: routes/join.$token.tsx:72
 msgid "Joining…"
 msgstr "Joining…"
+
+#. placeholder {0}: lib.name
+#: routes/_app/LibrarySwitcher.tsx:118
+msgid "Leave {0}? You will lose access."
+msgstr "Leave {0}? You will lose access."
+
+#: routes/_app/LibrarySwitcher.tsx:114
+msgid "Leave this library"
+msgstr "Leave this library"
 
 #: routes/_app/admin/settings.tsx:130
 #: routes/_app/nav.tsx:49
@@ -1238,6 +1260,10 @@ msgstr "members"
 #: routes/_app/nav.tsx:59
 msgid "Members"
 msgstr "Members"
+
+#: routes/_app/admin/library-users.tsx:45
+msgid "Members with a login account in this library."
+msgstr "Members with a login account in this library."
 
 #: routes/_app/nav.tsx:68
 msgid "More"
@@ -1357,6 +1383,10 @@ msgstr "No users"
 #: routes/_app/admin/UsersTable.tsx:95
 msgid "No users found"
 msgstr "No users found"
+
+#: routes/_app/admin/library-users.tsx:63
+msgid "No users yet"
+msgstr "No users yet"
 
 #: routes/_app/admin/members.$memberId.tsx:111
 msgid "Note"
@@ -1506,13 +1536,14 @@ msgstr "Publisher"
 msgid "Read-only system information (super admin)."
 msgstr "Read-only system information (super admin)."
 
+#: routes/_app/admin/library-users.tsx:79
 #: routes/_app/admin/members.$memberId.tsx:86
 #: routes/_app/admin/members.tsx:141
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:217
 #: routes/_app/admin/UsersTable.tsx:32
 #: routes/_app/LibrarySwitcher.tsx:33
-#: routes/_app/LibrarySwitcher.tsx:77
+#: routes/_app/LibrarySwitcher.tsx:87
 #: routes/_app/nav.tsx:79
 #: routes/_app/profile.tsx:26
 #: routes/_app/route.tsx:34
@@ -1524,7 +1555,6 @@ msgid "Reader preview"
 msgstr "Reader preview"
 
 #: routes/_app/admin/members.tsx:80
-#: routes/_app/nav.tsx:52
 msgid "Readers"
 msgstr "Readers"
 
@@ -1539,6 +1569,10 @@ msgstr "Recent changes in your library."
 #: routes/_app/admin/join-requests.tsx:98
 msgid "Reject"
 msgstr "Reject"
+
+#: routes/_app/admin/library-users.tsx:87
+msgid "Remove from library"
+msgstr "Remove from library"
 
 #: routes/_app/admin/join-requests.tsx:30
 msgid "Request approved."
@@ -2024,12 +2058,18 @@ msgstr "Upload the 番薯借阅 Excel export (.xls). Books, members, loans, revi
 msgid "User Feedback"
 msgstr "User Feedback"
 
+#: routes/_app/admin/library-users.tsx:33
+msgid "User removed from this library."
+msgstr "User removed from this library."
+
+#: routes/_app/admin/library-users.tsx:43
 #: routes/_app/admin/overview.tsx:64
 #: routes/_app/admin/tenants.$libraryId.tsx:148
 #: routes/_app/admin/tenants.$libraryId.tsx:184
 #: routes/_app/admin/TenantsTable.tsx:51
 #: routes/_app/admin/users.tsx:36
 #: routes/_app/nav.tsx:40
+#: routes/_app/nav.tsx:52
 msgid "Users"
 msgstr "Users"
 
@@ -2147,7 +2187,7 @@ msgstr "You've reached your borrowing limit. Return a book before borrowing anot
 msgid "Your feedback"
 msgstr "Your feedback"
 
-#: routes/_app/LibrarySwitcher.tsx:86
+#: routes/_app/LibrarySwitcher.tsx:96
 msgid "Your libraries"
 msgstr "Your libraries"
 

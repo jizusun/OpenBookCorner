@@ -49,7 +49,7 @@ const LIBRARY_MAIN: NavGroup = {
   label: <Trans>Library</Trans>,
   items: [
     { to: '/books', label: <Trans>Catalog</Trans>, icon: BookOpen },
-    { to: '/admin/members', label: <Trans>Readers</Trans>, icon: Users },
+    { to: '/admin/library-users', label: <Trans>Users</Trans>, icon: Users },
     { to: '/admin/overdue', label: <Trans>Overdue</Trans>, icon: ListChecks },
   ],
 }

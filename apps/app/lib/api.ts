@@ -202,6 +202,16 @@ const call = {
     ),
   'membership.switch': (i: { libraryId: string }) =>
     json<Ok<typeof client.membership.switch.$post>>(client.membership.switch.$post({ json: i })),
+  'membership.leave': (i: { libraryId: string }) =>
+    json<Ok<typeof client.membership.leave.$post>>(client.membership.leave.$post({ json: i })),
+  'membership.adminUsers': () =>
+    json<Ok<(typeof client.membership.admin)['users']['$get']>>(
+      client.membership.admin.users.$get(),
+    ),
+  'membership.remove': (i: { userId: string }) =>
+    json<Ok<(typeof client.membership.admin)['remove']['$post']>>(
+      client.membership.admin.remove.$post({ json: i }),
+    ),
   'join.discover': () =>
     json<Ok<typeof client.join.discover.$get>>(client.join.discover.$get()),
   'join.request': (i: { libraryId: string; answers?: Record<string, string> }) =>
@@ -333,6 +343,9 @@ export const api = {
     mine: node('membership.mine'),
     createLibrary: node('membership.createLibrary'),
     switch: node('membership.switch'),
+    leave: node('membership.leave'),
+    adminUsers: node('membership.adminUsers'),
+    remove: node('membership.remove'),
   },
   join: {
     discover: node('join.discover'),
