@@ -74,6 +74,68 @@ export class MembershipService {
     })
   }
 
+  /** All active memberships in a library, enriched with user name + email. */
+  async listByLibrary(libraryId: string): Promise<Array<{
+    userId: string; name: string; email: string; role: string; joinedAt: string
+  }>> {
+    const rows = await this.db
+      .select({
+        userId: membership.userId,
+        role: membership.role,
+        joinedAt: membership.createdAt,
+        name: user.name,
+        email: user.email,
+      })
+      .from(membership)
+      .innerJoin(user, eq(membership.userId, user.id))
+      .where(and(eq(membership.libraryId, libraryId), eq(membership.status, 'active')))
+      .all?.() ?? []
+    return rows
+  }
+
+  /**
+   * Admin removes a user from a library (sets membership to 'removed').
+   * Returns false if the membership doesn't exist.
+   */
+  async removeFromLibrary(userId: string, libraryId: string): Promise<boolean> {
+    const m = await this.db
+      .select({ id: membership.id })
+      .from(membership)
+      .where(and(eq(membership.userId, userId), eq(membership.libraryId, libraryId)))
+      .get?.()
+    if (!m) return false
+    await this.db
+      .update(membership)
+      .set({ status: 'removed', updatedAt: new Date().toISOString() })
+      .where(eq(membership.id, m.id))
+    return true
+  }
+
+  /**
+   * User leaves their own library. Clears active_library_id if it was this
+   * library so the app redirects to /welcome on next load.
+   */
+  async leaveLibrary(userId: string, libraryId: string): Promise<boolean> {
+    const removed = await this.removeFromLibrary(userId, libraryId)
+    if (!removed) return false
+    // If this was the active library, clear it so the user is sent to /welcome.
+    const u = await this.db
+      .select({ activeLibraryId: user.activeLibraryId })
+      .from(user)
+      .where(eq(user.id, userId))
+      .get?.()
+    if (u?.activeLibraryId === libraryId) {
+      // Try to switch to another active membership; else clear.
+      const others = await this.listUserLibraries(userId)
+      const next = others.find((l) => l.libraryId !== libraryId)
+      await this.db
+        .update(user)
+        .set({ activeLibraryId: next?.libraryId ?? null })
+        .where(eq(user.id, userId))
+    }
+    return true
+  }
+
   /** A library's join-form fields, ordered. */
   async joinFields(libraryId: string): Promise<JoinField[]> {
     const rows =

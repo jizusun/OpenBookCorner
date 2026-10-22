@@ -81,7 +81,7 @@ describe('AppSidebar', () => {
 
   it('library_admin shows the Library nav links', async () => {
     renderSidebar({ role: 'library_admin' })
-    expect(await screen.findByTestId('nav-/admin/members')).toBeInTheDocument()
+    expect(await screen.findByTestId('nav-/admin/library-users')).toBeInTheDocument()
     expect(screen.getByTestId('nav-/admin/overdue')).toBeInTheDocument()
     expect(screen.queryByTestId('nav-/admin/overview')).toBeNull()
   })

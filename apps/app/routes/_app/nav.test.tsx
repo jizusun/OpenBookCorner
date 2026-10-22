@@ -25,7 +25,7 @@ describe('navGroupsFor', () => {
     const groups = navGroupsFor('library_admin', false)
     expect(groups.map((g) => g.id)).toEqual(['library', 'library-members', 'library-more'])
     expect(ids(groups)).toEqual([
-      '/books', '/admin/members', '/admin/overdue',          // Library
+      '/books', '/admin/library-users', '/admin/overdue',          // Library
       '/admin/join-requests', '/admin/invites',              // Members
       '/admin/feedback', '/admin/activity', '/admin/settings', '/admin/import', // More
     ])
