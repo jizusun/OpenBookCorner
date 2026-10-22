@@ -21,7 +21,10 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 
-export const Route = createFileRoute('/signup')({ component: SignUpPage })
+export const Route = createFileRoute('/signup')({
+  validateSearch: z.object({ redirect: z.string().optional() }),
+  component: SignUpPage,
+})
 
 const formSchema = z
   .object({
@@ -41,6 +44,7 @@ type FormValues = z.infer<typeof formSchema>
 
 export function SignUpPage() {
   const router = useRouter()
+  const { redirect } = Route.useSearch()
   const { t } = useLingui()
 
   const form = useForm<FormValues>({
@@ -55,8 +59,9 @@ export function SignUpPage() {
       await signUp.email({ email: data.email, password: data.password, name: data.email.split('@')[0]! })
       queryClient.clear()
       setReaderPreview(false)
-      // New user has no active library → welcome screen (ADR 0009).
-      await router.navigate({ to: '/welcome' })
+      // After sign-up: go to the redirect URL if present (e.g. invite link),
+      // otherwise the welcome screen (no active library yet, ADR 0009).
+      await router.navigate({ to: (redirect as '/') ?? '/welcome' })
     } catch {
       form.setError('email', { message: t`Could not create account. That email may already be registered.` })
     }

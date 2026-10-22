@@ -595,7 +595,7 @@ msgstr "Code"
 msgid "Common fields"
 msgstr "Common fields"
 
-#: routes/signup.tsx:129
+#: routes/signup.tsx:134
 msgid "Confirm password"
 msgstr "Confirm password"
 
@@ -624,7 +624,7 @@ msgstr "Could not add the book. Please check the fields and try again."
 msgid "Could not add the member."
 msgstr "Could not add the member."
 
-#: routes/signup.tsx:61
+#: routes/signup.tsx:66
 msgid "Could not create account. That email may already be registered."
 msgstr "Could not create account. That email may already be registered."
 
@@ -704,11 +704,15 @@ msgstr "Create a library"
 msgid "Create a link to share with prospective members."
 msgstr "Create a link to share with prospective members."
 
-#: routes/signup.tsx:144
+#: routes/signup.tsx:149
 msgid "Create account"
 msgstr "Create account"
 
-#: routes/signup.tsx:71
+#: routes/join.$token.tsx:87
+msgid "Create account to join"
+msgstr "Create account to join"
+
+#: routes/signup.tsx:76
 msgid "Create an account"
 msgstr "Create an account"
 
@@ -799,7 +803,7 @@ msgstr "Deleting…"
 msgid "Demo accounts"
 msgstr "Demo accounts"
 
-#: routes/login.tsx:64
+#: routes/login.tsx:68
 msgid "Demo accounts (non-production) — tap to fill in"
 msgstr "Demo accounts (non-production) — tap to fill in"
 
@@ -878,8 +882,8 @@ msgstr "Edit Book"
 #: routes/_app/admin/tenants.$libraryId.tsx:200
 #: routes/_app/admin/UsersTable.tsx:44
 #: routes/_app/profile.tsx:99
-#: routes/login.tsx:192
-#: routes/signup.tsx:93
+#: routes/login.tsx:202
+#: routes/signup.tsx:98
 msgid "Email"
 msgstr "Email"
 
@@ -918,11 +922,11 @@ msgstr "Enable login for {0}"
 msgid "Enabled"
 msgstr "Enabled"
 
-#: routes/signup.tsx:76
+#: routes/signup.tsx:81
 msgid "Enter your email and password to create an account. Already have an account? <0>Sign in</0>"
 msgstr "Enter your email and password to create an account. Already have an account? <0>Sign in</0>"
 
-#: routes/login.tsx:175
+#: routes/login.tsx:185
 msgid "Enter your email and password to sign in. Don't have an account? <0>Sign up</0>"
 msgstr "Enter your email and password to sign in. Don't have an account? <0>Sign up</0>"
 
@@ -1411,8 +1415,8 @@ msgstr "Page {pageNum} of {pageTotal}"
 msgid "Pages"
 msgstr "Pages"
 
-#: routes/login.tsx:211
-#: routes/signup.tsx:111
+#: routes/login.tsx:221
+#: routes/signup.tsx:116
 msgid "Password"
 msgstr "Password"
 
@@ -1756,7 +1760,7 @@ msgstr "Shelved"
 msgid "showing the first {shown} — refine upstream search to see the rest"
 msgstr "showing the first {shown} — refine upstream search to see the rest"
 
-#: routes/login.tsx:231
+#: routes/login.tsx:241
 msgid "Sign in"
 msgstr "Sign in"
 
@@ -1768,8 +1772,8 @@ msgstr "Sign in as them"
 msgid "Sign in to join"
 msgstr "Sign in to join"
 
-#: routes/login.tsx:94
-#: routes/login.tsx:102
+#: routes/login.tsx:98
+#: routes/login.tsx:106
 msgid "Sign in to your library"
 msgstr "Sign in to your library"
 
@@ -1924,8 +1928,8 @@ msgstr "Thanks for your feedback! 🎉"
 msgid "That email is already in use."
 msgstr "That email is already in use."
 
-#: routes/login.tsx:146
-#: routes/login.tsx:157
+#: routes/login.tsx:151
+#: routes/login.tsx:167
 msgid "That email or password doesn't match. Please try again."
 msgstr "That email or password doesn't match. Please try again."
 
@@ -2066,7 +2070,7 @@ msgstr "Visible (non-production)"
 msgid "We could not process this return. It may already be returned."
 msgstr "We could not process this return. It may already be returned."
 
-#: routes/login.tsx:101
+#: routes/login.tsx:105
 msgid "Welcome back"
 msgstr "Welcome back"
 
@@ -2123,8 +2127,8 @@ msgid "You have an overdue book. Please return it before borrowing more."
 msgstr "You have an overdue book. Please return it before borrowing more."
 
 #: routes/join.$token.tsx:79
-msgid "You need to sign in first."
-msgstr "You need to sign in first."
+msgid "You need to sign in or create an account first."
+msgstr "You need to sign in or create an account first."
 
 #: routes/join.$token.tsx:65
 msgid "You'll be added immediately."
