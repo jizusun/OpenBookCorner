@@ -892,7 +892,7 @@ msgstr "编辑图书"
 #: routes/_app/admin/tenants.$libraryId.tsx:200
 #: routes/_app/admin/UsersTable.tsx:44
 #: routes/_app/profile.tsx:99
-#: routes/login.tsx:202
+#: routes/login.tsx:206
 #: routes/signup.tsx:98
 msgid "Email"
 msgstr "邮箱"
@@ -936,7 +936,7 @@ msgstr "已开通"
 msgid "Enter your email and password to create an account. Already have an account? <0>Sign in</0>"
 msgstr "输入邮箱和密码创建账户。已有账户？<0>登录</0>"
 
-#: routes/login.tsx:185
+#: routes/login.tsx:189
 msgid "Enter your email and password to sign in. Don't have an account? <0>Sign up</0>"
 msgstr "输入邮箱和密码登录。还没有账户？<0>注册</0>"
 
@@ -1475,7 +1475,7 @@ msgstr "第 {pageNum} / {pageTotal} 页"
 msgid "Pages"
 msgstr "页数"
 
-#: routes/login.tsx:221
+#: routes/login.tsx:225
 #: routes/signup.tsx:116
 msgid "Password"
 msgstr "密码"
@@ -1845,7 +1845,7 @@ msgstr "是否上架"
 msgid "showing the first {shown} — refine upstream search to see the rest"
 msgstr "仅显示前 {shown} 条 — 请在上游搜索中细化以查看其余"
 
-#: routes/login.tsx:241
+#: routes/login.tsx:245
 msgid "Sign in"
 msgstr "登录"
 
@@ -2012,8 +2012,8 @@ msgstr "感谢你的反馈！🎉"
 msgid "That email is already in use."
 msgstr "该邮箱已被使用。"
 
-#: routes/login.tsx:151
-#: routes/login.tsx:167
+#: routes/login.tsx:155
+#: routes/login.tsx:171
 msgid "That email or password doesn't match. Please try again."
 msgstr "邮箱或密码不匹配，请重试。"
 
