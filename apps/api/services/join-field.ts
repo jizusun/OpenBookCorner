@@ -20,6 +20,7 @@ export class JoinFieldService {
       required?: boolean
       verifyEmail?: boolean
       options?: string[]
+      allowedDomains?: string[]
     },
   ): Promise<JoinField> {
     const existing = await this.list(libraryId)
@@ -35,18 +36,20 @@ export class JoinFieldService {
       required: input.required ?? true,
       verifyEmail: input.verifyEmail ?? false,
       options: input.options ?? null,
+      allowedDomains: input.allowedDomains ?? null,
       position,
       createdAt: now,
     })
     return { id, libraryId, key: input.key, label: input.label, type: input.type,
       required: input.required ?? true, verifyEmail: input.verifyEmail ?? false,
-      options: input.options ?? null, position, createdAt: now }
+      options: input.options ?? null, allowedDomains: input.allowedDomains ?? null,
+      position, createdAt: now }
   }
 
   async update(
     fieldId: string,
     libraryId: string,
-    patch: Partial<Pick<JoinField, 'label' | 'required' | 'verifyEmail' | 'options'>>,
+    patch: Partial<Pick<JoinField, 'label' | 'required' | 'verifyEmail' | 'options' | 'allowedDomains'>>,
   ): Promise<void> {
     await this.db
       .update(joinField)

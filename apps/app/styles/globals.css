@@ -235,3 +235,12 @@ a {
     color: var(--sap-blue-dark);
   }
 }
+
+/* PasswordInput masking — keeps type="text" so mobile keyboards don't dismiss.
+   -webkit-text-security masks chars in Chrome/Safari; the disc font-family is
+   a fallback for Firefox which doesn't support -webkit-text-security. */
+input[data-mask="true"] {
+  -webkit-text-security: disc;
+  font-family: "text-security-disc", sans-serif;
+  letter-spacing: 0.1em;
+}

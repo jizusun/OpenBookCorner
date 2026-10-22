@@ -39,6 +39,7 @@ function JoinFormPage() {
   const [type, setType] = useState<'text' | 'email' | 'select'>('text')
   const [required, setRequired] = useState(true)
   const [verifyEmail, setVerifyEmail] = useState(false)
+  const [allowedDomains, setAllowedDomains] = useState('')  // comma-separated, e.g. "@acme.com, @acme.org"
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['join', 'adminFields'] })
 
@@ -46,7 +47,7 @@ function JoinFormPage() {
     ...api.join.addField.mutationOptions(),
     onSuccess: () => {
       toast.success(t`Field added.`)
-      setKey(''); setLabel(''); setType('text'); setRequired(true); setVerifyEmail(false)
+      setKey(''); setLabel(''); setType('text'); setRequired(true); setVerifyEmail(false); setAllowedDomains('')
       setOpen(false)
       invalidate()
     },
@@ -88,6 +89,11 @@ function JoinFormPage() {
                 <Badge variant="outline">{f.type}</Badge>
                 {f.required && <Badge variant="secondary"><Trans>Required</Trans></Badge>}
                 {f.verifyEmail && <Badge><Trans>Verify email</Trans></Badge>}
+                {f.allowedDomains && f.allowedDomains.length > 0 && (
+                  <Badge variant="outline" className="font-mono text-xs">
+                    {f.allowedDomains.join(', ')}
+                  </Badge>
+                )}
                 <Button size="sm" variant="ghost" onClick={() => remove.mutate({ id: f.id })}
                   data-testid={`join-field-remove-${f.id}`}>
                   <Trash2 className="size-4" />
@@ -112,7 +118,13 @@ function JoinFormPage() {
         }
       >
         <form id="join-field-form" className="space-y-4"
-          onSubmit={(e) => { e.preventDefault(); add.mutate({ key: key.trim(), label: label.trim(), type, required, verifyEmail }) }}>
+          onSubmit={(e) => {
+            e.preventDefault()
+            const domains = allowedDomains
+              .split(',').map((d) => d.trim()).filter(Boolean)
+            add.mutate({ key: key.trim(), label: label.trim(), type, required, verifyEmail,
+              allowedDomains: domains.length > 0 ? domains : undefined })
+          }}>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
               <Label htmlFor="jf-key"><Trans>Field key</Trans></Label>
@@ -130,6 +142,23 @@ function JoinFormPage() {
               {TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
             </select>
           </div>
+          {type === 'email' && (
+            <div className="space-y-2">
+              <Label htmlFor="jf-domains">
+                <Trans>Allowed email domains</Trans>
+                <span className="ml-1 text-xs text-muted-foreground font-normal">
+                  (<Trans>optional, comma-separated — e.g. @acme.com, @acme.org</Trans>)
+                </span>
+              </Label>
+              <Input
+                id="jf-domains"
+                value={allowedDomains}
+                onChange={(e) => setAllowedDomains(e.target.value)}
+                placeholder="@acme.com, @acme.org"
+                data-testid="jf-allowed-domains"
+              />
+            </div>
+          )}
           <div className="flex gap-4">
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" checked={required} onChange={(e) => setRequired(e.target.checked)} data-testid="jf-required" />

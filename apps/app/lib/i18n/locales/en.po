@@ -144,7 +144,7 @@ msgstr "1–7 days"
 msgid "15+ days"
 msgstr "15+ days"
 
-#: routes/join.$token.tsx:198
+#: routes/join.$token.tsx:212
 msgid "6-digit code"
 msgstr "6-digit code"
 
@@ -199,7 +199,7 @@ msgstr "Add"
 msgid "Add a book or adjust the filters."
 msgstr "Add a book or adjust the filters."
 
-#: routes/_app/admin/join-form.tsx:103
+#: routes/_app/admin/join-form.tsx:109
 #: routes/_app/admin/settings.tsx:210
 msgid "Add a field"
 msgstr "Add a field"
@@ -216,14 +216,14 @@ msgstr "Add admin"
 msgid "Add Book"
 msgstr "Add Book"
 
-#: routes/_app/admin/join-form.tsx:70
-#: routes/_app/admin/join-form.tsx:109
+#: routes/_app/admin/join-form.tsx:71
+#: routes/_app/admin/join-form.tsx:115
 #: routes/_app/admin/settings.tsx:176
 #: routes/_app/admin/settings.tsx:216
 msgid "Add field"
 msgstr "Add field"
 
-#: routes/_app/admin/join-form.tsx:101
+#: routes/_app/admin/join-form.tsx:107
 #: routes/_app/admin/settings.tsx:209
 msgid "Add join form field"
 msgstr "Add join form field"
@@ -234,7 +234,7 @@ msgid "Add reader"
 msgstr "Add reader"
 
 #: routes/_app/admin/AddUserDialog.tsx:55
-#: routes/_app/admin/join-form.tsx:109
+#: routes/_app/admin/join-form.tsx:115
 #: routes/_app/admin/settings.tsx:216
 #: routes/_app/books/add.tsx:188
 msgid "Adding…"
@@ -325,12 +325,21 @@ msgstr "All users across every tenant (super admin)."
 msgid "Allow renewals/extensions"
 msgstr "Allow renewals/extensions"
 
-#: routes/_app/admin/join-form.tsx:76
+#. placeholder {0}: f.allowedDomains.join(', ')
+#: routes/join.$token.tsx:202
+msgid "Allowed domains: {0}"
+msgstr "Allowed domains: {0}"
+
+#: routes/_app/admin/join-form.tsx:148
+msgid "Allowed email domains"
+msgstr "Allowed email domains"
+
+#: routes/_app/admin/join-form.tsx:77
 #: routes/_app/admin/settings.tsx:183
 msgid "Anyone can request to join without filling extra info."
 msgstr "Anyone can request to join without filling extra info."
 
-#: routes/_app/admin/join-form.tsx:104
+#: routes/_app/admin/join-form.tsx:110
 #: routes/_app/admin/settings.tsx:211
 msgid "Applicants must fill this field before submitting a request."
 msgstr "Applicants must fill this field before submitting a request."
@@ -542,7 +551,7 @@ msgstr "Camera permission denied. Allow camera access or enter the ISBN manually
 #: components/FeedbackButton.tsx:86
 #: routes/_app/admin/AddUserDialog.tsx:52
 #: routes/_app/admin/invites.tsx:111
-#: routes/_app/admin/join-form.tsx:107
+#: routes/_app/admin/join-form.tsx:113
 #: routes/_app/admin/library-users.tsx:219
 #: routes/_app/admin/settings.tsx:214
 #: routes/_app/admin/tenants.$libraryId.tsx:139
@@ -655,7 +664,7 @@ msgstr "Could not enable login."
 msgid "Could not fetch that URL. Paste a 番薯借阅 export link (https://…fanshujieyue.com/….xls)."
 msgstr "Could not fetch that URL. Paste a 番薯借阅 export link (https://…fanshujieyue.com/….xls)."
 
-#: routes/join.$token.tsx:82
+#: routes/join.$token.tsx:81
 msgid "Could not join. Please try again."
 msgstr "Could not join. Please try again."
 
@@ -722,7 +731,7 @@ msgstr "Create a link to share with prospective members."
 msgid "Create account"
 msgstr "Create account"
 
-#: routes/join.$token.tsx:278
+#: routes/join.$token.tsx:292
 msgid "Create account to join"
 msgstr "Create account to join"
 
@@ -852,7 +861,7 @@ msgstr "Discover libraries"
 msgid "Dismiss"
 msgstr "Dismiss"
 
-#: routes/_app/admin/join-form.tsx:122
+#: routes/_app/admin/join-form.tsx:134
 #: routes/_app/admin/settings.tsx:245
 msgid "Display label"
 msgstr "Display label"
@@ -920,7 +929,11 @@ msgstr "Email domains (comma-separated)"
 msgid "Email domains: {0}"
 msgstr "Email domains: {0}"
 
-#: routes/join.$token.tsx:194
+#: routes/join.$token.tsx:118
+msgid "Email must belong to one of these domains: {domains}"
+msgstr "Email must belong to one of these domains: {domains}"
+
+#: routes/join.$token.tsx:208
 msgid "Email verified"
 msgstr "Email verified"
 
@@ -1000,22 +1013,22 @@ msgstr "Feedback"
 msgid "Fetch"
 msgstr "Fetch"
 
-#: routes/_app/admin/join-form.tsx:48
+#: routes/_app/admin/join-form.tsx:49
 #: routes/_app/admin/settings.tsx:110
 msgid "Field added."
 msgstr "Field added."
 
-#: routes/_app/admin/join-form.tsx:118
+#: routes/_app/admin/join-form.tsx:130
 #: routes/_app/admin/settings.tsx:240
 msgid "Field key"
 msgstr "Field key"
 
-#: routes/_app/admin/join-form.tsx:57
+#: routes/_app/admin/join-form.tsx:58
 #: routes/_app/admin/settings.tsx:117
 msgid "Field removed."
 msgstr "Field removed."
 
-#: routes/_app/admin/join-form.tsx:66
+#: routes/_app/admin/join-form.tsx:67
 msgid "Fields applicants must fill before requesting to join this library."
 msgstr "Fields applicants must fill before requesting to join this library."
 
@@ -1028,7 +1041,7 @@ msgstr "File not archived (pre-R2 import)"
 msgid "Give the library a name and the email domains its members use."
 msgstr "Give the library a name and the email domains its members use."
 
-#: routes/join.$token.tsx:166
+#: routes/join.$token.tsx:175
 msgid "Go to library"
 msgstr "Go to library"
 
@@ -1087,11 +1100,11 @@ msgstr "Inactive"
 msgid "Install app"
 msgstr "Install app"
 
-#: routes/join.$token.tsx:241
+#: routes/join.$token.tsx:255
 msgid "Invalid or expired code. Try again."
 msgstr "Invalid or expired code. Try again."
 
-#: routes/join.$token.tsx:131
+#: routes/join.$token.tsx:140
 msgid "Invalid or expired invite"
 msgstr "Invalid or expired invite"
 
@@ -1140,12 +1153,12 @@ msgstr "ISBN: {0}"
 msgid "Join a library"
 msgstr "Join a library"
 
-#: routes/_app/admin/join-form.tsx:64
+#: routes/_app/admin/join-form.tsx:65
 #: routes/_app/admin/settings.tsx:170
 msgid "Join form"
 msgstr "Join form"
 
-#: routes/join.$token.tsx:260
+#: routes/join.$token.tsx:274
 msgid "Join library"
 msgstr "Join library"
 
@@ -1162,7 +1175,7 @@ msgstr "Joined"
 msgid "Joined date"
 msgstr "Joined date"
 
-#: routes/join.$token.tsx:257
+#: routes/join.$token.tsx:271
 msgid "Joining…"
 msgstr "Joining…"
 
@@ -1227,7 +1240,7 @@ msgstr "Loading"
 #: routes/_app/admin/members.tsx:162
 #: routes/_app/admin/settings.tsx:121
 #: routes/_app/books/$bookId.edit.tsx:89
-#: routes/join.$token.tsx:125
+#: routes/join.$token.tsx:134
 msgid "Loading…"
 msgstr "Loading…"
 
@@ -1371,7 +1384,7 @@ msgstr "No camera found. Enter the ISBN manually."
 msgid "No cover"
 msgstr "No cover"
 
-#: routes/_app/admin/join-form.tsx:75
+#: routes/_app/admin/join-form.tsx:76
 #: routes/_app/admin/settings.tsx:182
 msgid "No custom fields"
 msgstr "No custom fields"
@@ -1396,7 +1409,7 @@ msgstr "No libraries yet"
 msgid "No members yet"
 msgstr "No members yet"
 
-#: routes/join.$token.tsx:162
+#: routes/join.$token.tsx:171
 msgid "No need to join again."
 msgstr "No need to join again."
 
@@ -1456,6 +1469,10 @@ msgstr "Open menu"
 #: routes/_app/AppSidebar.tsx:60
 msgid "OpenBookCorner"
 msgstr "OpenBookCorner"
+
+#: routes/_app/admin/join-form.tsx:150
+msgid "optional, comma-separated — e.g. @acme.com, @acme.org"
+msgstr "optional, comma-separated — e.g. @acme.com, @acme.org"
 
 #: routes/_app/admin/import.tsx:176
 msgid "or paste a link"
@@ -1527,7 +1544,7 @@ msgstr "placeholder"
 msgid "Plan"
 msgstr "Plan"
 
-#: routes/join.$token.tsx:80
+#: routes/join.$token.tsx:79
 msgid "Please fill all required fields."
 msgstr "Please fill all required fields."
 
@@ -1537,11 +1554,11 @@ msgid "Please fill all required fields. {0}"
 msgstr "Please fill all required fields. {0}"
 
 #. placeholder {0}: missing.map((f) => f.label).join(', ')
-#: routes/join.$token.tsx:109
+#: routes/join.$token.tsx:107
 msgid "Please fill in all required fields: {0}"
 msgstr "Please fill in all required fields: {0}"
 
-#: routes/join.$token.tsx:175
+#: routes/join.$token.tsx:184
 msgid "Please fill in the required information to join."
 msgstr "Please fill in the required information to join."
 
@@ -1549,7 +1566,7 @@ msgstr "Please fill in the required information to join."
 msgid "Please fill in the required information."
 msgstr "Please fill in the required information."
 
-#: routes/join.$token.tsx:117
+#: routes/join.$token.tsx:126
 msgid "Please verify your email address first."
 msgstr "Please verify your email address first."
 
@@ -1670,14 +1687,14 @@ msgstr "Request to join"
 msgid "Request to join {libraryName}"
 msgstr "Request to join {libraryName}"
 
-#: routes/_app/admin/join-form.tsx:89
-#: routes/_app/admin/join-form.tsx:136
+#: routes/_app/admin/join-form.tsx:90
+#: routes/_app/admin/join-form.tsx:165
 #: routes/_app/admin/settings.tsx:194
 #: routes/_app/admin/settings.tsx:261
 msgid "Required"
 msgstr "Required"
 
-#: routes/join.$token.tsx:223
+#: routes/join.$token.tsx:237
 msgid "Resend"
 msgstr "Resend"
 
@@ -1834,7 +1851,7 @@ msgstr "Send"
 msgid "Send feedback"
 msgstr "Send feedback"
 
-#: routes/join.$token.tsx:237
+#: routes/join.$token.tsx:251
 msgid "Send verification code"
 msgstr "Send verification code"
 
@@ -1843,7 +1860,7 @@ msgid "Send your request to the library admin for approval."
 msgstr "Send your request to the library admin for approval."
 
 #: components/FeedbackButton.tsx:89
-#: routes/join.$token.tsx:236
+#: routes/join.$token.tsx:250
 msgid "Sending…"
 msgstr "Sending…"
 
@@ -1890,7 +1907,7 @@ msgstr "Sign in"
 msgid "Sign in as them"
 msgstr "Sign in as them"
 
-#: routes/join.$token.tsx:273
+#: routes/join.$token.tsx:287
 msgid "Sign in to join"
 msgstr "Sign in to join"
 
@@ -1955,7 +1972,7 @@ msgid "Student no."
 msgstr "Student no."
 
 #: routes/_app/discover.tsx:79
-#: routes/join.$token.tsx:259
+#: routes/join.$token.tsx:273
 msgid "Submit request"
 msgstr "Submit request"
 
@@ -2086,7 +2103,7 @@ msgstr "This book is not in your library’s catalog yet. Ask a librarian to add
 msgid "This email will need to be verified."
 msgstr "This email will need to be verified."
 
-#: routes/join.$token.tsx:132
+#: routes/join.$token.tsx:141
 msgid "This invite link is no longer valid."
 msgstr "This invite link is no longer valid."
 
@@ -2127,7 +2144,7 @@ msgid "Try adjusting the search or filters."
 msgstr "Try adjusting the search or filters."
 
 #: components/FeedbackButton.tsx:96
-#: routes/_app/admin/join-form.tsx:127
+#: routes/_app/admin/join-form.tsx:139
 #: routes/_app/admin/settings.tsx:251
 msgid "Type"
 msgstr "Type"
@@ -2174,21 +2191,21 @@ msgstr "Users"
 msgid "uses"
 msgstr "uses"
 
-#: routes/join.$token.tsx:215
+#: routes/join.$token.tsx:229
 msgid "Verify"
 msgstr "Verify"
 
-#: routes/_app/admin/join-form.tsx:90
+#: routes/_app/admin/join-form.tsx:91
 #: routes/_app/admin/settings.tsx:195
 msgid "Verify email"
 msgstr "Verify email"
 
-#: routes/_app/admin/join-form.tsx:141
+#: routes/_app/admin/join-form.tsx:170
 #: routes/_app/admin/settings.tsx:266
 msgid "Verify email ownership"
 msgstr "Verify email ownership"
 
-#: routes/join.$token.tsx:214
+#: routes/join.$token.tsx:228
 msgid "Verifying…"
 msgstr "Verifying…"
 
@@ -2268,7 +2285,7 @@ msgstr "You do not have permission to add books."
 msgid "You have an overdue book. Please return it before borrowing more."
 msgstr "You have an overdue book. Please return it before borrowing more."
 
-#: routes/join.$token.tsx:268
+#: routes/join.$token.tsx:282
 msgid "You need to sign in or create an account first."
 msgstr "You need to sign in or create an account first."
 
@@ -2276,12 +2293,12 @@ msgstr "You need to sign in or create an account first."
 msgid "You will lose access to this library immediately. The admin can invite you back later."
 msgstr "You will lose access to this library immediately. The admin can invite you back later."
 
-#: routes/join.$token.tsx:148
+#: routes/join.$token.tsx:157
 msgid "You'll be added immediately."
 msgstr "You'll be added immediately."
 
 #. placeholder {0}: resolved.libraryName
-#: routes/join.$token.tsx:159
+#: routes/join.$token.tsx:168
 msgid "You're already a member of {0}"
 msgstr "You're already a member of {0}"
 
@@ -2289,7 +2306,7 @@ msgstr "You're already a member of {0}"
 msgid "You're not part of any library yet. Create one, or join an existing one."
 msgstr "You're not part of any library yet. Create one, or join an existing one."
 
-#: routes/join.$token.tsx:142
+#: routes/join.$token.tsx:151
 msgid "You've been invited to join"
 msgstr "You've been invited to join"
 
@@ -2305,6 +2322,6 @@ msgstr "Your feedback"
 msgid "Your libraries"
 msgstr "Your libraries"
 
-#: routes/join.$token.tsx:147
+#: routes/join.$token.tsx:156
 msgid "Your request will need approval from the library admin."
 msgstr "Your request will need approval from the library admin."

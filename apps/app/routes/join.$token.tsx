@@ -107,6 +107,17 @@ function JoinPage() {
       setFormError(t`Please fill in all required fields: ${missing.map((f) => f.label).join(', ')}`)
       return
     }
+    // allowedDomains check — catch invalid domain before hitting the server
+    const domainBlocked = fields.filter((f) => {
+      if (f.type !== 'email' || !f.allowedDomains?.length) return false
+      const val = (answers[f.key] ?? '').toLowerCase()
+      return !f.allowedDomains.some((d: string) => val.endsWith(d.toLowerCase()))
+    })
+    if (domainBlocked.length > 0) {
+      const domains = domainBlocked.flatMap((f) => f.allowedDomains ?? []).join(', ')
+      setFormError(t`Email must belong to one of these domains: ${domains}`)
+      return
+    }
     // verifyEmail fields must be verified before submitting
     const unverified = fields.filter(
       (f) => f.verifyEmail && !(verifiedEmails.has((answers[f.key] ?? '').toLowerCase())),
@@ -186,6 +197,11 @@ function JoinPage() {
                       onChange={(e) => setAnswers((p) => ({ ...p, [f.key]: e.target.value }))}
                       data-testid={`jf-answer-${f.key}`}
                     />
+                    {f.allowedDomains && f.allowedDomains.length > 0 && (
+                      <p className="text-xs text-muted-foreground">
+                        <Trans>Allowed domains: {f.allowedDomains.join(', ')}</Trans>
+                      </p>
+                    )}
                     {f.verifyEmail && (
                       <div className="mt-2 space-y-2">
                         {otpState[answers[f.key] ?? ''] === 'verified' ? (

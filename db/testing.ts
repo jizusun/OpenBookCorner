@@ -104,7 +104,8 @@ export async function createTestDb(): Promise<Database> {
     CREATE TABLE join_field (
       id TEXT PRIMARY KEY, library_id TEXT NOT NULL, key TEXT NOT NULL, label TEXT NOT NULL,
       type TEXT NOT NULL DEFAULT 'text', required INTEGER NOT NULL DEFAULT 1,
-      verify_email INTEGER NOT NULL DEFAULT 0, options TEXT, position INTEGER NOT NULL DEFAULT 0,
+      verify_email INTEGER NOT NULL DEFAULT 0, options TEXT, allowed_domains TEXT,
+      position INTEGER NOT NULL DEFAULT 0,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
   `)

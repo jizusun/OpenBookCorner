@@ -316,6 +316,12 @@ export const joinField = sqliteTable('join_field', {
   type: text('type', { enum: ['text', 'email', 'select'] }).notNull().default('text'),
   required: integer('required', { mode: 'boolean' }).notNull().default(true),
   verifyEmail: integer('verify_email', { mode: 'boolean' }).notNull().default(false),
+  /**
+   * Optional list of allowed email domain suffixes (e.g. ["@acme.com", "@acme.org"]).
+   * Only meaningful when type="email". When non-empty, submitted values are
+   * rejected unless they end with one of these suffixes (case-insensitive).
+   */
+  allowedDomains: text('allowed_domains', { mode: 'json' }).$type<string[]>(),
   options: text('options', { mode: 'json' }).$type<string[]>(),
   position: integer('position').notNull().default(0),
   createdAt: text('created_at').notNull().default(sql`CURRENT_TIMESTAMP`),

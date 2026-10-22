@@ -236,7 +236,7 @@ const call = {
     json<Ok<(typeof client.join.admin)['fields']['$get']>>(
       client.join.admin.fields.$get(),
     ),
-  'join.addField': (i: { key: string; label: string; type: 'text' | 'email' | 'select'; required?: boolean; verifyEmail?: boolean; options?: string[] }) =>
+  'join.addField': (i: { key: string; label: string; type: 'text' | 'email' | 'select'; required?: boolean; verifyEmail?: boolean; options?: string[]; allowedDomains?: string[] }) =>
     json<Ok<(typeof client.join.admin)['fields']['$post']>>(
       client.join.admin.fields.$post({ json: i }),
     ),

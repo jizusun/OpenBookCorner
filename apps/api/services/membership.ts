@@ -233,7 +233,7 @@ function slugifyUnique(name: string): string | null {
 
 export interface JoinAnswerError {
   key: string
-  reason: 'required' | 'invalid_email' | 'email_not_verified'
+  reason: 'required' | 'invalid_email' | 'email_not_verified' | 'domain_not_allowed'
 }
 
 /**
@@ -246,7 +246,7 @@ export interface JoinAnswerError {
  *   (for fields with verifyEmail=true).
  */
 export function validateJoinAnswers(
-  fields: Pick<JoinField, 'key' | 'type' | 'required' | 'verifyEmail'>[],
+  fields: Pick<JoinField, 'key' | 'type' | 'required' | 'verifyEmail' | 'allowedDomains'>[],
   answers: Record<string, string>,
   verifiedEmails: string[] = [],
 ): JoinAnswerError[] {
@@ -259,10 +259,17 @@ export function validateJoinAnswers(
       continue
     }
     if (f.type === 'email') {
-      // Shape check only. `verifyEmail` is a Phase 2 feature (OTP); until
-      // email sending is implemented it is a display hint, not a submission gate.
+      // Shape check only.
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val)) {
         errors.push({ key: f.key, reason: 'invalid_email' })
+        continue
+      }
+      // Domain allowlist — only checked when allowedDomains is non-empty.
+      const allowed = f.allowedDomains
+      if (allowed && allowed.length > 0) {
+        const lower = val.toLowerCase()
+        const ok = allowed.some((d) => lower.endsWith(d.toLowerCase()))
+        if (!ok) errors.push({ key: f.key, reason: 'domain_not_allowed' })
       }
       // Note: verifiedEmails param is kept for forward compat with Phase 2 OTP.
       void verifiedEmails

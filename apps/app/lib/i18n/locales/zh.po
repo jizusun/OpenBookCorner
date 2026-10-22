@@ -144,7 +144,7 @@ msgstr "1–7 天"
 msgid "15+ days"
 msgstr "15 天以上"
 
-#: routes/join.$token.tsx:198
+#: routes/join.$token.tsx:212
 msgid "6-digit code"
 msgstr "6位验证码"
 
@@ -199,7 +199,7 @@ msgstr "添加"
 msgid "Add a book or adjust the filters."
 msgstr "添加一本图书，或调整筛选条件。"
 
-#: routes/_app/admin/join-form.tsx:103
+#: routes/_app/admin/join-form.tsx:109
 #: routes/_app/admin/settings.tsx:210
 msgid "Add a field"
 msgstr "添加字段"
@@ -216,14 +216,14 @@ msgstr "添加管理员"
 msgid "Add Book"
 msgstr "添加图书"
 
-#: routes/_app/admin/join-form.tsx:70
-#: routes/_app/admin/join-form.tsx:109
+#: routes/_app/admin/join-form.tsx:71
+#: routes/_app/admin/join-form.tsx:115
 #: routes/_app/admin/settings.tsx:176
 #: routes/_app/admin/settings.tsx:216
 msgid "Add field"
 msgstr "添加字段"
 
-#: routes/_app/admin/join-form.tsx:101
+#: routes/_app/admin/join-form.tsx:107
 #: routes/_app/admin/settings.tsx:209
 msgid "Add join form field"
 msgstr "添加加入表单字段"
@@ -234,7 +234,7 @@ msgid "Add reader"
 msgstr "添加读者"
 
 #: routes/_app/admin/AddUserDialog.tsx:55
-#: routes/_app/admin/join-form.tsx:109
+#: routes/_app/admin/join-form.tsx:115
 #: routes/_app/admin/settings.tsx:216
 #: routes/_app/books/add.tsx:188
 msgid "Adding…"
@@ -325,12 +325,21 @@ msgstr "所有租户的全部用户（超级管理员）。"
 msgid "Allow renewals/extensions"
 msgstr "允许续借"
 
-#: routes/_app/admin/join-form.tsx:76
+#. placeholder {0}: f.allowedDomains.join(', ')
+#: routes/join.$token.tsx:202
+msgid "Allowed domains: {0}"
+msgstr "允许的域名：{0}"
+
+#: routes/_app/admin/join-form.tsx:148
+msgid "Allowed email domains"
+msgstr "允许的邮箱域名"
+
+#: routes/_app/admin/join-form.tsx:77
 #: routes/_app/admin/settings.tsx:183
 msgid "Anyone can request to join without filling extra info."
 msgstr "任何人都可以直接申请加入，无需填写额外信息。"
 
-#: routes/_app/admin/join-form.tsx:104
+#: routes/_app/admin/join-form.tsx:110
 #: routes/_app/admin/settings.tsx:211
 msgid "Applicants must fill this field before submitting a request."
 msgstr "申请人在提交申请前必须填写此字段。"
@@ -542,7 +551,7 @@ msgstr "摄像头权限被拒绝，请允许访问或手动输入 ISBN。"
 #: components/FeedbackButton.tsx:86
 #: routes/_app/admin/AddUserDialog.tsx:52
 #: routes/_app/admin/invites.tsx:111
-#: routes/_app/admin/join-form.tsx:107
+#: routes/_app/admin/join-form.tsx:113
 #: routes/_app/admin/library-users.tsx:219
 #: routes/_app/admin/settings.tsx:214
 #: routes/_app/admin/tenants.$libraryId.tsx:139
@@ -655,7 +664,7 @@ msgstr "无法开通登录。"
 msgid "Could not fetch that URL. Paste a 番薯借阅 export link (https://…fanshujieyue.com/….xls)."
 msgstr "无法获取该链接，请粘贴番薯借阅的导出链接（https://…fanshujieyue.com/….xls）。"
 
-#: routes/join.$token.tsx:82
+#: routes/join.$token.tsx:81
 msgid "Could not join. Please try again."
 msgstr "加入失败，请重试。"
 
@@ -722,7 +731,7 @@ msgstr "创建链接分享给潜在成员。"
 msgid "Create account"
 msgstr "创建账户"
 
-#: routes/join.$token.tsx:278
+#: routes/join.$token.tsx:292
 msgid "Create account to join"
 msgstr "注册账户并加入"
 
@@ -852,7 +861,7 @@ msgstr "发现图书馆"
 msgid "Dismiss"
 msgstr "关闭"
 
-#: routes/_app/admin/join-form.tsx:122
+#: routes/_app/admin/join-form.tsx:134
 #: routes/_app/admin/settings.tsx:245
 msgid "Display label"
 msgstr "显示标签"
@@ -920,7 +929,11 @@ msgstr "邮箱域名（用逗号分隔）"
 msgid "Email domains: {0}"
 msgstr "邮箱域名：{0}"
 
-#: routes/join.$token.tsx:194
+#: routes/join.$token.tsx:118
+msgid "Email must belong to one of these domains: {domains}"
+msgstr "邮箱必须属于以下域名之一：{domains}"
+
+#: routes/join.$token.tsx:208
 msgid "Email verified"
 msgstr "邮箱已验证"
 
@@ -1000,22 +1013,22 @@ msgstr "反馈"
 msgid "Fetch"
 msgstr "获取"
 
-#: routes/_app/admin/join-form.tsx:48
+#: routes/_app/admin/join-form.tsx:49
 #: routes/_app/admin/settings.tsx:110
 msgid "Field added."
 msgstr "字段已添加。"
 
-#: routes/_app/admin/join-form.tsx:118
+#: routes/_app/admin/join-form.tsx:130
 #: routes/_app/admin/settings.tsx:240
 msgid "Field key"
 msgstr "字段键"
 
-#: routes/_app/admin/join-form.tsx:57
+#: routes/_app/admin/join-form.tsx:58
 #: routes/_app/admin/settings.tsx:117
 msgid "Field removed."
 msgstr "字段已移除。"
 
-#: routes/_app/admin/join-form.tsx:66
+#: routes/_app/admin/join-form.tsx:67
 msgid "Fields applicants must fill before requesting to join this library."
 msgstr "申请加入本图书馆前，申请人必须填写的字段。"
 
@@ -1028,7 +1041,7 @@ msgstr "文件未归档（早期导入）"
 msgid "Give the library a name and the email domains its members use."
 msgstr "为图书馆取个名字，并填写成员使用的邮箱域名。"
 
-#: routes/join.$token.tsx:166
+#: routes/join.$token.tsx:175
 msgid "Go to library"
 msgstr "进入图书馆"
 
@@ -1087,11 +1100,11 @@ msgstr "已停用"
 msgid "Install app"
 msgstr "安装应用"
 
-#: routes/join.$token.tsx:241
+#: routes/join.$token.tsx:255
 msgid "Invalid or expired code. Try again."
 msgstr "验证码无效或已过期，请重试。"
 
-#: routes/join.$token.tsx:131
+#: routes/join.$token.tsx:140
 msgid "Invalid or expired invite"
 msgstr "邀请无效或已过期"
 
@@ -1140,12 +1153,12 @@ msgstr "ISBN：{0}"
 msgid "Join a library"
 msgstr "加入图书馆"
 
-#: routes/_app/admin/join-form.tsx:64
+#: routes/_app/admin/join-form.tsx:65
 #: routes/_app/admin/settings.tsx:170
 msgid "Join form"
 msgstr "加入表单"
 
-#: routes/join.$token.tsx:260
+#: routes/join.$token.tsx:274
 msgid "Join library"
 msgstr "加入图书馆"
 
@@ -1162,7 +1175,7 @@ msgstr "入馆日期"
 msgid "Joined date"
 msgstr "入馆日期"
 
-#: routes/join.$token.tsx:257
+#: routes/join.$token.tsx:271
 msgid "Joining…"
 msgstr "加入中…"
 
@@ -1227,7 +1240,7 @@ msgstr "加载中"
 #: routes/_app/admin/members.tsx:162
 #: routes/_app/admin/settings.tsx:121
 #: routes/_app/books/$bookId.edit.tsx:89
-#: routes/join.$token.tsx:125
+#: routes/join.$token.tsx:134
 msgid "Loading…"
 msgstr "加载中…"
 
@@ -1371,7 +1384,7 @@ msgstr "未找到摄像头，请手动输入 ISBN。"
 msgid "No cover"
 msgstr "暂无封面"
 
-#: routes/_app/admin/join-form.tsx:75
+#: routes/_app/admin/join-form.tsx:76
 #: routes/_app/admin/settings.tsx:182
 msgid "No custom fields"
 msgstr "暂无自定义字段"
@@ -1396,7 +1409,7 @@ msgstr "还没有图书馆"
 msgid "No members yet"
 msgstr "暂无成员"
 
-#: routes/join.$token.tsx:162
+#: routes/join.$token.tsx:171
 msgid "No need to join again."
 msgstr "无需重复加入。"
 
@@ -1456,6 +1469,10 @@ msgstr "打开菜单"
 #: routes/_app/AppSidebar.tsx:60
 msgid "OpenBookCorner"
 msgstr "开卷角"
+
+#: routes/_app/admin/join-form.tsx:150
+msgid "optional, comma-separated — e.g. @acme.com, @acme.org"
+msgstr "可选，逗号分隔，例如 @acme.com, @acme.org"
 
 #: routes/_app/admin/import.tsx:176
 msgid "or paste a link"
@@ -1527,7 +1544,7 @@ msgstr "占位"
 msgid "Plan"
 msgstr "会员计划"
 
-#: routes/join.$token.tsx:80
+#: routes/join.$token.tsx:79
 msgid "Please fill all required fields."
 msgstr "请填写所有必填字段。"
 
@@ -1537,11 +1554,11 @@ msgid "Please fill all required fields. {0}"
 msgstr "请填写所有必填字段。{0}"
 
 #. placeholder {0}: missing.map((f) => f.label).join(', ')
-#: routes/join.$token.tsx:109
+#: routes/join.$token.tsx:107
 msgid "Please fill in all required fields: {0}"
 msgstr "请填写所有必填字段：{0}"
 
-#: routes/join.$token.tsx:175
+#: routes/join.$token.tsx:184
 msgid "Please fill in the required information to join."
 msgstr "请填写加入所需信息。"
 
@@ -1549,7 +1566,7 @@ msgstr "请填写加入所需信息。"
 msgid "Please fill in the required information."
 msgstr "请填写所需信息。"
 
-#: routes/join.$token.tsx:117
+#: routes/join.$token.tsx:126
 msgid "Please verify your email address first."
 msgstr "请先验证您的邮箱地址。"
 
@@ -1670,14 +1687,14 @@ msgstr "申请加入"
 msgid "Request to join {libraryName}"
 msgstr "申请加入 {libraryName}"
 
-#: routes/_app/admin/join-form.tsx:89
-#: routes/_app/admin/join-form.tsx:136
+#: routes/_app/admin/join-form.tsx:90
+#: routes/_app/admin/join-form.tsx:165
 #: routes/_app/admin/settings.tsx:194
 #: routes/_app/admin/settings.tsx:261
 msgid "Required"
 msgstr "必填"
 
-#: routes/join.$token.tsx:223
+#: routes/join.$token.tsx:237
 msgid "Resend"
 msgstr "重新发送"
 
@@ -1834,7 +1851,7 @@ msgstr "发送"
 msgid "Send feedback"
 msgstr "发送反馈"
 
-#: routes/join.$token.tsx:237
+#: routes/join.$token.tsx:251
 msgid "Send verification code"
 msgstr "发送验证码"
 
@@ -1843,7 +1860,7 @@ msgid "Send your request to the library admin for approval."
 msgstr "向图书馆管理员发送申请以等待审批。"
 
 #: components/FeedbackButton.tsx:89
-#: routes/join.$token.tsx:236
+#: routes/join.$token.tsx:250
 msgid "Sending…"
 msgstr "发送中…"
 
@@ -1890,7 +1907,7 @@ msgstr "登录"
 msgid "Sign in as them"
 msgstr "以其身份登录"
 
-#: routes/join.$token.tsx:273
+#: routes/join.$token.tsx:287
 msgid "Sign in to join"
 msgstr "登录后加入"
 
@@ -1955,7 +1972,7 @@ msgid "Student no."
 msgstr "学号"
 
 #: routes/_app/discover.tsx:79
-#: routes/join.$token.tsx:259
+#: routes/join.$token.tsx:273
 msgid "Submit request"
 msgstr "提交申请"
 
@@ -2086,7 +2103,7 @@ msgstr "这本书还不在你图书馆的书目里，请联系管理员添加。
 msgid "This email will need to be verified."
 msgstr "此邮箱需要验证。"
 
-#: routes/join.$token.tsx:132
+#: routes/join.$token.tsx:141
 msgid "This invite link is no longer valid."
 msgstr "此邀请链接已失效。"
 
@@ -2127,7 +2144,7 @@ msgid "Try adjusting the search or filters."
 msgstr "换个关键词或筛选条件试试。"
 
 #: components/FeedbackButton.tsx:96
-#: routes/_app/admin/join-form.tsx:127
+#: routes/_app/admin/join-form.tsx:139
 #: routes/_app/admin/settings.tsx:251
 msgid "Type"
 msgstr "类型"
@@ -2174,21 +2191,21 @@ msgstr "用户"
 msgid "uses"
 msgstr "次"
 
-#: routes/join.$token.tsx:215
+#: routes/join.$token.tsx:229
 msgid "Verify"
 msgstr "验证"
 
-#: routes/_app/admin/join-form.tsx:90
+#: routes/_app/admin/join-form.tsx:91
 #: routes/_app/admin/settings.tsx:195
 msgid "Verify email"
 msgstr "验证邮箱"
 
-#: routes/_app/admin/join-form.tsx:141
+#: routes/_app/admin/join-form.tsx:170
 #: routes/_app/admin/settings.tsx:266
 msgid "Verify email ownership"
 msgstr "验证邮箱归属"
 
-#: routes/join.$token.tsx:214
+#: routes/join.$token.tsx:228
 msgid "Verifying…"
 msgstr "验证中…"
 
@@ -2268,7 +2285,7 @@ msgstr "你没有添加图书的权限。"
 msgid "You have an overdue book. Please return it before borrowing more."
 msgstr "你有逾期未还的书，请先归还再借阅。"
 
-#: routes/join.$token.tsx:268
+#: routes/join.$token.tsx:282
 msgid "You need to sign in or create an account first."
 msgstr "你需要先登录或注册账户。"
 
@@ -2276,12 +2293,12 @@ msgstr "你需要先登录或注册账户。"
 msgid "You will lose access to this library immediately. The admin can invite you back later."
 msgstr "你将立即失去对该图书馆的访问权限，管理员可随时重新邀请你。"
 
-#: routes/join.$token.tsx:148
+#: routes/join.$token.tsx:157
 msgid "You'll be added immediately."
 msgstr "你将被立即添加。"
 
 #. placeholder {0}: resolved.libraryName
-#: routes/join.$token.tsx:159
+#: routes/join.$token.tsx:168
 msgid "You're already a member of {0}"
 msgstr "你已经是 {0} 的成员了"
 
@@ -2289,7 +2306,7 @@ msgstr "你已经是 {0} 的成员了"
 msgid "You're not part of any library yet. Create one, or join an existing one."
 msgstr "你还没有加入任何图书馆。创建一个，或加入已有的。"
 
-#: routes/join.$token.tsx:142
+#: routes/join.$token.tsx:151
 msgid "You've been invited to join"
 msgstr "你已被邀请加入"
 
@@ -2305,6 +2322,6 @@ msgstr "你的反馈"
 msgid "Your libraries"
 msgstr "你的图书馆"
 
-#: routes/join.$token.tsx:147
+#: routes/join.$token.tsx:156
 msgid "Your request will need approval from the library admin."
 msgstr "你的申请需要图书馆管理员审批。"

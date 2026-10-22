@@ -26,12 +26,14 @@ const fieldBody = z.object({
   required: z.boolean().optional(),
   verifyEmail: z.boolean().optional(),
   options: z.array(z.string()).optional(),
+  allowedDomains: z.array(z.string()).optional(),
 })
 const fieldPatch = z.object({
   label: z.string().min(1).max(120).optional(),
   required: z.boolean().optional(),
   verifyEmail: z.boolean().optional(),
   options: z.array(z.string()).optional(),
+  allowedDomains: z.array(z.string()).optional(),
 })
 
 // User-facing (sessionAuth only — no active library needed for discover/request).

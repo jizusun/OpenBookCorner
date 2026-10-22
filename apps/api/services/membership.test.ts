@@ -56,6 +56,49 @@ describe('validateJoinAnswers (pure)', () => {
     const errs = validateJoinAnswers(fields, { employee_id: '   ', company_email: 'a@acme.com' }, ['a@acme.com'])
     expect(errs).toContainEqual({ key: 'employee_id', reason: 'required' })
   })
+
+  describe('allowedDomains', () => {
+    const emailField = [
+      { key: 'work_email', type: 'email' as const, required: true, verifyEmail: false,
+        allowedDomains: ['@acme.com', '@acme.org'] },
+    ]
+
+    it('accepts an email matching one of the allowed domains', () => {
+      const errs = validateJoinAnswers(emailField, { work_email: 'alice@acme.com' })
+      expect(errs).toEqual([])
+    })
+
+    it('accepts an email matching domain case-insensitively', () => {
+      const errs = validateJoinAnswers(emailField, { work_email: 'Alice@ACME.COM' })
+      expect(errs).toEqual([])
+    })
+
+    it('rejects an email whose domain is not in the allowed list', () => {
+      const errs = validateJoinAnswers(emailField, { work_email: 'alice@gmail.com' })
+      expect(errs).toContainEqual({ key: 'work_email', reason: 'domain_not_allowed' })
+    })
+
+    it('rejects a subdomain that is not explicitly listed', () => {
+      const errs = validateJoinAnswers(emailField, { work_email: 'alice@mail.acme.com' })
+      expect(errs).toContainEqual({ key: 'work_email', reason: 'domain_not_allowed' })
+    })
+
+    it('skips domain check when allowedDomains is empty', () => {
+      const noRestriction = [
+        { key: 'email', type: 'email' as const, required: true, verifyEmail: false, allowedDomains: [] },
+      ]
+      const errs = validateJoinAnswers(noRestriction, { email: 'anyone@anywhere.io' })
+      expect(errs).toEqual([])
+    })
+
+    it('skips domain check when allowedDomains is undefined', () => {
+      const noRestriction = [
+        { key: 'email', type: 'email' as const, required: true, verifyEmail: false },
+      ]
+      const errs = validateJoinAnswers(noRestriction, { email: 'anyone@anywhere.io' })
+      expect(errs).toEqual([])
+    })
+  })
 })
 
 describe('MembershipService', () => {

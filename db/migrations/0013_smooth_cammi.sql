@@ -1,0 +1,1 @@
+ALTER TABLE `join_field` ADD `allowed_domains` text;
