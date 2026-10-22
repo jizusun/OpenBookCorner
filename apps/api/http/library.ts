@@ -119,13 +119,18 @@ export const libraryApp = new Hono<{ Variables: TenantVars }>()
     zValidator('json', z.object({ url: z.string().url(), preview: z.boolean().optional() })),
     async (c) => {
       const { url, preview } = c.req.valid('json')
-      // For preview: use the existing fetchFanshuWorkbook (no need to buffer for R2).
+      const fileName = url.split('/').pop() ?? 'import.xls'
+      // fetchFanshuWorkbook validates protocol + host (fanshujieyue.com only),
+      // preventing SSRF. Use it for both preview and full import.
       if (preview) {
         const sheets = await fetchFanshuWorkbook(url)
         return c.json(await previewFanshuImport(c.get('libraryId'), sheets))
       }
-      // Full import: fetch raw bytes, archive to R2, then parse + import.
-      const fileName = url.split('/').pop() ?? 'import.xls'
+      // Full import: fetch raw bytes (validated), archive to R2, parse + import.
+      // We call fetch() ourselves here only AFTER fetchFanshuWorkbook already
+      // validated the URL — we need the raw bytes for R2. Re-use that validation
+      // by calling fetchFanshuWorkbook first to detect invalid URLs, then fetch.
+      await fetchFanshuWorkbook(url) // validates URL; throws on bad host/protocol
       const res = await fetch(url)
       if (!res.ok) return c.json({ error: 'FETCH_FAILED' }, 400)
       const bytes = await res.arrayBuffer()

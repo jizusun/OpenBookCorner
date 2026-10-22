@@ -596,7 +596,7 @@ msgstr "馆内编码"
 msgid "Common fields"
 msgstr "常用字段"
 
-#: routes/signup.tsx:134
+#: routes/signup.tsx:137
 msgid "Confirm password"
 msgstr "确认密码"
 
@@ -625,7 +625,8 @@ msgstr "添加失败，请检查填写内容后重试。"
 msgid "Could not add the member."
 msgstr "无法添加成员。"
 
-#: routes/signup.tsx:66
+#: routes/signup.tsx:62
+#: routes/signup.tsx:69
 msgid "Could not create account. That email may already be registered."
 msgstr "无法创建账户，该邮箱可能已被注册。"
 
@@ -713,7 +714,7 @@ msgstr "创建图书馆"
 msgid "Create a link to share with prospective members."
 msgstr "创建链接分享给潜在成员。"
 
-#: routes/signup.tsx:149
+#: routes/signup.tsx:152
 msgid "Create account"
 msgstr "创建账户"
 
@@ -721,7 +722,7 @@ msgstr "创建账户"
 msgid "Create account to join"
 msgstr "注册账户并加入"
 
-#: routes/signup.tsx:76
+#: routes/signup.tsx:79
 msgid "Create an account"
 msgstr "创建账户"
 
@@ -893,7 +894,7 @@ msgstr "编辑图书"
 #: routes/_app/admin/UsersTable.tsx:44
 #: routes/_app/profile.tsx:99
 #: routes/login.tsx:206
-#: routes/signup.tsx:98
+#: routes/signup.tsx:101
 msgid "Email"
 msgstr "邮箱"
 
@@ -932,7 +933,7 @@ msgstr "为 {0} 开通登录"
 msgid "Enabled"
 msgstr "已开通"
 
-#: routes/signup.tsx:81
+#: routes/signup.tsx:84
 msgid "Enter your email and password to create an account. Already have an account? <0>Sign in</0>"
 msgstr "输入邮箱和密码创建账户。已有账户？<0>登录</0>"
 
@@ -1476,7 +1477,7 @@ msgid "Pages"
 msgstr "页数"
 
 #: routes/login.tsx:225
-#: routes/signup.tsx:116
+#: routes/signup.tsx:119
 msgid "Password"
 msgstr "密码"
 

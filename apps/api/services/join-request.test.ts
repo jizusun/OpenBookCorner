@@ -63,7 +63,7 @@ describe('JoinRequestService.approve', () => {
   it('creates an active membership and marks the request approved', async () => {
     const svc = new JoinRequestService(db)
     const { id } = (await svc.submit('u1', 'lib-pub', 'button')) as { id: string }
-    const result = await svc.approve(id, 'admin1')
+    const result = await svc.approve(id, 'admin1', 'lib-pub')
     expect(result).toEqual({ success: true })
 
     const { MembershipService } = await import('./membership')
@@ -72,7 +72,7 @@ describe('JoinRequestService.approve', () => {
   })
 
   it('returns NOT_FOUND for unknown request id', async () => {
-    expect(await new JoinRequestService(db).approve('nope', 'admin1')).toEqual({
+    expect(await new JoinRequestService(db).approve('nope', 'admin1', 'lib-pub')).toEqual({
       error: 'REQUEST_NOT_FOUND',
     })
   })
@@ -82,7 +82,7 @@ describe('JoinRequestService.reject + cancel', () => {
   it('reject marks the request rejected', async () => {
     const svc = new JoinRequestService(db)
     const { id } = (await svc.submit('u1', 'lib-pub', 'button')) as { id: string }
-    await svc.reject(id, 'admin1')
+    await svc.reject(id, 'admin1', 'lib-pub')
     expect(await svc.listPending('lib-pub')).toHaveLength(0)
   })
 

@@ -129,51 +129,68 @@ export class JoinRequestService {
     }))
   }
 
-  /** Approve: create an active membership + mark request approved. */
+  /** Approve: create an active membership + mark request approved. Scoped to `libraryId`. */
   async approve(
     requestId: string,
     decidedBy: string,
+    libraryId: string,
   ): Promise<{ error: string } | { success: true }> {
     const req = await this.db
       .select()
       .from(joinRequest)
-      .where(and(eq(joinRequest.id, requestId), eq(joinRequest.status, 'pending')))
+      .where(and(
+        eq(joinRequest.id, requestId),
+        eq(joinRequest.status, 'pending'),
+        eq(joinRequest.libraryId, libraryId), // scoped to admin's library
+      ))
       .get?.()
     if (!req) return { error: 'REQUEST_NOT_FOUND' }
 
     const now = new Date().toISOString()
-    // Create membership
-    await this.db
-      .insert(membership)
-      .values({
-        id: crypto.randomUUID(),
-        userId: req.userId,
-        libraryId: req.libraryId,
-        role: 'library_reader',
-        status: 'active',
-        joinFields: (req.answers as Record<string, string> | null) ?? null,
-        createdAt: now,
-        updatedAt: now,
-      })
-      .onConflictDoNothing()
-    // Mark approved
+    // Upsert: reactivate if previously removed, or insert new.
+    const existing = await this.db
+      .select({ id: membership.id })
+      .from(membership)
+      .where(and(eq(membership.userId, req.userId), eq(membership.libraryId, req.libraryId)))
+      .get?.()
+    if (existing) {
+      await this.db
+        .update(membership)
+        .set({ status: 'active', role: 'library_reader', joinFields: (req.answers as Record<string, string> | null) ?? null, updatedAt: now })
+        .where(eq(membership.id, existing.id))
+    } else {
+      await this.db
+        .insert(membership)
+        .values({
+          id: crypto.randomUUID(),
+          userId: req.userId,
+          libraryId: req.libraryId,
+          role: 'library_reader',
+          status: 'active',
+          joinFields: (req.answers as Record<string, string> | null) ?? null,
+          createdAt: now,
+          updatedAt: now,
+        })
+    }
+    // Mark approved (only if still pending — prevent overwriting a concurrent reject)
     await this.db
       .update(joinRequest)
       .set({ status: 'approved', decidedBy, decidedAt: now })
-      .where(eq(joinRequest.id, requestId))
+      .where(and(eq(joinRequest.id, requestId), eq(joinRequest.status, 'pending')))
     return { success: true }
   }
 
-  /** Reject: mark request rejected. */
+  /** Reject: mark request rejected. Scoped to `libraryId`. */
   async reject(
     requestId: string,
     decidedBy: string,
+    libraryId: string,
   ): Promise<{ error: string } | { success: true }> {
     const now = new Date().toISOString()
     const result = await this.db
       .update(joinRequest)
       .set({ status: 'rejected', decidedBy, decidedAt: now })
-      .where(and(eq(joinRequest.id, requestId), eq(joinRequest.status, 'pending')))
+      .where(and(eq(joinRequest.id, requestId), eq(joinRequest.status, 'pending'), eq(joinRequest.libraryId, libraryId)))
     if (!result) return { error: 'REQUEST_NOT_FOUND' }
     return { success: true }
   }
