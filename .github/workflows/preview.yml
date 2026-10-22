@@ -78,9 +78,13 @@ jobs:
           wranglerVersion: '4.151.1'
           # Creates a GitHub Deployment + exposes the preview-url output.
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          # BETTER_AUTH_SECRET is inherited from the Previews base config, so no
-          # per-deploy --secrets-file is needed. Fixed name → one shared preview.
+          # BETTER_AUTH_SECRET is inherited from the Previews base config.
+          # RESEND_API_KEY is injected from GitHub Actions secrets — never hardcoded.
           command: preview --name preview
+          secrets: |
+            RESEND_API_KEY
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
 
       - name: Seed demo users into the preview DB
         env:

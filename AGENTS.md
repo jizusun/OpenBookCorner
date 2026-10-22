@@ -49,6 +49,20 @@ Bun monorepo (workspaces: `apps/*`, `db`, `packages/*`):
    (it caused an empty Role column); render labels with `<Trans>` in a small
    in-component sub-component instead.
 
+## Secrets policy — never commit secrets
+
+**Secrets MUST NOT appear in any committed file** (source code, config, workflow yaml, etc.).
+
+| Secret | Where it lives |
+|---|---|
+| `BETTER_AUTH_SECRET` | Cloudflare Previews base-config (`wrangler preview base-config secret put`) + prod Worker (`wrangler secret put`) |
+| `RESEND_API_KEY` | GitHub Actions repo secret (`gh secret set RESEND_API_KEY`) → injected into Cloudflare via `cloudflare/wrangler-action` `secrets:` block in `preview.yml` |
+| Any new secret | Same pattern: GitHub Actions secret → `secrets:` block in the workflow |
+
+**Local development**: put secrets in `apps/app/.dev.vars` (already gitignored by root `.gitignore`). Never commit this file. Provide values out-of-band (e.g. password manager → `echo "..." | gh secret set`).
+
+**Wrangler `vars:` in `wrangler.jsonc`**: non-secret runtime config only (e.g. `ENVIRONMENT`, `APP_ORIGIN`, `RESEND_FROM`). Never put API keys or passwords here.
+
 ## Deploy
 
 - API: `cd apps/api && wrangler deploy` (D1 binding `DB` → database `openbookcorner`).
