@@ -892,7 +892,7 @@ msgstr "Edit Book"
 #: routes/_app/admin/tenants.$libraryId.tsx:200
 #: routes/_app/admin/UsersTable.tsx:44
 #: routes/_app/profile.tsx:99
-#: routes/login.tsx:202
+#: routes/login.tsx:206
 #: routes/signup.tsx:98
 msgid "Email"
 msgstr "Email"
@@ -936,7 +936,7 @@ msgstr "Enabled"
 msgid "Enter your email and password to create an account. Already have an account? <0>Sign in</0>"
 msgstr "Enter your email and password to create an account. Already have an account? <0>Sign in</0>"
 
-#: routes/login.tsx:185
+#: routes/login.tsx:189
 msgid "Enter your email and password to sign in. Don't have an account? <0>Sign up</0>"
 msgstr "Enter your email and password to sign in. Don't have an account? <0>Sign up</0>"
 
@@ -1475,7 +1475,7 @@ msgstr "Page {pageNum} of {pageTotal}"
 msgid "Pages"
 msgstr "Pages"
 
-#: routes/login.tsx:221
+#: routes/login.tsx:225
 #: routes/signup.tsx:116
 msgid "Password"
 msgstr "Password"
@@ -1845,7 +1845,7 @@ msgstr "Shelved"
 msgid "showing the first {shown} — refine upstream search to see the rest"
 msgstr "showing the first {shown} — refine upstream search to see the rest"
 
-#: routes/login.tsx:241
+#: routes/login.tsx:245
 msgid "Sign in"
 msgstr "Sign in"
 
@@ -2012,8 +2012,8 @@ msgstr "Thanks for your feedback! 🎉"
 msgid "That email is already in use."
 msgstr "That email is already in use."
 
-#: routes/login.tsx:151
-#: routes/login.tsx:167
+#: routes/login.tsx:155
+#: routes/login.tsx:171
 msgid "That email or password doesn't match. Please try again."
 msgstr "That email or password doesn't match. Please try again."
 
