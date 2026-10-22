@@ -12,6 +12,11 @@ export const envSchema = z.object({
    */
   APP_ORIGINS: z.string().optional(),
   BETTER_AUTH_SECRET: z.string().min(16),
+  /** Resend API key for transactional email (ADR 0009 Phase 2). Optional —
+   *  when absent the EmailService is a no-op so the worker still boots. */
+  RESEND_API_KEY: z.string().optional(),
+  /** Sender address for outgoing email, e.g. noreply@yourdomain.com. */
+  RESEND_FROM: z.string().optional().default('onboarding@resend.dev'),
 })
 
 export type Env = z.infer<typeof envSchema> & {

@@ -144,6 +144,10 @@ msgstr "1–7 天"
 msgid "15+ days"
 msgstr "15 天以上"
 
+#: routes/join.$token.tsx:198
+msgid "6-digit code"
+msgstr "6位验证码"
+
 #: routes/_app/admin/overdue.tsx:20
 msgid "8–14 days"
 msgstr "8–14 天"
@@ -651,7 +655,7 @@ msgstr "无法开通登录。"
 msgid "Could not fetch that URL. Paste a 番薯借阅 export link (https://…fanshujieyue.com/….xls)."
 msgstr "无法获取该链接，请粘贴番薯借阅的导出链接（https://…fanshujieyue.com/….xls）。"
 
-#: routes/join.$token.tsx:77
+#: routes/join.$token.tsx:82
 msgid "Could not join. Please try again."
 msgstr "加入失败，请重试。"
 
@@ -718,7 +722,7 @@ msgstr "创建链接分享给潜在成员。"
 msgid "Create account"
 msgstr "创建账户"
 
-#: routes/join.$token.tsx:199
+#: routes/join.$token.tsx:278
 msgid "Create account to join"
 msgstr "注册账户并加入"
 
@@ -916,6 +920,10 @@ msgstr "邮箱域名（用逗号分隔）"
 msgid "Email domains: {0}"
 msgstr "邮箱域名：{0}"
 
+#: routes/join.$token.tsx:194
+msgid "Email verified"
+msgstr "邮箱已验证"
+
 #: routes/_app/admin/members.$memberId.tsx:99
 msgid "Employee no."
 msgstr "工号"
@@ -1020,7 +1028,7 @@ msgstr "文件未归档（早期导入）"
 msgid "Give the library a name and the email domains its members use."
 msgstr "为图书馆取个名字，并填写成员使用的邮箱域名。"
 
-#: routes/join.$token.tsx:136
+#: routes/join.$token.tsx:166
 msgid "Go to library"
 msgstr "进入图书馆"
 
@@ -1079,7 +1087,11 @@ msgstr "已停用"
 msgid "Install app"
 msgstr "安装应用"
 
-#: routes/join.$token.tsx:101
+#: routes/join.$token.tsx:241
+msgid "Invalid or expired code. Try again."
+msgstr "验证码无效或已过期，请重试。"
+
+#: routes/join.$token.tsx:131
 msgid "Invalid or expired invite"
 msgstr "邀请无效或已过期"
 
@@ -1133,7 +1145,7 @@ msgstr "加入图书馆"
 msgid "Join form"
 msgstr "加入表单"
 
-#: routes/join.$token.tsx:181
+#: routes/join.$token.tsx:260
 msgid "Join library"
 msgstr "加入图书馆"
 
@@ -1150,7 +1162,7 @@ msgstr "入馆日期"
 msgid "Joined date"
 msgstr "入馆日期"
 
-#: routes/join.$token.tsx:178
+#: routes/join.$token.tsx:257
 msgid "Joining…"
 msgstr "加入中…"
 
@@ -1215,7 +1227,7 @@ msgstr "加载中"
 #: routes/_app/admin/members.tsx:162
 #: routes/_app/admin/settings.tsx:121
 #: routes/_app/books/$bookId.edit.tsx:89
-#: routes/join.$token.tsx:95
+#: routes/join.$token.tsx:125
 msgid "Loading…"
 msgstr "加载中…"
 
@@ -1384,7 +1396,7 @@ msgstr "还没有图书馆"
 msgid "No members yet"
 msgstr "暂无成员"
 
-#: routes/join.$token.tsx:132
+#: routes/join.$token.tsx:162
 msgid "No need to join again."
 msgstr "无需重复加入。"
 
@@ -1515,7 +1527,7 @@ msgstr "占位"
 msgid "Plan"
 msgstr "会员计划"
 
-#: routes/join.$token.tsx:75
+#: routes/join.$token.tsx:80
 msgid "Please fill all required fields."
 msgstr "请填写所有必填字段。"
 
@@ -1525,17 +1537,21 @@ msgid "Please fill all required fields. {0}"
 msgstr "请填写所有必填字段。{0}"
 
 #. placeholder {0}: missing.map((f) => f.label).join(', ')
-#: routes/join.$token.tsx:87
+#: routes/join.$token.tsx:109
 msgid "Please fill in all required fields: {0}"
 msgstr "请填写所有必填字段：{0}"
 
-#: routes/join.$token.tsx:145
+#: routes/join.$token.tsx:175
 msgid "Please fill in the required information to join."
 msgstr "请填写加入所需信息。"
 
 #: routes/_app/discover.tsx:72
 msgid "Please fill in the required information."
 msgstr "请填写所需信息。"
+
+#: routes/join.$token.tsx:117
+msgid "Please verify your email address first."
+msgstr "请先验证您的邮箱地址。"
 
 #. placeholder {0}: pendingFile?.name ?? pendingUrl
 #: routes/_app/admin/import.tsx:202
@@ -1660,6 +1676,10 @@ msgstr "申请加入 {libraryName}"
 #: routes/_app/admin/settings.tsx:261
 msgid "Required"
 msgstr "必填"
+
+#: routes/join.$token.tsx:223
+msgid "Resend"
+msgstr "重新发送"
 
 #: components/ui/DataTable.tsx:327
 msgid "Reset"
@@ -1814,11 +1834,16 @@ msgstr "发送"
 msgid "Send feedback"
 msgstr "发送反馈"
 
+#: routes/join.$token.tsx:237
+msgid "Send verification code"
+msgstr "发送验证码"
+
 #: routes/_app/discover.tsx:73
 msgid "Send your request to the library admin for approval."
 msgstr "向图书馆管理员发送申请以等待审批。"
 
 #: components/FeedbackButton.tsx:89
+#: routes/join.$token.tsx:236
 msgid "Sending…"
 msgstr "发送中…"
 
@@ -1865,7 +1890,7 @@ msgstr "登录"
 msgid "Sign in as them"
 msgstr "以其身份登录"
 
-#: routes/join.$token.tsx:194
+#: routes/join.$token.tsx:273
 msgid "Sign in to join"
 msgstr "登录后加入"
 
@@ -1930,7 +1955,7 @@ msgid "Student no."
 msgstr "学号"
 
 #: routes/_app/discover.tsx:79
-#: routes/join.$token.tsx:180
+#: routes/join.$token.tsx:259
 msgid "Submit request"
 msgstr "提交申请"
 
@@ -2057,15 +2082,11 @@ msgstr "这本书已被他人借走。"
 msgid "This book is not in your library’s catalog yet. Ask a librarian to add it."
 msgstr "这本书还不在你图书馆的书目里，请联系管理员添加。"
 
-#: routes/join.$token.tsx:163
-msgid "This email will be verified."
-msgstr "此邮箱将被验证。"
-
 #: routes/_app/discover.tsx:101
 msgid "This email will need to be verified."
 msgstr "此邮箱需要验证。"
 
-#: routes/join.$token.tsx:102
+#: routes/join.$token.tsx:132
 msgid "This invite link is no longer valid."
 msgstr "此邀请链接已失效。"
 
@@ -2153,6 +2174,10 @@ msgstr "用户"
 msgid "uses"
 msgstr "次"
 
+#: routes/join.$token.tsx:215
+msgid "Verify"
+msgstr "验证"
+
 #: routes/_app/admin/join-form.tsx:90
 #: routes/_app/admin/settings.tsx:195
 msgid "Verify email"
@@ -2162,6 +2187,10 @@ msgstr "验证邮箱"
 #: routes/_app/admin/settings.tsx:266
 msgid "Verify email ownership"
 msgstr "验证邮箱归属"
+
+#: routes/join.$token.tsx:214
+msgid "Verifying…"
+msgstr "验证中…"
 
 #: components/ui/DataTable.tsx:440
 msgid "View"
@@ -2239,7 +2268,7 @@ msgstr "你没有添加图书的权限。"
 msgid "You have an overdue book. Please return it before borrowing more."
 msgstr "你有逾期未还的书，请先归还再借阅。"
 
-#: routes/join.$token.tsx:189
+#: routes/join.$token.tsx:268
 msgid "You need to sign in or create an account first."
 msgstr "你需要先登录或注册账户。"
 
@@ -2247,12 +2276,12 @@ msgstr "你需要先登录或注册账户。"
 msgid "You will lose access to this library immediately. The admin can invite you back later."
 msgstr "你将立即失去对该图书馆的访问权限，管理员可随时重新邀请你。"
 
-#: routes/join.$token.tsx:118
+#: routes/join.$token.tsx:148
 msgid "You'll be added immediately."
 msgstr "你将被立即添加。"
 
 #. placeholder {0}: resolved.libraryName
-#: routes/join.$token.tsx:129
+#: routes/join.$token.tsx:159
 msgid "You're already a member of {0}"
 msgstr "你已经是 {0} 的成员了"
 
@@ -2260,7 +2289,7 @@ msgstr "你已经是 {0} 的成员了"
 msgid "You're not part of any library yet. Create one, or join an existing one."
 msgstr "你还没有加入任何图书馆。创建一个，或加入已有的。"
 
-#: routes/join.$token.tsx:112
+#: routes/join.$token.tsx:142
 msgid "You've been invited to join"
 msgstr "你已被邀请加入"
 
@@ -2276,6 +2305,6 @@ msgstr "你的反馈"
 msgid "Your libraries"
 msgstr "你的图书馆"
 
-#: routes/join.$token.tsx:117
+#: routes/join.$token.tsx:147
 msgid "Your request will need approval from the library admin."
 msgstr "你的申请需要图书馆管理员审批。"

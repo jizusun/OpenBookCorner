@@ -100,6 +100,7 @@ export function createTestServer(opts: HarnessOptions) {
     APP_NAME: 'OpenBookCorner',
     APP_ORIGIN: appOrigin,
     BETTER_AUTH_SECRET: 'test-only-insecure-secret-change-me',
+    RESEND_FROM: 'test@example.com',
     DB: undefined as unknown as D1Database,
     COVERS: undefined as unknown as R2Bucket,
   } satisfies Env
@@ -110,6 +111,7 @@ export function createTestServer(opts: HarnessOptions) {
     c.set('db', opts.db)
     c.set('auth', auth)
     c.set('env', env)
+    c.set('email', new (await import('../services/email')).EmailService(undefined, 'test@example.com'))
     if (opts.rateLimiter) c.set('rateLimiter', opts.rateLimiter)
     await next()
   })

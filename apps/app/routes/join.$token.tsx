@@ -34,6 +34,11 @@ function JoinPage() {
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [formError, setFormError] = useState<string | null>(null)
   const [alreadyMember, setAlreadyMember] = useState(false)
+  // verifiedEmails: set of emails the user has proven ownership of via OTP
+  const [verifiedEmails, setVerifiedEmails] = useState<Set<string>>(new Set())
+  // otpState per field key: 'idle' | 'sending' | 'sent' | 'verifying' | 'verified'
+  const [otpState, setOtpState] = useState<Record<string, string>>({})
+  const [otpCode, setOtpCode] = useState<Record<string, string>>({})
 
   // Check if the user is already a member of this library (proactive check)
   const { data: myLibraries = [] } = useQuery({
@@ -79,12 +84,37 @@ function JoinPage() {
     },
   })
 
+  const sendCode = useMutation({
+    ...api.join.sendVerification.mutationOptions(),
+    onMutate: ({ email }) => setOtpState((s) => ({ ...s, [email]: 'sending' })),
+    onSuccess: (_, { email }) => setOtpState((s) => ({ ...s, [email]: 'sent' })),
+    onError: (_, { email }) => setOtpState((s) => ({ ...s, [email]: 'idle' })),
+  })
+
+  const verifyCode = useMutation({
+    ...api.join.verifyEmail.mutationOptions(),
+    onMutate: ({ email }) => setOtpState((s) => ({ ...s, [email]: 'verifying' })),
+    onSuccess: (_, { email }) => {
+      setVerifiedEmails((s) => new Set([...s, email.toLowerCase()]))
+      setOtpState((s) => ({ ...s, [email]: 'verified' }))
+    },
+    onError: (_, { email }) => setOtpState((s) => ({ ...s, [email]: 'sent' })),
+  })
+
   function handleJoin() {
     setFormError(null)
     // Client-side required-field check before submitting
     const missing = fields.filter((f) => f.required && !(answers[f.key] ?? '').trim())
     if (missing.length > 0) {
       setFormError(t`Please fill in all required fields: ${missing.map((f) => f.label).join(', ')}`)
+      return
+    }
+    // verifyEmail fields must be verified before submitting
+    const unverified = fields.filter(
+      (f) => f.verifyEmail && !(verifiedEmails.has((answers[f.key] ?? '').toLowerCase())),
+    )
+    if (unverified.length > 0) {
+      setFormError(t`Please verify your email address first.`)
       return
     }
     use.mutate({ token, answers: Object.keys(answers).length > 0 ? answers : undefined })
@@ -159,9 +189,58 @@ function JoinPage() {
                       data-testid={`jf-answer-${f.key}`}
                     />
                     {f.verifyEmail && (
-                      <p className="text-xs text-muted-foreground">
-                        <Trans>This email will be verified.</Trans>
-                      </p>
+                      <div className="mt-2 space-y-2">
+                        {otpState[answers[f.key] ?? ''] === 'verified' ? (
+                          <p className="text-xs text-emerald-600 font-medium">✓ <Trans>Email verified</Trans></p>
+                        ) : otpState[answers[f.key] ?? ''] === 'sent' || otpState[answers[f.key] ?? ''] === 'verifying' ? (
+                          <div className="flex gap-2 items-center">
+                            <Input
+                              placeholder={t`6-digit code`}
+                              className="h-8 w-32 text-sm"
+                              maxLength={6}
+                              value={otpCode[f.key] ?? ''}
+                              onChange={(e) => setOtpCode((p) => ({ ...p, [f.key]: e.target.value }))}
+                              data-testid={`otp-code-${f.key}`}
+                            />
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              disabled={otpState[answers[f.key] ?? ''] === 'verifying'}
+                              onClick={() => verifyCode.mutate({ email: answers[f.key] ?? '', code: otpCode[f.key] ?? '' })}
+                              data-testid={`otp-verify-${f.key}`}
+                            >
+                              {otpState[answers[f.key] ?? ''] === 'verifying'
+                                ? <Trans>Verifying…</Trans>
+                                : <Trans>Verify</Trans>}
+                            </Button>
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => sendCode.mutate({ email: answers[f.key] ?? '' })}
+                            >
+                              <Trans>Resend</Trans>
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            disabled={!answers[f.key] || sendCode.isPending}
+                            onClick={() => sendCode.mutate({ email: answers[f.key] ?? '' })}
+                            data-testid={`otp-send-${f.key}`}
+                          >
+                            {sendCode.isPending
+                              ? <Trans>Sending…</Trans>
+                              : <Trans>Send verification code</Trans>}
+                          </Button>
+                        )}
+                        {verifyCode.isError && otpState[answers[f.key] ?? ''] === 'sent' && (
+                          <p className="text-xs text-destructive"><Trans>Invalid or expired code. Try again.</Trans></p>
+                        )}
+                      </div>
                     )}
                   </div>
                 ))}

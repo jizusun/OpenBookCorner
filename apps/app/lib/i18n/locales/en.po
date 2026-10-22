@@ -144,6 +144,10 @@ msgstr "1–7 days"
 msgid "15+ days"
 msgstr "15+ days"
 
+#: routes/join.$token.tsx:198
+msgid "6-digit code"
+msgstr "6-digit code"
+
 #: routes/_app/admin/overdue.tsx:20
 msgid "8–14 days"
 msgstr "8–14 days"
@@ -651,7 +655,7 @@ msgstr "Could not enable login."
 msgid "Could not fetch that URL. Paste a 番薯借阅 export link (https://…fanshujieyue.com/….xls)."
 msgstr "Could not fetch that URL. Paste a 番薯借阅 export link (https://…fanshujieyue.com/….xls)."
 
-#: routes/join.$token.tsx:77
+#: routes/join.$token.tsx:82
 msgid "Could not join. Please try again."
 msgstr "Could not join. Please try again."
 
@@ -718,7 +722,7 @@ msgstr "Create a link to share with prospective members."
 msgid "Create account"
 msgstr "Create account"
 
-#: routes/join.$token.tsx:199
+#: routes/join.$token.tsx:278
 msgid "Create account to join"
 msgstr "Create account to join"
 
@@ -916,6 +920,10 @@ msgstr "Email domains (comma-separated)"
 msgid "Email domains: {0}"
 msgstr "Email domains: {0}"
 
+#: routes/join.$token.tsx:194
+msgid "Email verified"
+msgstr "Email verified"
+
 #: routes/_app/admin/members.$memberId.tsx:99
 msgid "Employee no."
 msgstr "Employee no."
@@ -1020,7 +1028,7 @@ msgstr "File not archived (pre-R2 import)"
 msgid "Give the library a name and the email domains its members use."
 msgstr "Give the library a name and the email domains its members use."
 
-#: routes/join.$token.tsx:136
+#: routes/join.$token.tsx:166
 msgid "Go to library"
 msgstr "Go to library"
 
@@ -1079,7 +1087,11 @@ msgstr "Inactive"
 msgid "Install app"
 msgstr "Install app"
 
-#: routes/join.$token.tsx:101
+#: routes/join.$token.tsx:241
+msgid "Invalid or expired code. Try again."
+msgstr "Invalid or expired code. Try again."
+
+#: routes/join.$token.tsx:131
 msgid "Invalid or expired invite"
 msgstr "Invalid or expired invite"
 
@@ -1133,7 +1145,7 @@ msgstr "Join a library"
 msgid "Join form"
 msgstr "Join form"
 
-#: routes/join.$token.tsx:181
+#: routes/join.$token.tsx:260
 msgid "Join library"
 msgstr "Join library"
 
@@ -1150,7 +1162,7 @@ msgstr "Joined"
 msgid "Joined date"
 msgstr "Joined date"
 
-#: routes/join.$token.tsx:178
+#: routes/join.$token.tsx:257
 msgid "Joining…"
 msgstr "Joining…"
 
@@ -1215,7 +1227,7 @@ msgstr "Loading"
 #: routes/_app/admin/members.tsx:162
 #: routes/_app/admin/settings.tsx:121
 #: routes/_app/books/$bookId.edit.tsx:89
-#: routes/join.$token.tsx:95
+#: routes/join.$token.tsx:125
 msgid "Loading…"
 msgstr "Loading…"
 
@@ -1384,7 +1396,7 @@ msgstr "No libraries yet"
 msgid "No members yet"
 msgstr "No members yet"
 
-#: routes/join.$token.tsx:132
+#: routes/join.$token.tsx:162
 msgid "No need to join again."
 msgstr "No need to join again."
 
@@ -1515,7 +1527,7 @@ msgstr "placeholder"
 msgid "Plan"
 msgstr "Plan"
 
-#: routes/join.$token.tsx:75
+#: routes/join.$token.tsx:80
 msgid "Please fill all required fields."
 msgstr "Please fill all required fields."
 
@@ -1525,17 +1537,21 @@ msgid "Please fill all required fields. {0}"
 msgstr "Please fill all required fields. {0}"
 
 #. placeholder {0}: missing.map((f) => f.label).join(', ')
-#: routes/join.$token.tsx:87
+#: routes/join.$token.tsx:109
 msgid "Please fill in all required fields: {0}"
 msgstr "Please fill in all required fields: {0}"
 
-#: routes/join.$token.tsx:145
+#: routes/join.$token.tsx:175
 msgid "Please fill in the required information to join."
 msgstr "Please fill in the required information to join."
 
 #: routes/_app/discover.tsx:72
 msgid "Please fill in the required information."
 msgstr "Please fill in the required information."
+
+#: routes/join.$token.tsx:117
+msgid "Please verify your email address first."
+msgstr "Please verify your email address first."
 
 #. placeholder {0}: pendingFile?.name ?? pendingUrl
 #: routes/_app/admin/import.tsx:202
@@ -1660,6 +1676,10 @@ msgstr "Request to join {libraryName}"
 #: routes/_app/admin/settings.tsx:261
 msgid "Required"
 msgstr "Required"
+
+#: routes/join.$token.tsx:223
+msgid "Resend"
+msgstr "Resend"
 
 #: components/ui/DataTable.tsx:327
 msgid "Reset"
@@ -1814,11 +1834,16 @@ msgstr "Send"
 msgid "Send feedback"
 msgstr "Send feedback"
 
+#: routes/join.$token.tsx:237
+msgid "Send verification code"
+msgstr "Send verification code"
+
 #: routes/_app/discover.tsx:73
 msgid "Send your request to the library admin for approval."
 msgstr "Send your request to the library admin for approval."
 
 #: components/FeedbackButton.tsx:89
+#: routes/join.$token.tsx:236
 msgid "Sending…"
 msgstr "Sending…"
 
@@ -1865,7 +1890,7 @@ msgstr "Sign in"
 msgid "Sign in as them"
 msgstr "Sign in as them"
 
-#: routes/join.$token.tsx:194
+#: routes/join.$token.tsx:273
 msgid "Sign in to join"
 msgstr "Sign in to join"
 
@@ -1930,7 +1955,7 @@ msgid "Student no."
 msgstr "Student no."
 
 #: routes/_app/discover.tsx:79
-#: routes/join.$token.tsx:180
+#: routes/join.$token.tsx:259
 msgid "Submit request"
 msgstr "Submit request"
 
@@ -2057,15 +2082,11 @@ msgstr "This book is currently borrowed by someone else."
 msgid "This book is not in your library’s catalog yet. Ask a librarian to add it."
 msgstr "This book is not in your library’s catalog yet. Ask a librarian to add it."
 
-#: routes/join.$token.tsx:163
-msgid "This email will be verified."
-msgstr "This email will be verified."
-
 #: routes/_app/discover.tsx:101
 msgid "This email will need to be verified."
 msgstr "This email will need to be verified."
 
-#: routes/join.$token.tsx:102
+#: routes/join.$token.tsx:132
 msgid "This invite link is no longer valid."
 msgstr "This invite link is no longer valid."
 
@@ -2153,6 +2174,10 @@ msgstr "Users"
 msgid "uses"
 msgstr "uses"
 
+#: routes/join.$token.tsx:215
+msgid "Verify"
+msgstr "Verify"
+
 #: routes/_app/admin/join-form.tsx:90
 #: routes/_app/admin/settings.tsx:195
 msgid "Verify email"
@@ -2162,6 +2187,10 @@ msgstr "Verify email"
 #: routes/_app/admin/settings.tsx:266
 msgid "Verify email ownership"
 msgstr "Verify email ownership"
+
+#: routes/join.$token.tsx:214
+msgid "Verifying…"
+msgstr "Verifying…"
 
 #: components/ui/DataTable.tsx:440
 msgid "View"
@@ -2239,7 +2268,7 @@ msgstr "You do not have permission to add books."
 msgid "You have an overdue book. Please return it before borrowing more."
 msgstr "You have an overdue book. Please return it before borrowing more."
 
-#: routes/join.$token.tsx:189
+#: routes/join.$token.tsx:268
 msgid "You need to sign in or create an account first."
 msgstr "You need to sign in or create an account first."
 
@@ -2247,12 +2276,12 @@ msgstr "You need to sign in or create an account first."
 msgid "You will lose access to this library immediately. The admin can invite you back later."
 msgstr "You will lose access to this library immediately. The admin can invite you back later."
 
-#: routes/join.$token.tsx:118
+#: routes/join.$token.tsx:148
 msgid "You'll be added immediately."
 msgstr "You'll be added immediately."
 
 #. placeholder {0}: resolved.libraryName
-#: routes/join.$token.tsx:129
+#: routes/join.$token.tsx:159
 msgid "You're already a member of {0}"
 msgstr "You're already a member of {0}"
 
@@ -2260,7 +2289,7 @@ msgstr "You're already a member of {0}"
 msgid "You're not part of any library yet. Create one, or join an existing one."
 msgstr "You're not part of any library yet. Create one, or join an existing one."
 
-#: routes/join.$token.tsx:112
+#: routes/join.$token.tsx:142
 msgid "You've been invited to join"
 msgstr "You've been invited to join"
 
@@ -2276,6 +2305,6 @@ msgstr "Your feedback"
 msgid "Your libraries"
 msgstr "Your libraries"
 
-#: routes/join.$token.tsx:117
+#: routes/join.$token.tsx:147
 msgid "Your request will need approval from the library admin."
 msgstr "Your request will need approval from the library admin."

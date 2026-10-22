@@ -19,6 +19,7 @@ export type BaseVars = {
   db: Database
   auth: Auth
   env: Env
+  email: import('../services/email').EmailService
   rateLimiter?: RateLimiter
 }
 

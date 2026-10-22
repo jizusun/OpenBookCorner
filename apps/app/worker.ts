@@ -10,6 +10,7 @@ import {
   type BaseVars,
   createAuth,
   createDb,
+  EmailService,
   envSchema,
   type Env,
   parseOriginPatterns,
@@ -77,6 +78,7 @@ const setup = createMiddleware<{ Bindings: CloudflareEnv; Variables: BaseVars }>
     c.set('db', db)
     c.set('auth', createAuth(db, env))
     c.set('env', env)
+    c.set('email', new EmailService(env.RESEND_API_KEY, env.RESEND_FROM))
     if (c.env.PUBLIC_RATE_LIMITER) c.set('rateLimiter', c.env.PUBLIC_RATE_LIMITER)
     await next()
   },

@@ -1,12 +1,15 @@
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
 import { z } from 'zod'
+import { and, eq, gt } from 'drizzle-orm'
 
 import type { AuthedVars, TenantVars } from '../lib/mw'
 import { admin, sessionAuth, tenant } from '../lib/mw'
 import { JoinRequestService } from '../services/join-request'
 import { JoinFieldService } from '../services/join-field'
 import { MembershipService, validateJoinAnswers } from '../services/membership'
+import { EmailService } from '../services/email'
+import { verification } from '@obc/db'
 
 const submitBody = z.object({
   libraryId: z.string().min(1),
@@ -55,6 +58,48 @@ const userApp = new Hono<{ Variables: AuthedVars }>()
     return c.json(
       await new JoinRequestService(c.get('db')).cancel(c.req.param('id'), c.get('user').id),
     )
+  })
+  // Send a 6-digit OTP to a join-form email field for ownership verification.
+  .post('/send-verification', zValidator('json', z.object({ email: z.string().email() })), async (c) => {
+    const { email } = c.req.valid('json')
+    const code = EmailService.generateCode()
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000) // 10 min
+    const identifier = `joinform:${c.get('user').id}:${email.toLowerCase()}`
+    // Store in Better Auth verification table (upsert by replacing existing).
+    await c.get('db')
+      .delete(verification)
+      .where(eq(verification.identifier, identifier))
+    await c.get('db').insert(verification).values({
+      id: crypto.randomUUID(),
+      identifier,
+      value: code,
+      expiresAt,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
+    // Send email (no-op when RESEND_API_KEY is absent).
+    const emailSvc = new EmailService(c.get('env').RESEND_API_KEY, c.get('env').RESEND_FROM)
+    await emailSvc.sendVerificationCode(email, code, 'OpenBookCorner')
+    return c.json({ success: true })
+  })
+  // Verify an OTP code submitted via the join form.
+  .post('/verify-email', zValidator('json', z.object({ email: z.string().email(), code: z.string().length(6) })), async (c) => {
+    const { email, code } = c.req.valid('json')
+    const identifier = `joinform:${c.get('user').id}:${email.toLowerCase()}`
+    const row = await c.get('db')
+      .select()
+      .from(verification)
+      .where(and(
+        eq(verification.identifier, identifier),
+        gt(verification.expiresAt, new Date()),
+      ))
+      .get?.()
+    if (!row || row.value !== code) {
+      return c.json({ error: 'INVALID_OR_EXPIRED_CODE' }, 400)
+    }
+    // Delete after successful verification (single-use).
+    await c.get('db').delete(verification).where(eq(verification.identifier, identifier))
+    return c.json({ success: true, verifiedEmail: email })
   })
 
 // Admin-facing (tenant + admin guards).

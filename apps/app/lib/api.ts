@@ -244,6 +244,14 @@ const call = {
     json<Ok<(typeof client.join.admin.fields)[':id']['$delete']>>(
       client.join.admin.fields[':id'].$delete({ param: { id: i.id } }),
     ),
+  'join.sendVerification': (i: { email: string }) =>
+    json<Ok<(typeof client.join)['send-verification']['$post']>>(
+      client.join['send-verification'].$post({ json: i }),
+    ),
+  'join.verifyEmail': (i: { email: string; code: string }) =>
+    json<Ok<(typeof client.join)['verify-email']['$post']>>(
+      client.join['verify-email'].$post({ json: i }),
+    ),
   'invite.resolve': (i: { token: string }) =>
     json<Ok<(typeof client.invites.resolve)[':token']['$get']>>(
       client.invites.resolve[':token'].$get({ param: { token: i.token } }),
@@ -357,6 +365,8 @@ export const api = {
     adminFields: node('join.adminFields'),
     addField: node('join.addField'),
     removeField: node('join.removeField'),
+    sendVerification: node('join.sendVerification'),
+    verifyEmail: node('join.verifyEmail'),
   },
   invite: {
     resolve: node('invite.resolve'),
