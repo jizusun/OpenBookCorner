@@ -37,21 +37,26 @@ export default async function globalSetup() {
   await createUser('admin@demo.test', 'Demo Admin')
   await createUser('super@demo.test', 'Demo Super Admin')
 
-  // Attach to the demo library + roles (local D1). The super admin also gets the
-  // demo library so Admin/Reader views work when they switch; their System view
-  // (tenant management) is role-based and spans all libraries.
+  // Attach to the demo library + roles (local D1). Also create membership rows
+  // so the new active-membership tenant guard works (ADR 0009).
   const sql =
-    "UPDATE user SET library_id='lib-demo-001', role='library_admin' WHERE email='admin@demo.test';" +
-    "UPDATE user SET library_id='lib-demo-001', role='library_reader' WHERE email='reader@demo.test';" +
-    "UPDATE user SET library_id='lib-demo-001', role='super_admin' WHERE email='super@demo.test';" +
-    // Link a member to the reader's login account so the super-admin
-    // 'Sign in as them' (impersonation) action has a target on the Members page.
+    "UPDATE user SET library_id='lib-demo-001', role='library_admin', active_library_id='lib-demo-001' WHERE email='admin@demo.test';" +
+    "UPDATE user SET library_id='lib-demo-001', role='library_reader', active_library_id='lib-demo-001' WHERE email='reader@demo.test';" +
+    "UPDATE user SET library_id='lib-demo-001', role='super_admin',    active_library_id='lib-demo-001' WHERE email='super@demo.test';" +
+    // Membership rows so the tenant guard resolves role from membership.
+    "INSERT OR IGNORE INTO membership (id, user_id, library_id, role, status, created_at, updated_at)" +
+    " SELECT lower(hex(randomblob(16))), u.id, 'lib-demo-001'," +
+    "   CASE u.email WHEN 'admin@demo.test' THEN 'library_admin' ELSE 'library_reader' END," +
+    "   'active', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP FROM user u" +
+    "   WHERE u.email IN ('admin@demo.test','reader@demo.test')" +
+    "   AND NOT EXISTS (SELECT 1 FROM membership m WHERE m.user_id=u.id AND m.library_id='lib-demo-001');" +
+    // Link a member to the reader's login account for impersonation tests.
     "INSERT OR IGNORE INTO members (id, library_id, name, role, email, user_id, is_placeholder, created_at)" +
     " SELECT 'member-demo-reader','lib-demo-001','Demo Reader','library_reader','reader@demo.test', u.id, 0, '2025-01-01T00:00:00.000Z'" +
     " FROM user u WHERE u.email='reader@demo.test';" +
     "UPDATE members SET user_id=(SELECT id FROM user WHERE email='reader@demo.test') WHERE id='member-demo-reader';"
   execSync(
-    `bunx wrangler d1 execute openbookcorner --local --command "${sql}"`,
+    `bunx wrangler d1 execute openbookcorner --local --persist-to .wrangler/state-e2e --command "${sql}"`,
     { cwd: new URL('../apps/app', import.meta.url).pathname, stdio: 'ignore' },
   )
 }

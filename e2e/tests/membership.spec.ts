@@ -37,7 +37,7 @@ test.describe('Multi-library membership (ADR 0009)', () => {
 
     // The admin nav groups must appear — this confirms the user is recognised as
     // library_admin in their newly-created library (the core ADR 0009 assertion).
-    await expect(page.getByTestId('nav-/admin/members')).toBeVisible({ timeout: 15000 })
+    await expect(page.getByTestId('nav-/admin/library-users')).toBeVisible({ timeout: 15000 })
     await expect(page.getByTestId('nav-/admin/join-requests')).toBeVisible({ timeout: 5000 })
     await expect(page.getByTestId('nav-/admin/invites')).toBeVisible()
   })

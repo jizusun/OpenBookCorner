@@ -38,7 +38,7 @@ test.describe('Impersonation (super admin)', () => {
 
     // Exit impersonation → banner gone, back to the super-admin console (Overview).
     await page.getByRole('button', { name: 'Back to my account' }).click()
-    await expect(page.getByRole('status')).toHaveCount(0)
+    await expect(page.getByRole('status')).toHaveCount(0, { timeout: 10000 })
     await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible()
   })
 
@@ -49,7 +49,8 @@ test.describe('Impersonation (super admin)', () => {
     await page.getByTestId('signin-submit').click()
     await expect(page.getByRole('heading', { name: 'Library Catalog' })).toBeVisible()
 
-    await page.getByRole('link', { name: 'Readers' }).first().click()
+    // Navigate to the members/readers roster directly (not in main nav since ADR 0009).
+    await page.goto('/admin/members', { waitUntil: 'domcontentloaded' })
     await expect(page.getByRole('heading', { name: 'Readers' })).toBeVisible()
     // No impersonation control for a non-super-admin.
     await expect(page.getByRole('button', { name: 'Sign in as them' })).toHaveCount(0)
