@@ -595,7 +595,7 @@ msgstr "馆内编码"
 msgid "Common fields"
 msgstr "常用字段"
 
-#: routes/signup.tsx:129
+#: routes/signup.tsx:134
 msgid "Confirm password"
 msgstr "确认密码"
 
@@ -624,7 +624,7 @@ msgstr "添加失败，请检查填写内容后重试。"
 msgid "Could not add the member."
 msgstr "无法添加成员。"
 
-#: routes/signup.tsx:61
+#: routes/signup.tsx:66
 msgid "Could not create account. That email may already be registered."
 msgstr "无法创建账户，该邮箱可能已被注册。"
 
@@ -704,11 +704,15 @@ msgstr "创建图书馆"
 msgid "Create a link to share with prospective members."
 msgstr "创建链接分享给潜在成员。"
 
-#: routes/signup.tsx:144
+#: routes/signup.tsx:149
 msgid "Create account"
 msgstr "创建账户"
 
-#: routes/signup.tsx:71
+#: routes/join.$token.tsx:87
+msgid "Create account to join"
+msgstr "注册账户并加入"
+
+#: routes/signup.tsx:76
 msgid "Create an account"
 msgstr "创建账户"
 
@@ -799,7 +803,7 @@ msgstr "删除中…"
 msgid "Demo accounts"
 msgstr "演示账号"
 
-#: routes/login.tsx:64
+#: routes/login.tsx:68
 msgid "Demo accounts (non-production) — tap to fill in"
 msgstr "演示账户（非生产环境）— 点击自动填充"
 
@@ -878,8 +882,8 @@ msgstr "编辑图书"
 #: routes/_app/admin/tenants.$libraryId.tsx:200
 #: routes/_app/admin/UsersTable.tsx:44
 #: routes/_app/profile.tsx:99
-#: routes/login.tsx:192
-#: routes/signup.tsx:93
+#: routes/login.tsx:202
+#: routes/signup.tsx:98
 msgid "Email"
 msgstr "邮箱"
 
@@ -918,11 +922,11 @@ msgstr "为 {0} 开通登录"
 msgid "Enabled"
 msgstr "已开通"
 
-#: routes/signup.tsx:76
+#: routes/signup.tsx:81
 msgid "Enter your email and password to create an account. Already have an account? <0>Sign in</0>"
 msgstr "输入邮箱和密码创建账户。已有账户？<0>登录</0>"
 
-#: routes/login.tsx:175
+#: routes/login.tsx:185
 msgid "Enter your email and password to sign in. Don't have an account? <0>Sign up</0>"
 msgstr "输入邮箱和密码登录。还没有账户？<0>注册</0>"
 
@@ -1411,8 +1415,8 @@ msgstr "第 {pageNum} / {pageTotal} 页"
 msgid "Pages"
 msgstr "页数"
 
-#: routes/login.tsx:211
-#: routes/signup.tsx:111
+#: routes/login.tsx:221
+#: routes/signup.tsx:116
 msgid "Password"
 msgstr "密码"
 
@@ -1756,7 +1760,7 @@ msgstr "是否上架"
 msgid "showing the first {shown} — refine upstream search to see the rest"
 msgstr "仅显示前 {shown} 条 — 请在上游搜索中细化以查看其余"
 
-#: routes/login.tsx:231
+#: routes/login.tsx:241
 msgid "Sign in"
 msgstr "登录"
 
@@ -1768,8 +1772,8 @@ msgstr "以其身份登录"
 msgid "Sign in to join"
 msgstr "登录后加入"
 
-#: routes/login.tsx:94
-#: routes/login.tsx:102
+#: routes/login.tsx:98
+#: routes/login.tsx:106
 msgid "Sign in to your library"
 msgstr "登录你的图书馆"
 
@@ -1924,8 +1928,8 @@ msgstr "感谢你的反馈！🎉"
 msgid "That email is already in use."
 msgstr "该邮箱已被使用。"
 
-#: routes/login.tsx:146
-#: routes/login.tsx:157
+#: routes/login.tsx:151
+#: routes/login.tsx:167
 msgid "That email or password doesn't match. Please try again."
 msgstr "邮箱或密码不匹配，请重试。"
 
@@ -2066,7 +2070,7 @@ msgstr "可见（非生产环境）"
 msgid "We could not process this return. It may already be returned."
 msgstr "无法处理这次归还，可能已经还过了。"
 
-#: routes/login.tsx:101
+#: routes/login.tsx:105
 msgid "Welcome back"
 msgstr "欢迎回来"
 
@@ -2123,8 +2127,8 @@ msgid "You have an overdue book. Please return it before borrowing more."
 msgstr "你有逾期未还的书，请先归还再借阅。"
 
 #: routes/join.$token.tsx:79
-msgid "You need to sign in first."
-msgstr "你需要先登录。"
+msgid "You need to sign in or create an account first."
+msgstr "你需要先登录或注册账户。"
 
 #: routes/join.$token.tsx:65
 msgid "You'll be added immediately."

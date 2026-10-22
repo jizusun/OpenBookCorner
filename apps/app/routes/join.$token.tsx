@@ -75,13 +75,18 @@ function JoinPage() {
                 : <Trans>Join library</Trans>}
           </Button>
         ) : (
-          <>
-            <p className="text-sm text-muted-foreground"><Trans>You need to sign in first.</Trans></p>
-            <Button className="w-full" onClick={() => router.navigate({ to: '/login' })}
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground"><Trans>You need to sign in or create an account first.</Trans></p>
+            <Button className="w-full" onClick={() => router.navigate({ to: '/login', search: { redirect: `/join/${token}` } })}
               data-testid="invite-signin-btn">
               <Trans>Sign in to join</Trans>
             </Button>
-          </>
+            <Button className="w-full" variant="outline"
+              onClick={() => router.navigate({ to: '/signup', search: { redirect: `/join/${token}` } })}
+              data-testid="invite-signup-btn">
+              <Trans>Create account to join</Trans>
+            </Button>
+          </div>
         )}
       </div>
     </div>

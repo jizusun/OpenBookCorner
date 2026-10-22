@@ -24,7 +24,11 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 
-export const Route = createFileRoute('/login')({ component: () => <LoginPage /> })
+
+export const Route = createFileRoute('/login')({
+  validateSearch: z.object({ redirect: z.string().optional() }),
+  component: () => <LoginPage />,
+})
 
 const DEMO_PASSWORD = 'password123'
 
@@ -117,6 +121,7 @@ type LoginValues = z.infer<typeof loginSchema>
  */
 export function LoginPage({ slug }: { slug?: string } = {}) {
   const router = useRouter()
+  const { redirect } = Route.useSearch()
   const { t } = useLingui()
   const [branding, setBranding] = useState<TenantBranding | null>(null)
   const [demoVisible, setDemoVisible] = useState(false)
@@ -150,6 +155,11 @@ export function LoginPage({ slug }: { slug?: string } = {}) {
       queryClient.clear()
       setReaderPreview(false)
       const role = (res.data?.user as { role?: string } | undefined)?.role
+      // If there's a redirect param (e.g. from an invite link), go there first.
+      if (redirect) {
+        await router.navigate({ to: redirect as '/' })
+        return
+      }
       if (role === 'super_admin') await router.navigate({ to: '/admin/overview' })
       else if (role === 'library_admin') await router.navigate({ to: '/books' })
       else await router.navigate({ to: '/my-books' })
