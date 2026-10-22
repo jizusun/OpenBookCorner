@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { EmptyState } from '@/components/ui/empty-state'
-
 export const Route = createFileRoute('/join/$token')({
   component: JoinPage,
 })
@@ -16,7 +15,7 @@ function JoinPage() {
   const { token } = Route.useParams()
   const router = useRouter()
   const queryClient = useQueryClient()
-  const { t } = useLingui()
+  const { t, i18n } = useLingui()
 
   // Resolve the invite token
   const { data: resolved, isLoading, isError } = useQuery({
@@ -90,7 +89,6 @@ function JoinPage() {
     onSuccess: (_, { email }) => setOtpState((s) => ({ ...s, [email]: 'sent' })),
     onError: (_, { email }) => setOtpState((s) => ({ ...s, [email]: 'idle' })),
   })
-
   const verifyCode = useMutation({
     ...api.join.verifyEmail.mutationOptions(),
     onMutate: ({ email }) => setOtpState((s) => ({ ...s, [email]: 'verifying' })),
@@ -218,7 +216,7 @@ function JoinPage() {
                               type="button"
                               size="sm"
                               variant="ghost"
-                              onClick={() => sendCode.mutate({ email: answers[f.key] ?? '' })}
+                              onClick={() => sendCode.mutate({ email: answers[f.key] ?? '', libraryId: resolved.libraryId, locale: i18n.locale })}
                             >
                               <Trans>Resend</Trans>
                             </Button>
@@ -229,7 +227,7 @@ function JoinPage() {
                             size="sm"
                             variant="outline"
                             disabled={!answers[f.key] || sendCode.isPending}
-                            onClick={() => sendCode.mutate({ email: answers[f.key] ?? '' })}
+                            onClick={() => sendCode.mutate({ email: answers[f.key] ?? '', libraryId: resolved.libraryId, locale: i18n.locale })}
                             data-testid={`otp-send-${f.key}`}
                           >
                             {sendCode.isPending

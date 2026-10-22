@@ -9,7 +9,8 @@ import { JoinRequestService } from '../services/join-request'
 import { JoinFieldService } from '../services/join-field'
 import { MembershipService, validateJoinAnswers } from '../services/membership'
 import { EmailService } from '../services/email'
-import { verification } from '@obc/db'
+import { verification, membership, libraries } from '@obc/db'
+import { user as userTable } from '@obc/db'
 
 const submitBody = z.object({
   libraryId: z.string().min(1),
@@ -60,16 +61,35 @@ const userApp = new Hono<{ Variables: AuthedVars }>()
     )
   })
   // Send a 6-digit OTP to a join-form email field for ownership verification.
-  .post('/send-verification', zValidator('json', z.object({ email: z.string().email() })), async (c) => {
-    const { email } = c.req.valid('json')
+  .post('/send-verification', zValidator('json', z.object({
+    email: z.string().email(),
+    libraryId: z.string().min(1),
+    locale: z.string().default('en'),
+  })), async (c) => {
+    const { email, libraryId, locale } = c.req.valid('json')
     const code = EmailService.generateCode()
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000) // 10 min
     const identifier = `joinform:${c.get('user').id}:${email.toLowerCase()}`
-    // Store in Better Auth verification table (upsert by replacing existing).
-    await c.get('db')
-      .delete(verification)
-      .where(eq(verification.identifier, identifier))
-    await c.get('db').insert(verification).values({
+
+    // Fetch library name + first admin email for the email copy.
+    const db = c.get('db')
+    const [libraryRow] = await db
+      .select({ name: libraries.name })
+      .from(libraries)
+      .where(eq(libraries.id, libraryId))
+      .limit(1)
+    const [adminRow] = await db
+      .select({ email: userTable.email })
+      .from(membership)
+      .innerJoin(userTable, eq(membership.userId, userTable.id))
+      .where(and(eq(membership.libraryId, libraryId), eq(membership.role, 'library_admin')))
+      .limit(1)
+    const libraryName = libraryRow?.name ?? 'OpenBookCorner'
+    const adminEmail = adminRow?.email
+
+    // Store OTP in Better Auth verification table (upsert).
+    await db.delete(verification).where(eq(verification.identifier, identifier))
+    await db.insert(verification).values({
       id: crypto.randomUUID(),
       identifier,
       value: code,
@@ -77,9 +97,10 @@ const userApp = new Hono<{ Variables: AuthedVars }>()
       createdAt: new Date(),
       updatedAt: new Date(),
     })
+
     // Send email (no-op when RESEND_API_KEY is absent).
     const emailSvc = new EmailService(c.get('env').RESEND_API_KEY, c.get('env').RESEND_FROM)
-    await emailSvc.sendVerificationCode(email, code, 'OpenBookCorner')
+    await emailSvc.sendVerificationCode(email, code, libraryName, locale, adminEmail)
     return c.json({ success: true })
   })
   // Verify an OTP code submitted via the join form.

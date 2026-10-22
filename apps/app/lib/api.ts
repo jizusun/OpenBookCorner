@@ -244,7 +244,7 @@ const call = {
     json<Ok<(typeof client.join.admin.fields)[':id']['$delete']>>(
       client.join.admin.fields[':id'].$delete({ param: { id: i.id } }),
     ),
-  'join.sendVerification': (i: { email: string }) =>
+  'join.sendVerification': (i: { email: string; libraryId: string; locale: string }) =>
     json<Ok<(typeof client.join)['send-verification']['$post']>>(
       client.join['send-verification'].$post({ json: i }),
     ),
