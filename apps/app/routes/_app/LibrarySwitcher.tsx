@@ -1,8 +1,19 @@
+import { useState } from 'react'
 import { useRouter } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { ChevronsUpDown, Check, Plus, ShieldCheck, BookOpen, LogOut } from 'lucide-react'
 import { api } from '@/lib/api'
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -49,6 +60,7 @@ export function LibrarySwitcher({ brandFallback }: { brandFallback: React.ReactN
   const { data } = useQuery(api.membership.mine.queryOptions())
   const libraries = data ?? []
   const active = libraries.find((l) => l.active) ?? libraries[0]
+  const [pendingLeave, setPendingLeave] = useState<{ libraryId: string; name: string } | null>(null)
 
   const switchLib = useMutation({
     ...api.membership.switch.mutationOptions(),
@@ -72,6 +84,7 @@ export function LibrarySwitcher({ brandFallback }: { brandFallback: React.ReactN
   if (libraries.length === 0) return <>{brandFallback}</>
 
   return (
+    <>
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <SidebarMenuButton size="lg" data-testid="library-switcher">
@@ -115,9 +128,7 @@ export function LibrarySwitcher({ brandFallback }: { brandFallback: React.ReactN
               data-testid={`leave-lib-${lib.libraryId}`}
               onClick={(e) => {
                 e.stopPropagation()
-                if (window.confirm(t`Leave ${lib.name}? You will lose access.`)) {
-                  leaveLib.mutate({ libraryId: lib.libraryId })
-                }
+                setPendingLeave({ libraryId: lib.libraryId, name: lib.name })
               }}
             >
               <LogOut className="size-3.5" />
@@ -134,5 +145,32 @@ export function LibrarySwitcher({ brandFallback }: { brandFallback: React.ReactN
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+
+    {/* Leave library confirmation */}
+    <AlertDialog open={!!pendingLeave} onOpenChange={(open) => { if (!open) setPendingLeave(null) }}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>
+            <Trans>Leave {pendingLeave?.name ?? ''}?</Trans>
+          </AlertDialogTitle>
+          <AlertDialogDescription>
+            <Trans>You will lose access to this library immediately. The admin can invite you back later.</Trans>
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={leaveLib.isPending}>
+            <Trans>Cancel</Trans>
+          </AlertDialogCancel>
+          <Button
+            variant="destructive"
+            disabled={leaveLib.isPending}
+            onClick={() => pendingLeave && leaveLib.mutate({ libraryId: pendingLeave.libraryId })}
+          >
+            {leaveLib.isPending ? <Trans>Leaving…</Trans> : <Trans>Leave library</Trans>}
+          </Button>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  </>
   )
 }

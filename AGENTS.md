@@ -164,25 +164,37 @@ work, without being asked**. Number sequentially; keep the existing format
 it). Small, local, or obvious changes do NOT need an ADR. When an ADR deepens or
 supersedes an earlier one, say so explicitly in the header.
 
-### TDD: present the test plan before implementing (required)
+### TDD: present the test plan before implementing (required — no exceptions)
 
-For EVERY implementation task, BEFORE writing code, present the complete test-case
-plan across all layers of the testing pyramid, then wait for the go-ahead:
+**This rule applies to EVERY feature, bug fix, and refactor, no matter how
+small.** Before writing a single line of implementation code:
 
-- **Unit** (broad base): pure logic + service classes (sql.js test DB).
-- **Integration** (middle): hc handlers + mw guards via the test harness
-  (`apps/api/http/testHarness.ts`).
-- **Component**: React via `@testing-library/react`.
-- **E2E** (fewest, top): Playwright on one `wrangler dev` worker.
+1. Present the **complete test-case plan** across all layers of the testing
+   pyramid and **wait for the go-ahead**.
+2. Write the tests **RED** first (they must fail before the implementation).
+3. Write the minimal implementation to make them **GREEN**.
+4. Refactor while keeping the suite green.
+5. Only mark a task done when **typecheck + all tests + build + CI are green**.
 
-List concrete per-case descriptions + target counts showing the shape
-**unit ≫ integration/component ≫ E2E**. Push the MAJORITY of coverage down to
-the unit level (pure functions + service classes with the sql.js test DB);
-reserve integration/component for wiring + guard behavior and E2E for the few
-flows only real end-to-end (auth cookie round-trips). Call out honestly which assertions are
-only reachable at a given layer (e.g. a Better Auth cookie round-trip is only
-real in E2E) rather than faking them at a lower layer. Then write the tests red,
-make them green, and keep the whole suite + CI + Preview green before done.
+The testing pyramid layers for this project:
+
+- **Unit** (broad base — most tests): pure functions + service classes with
+  the sql.js test DB (`db/testing.ts`). Zero network, zero Worker.
+- **Integration** (middle): Hono handlers + middleware guards via the test
+  harness (`apps/api/http/testHarness.ts`). Real composed app, stubbed auth.
+- **Component**: React components via `@testing-library/react` + jsdom.
+- **E2E** (fewest, top): Playwright against a real `wrangler dev` Worker.
+
+Shape: **unit ≫ integration ≫ component ≫ E2E**. Push the MAJORITY of
+coverage to unit. Reserve E2E only for flows that genuinely require a real
+browser + auth cookie round-trip.
+
+For each layer list **concrete case descriptions + expected counts**. Call out
+honestly which assertions are only reachable at a given layer. Do not fake
+E2E-only behavior at a lower layer.
+
+Features already shipped are already covered by existing tests. New work must
+add tests at the appropriate layers **before** the feature is considered done.
 
 <!-- tanstack-intent:start -->
 <!-- `npx @tanstack/intent@latest install` will manage guidance between these markers once deps are installed. -->
