@@ -30,36 +30,28 @@ msgstr "— {0}（{1}）"
 msgid "“{0}” added to the catalog."
 msgstr "《{0}》已加入书目。"
 
-#. placeholder {0}: counts.books
-#. placeholder {0}: result.books
-#: routes/_app/admin/import.tsx:204
-#: routes/_app/admin/import.tsx:245
+#. placeholder {0}: c.books
+#: routes/_app/admin/import.tsx:48
 msgid "{0, plural, one {# book} other {# books}}"
 msgstr "{0, plural, other {# 本图书}}"
 
-#. placeholder {0}: counts.orphanLoans.noMember + counts.orphanLoans.noBook
-#: routes/_app/admin/import.tsx:224
+#. placeholder {0}: c.orphanLoans.noMember + c.orphanLoans.noBook
+#: routes/_app/admin/import.tsx:55
 msgid "{0, plural, one {# loan skipped (unmatched member/book)} other {# loans skipped (unmatched member/book)}}"
 msgstr "{0, plural, other {# 条借阅已跳过（成员/图书未匹配）}}"
 
-#. placeholder {0}: counts.loans
-#. placeholder {0}: result.loans
-#: routes/_app/admin/import.tsx:210
-#: routes/_app/admin/import.tsx:251
+#. placeholder {0}: c.loans
+#: routes/_app/admin/import.tsx:50
 msgid "{0, plural, one {# loan} other {# loans}}"
 msgstr "{0, plural, other {# 条借阅}}"
 
-#. placeholder {0}: counts.members
-#. placeholder {0}: result.members
-#: routes/_app/admin/import.tsx:207
-#: routes/_app/admin/import.tsx:248
+#. placeholder {0}: c.members
+#: routes/_app/admin/import.tsx:49
 msgid "{0, plural, one {# member} other {# members}}"
 msgstr "{0, plural, other {# 位成员}}"
 
-#. placeholder {0}: counts.purchaseRequests
-#. placeholder {0}: result.purchaseRequests
-#: routes/_app/admin/import.tsx:216
-#: routes/_app/admin/import.tsx:257
+#. placeholder {0}: c.purchaseRequests
+#: routes/_app/admin/import.tsx:52
 msgid "{0, plural, one {# purchase request} other {# purchase requests}}"
 msgstr "{0, plural, other {# 条荐购}}"
 
@@ -68,21 +60,10 @@ msgstr "{0, plural, other {# 条荐购}}"
 msgid "{0, plural, one {# reader} other {# readers}}"
 msgstr "{0, plural, other {# 位读者}}"
 
-#. placeholder {0}: counts.reviews
-#. placeholder {0}: result.reviews
-#: routes/_app/admin/import.tsx:213
-#: routes/_app/admin/import.tsx:254
+#. placeholder {0}: c.reviews
+#: routes/_app/admin/import.tsx:51
 msgid "{0, plural, one {# review} other {# reviews}}"
 msgstr "{0, plural, other {# 条评论}}"
-
-#. placeholder {0}: c.books ?? 0
-#. placeholder {1}: c.members ?? 0
-#. placeholder {2}: c.loans ?? 0
-#. placeholder {3}: c.reviews ?? 0
-#. placeholder {4}: c.purchaseRequests ?? 0
-#: routes/_app/admin/import.tsx:298
-msgid "{0} books · {1} members · {2} loans · {3} reviews · {4} requests"
-msgstr "{0} 本图书 · {1} 位成员 · {2} 条借阅 · {3} 条评论 · {4} 条荐购"
 
 #. placeholder {0}: items.length
 #: routes/_app/my-books.tsx:85
@@ -351,6 +332,10 @@ msgstr "申请人在提交申请前必须填写此字段。"
 msgid "Approve"
 msgstr "批准"
 
+#: routes/_app/admin/import.tsx:279
+msgid "Archived:"
+msgstr "已归档:"
+
 #: routes/_app/admin/members.tsx:130
 #: routes/_app/books/index.tsx:137
 msgid "Ascending"
@@ -438,6 +423,10 @@ msgstr "未找到该图书。"
 msgid "Book suggestion"
 msgstr "荐书"
 
+#: routes/_app/admin/import.tsx:256
+msgid "books"
+msgstr "本"
+
 #: routes/_app/admin/books.tsx:31
 #: routes/_app/admin/overview.tsx:65
 #: routes/_app/admin/tenants.$libraryId.tsx:152
@@ -521,7 +510,9 @@ msgstr "问题反馈"
 
 #. placeholder {0}: book.author
 #. placeholder {0}: item.author
+#. placeholder {0}: run.ranByUserName
 #: components/books/BookCard.tsx:59
+#: routes/_app/admin/import.tsx:244
 #: routes/_app/admin/overdue.tsx:112
 #: routes/_app/books/$bookId.tsx:120
 #: routes/_app/my-books.tsx:165
@@ -645,11 +636,11 @@ msgstr "无法删除该图书馆。"
 msgid "Could not enable login."
 msgstr "无法开通登录。"
 
-#: routes/_app/admin/import.tsx:87
+#: routes/_app/admin/import.tsx:118
 msgid "Could not fetch that URL. Paste a 番薯借阅 export link (https://…fanshujieyue.com/….xls)."
 msgstr "无法获取该链接，请粘贴番薯借阅的导出链接（https://…fanshujieyue.com/….xls）。"
 
-#: routes/_app/admin/import.tsx:116
+#: routes/_app/admin/import.tsx:103
 msgid "Could not read this file. Make sure it is a 番薯借阅 Excel export (.xls/.xlsx)."
 msgstr "无法读取该文件，请确认是番薯借阅的 Excel 导出文件（.xls/.xlsx）。"
 
@@ -938,9 +929,9 @@ msgstr "上架时间"
 msgid "Environment"
 msgstr "运行环境"
 
-#: routes/_app/admin/import.tsx:276
-msgid "Every import is recorded with its source and counts."
-msgstr "每次导入都会记录来源和数量。"
+#: routes/_app/admin/import.tsx:226
+msgid "Every import is recorded — who imported, when, from where, and where the file is stored."
+msgstr "每次导入都有记录——谁导入的、何时导入、从哪里导入、文件存在哪里。"
 
 #: routes/_app/route.tsx:137
 #: routes/_app/route.tsx:139
@@ -963,7 +954,7 @@ msgstr "到期日期"
 msgid "Extra fields applicants fill before requesting to join."
 msgstr "申请加入前需要填写的额外字段。"
 
-#: routes/_app/admin/import.tsx:294
+#: routes/_app/admin/import.tsx:249
 msgid "failed"
 msgstr "失败"
 
@@ -977,7 +968,7 @@ msgstr "功能建议"
 msgid "Feedback"
 msgstr "反馈"
 
-#: routes/_app/admin/import.tsx:183
+#: routes/_app/admin/import.tsx:188
 msgid "Fetch"
 msgstr "获取"
 
@@ -1000,6 +991,10 @@ msgstr "字段已移除。"
 msgid "Fields applicants must fill before requesting to join this library."
 msgstr "申请加入本图书馆前，申请人必须填写的字段。"
 
+#: routes/_app/admin/import.tsx:284
+msgid "File not archived (pre-R2 import)"
+msgstr "文件未归档（早期导入）"
+
 #: routes/_app/admin/tenants.index.tsx:80
 #: routes/_app/welcome.tsx:102
 msgid "Give the library a name and the email domains its members use."
@@ -1009,24 +1004,24 @@ msgstr "为图书馆取个名字，并填写成员使用的邮箱域名。"
 msgid "Hidden"
 msgstr "已隐藏"
 
-#: routes/_app/admin/import.tsx:176
+#: routes/_app/admin/import.tsx:182
 msgid "https://…fanshujieyue.com/…/librarydata_….xls"
 msgstr "https://…fanshujieyue.com/…/librarydata_….xls"
 
-#: routes/_app/admin/import.tsx:233
+#: routes/_app/admin/import.tsx:206
 #: routes/_app/nav.tsx:73
 msgid "Import"
 msgstr "导入"
 
-#: routes/_app/admin/import.tsx:134
+#: routes/_app/admin/import.tsx:148
 msgid "Import failed. Please try again."
 msgstr "导入失败，请重试。"
 
-#: routes/_app/admin/import.tsx:143
+#: routes/_app/admin/import.tsx:156
 msgid "Import from 番薯借阅"
 msgstr "从番薯借阅导入"
 
-#: routes/_app/admin/import.tsx:273
+#: routes/_app/admin/import.tsx:224
 msgid "Import history"
 msgstr "导入历史"
 
@@ -1037,15 +1032,15 @@ msgstr "导入番薯数据，或调整搜索/筛选条件。"
 #. placeholder {0}: res.books
 #. placeholder {1}: res.members
 #. placeholder {2}: res.loans
-#: routes/_app/admin/import.tsx:130
+#: routes/_app/admin/import.tsx:144
 msgid "Imported {0} books, {1} members, {2} loans."
 msgstr "已导入 {0} 本图书、{1} 位成员、{2} 条借阅。"
 
-#: routes/_app/admin/import.tsx:241
+#: routes/_app/admin/import.tsx:213
 msgid "Imported successfully"
 msgstr "导入成功"
 
-#: routes/_app/admin/import.tsx:233
+#: routes/_app/admin/import.tsx:206
 msgid "Importing…"
 msgstr "导入中…"
 
@@ -1175,6 +1170,10 @@ msgstr "加载中"
 msgid "Loading…"
 msgstr "加载中…"
 
+#: routes/_app/admin/import.tsx:258
+msgid "loans"
+msgstr "条借阅"
+
 #: routes/_app/admin/members.$memberId.tsx:117
 msgid "Login account"
 msgstr "登录账号"
@@ -1231,6 +1230,10 @@ msgstr "会员起始"
 #: routes/_app/admin/members.$memberId.tsx:110
 msgid "Member until"
 msgstr "会员到期"
+
+#: routes/_app/admin/import.tsx:257
+msgid "members"
+msgstr "位成员"
 
 #: routes/_app/nav.tsx:59
 msgid "Members"
@@ -1376,7 +1379,7 @@ msgstr "代 {0}"
 msgid "OpenBookCorner"
 msgstr "开卷角"
 
-#: routes/_app/admin/import.tsx:168
+#: routes/_app/admin/import.tsx:176
 msgid "or paste a link"
 msgstr "或粘贴链接"
 
@@ -1455,8 +1458,8 @@ msgstr "请填写所有必填字段。{0}"
 msgid "Please fill in the required information."
 msgstr "请填写所需信息。"
 
-#. placeholder {0}: fileName ?? ''
-#: routes/_app/admin/import.tsx:200
+#. placeholder {0}: pendingFile?.name ?? pendingUrl
+#: routes/_app/admin/import.tsx:202
 msgid "Preview — {0}"
 msgstr "预览 — {0}"
 
@@ -1498,11 +1501,6 @@ msgstr "出版年份"
 #: routes/_app/books/$bookId.tsx:126
 msgid "Publisher"
 msgstr "出版社"
-
-#. placeholder {0}: run.r2Key
-#: routes/_app/admin/import.tsx:310
-msgid "R2: {0}"
-msgstr "R2：{0}"
 
 #: routes/_app/admin/system.tsx:26
 msgid "Read-only system information (super admin)."
@@ -1803,10 +1801,9 @@ msgstr "出了点问题，请重试。"
 msgid "Sort"
 msgstr "排序"
 
-#. placeholder {0}: run.sourceUrl ?? run.fileName ?? ''
-#: routes/_app/admin/import.tsx:305
-msgid "Source: {0}"
-msgstr "来源：{0}"
+#: routes/_app/admin/import.tsx:264
+msgid "Source:"
+msgstr "来源:"
 
 #: routes/_app/welcome.tsx:67
 msgid "Start a new library and become its admin."
@@ -1842,7 +1839,7 @@ msgstr "提交申请"
 msgid "Submitting…"
 msgstr "提交中…"
 
-#: routes/_app/admin/import.tsx:294
+#: routes/_app/admin/import.tsx:249
 msgid "success"
 msgstr "成功"
 
@@ -2015,13 +2012,13 @@ msgstr "类型"
 msgid "Updated tenant"
 msgstr "更新租户"
 
-#: routes/_app/admin/import.tsx:148
+#: routes/_app/admin/import.tsx:161
 msgid "Upload export"
 msgstr "上传导出文件"
 
-#: routes/_app/admin/import.tsx:151
-msgid "Upload the 番薯借阅 Excel export (.xls). Books, members, loans, reviews and purchase requests are imported into this library. Re-importing updates existing rows (safe to run again)."
-msgstr "上传番薯借阅的 Excel 导出文件（.xls）。图书、成员、借阅、评论和荐购记录都会导入到本图书馆。重复导入会更新已有记录（可安全重复运行）。"
+#: routes/_app/admin/import.tsx:163
+msgid "Upload the 番薯借阅 Excel export (.xls). Books, members, loans, reviews and purchase requests are imported into this library. Re-importing updates existing rows safely. The original file is archived to R2 for auditability."
+msgstr "上传番薯借阅 Excel 导出文件（.xls）。书籍、成员、借阅记录、评论和荐购将导入本图书馆。重复导入会安全更新已有数据。原始文件将归档到 R2 以备审查。"
 
 #: routes/_app/admin/feedback.tsx:41
 msgid "User Feedback"
@@ -2090,7 +2087,7 @@ msgstr "读者提交反馈后，会显示在这里。"
 msgid "Words"
 msgstr "字数"
 
-#: routes/_app/admin/import.tsx:188
+#: routes/_app/admin/import.tsx:193
 msgid "Working…"
 msgstr "处理中…"
 

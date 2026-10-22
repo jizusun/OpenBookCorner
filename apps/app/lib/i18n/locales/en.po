@@ -30,36 +30,28 @@ msgstr "— {0} ({1})"
 msgid "“{0}” added to the catalog."
 msgstr "“{0}” added to the catalog."
 
-#. placeholder {0}: counts.books
-#. placeholder {0}: result.books
-#: routes/_app/admin/import.tsx:204
-#: routes/_app/admin/import.tsx:245
+#. placeholder {0}: c.books
+#: routes/_app/admin/import.tsx:48
 msgid "{0, plural, one {# book} other {# books}}"
 msgstr "{0, plural, one {# book} other {# books}}"
 
-#. placeholder {0}: counts.orphanLoans.noMember + counts.orphanLoans.noBook
-#: routes/_app/admin/import.tsx:224
+#. placeholder {0}: c.orphanLoans.noMember + c.orphanLoans.noBook
+#: routes/_app/admin/import.tsx:55
 msgid "{0, plural, one {# loan skipped (unmatched member/book)} other {# loans skipped (unmatched member/book)}}"
 msgstr "{0, plural, one {# loan skipped (unmatched member/book)} other {# loans skipped (unmatched member/book)}}"
 
-#. placeholder {0}: counts.loans
-#. placeholder {0}: result.loans
-#: routes/_app/admin/import.tsx:210
-#: routes/_app/admin/import.tsx:251
+#. placeholder {0}: c.loans
+#: routes/_app/admin/import.tsx:50
 msgid "{0, plural, one {# loan} other {# loans}}"
 msgstr "{0, plural, one {# loan} other {# loans}}"
 
-#. placeholder {0}: counts.members
-#. placeholder {0}: result.members
-#: routes/_app/admin/import.tsx:207
-#: routes/_app/admin/import.tsx:248
+#. placeholder {0}: c.members
+#: routes/_app/admin/import.tsx:49
 msgid "{0, plural, one {# member} other {# members}}"
 msgstr "{0, plural, one {# member} other {# members}}"
 
-#. placeholder {0}: counts.purchaseRequests
-#. placeholder {0}: result.purchaseRequests
-#: routes/_app/admin/import.tsx:216
-#: routes/_app/admin/import.tsx:257
+#. placeholder {0}: c.purchaseRequests
+#: routes/_app/admin/import.tsx:52
 msgid "{0, plural, one {# purchase request} other {# purchase requests}}"
 msgstr "{0, plural, one {# purchase request} other {# purchase requests}}"
 
@@ -68,21 +60,10 @@ msgstr "{0, plural, one {# purchase request} other {# purchase requests}}"
 msgid "{0, plural, one {# reader} other {# readers}}"
 msgstr "{0, plural, one {# reader} other {# readers}}"
 
-#. placeholder {0}: counts.reviews
-#. placeholder {0}: result.reviews
-#: routes/_app/admin/import.tsx:213
-#: routes/_app/admin/import.tsx:254
+#. placeholder {0}: c.reviews
+#: routes/_app/admin/import.tsx:51
 msgid "{0, plural, one {# review} other {# reviews}}"
 msgstr "{0, plural, one {# review} other {# reviews}}"
-
-#. placeholder {0}: c.books ?? 0
-#. placeholder {1}: c.members ?? 0
-#. placeholder {2}: c.loans ?? 0
-#. placeholder {3}: c.reviews ?? 0
-#. placeholder {4}: c.purchaseRequests ?? 0
-#: routes/_app/admin/import.tsx:298
-msgid "{0} books · {1} members · {2} loans · {3} reviews · {4} requests"
-msgstr "{0} books · {1} members · {2} loans · {3} reviews · {4} requests"
 
 #. placeholder {0}: items.length
 #: routes/_app/my-books.tsx:85
@@ -351,6 +332,10 @@ msgstr "Applicants must fill this field before submitting a request."
 msgid "Approve"
 msgstr "Approve"
 
+#: routes/_app/admin/import.tsx:279
+msgid "Archived:"
+msgstr "Archived:"
+
 #: routes/_app/admin/members.tsx:130
 #: routes/_app/books/index.tsx:137
 msgid "Ascending"
@@ -438,6 +423,10 @@ msgstr "Book not found."
 msgid "Book suggestion"
 msgstr "Book suggestion"
 
+#: routes/_app/admin/import.tsx:256
+msgid "books"
+msgstr "books"
+
 #: routes/_app/admin/books.tsx:31
 #: routes/_app/admin/overview.tsx:65
 #: routes/_app/admin/tenants.$libraryId.tsx:152
@@ -521,7 +510,9 @@ msgstr "Bug report"
 
 #. placeholder {0}: book.author
 #. placeholder {0}: item.author
+#. placeholder {0}: run.ranByUserName
 #: components/books/BookCard.tsx:59
+#: routes/_app/admin/import.tsx:244
 #: routes/_app/admin/overdue.tsx:112
 #: routes/_app/books/$bookId.tsx:120
 #: routes/_app/my-books.tsx:165
@@ -645,11 +636,11 @@ msgstr "Could not delete the library."
 msgid "Could not enable login."
 msgstr "Could not enable login."
 
-#: routes/_app/admin/import.tsx:87
+#: routes/_app/admin/import.tsx:118
 msgid "Could not fetch that URL. Paste a 番薯借阅 export link (https://…fanshujieyue.com/….xls)."
 msgstr "Could not fetch that URL. Paste a 番薯借阅 export link (https://…fanshujieyue.com/….xls)."
 
-#: routes/_app/admin/import.tsx:116
+#: routes/_app/admin/import.tsx:103
 msgid "Could not read this file. Make sure it is a 番薯借阅 Excel export (.xls/.xlsx)."
 msgstr "Could not read this file. Make sure it is a 番薯借阅 Excel export (.xls/.xlsx)."
 
@@ -938,9 +929,9 @@ msgstr "Entered"
 msgid "Environment"
 msgstr "Environment"
 
-#: routes/_app/admin/import.tsx:276
-msgid "Every import is recorded with its source and counts."
-msgstr "Every import is recorded with its source and counts."
+#: routes/_app/admin/import.tsx:226
+msgid "Every import is recorded — who imported, when, from where, and where the file is stored."
+msgstr "Every import is recorded — who imported, when, from where, and where the file is stored."
 
 #: routes/_app/route.tsx:137
 #: routes/_app/route.tsx:139
@@ -963,7 +954,7 @@ msgstr "Expiry date"
 msgid "Extra fields applicants fill before requesting to join."
 msgstr "Extra fields applicants fill before requesting to join."
 
-#: routes/_app/admin/import.tsx:294
+#: routes/_app/admin/import.tsx:249
 msgid "failed"
 msgstr "failed"
 
@@ -977,7 +968,7 @@ msgstr "Feature request"
 msgid "Feedback"
 msgstr "Feedback"
 
-#: routes/_app/admin/import.tsx:183
+#: routes/_app/admin/import.tsx:188
 msgid "Fetch"
 msgstr "Fetch"
 
@@ -1000,6 +991,10 @@ msgstr "Field removed."
 msgid "Fields applicants must fill before requesting to join this library."
 msgstr "Fields applicants must fill before requesting to join this library."
 
+#: routes/_app/admin/import.tsx:284
+msgid "File not archived (pre-R2 import)"
+msgstr "File not archived (pre-R2 import)"
+
 #: routes/_app/admin/tenants.index.tsx:80
 #: routes/_app/welcome.tsx:102
 msgid "Give the library a name and the email domains its members use."
@@ -1009,24 +1004,24 @@ msgstr "Give the library a name and the email domains its members use."
 msgid "Hidden"
 msgstr "Hidden"
 
-#: routes/_app/admin/import.tsx:176
+#: routes/_app/admin/import.tsx:182
 msgid "https://…fanshujieyue.com/…/librarydata_….xls"
 msgstr "https://…fanshujieyue.com/…/librarydata_….xls"
 
-#: routes/_app/admin/import.tsx:233
+#: routes/_app/admin/import.tsx:206
 #: routes/_app/nav.tsx:73
 msgid "Import"
 msgstr "Import"
 
-#: routes/_app/admin/import.tsx:134
+#: routes/_app/admin/import.tsx:148
 msgid "Import failed. Please try again."
 msgstr "Import failed. Please try again."
 
-#: routes/_app/admin/import.tsx:143
+#: routes/_app/admin/import.tsx:156
 msgid "Import from 番薯借阅"
 msgstr "Import from 番薯借阅"
 
-#: routes/_app/admin/import.tsx:273
+#: routes/_app/admin/import.tsx:224
 msgid "Import history"
 msgstr "Import history"
 
@@ -1037,15 +1032,15 @@ msgstr "Import 番薯 data or adjust the search/filters."
 #. placeholder {0}: res.books
 #. placeholder {1}: res.members
 #. placeholder {2}: res.loans
-#: routes/_app/admin/import.tsx:130
+#: routes/_app/admin/import.tsx:144
 msgid "Imported {0} books, {1} members, {2} loans."
 msgstr "Imported {0} books, {1} members, {2} loans."
 
-#: routes/_app/admin/import.tsx:241
+#: routes/_app/admin/import.tsx:213
 msgid "Imported successfully"
 msgstr "Imported successfully"
 
-#: routes/_app/admin/import.tsx:233
+#: routes/_app/admin/import.tsx:206
 msgid "Importing…"
 msgstr "Importing…"
 
@@ -1175,6 +1170,10 @@ msgstr "Loading"
 msgid "Loading…"
 msgstr "Loading…"
 
+#: routes/_app/admin/import.tsx:258
+msgid "loans"
+msgstr "loans"
+
 #: routes/_app/admin/members.$memberId.tsx:117
 msgid "Login account"
 msgstr "Login account"
@@ -1231,6 +1230,10 @@ msgstr "Member since"
 #: routes/_app/admin/members.$memberId.tsx:110
 msgid "Member until"
 msgstr "Member until"
+
+#: routes/_app/admin/import.tsx:257
+msgid "members"
+msgstr "members"
 
 #: routes/_app/nav.tsx:59
 msgid "Members"
@@ -1376,7 +1379,7 @@ msgstr "on behalf of {0}"
 msgid "OpenBookCorner"
 msgstr "OpenBookCorner"
 
-#: routes/_app/admin/import.tsx:168
+#: routes/_app/admin/import.tsx:176
 msgid "or paste a link"
 msgstr "or paste a link"
 
@@ -1455,8 +1458,8 @@ msgstr "Please fill all required fields. {0}"
 msgid "Please fill in the required information."
 msgstr "Please fill in the required information."
 
-#. placeholder {0}: fileName ?? ''
-#: routes/_app/admin/import.tsx:200
+#. placeholder {0}: pendingFile?.name ?? pendingUrl
+#: routes/_app/admin/import.tsx:202
 msgid "Preview — {0}"
 msgstr "Preview — {0}"
 
@@ -1498,11 +1501,6 @@ msgstr "Published year"
 #: routes/_app/books/$bookId.tsx:126
 msgid "Publisher"
 msgstr "Publisher"
-
-#. placeholder {0}: run.r2Key
-#: routes/_app/admin/import.tsx:310
-msgid "R2: {0}"
-msgstr "R2: {0}"
 
 #: routes/_app/admin/system.tsx:26
 msgid "Read-only system information (super admin)."
@@ -1803,10 +1801,9 @@ msgstr "Something went wrong. Please try again."
 msgid "Sort"
 msgstr "Sort"
 
-#. placeholder {0}: run.sourceUrl ?? run.fileName ?? ''
-#: routes/_app/admin/import.tsx:305
-msgid "Source: {0}"
-msgstr "Source: {0}"
+#: routes/_app/admin/import.tsx:264
+msgid "Source:"
+msgstr "Source:"
 
 #: routes/_app/welcome.tsx:67
 msgid "Start a new library and become its admin."
@@ -1842,7 +1839,7 @@ msgstr "Submit request"
 msgid "Submitting…"
 msgstr "Submitting…"
 
-#: routes/_app/admin/import.tsx:294
+#: routes/_app/admin/import.tsx:249
 msgid "success"
 msgstr "success"
 
@@ -2015,13 +2012,13 @@ msgstr "Type"
 msgid "Updated tenant"
 msgstr "Updated tenant"
 
-#: routes/_app/admin/import.tsx:148
+#: routes/_app/admin/import.tsx:161
 msgid "Upload export"
 msgstr "Upload export"
 
-#: routes/_app/admin/import.tsx:151
-msgid "Upload the 番薯借阅 Excel export (.xls). Books, members, loans, reviews and purchase requests are imported into this library. Re-importing updates existing rows (safe to run again)."
-msgstr "Upload the 番薯借阅 Excel export (.xls). Books, members, loans, reviews and purchase requests are imported into this library. Re-importing updates existing rows (safe to run again)."
+#: routes/_app/admin/import.tsx:163
+msgid "Upload the 番薯借阅 Excel export (.xls). Books, members, loans, reviews and purchase requests are imported into this library. Re-importing updates existing rows safely. The original file is archived to R2 for auditability."
+msgstr "Upload the 番薯借阅 Excel export (.xls). Books, members, loans, reviews and purchase requests are imported into this library. Re-importing updates existing rows safely. The original file is archived to R2 for auditability."
 
 #: routes/_app/admin/feedback.tsx:41
 msgid "User Feedback"
@@ -2090,7 +2087,7 @@ msgstr "When readers send feedback, it will show up here."
 msgid "Words"
 msgstr "Words"
 
-#: routes/_app/admin/import.tsx:188
+#: routes/_app/admin/import.tsx:193
 msgid "Working…"
 msgstr "Working…"
 
