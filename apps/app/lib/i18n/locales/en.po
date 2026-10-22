@@ -156,6 +156,7 @@ msgstr "Account"
 msgid "Action"
 msgstr "Action"
 
+#: routes/_app/admin/library-users.tsx:102
 #: routes/_app/admin/members.tsx:203
 #: routes/_app/admin/tenants.$libraryId.tsx:203
 #: routes/_app/admin/UsersTable.tsx:49
@@ -239,14 +240,15 @@ msgstr "Adding…"
 msgid "Address"
 msgstr "Address"
 
-#: routes/_app/admin/library-users.tsx:79
+#: routes/_app/admin/library-users.tsx:96
+#: routes/_app/admin/library-users.tsx:169
 #: routes/_app/admin/members.$memberId.tsx:86
 #: routes/_app/admin/members.tsx:140
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:216
 #: routes/_app/admin/UsersTable.tsx:31
-#: routes/_app/LibrarySwitcher.tsx:28
-#: routes/_app/LibrarySwitcher.tsx:87
+#: routes/_app/LibrarySwitcher.tsx:39
+#: routes/_app/LibrarySwitcher.tsx:100
 #: routes/_app/profile.tsx:24
 #: routes/_app/route.tsx:32
 msgid "Admin"
@@ -336,6 +338,11 @@ msgstr "Approve"
 #: routes/_app/admin/import.tsx:279
 msgid "Archived:"
 msgstr "Archived:"
+
+#. placeholder {0}: pendingDelete?.name
+#: routes/_app/admin/library-users.tsx:197
+msgid "Are you sure you want to remove <0>{0}</0> from this library? They will lose access immediately. This action cannot be undone."
+msgstr "Are you sure you want to remove <0>{0}</0> from this library? They will lose access immediately. This action cannot be undone."
 
 #: routes/_app/admin/members.tsx:130
 #: routes/_app/books/index.tsx:137
@@ -532,11 +539,13 @@ msgstr "Camera permission denied. Allow camera access or enter the ISBN manually
 #: routes/_app/admin/AddUserDialog.tsx:52
 #: routes/_app/admin/invites.tsx:111
 #: routes/_app/admin/join-form.tsx:107
+#: routes/_app/admin/library-users.tsx:219
 #: routes/_app/admin/settings.tsx:214
 #: routes/_app/admin/tenants.$libraryId.tsx:139
 #: routes/_app/admin/tenants.index.tsx:84
 #: routes/_app/books/$bookId.edit.tsx:144
 #: routes/_app/discover.tsx:77
+#: routes/_app/LibrarySwitcher.tsx:162
 #: routes/_app/welcome.tsx:106
 msgid "Cancel"
 msgstr "Cancel"
@@ -641,11 +650,15 @@ msgstr "Could not enable login."
 msgid "Could not fetch that URL. Paste a 番薯借阅 export link (https://…fanshujieyue.com/….xls)."
 msgstr "Could not fetch that URL. Paste a 番薯借阅 export link (https://…fanshujieyue.com/….xls)."
 
+#: routes/join.$token.tsx:55
+msgid "Could not join. Please try again."
+msgstr "Could not join. Please try again."
+
 #: routes/_app/admin/import.tsx:103
 msgid "Could not read this file. Make sure it is a 番薯借阅 Excel export (.xls/.xlsx)."
 msgstr "Could not read this file. Make sure it is a 番薯借阅 Excel export (.xls/.xlsx)."
 
-#: routes/_app/admin/library-users.tsx:36
+#: routes/_app/admin/library-users.tsx:66
 msgid "Could not remove user."
 msgstr "Could not remove user."
 
@@ -704,7 +717,7 @@ msgstr "Create a link to share with prospective members."
 msgid "Create account"
 msgstr "Create account"
 
-#: routes/join.$token.tsx:87
+#: routes/join.$token.tsx:159
 msgid "Create account to join"
 msgstr "Create account to join"
 
@@ -730,7 +743,7 @@ msgstr "Create library"
 msgid "Create link"
 msgstr "Create link"
 
-#: routes/_app/LibrarySwitcher.tsx:133
+#: routes/_app/LibrarySwitcher.tsx:144
 msgid "Create or join a library"
 msgstr "Create or join a library"
 
@@ -874,6 +887,7 @@ msgid "Edit Book"
 msgstr "Edit Book"
 
 #: routes/_app/admin/AddUserDialog.tsx:63
+#: routes/_app/admin/library-users.tsx:85
 #: routes/_app/admin/members.$memberId.tsx:97
 #: routes/_app/admin/tenants.$libraryId.tsx:200
 #: routes/_app/admin/UsersTable.tsx:44
@@ -1060,7 +1074,7 @@ msgstr "Inactive"
 msgid "Install app"
 msgstr "Install app"
 
-#: routes/join.$token.tsx:45
+#: routes/join.$token.tsx:79
 msgid "Invalid or expired invite"
 msgstr "Invalid or expired invite"
 
@@ -1081,13 +1095,13 @@ msgstr "Invite link revoked."
 msgid "Invite links"
 msgstr "Invite links"
 
-#: routes/_app/admin/library-users.tsx:64
+#: routes/_app/admin/library-users.tsx:179
 msgid "Invite people using an invite link. They'll appear here after joining."
 msgstr "Invite people using an invite link. They'll appear here after joining."
 
-#: routes/_app/admin/library-users.tsx:54
-msgid "Invite user"
-msgstr "Invite user"
+#: routes/_app/admin/library-users.tsx:146
+msgid "Invite User"
+msgstr "Invite User"
 
 #: routes/_app/admin/BooksTable.tsx:26
 #: routes/_app/books/$bookId.edit.tsx:109
@@ -1114,7 +1128,7 @@ msgstr "Join a library"
 msgid "Join form"
 msgstr "Join form"
 
-#: routes/join.$token.tsx:75
+#: routes/join.$token.tsx:142
 msgid "Join library"
 msgstr "Join library"
 
@@ -1131,18 +1145,26 @@ msgstr "Joined"
 msgid "Joined date"
 msgstr "Joined date"
 
-#: routes/join.$token.tsx:72
+#: routes/join.$token.tsx:139
 msgid "Joining…"
 msgstr "Joining…"
 
-#. placeholder {0}: lib.name
-#: routes/_app/LibrarySwitcher.tsx:118
-msgid "Leave {0}? You will lose access."
-msgstr "Leave {0}? You will lose access."
+#. placeholder {0}: pendingLeave?.name ?? ''
+#: routes/_app/LibrarySwitcher.tsx:154
+msgid "Leave {0}?"
+msgstr "Leave {0}?"
 
-#: routes/_app/LibrarySwitcher.tsx:114
+#: routes/_app/LibrarySwitcher.tsx:169
+msgid "Leave library"
+msgstr "Leave library"
+
+#: routes/_app/LibrarySwitcher.tsx:127
 msgid "Leave this library"
 msgstr "Leave this library"
+
+#: routes/_app/LibrarySwitcher.tsx:169
+msgid "Leaving…"
+msgstr "Leaving…"
 
 #: routes/_app/admin/settings.tsx:130
 #: routes/_app/nav.tsx:49
@@ -1188,7 +1210,7 @@ msgstr "Loading"
 #: routes/_app/admin/members.tsx:162
 #: routes/_app/admin/settings.tsx:121
 #: routes/_app/books/$bookId.edit.tsx:89
-#: routes/join.$token.tsx:39
+#: routes/join.$token.tsx:73
 msgid "Loading…"
 msgstr "Loading…"
 
@@ -1223,6 +1245,10 @@ msgstr "Lookup failed. Enter the title and author manually."
 #: routes/_app/admin/tenants.index.tsx:56
 msgid "Manage libraries across the system (super admin)."
 msgstr "Manage libraries across the system (super admin)."
+
+#: routes/_app/admin/library-users.tsx:137
+msgid "Manage your library members and their roles here."
+msgstr "Manage your library members and their roles here."
 
 #: routes/_app/admin/settings.tsx:147
 msgid "Max books per reader"
@@ -1261,10 +1287,6 @@ msgstr "members"
 msgid "Members"
 msgstr "Members"
 
-#: routes/_app/admin/library-users.tsx:45
-msgid "Members with a login account in this library."
-msgstr "Members with a login account in this library."
-
 #: routes/_app/nav.tsx:68
 msgid "More"
 msgstr "More"
@@ -1275,6 +1297,7 @@ msgid "My Books"
 msgstr "My Books"
 
 #: routes/_app/admin/AddUserDialog.tsx:76
+#: routes/_app/admin/library-users.tsx:78
 #: routes/_app/admin/members.tsx:118
 #: routes/_app/admin/members.tsx:180
 #: routes/_app/admin/tenants.$libraryId.tsx:199
@@ -1384,7 +1407,7 @@ msgstr "No users"
 msgid "No users found"
 msgstr "No users found"
 
-#: routes/_app/admin/library-users.tsx:63
+#: routes/_app/admin/library-users.tsx:178
 msgid "No users yet"
 msgstr "No users yet"
 
@@ -1404,6 +1427,10 @@ msgstr "Notifications"
 #: routes/_app/admin/AuditTable.tsx:42
 msgid "on behalf of {0}"
 msgstr "on behalf of {0}"
+
+#: routes/_app/admin/library-users.tsx:112
+msgid "Open menu"
+msgstr "Open menu"
 
 #: routes/_app/AppSidebar.tsx:60
 msgid "OpenBookCorner"
@@ -1481,8 +1508,18 @@ msgstr "Plan"
 
 #. placeholder {0}: msgs ?? ''
 #: routes/_app/discover.tsx:49
+#: routes/join.$token.tsx:53
 msgid "Please fill all required fields. {0}"
 msgstr "Please fill all required fields. {0}"
+
+#. placeholder {0}: missing.map((f) => f.label).join(', ')
+#: routes/join.$token.tsx:65
+msgid "Please fill in all required fields: {0}"
+msgstr "Please fill in all required fields: {0}"
+
+#: routes/join.$token.tsx:106
+msgid "Please fill in the required information to join."
+msgstr "Please fill in the required information to join."
 
 #: routes/_app/discover.tsx:72
 msgid "Please fill in the required information."
@@ -1536,14 +1573,15 @@ msgstr "Publisher"
 msgid "Read-only system information (super admin)."
 msgstr "Read-only system information (super admin)."
 
-#: routes/_app/admin/library-users.tsx:79
+#: routes/_app/admin/library-users.tsx:96
+#: routes/_app/admin/library-users.tsx:170
 #: routes/_app/admin/members.$memberId.tsx:86
 #: routes/_app/admin/members.tsx:141
 #: routes/_app/admin/members.tsx:226
 #: routes/_app/admin/tenants.$libraryId.tsx:217
 #: routes/_app/admin/UsersTable.tsx:32
-#: routes/_app/LibrarySwitcher.tsx:33
-#: routes/_app/LibrarySwitcher.tsx:87
+#: routes/_app/LibrarySwitcher.tsx:44
+#: routes/_app/LibrarySwitcher.tsx:100
 #: routes/_app/nav.tsx:79
 #: routes/_app/profile.tsx:26
 #: routes/_app/route.tsx:34
@@ -1570,9 +1608,18 @@ msgstr "Recent changes in your library."
 msgid "Reject"
 msgstr "Reject"
 
-#: routes/_app/admin/library-users.tsx:87
-msgid "Remove from library"
-msgstr "Remove from library"
+#: routes/_app/admin/library-users.tsx:121
+#: routes/_app/admin/library-users.tsx:227
+msgid "Remove"
+msgstr "Remove"
+
+#: routes/_app/admin/library-users.tsx:192
+msgid "Remove User"
+msgstr "Remove User"
+
+#: routes/_app/admin/library-users.tsx:227
+msgid "Removing…"
+msgstr "Removing…"
 
 #: routes/_app/admin/join-requests.tsx:30
 msgid "Request approved."
@@ -1627,6 +1674,8 @@ msgstr "Returning…"
 msgid "Revoked"
 msgstr "Revoked"
 
+#: routes/_app/admin/library-users.tsx:93
+#: routes/_app/admin/library-users.tsx:166
 #: routes/_app/admin/members.tsx:183
 #: routes/_app/admin/tenants.$libraryId.tsx:201
 #: routes/_app/admin/users.tsx:66
@@ -1739,6 +1788,10 @@ msgstr "Search tenants"
 msgid "Search users"
 msgstr "Search users"
 
+#: routes/_app/admin/library-users.tsx:161
+msgid "Search users…"
+msgstr "Search users…"
+
 #: components/FeedbackButton.tsx:89
 msgid "Send"
 msgstr "Send"
@@ -1800,7 +1853,7 @@ msgstr "Sign in"
 msgid "Sign in as them"
 msgstr "Sign in as them"
 
-#: routes/join.$token.tsx:82
+#: routes/join.$token.tsx:154
 msgid "Sign in to join"
 msgstr "Sign in to join"
 
@@ -1865,7 +1918,7 @@ msgid "Student no."
 msgstr "Student no."
 
 #: routes/_app/discover.tsx:79
-#: routes/join.$token.tsx:74
+#: routes/join.$token.tsx:141
 msgid "Submit request"
 msgstr "Submit request"
 
@@ -1992,11 +2045,15 @@ msgstr "This book is currently borrowed by someone else."
 msgid "This book is not in your library’s catalog yet. Ask a librarian to add it."
 msgstr "This book is not in your library’s catalog yet. Ask a librarian to add it."
 
+#: routes/join.$token.tsx:124
+msgid "This email will be verified."
+msgstr "This email will be verified."
+
 #: routes/_app/discover.tsx:101
 msgid "This email will need to be verified."
 msgstr "This email will need to be verified."
 
-#: routes/join.$token.tsx:46
+#: routes/join.$token.tsx:80
 msgid "This invite link is no longer valid."
 msgstr "This invite link is no longer valid."
 
@@ -2042,6 +2099,10 @@ msgstr "Try adjusting the search or filters."
 msgid "Type"
 msgstr "Type"
 
+#: routes/_app/admin/library-users.tsx:204
+msgid "Type their email to confirm:"
+msgstr "Type their email to confirm:"
+
 #: routes/_app/admin/AuditTable.tsx:23
 msgid "Updated tenant"
 msgstr "Updated tenant"
@@ -2058,11 +2119,14 @@ msgstr "Upload the 番薯借阅 Excel export (.xls). Books, members, loans, revi
 msgid "User Feedback"
 msgstr "User Feedback"
 
-#: routes/_app/admin/library-users.tsx:33
+#: routes/_app/admin/library-users.tsx:135
+msgid "User List"
+msgstr "User List"
+
+#: routes/_app/admin/library-users.tsx:61
 msgid "User removed from this library."
 msgstr "User removed from this library."
 
-#: routes/_app/admin/library-users.tsx:43
 #: routes/_app/admin/overview.tsx:64
 #: routes/_app/admin/tenants.$libraryId.tsx:148
 #: routes/_app/admin/tenants.$libraryId.tsx:184
@@ -2163,11 +2227,15 @@ msgstr "You do not have permission to add books."
 msgid "You have an overdue book. Please return it before borrowing more."
 msgstr "You have an overdue book. Please return it before borrowing more."
 
-#: routes/join.$token.tsx:79
+#: routes/join.$token.tsx:149
 msgid "You need to sign in or create an account first."
 msgstr "You need to sign in or create an account first."
 
-#: routes/join.$token.tsx:65
+#: routes/_app/LibrarySwitcher.tsx:157
+msgid "You will lose access to this library immediately. The admin can invite you back later."
+msgstr "You will lose access to this library immediately. The admin can invite you back later."
+
+#: routes/join.$token.tsx:96
 msgid "You'll be added immediately."
 msgstr "You'll be added immediately."
 
@@ -2175,7 +2243,7 @@ msgstr "You'll be added immediately."
 msgid "You're not part of any library yet. Create one, or join an existing one."
 msgstr "You're not part of any library yet. Create one, or join an existing one."
 
-#: routes/join.$token.tsx:55
+#: routes/join.$token.tsx:90
 msgid "You've been invited to join"
 msgstr "You've been invited to join"
 
@@ -2187,10 +2255,10 @@ msgstr "You've reached your borrowing limit. Return a book before borrowing anot
 msgid "Your feedback"
 msgstr "Your feedback"
 
-#: routes/_app/LibrarySwitcher.tsx:96
+#: routes/_app/LibrarySwitcher.tsx:109
 msgid "Your libraries"
 msgstr "Your libraries"
 
-#: routes/join.$token.tsx:61
+#: routes/join.$token.tsx:95
 msgid "Your request will need approval from the library admin."
 msgstr "Your request will need approval from the library admin."
