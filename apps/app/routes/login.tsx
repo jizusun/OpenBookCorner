@@ -121,7 +121,11 @@ type LoginValues = z.infer<typeof loginSchema>
  */
 export function LoginPage({ slug }: { slug?: string } = {}) {
   const router = useRouter()
-  const { redirect } = Route.useSearch()
+  // Read redirect from URL search params directly — Route.useSearch() only works
+  // when rendered from /login; this component is also used from /t/:slug/login.
+  const redirect = typeof window !== 'undefined'
+    ? new URLSearchParams(window.location.search).get('redirect') ?? undefined
+    : undefined
   const { t } = useLingui()
   const [branding, setBranding] = useState<TenantBranding | null>(null)
   const [demoVisible, setDemoVisible] = useState(false)
