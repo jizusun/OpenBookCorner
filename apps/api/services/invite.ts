@@ -1,6 +1,6 @@
 import { and, eq, sql } from 'drizzle-orm'
 
-import { invite, libraries, type Database, type Invite } from '@obc/db'
+import { invite, libraries, user, type Database, type Invite } from '@obc/db'
 import { MembershipService } from './membership'
 
 export interface InviteRow {
@@ -80,25 +80,53 @@ export class InviteService {
     const resolved = await this.resolve(token)
     if (!resolved) return { error: 'INVITE_INVALID' }
 
-    // Increment used count (reserve the slot atomically).
+    // Server-side join-form validation before consuming the slot.
+    const { MembershipService, validateJoinAnswers } = await import('./membership')
+    const svc = new MembershipService(this.db)
+    const fields = await svc.joinFields(resolved.libraryId)
+    if (fields.length > 0) {
+      const errors = validateJoinAnswers(fields, answers ?? {}, [])
+      if (errors.length > 0) return { error: 'VALIDATION_FAILED' }
+    }
+
+    // Do NOT increment the slot before we know the action will succeed (prevents
+    // exhausting maxUses on already-member or ALREADY_MEMBER errors).
+    const { JoinRequestService } = await import('./join-request')
+
+    if (!resolved.requiresApproval) {
+      // Check already-member to avoid demoting an existing admin.
+      const existing = await svc.activeMembership(userId, resolved.libraryId)
+      if (existing) return { error: 'ALREADY_MEMBER' }
+
+      // Consume the slot only now (after all pre-flight checks).
+      await this.db
+        .update(invite)
+        .set({ usedCount: sql`${invite.usedCount} + 1` })
+        .where(eq(invite.token, token))
+
+      // Auto-join: create an active membership + set as active library.
+      await svc.upsertActive(userId, resolved.libraryId, resolved.role as 'library_admin' | 'library_reader', answers)
+      await this.db.update(user).set({ activeLibraryId: resolved.libraryId }).where(eq(user.id, userId))
+      return { memberId: resolved.libraryId }
+    }
+
+    // Consume the slot for approval-required path too.
     await this.db
       .update(invite)
       .set({ usedCount: sql`${invite.usedCount} + 1` })
       .where(eq(invite.token, token))
 
-    const { JoinRequestService } = await import('./join-request')
-
-    if (!resolved.requiresApproval) {
-      // Auto-join: create an active membership directly.
-      const svc = new MembershipService(this.db)
-      await svc.upsertActive(userId, resolved.libraryId, resolved.role as 'library_admin' | 'library_reader', answers)
-      return { memberId: resolved.libraryId }
-    }
-
     // Create a pending join request tagged with 'invite'.
     const jrSvc = new JoinRequestService(this.db)
     const res = await jrSvc.submit(userId, resolved.libraryId, 'invite', answers)
-    if ('error' in res) return { error: res.error }
+    if ('error' in res) {
+      // Restore the slot if submission failed.
+      await this.db
+        .update(invite)
+        .set({ usedCount: sql`${invite.usedCount} - 1` })
+        .where(eq(invite.token, token))
+      return { error: res.error }
+    }
     return { requestId: res.id }
   }
 

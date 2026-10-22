@@ -11,7 +11,8 @@ import { MembershipService, validateJoinAnswers } from '../services/membership'
 const submitBody = z.object({
   libraryId: z.string().min(1),
   answers: z.record(z.string()).optional(),
-  verifiedEmails: z.array(z.string()).optional(),
+  // verifiedEmails intentionally omitted — client-provided email ownership
+  // claims are untrusted. Server-side OTP verification is Phase 2.
 })
 const decideBody = z.object({ requestId: z.string().min(1) })
 const fieldBody = z.object({
@@ -39,11 +40,11 @@ const userApp = new Hono<{ Variables: AuthedVars }>()
     c.json(await new JoinFieldService(c.get('db')).list(c.req.param('libraryId'))),
   )
   .post('/request', zValidator('json', submitBody), async (c) => {
-    const { libraryId, answers, verifiedEmails } = c.req.valid('json')
+    const { libraryId, answers } = c.req.valid('json')
     const svc = new JoinRequestService(c.get('db'))
     const fields = await new MembershipService(c.get('db')).joinFields(libraryId)
     if (fields.length > 0) {
-      const errors = validateJoinAnswers(fields, answers ?? {}, verifiedEmails ?? [])
+      const errors = validateJoinAnswers(fields, answers ?? {}, []) // verifiedEmails: [] — OTP Phase 2
       if (errors.length > 0) return c.json({ error: 'VALIDATION_FAILED', fields: errors }, 422)
     }
     const res = await svc.submit(c.get('user').id, libraryId, 'button', answers)
@@ -66,6 +67,7 @@ const adminApp = new Hono<{ Variables: TenantVars }>()
     const res = await new JoinRequestService(c.get('db')).approve(
       c.req.valid('json').requestId,
       c.get('user').id,
+      c.get('libraryId'), // scoped to admin's library (prevents cross-tenant approval)
     )
     if ('error' in res) return c.json(res, 404)
     return c.json(res)
@@ -74,6 +76,7 @@ const adminApp = new Hono<{ Variables: TenantVars }>()
     const res = await new JoinRequestService(c.get('db')).reject(
       c.req.valid('json').requestId,
       c.get('user').id,
+      c.get('libraryId'), // scoped to admin's library (prevents cross-tenant rejection)
     )
     if ('error' in res) return c.json(res, 404)
     return c.json(res)

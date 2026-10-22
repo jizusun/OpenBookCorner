@@ -43,7 +43,10 @@ export const serverApp = new Hono<{ Variables: BaseVars }>()
   .get('/covers/:key', async (c) => {
     const r2 = c.get('env').COVERS
     if (!r2) return c.notFound()
-    const obj = await r2.get(c.req.param('key'))
+    const key = c.req.param('key')
+    // Block private import archives from being served unauthenticated.
+    if (key.startsWith('imports/') || key.startsWith('imports%2F')) return c.notFound()
+    const obj = await r2.get(key)
     if (!obj) return c.notFound()
     const headers = new Headers()
     headers.set('Content-Type', obj.httpMetadata?.contentType ?? 'image/jpeg')
