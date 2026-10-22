@@ -15,7 +15,7 @@
     "ENVIRONMENT": "production",
     "APP_NAME": "OpenBookCorner",
     "APP_ORIGIN": "https://openbookcorner.jizu.dev",
-    "RESEND_FROM": "noreply@openbookcorner.jizu.dev"
+    "RESEND_FROM": "noreply@jizu.dev"
   },
   "d1_databases": [
     {
