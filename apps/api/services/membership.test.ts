@@ -33,14 +33,23 @@ describe('validateJoinAnswers (pure)', () => {
     expect(errs).toContainEqual({ key: 'company_email', reason: 'invalid_email' })
   })
 
-  it('requires ownership verification for verifyEmail fields', () => {
-    const errs = validateJoinAnswers(fields, { employee_id: 'E1', company_email: 'a@acme.com' }, [])
-    expect(errs).toContainEqual({ key: 'company_email', reason: 'email_not_verified' })
+  // Phase 2 (OTP not yet implemented): verifyEmail is a display hint only.
+  // A valid email value satisfies the field; ownership verification comes later.
+  it('accepts a valid email in a verifyEmail field when OTP not yet enforced', () => {
+    const errs = validateJoinAnswers(fields, { employee_id: 'E1', company_email: 'user@acme.com' }, [])
+    // Should NOT include email_not_verified — just pass through
+    expect(errs.map((e) => e.reason)).not.toContain('email_not_verified')
+    expect(errs).toEqual([])
   })
 
-  it('passes when the verified email matches (case-insensitive)', () => {
-    const errs = validateJoinAnswers(fields, { employee_id: 'E1', company_email: 'A@Acme.com' }, ['a@acme.com'])
-    expect(errs).toEqual([])
+  it('still rejects a malformed email even on a verifyEmail field', () => {
+    const errs = validateJoinAnswers(fields, { employee_id: 'E1', company_email: 'not-valid' })
+    expect(errs).toContainEqual({ key: 'company_email', reason: 'invalid_email' })
+  })
+
+  it('still requires the verifyEmail field to be present (required check)', () => {
+    const errs = validateJoinAnswers(fields, { employee_id: 'E1' })
+    expect(errs).toContainEqual({ key: 'company_email', reason: 'required' })
   })
 
   it('treats whitespace-only as empty for required', () => {
