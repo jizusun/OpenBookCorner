@@ -29,6 +29,8 @@ type CloudflareEnv = {
   APP_NAME?: string
   BETTER_AUTH_SECRET?: string
   ENVIRONMENT?: string
+  RESEND_API_KEY?: string
+  RESEND_FROM?: string
 }
 
 const worker = new Hono<{ Bindings: CloudflareEnv; Variables: BaseVars }>()
@@ -70,6 +72,8 @@ const setup = createMiddleware<{ Bindings: CloudflareEnv; Variables: BaseVars }>
         APP_ORIGINS: c.env.APP_ORIGINS,
         BETTER_AUTH_SECRET:
           c.env.BETTER_AUTH_SECRET ?? 'dev-only-insecure-secret-change-me-32chars',
+        RESEND_API_KEY: c.env.RESEND_API_KEY,
+        RESEND_FROM: c.env.RESEND_FROM,
       }),
       DB: c.env.DB,
       COVERS: c.env.COVERS,
