@@ -3,9 +3,11 @@ import { FormPageSkeleton } from '@/components/ui/skeleton'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Trans, Plural, useLingui } from '@lingui/react/macro'
+import { ExternalLink } from 'lucide-react'
 import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { useToast } from '@/components/Toast'
 
 export const Route = createFileRoute('/_app/admin/import')({
@@ -19,34 +21,6 @@ export const Route = createFileRoute('/_app/admin/import')({
   component: ImportPage,
 })
 
-// 番薯 sheet names → our FanshuSheets keys.
-const SHEET_MAP: Record<string, keyof Sheets> = {
-  书籍清单: 'books',
-  存量明细: 'stock',
-  成员清单: 'members',
-  借阅清单: 'loans',
-  评论清单: 'reviews',
-  荐购清单: 'purchaseRequests',
-}
-
-type Row = Record<string, unknown>
-interface Sheets {
-  books: Row[]
-  stock: Row[]
-  members: Row[]
-  loans: Row[]
-  reviews: Row[]
-  purchaseRequests: Row[]
-}
-const emptySheets = (): Sheets => ({
-  books: [],
-  stock: [],
-  members: [],
-  loans: [],
-  reviews: [],
-  purchaseRequests: [],
-})
-
 interface Counts {
   books: number
   members: number
@@ -55,62 +29,75 @@ interface Counts {
   purchaseRequests: number
   orphanLoans: { noMember: number; noBook: number }
 }
+interface RunRow {
+  id: string
+  createdAt: string
+  status: string
+  fileName?: string | null
+  sourceUrl?: string | null
+  r2Key?: string | null
+  ranByUserId?: string | null
+  ranByUserName?: string | null
+  counts?: Record<string, number> | null
+  error?: string | null
+}
+
+function CountList({ c }: { c: Counts }) {
+  return (
+    <ul className="mt-1 space-y-0.5 text-sm text-muted-foreground">
+      <li><Plural value={c.books} one="# book" other="# books" /></li>
+      <li><Plural value={c.members} one="# member" other="# members" /></li>
+      <li><Plural value={c.loans} one="# loan" other="# loans" /></li>
+      <li><Plural value={c.reviews} one="# review" other="# reviews" /></li>
+      <li><Plural value={c.purchaseRequests} one="# purchase request" other="# purchase requests" /></li>
+      {(c.orphanLoans.noMember > 0 || c.orphanLoans.noBook > 0) && (
+        <li className="text-amber-600">
+          <Plural
+            value={c.orphanLoans.noMember + c.orphanLoans.noBook}
+            one="# loan skipped (unmatched member/book)"
+            other="# loans skipped (unmatched member/book)"
+          />
+        </li>
+      )}
+    </ul>
+  )
+}
 
 function ImportPage() {
   const queryClient = useQueryClient()
   const { data: history } = useQuery(api.library.importHistory.queryOptions())
   const toast = useToast()
   const { t } = useLingui()
-  const [fileName, setFileName] = useState<string | null>(null)
-  const [sheets, setSheets] = useState<Sheets | null>(null)
+
   const [counts, setCounts] = useState<Counts | null>(null)
   const [result, setResult] = useState<Counts | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
   const [url, setUrl] = useState('')
-
-  async function handleUrlImport() {
-    const u = url.trim()
-    if (!u) return
-    setError(null)
-    setResult(null)
-    setCounts(null)
-    setFileName(u)
-    setBusy(true)
-    try {
-      // The Worker fetches + parses the URL (the browser can't fetch it
-      // cross-origin). Preview first, then the admin confirms with Import.
-      const preview = await api.library.importFanshuFromUrl.mutate({ url: u, preview: true })
-      setCounts(preview)
-      setSheets(null) // signals the commit path to use the URL, not parsed sheets
-    } catch {
-      setError(t`Could not fetch that URL. Paste a 番薯借阅 export link (https://…fanshujieyue.com/….xls).`)
-    } finally {
-      setBusy(false)
-    }
-  }
+  // For file upload we keep the File object (not pre-parsed sheets)
+  const [pendingFile, setPendingFile] = useState<File | null>(null)
+  const [pendingUrl, setPendingUrl] = useState('')
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
-    setError(null)
-    setResult(null)
-    setCounts(null)
-    setFileName(file.name)
+    setError(null); setResult(null); setCounts(null); setPendingFile(file); setPendingUrl('')
     setBusy(true)
     try {
-      // Lazy-load SheetJS so it stays out of the main bundle (parse in the browser).
+      // Preview via the legacy browser-parse path (fast, no upload yet).
       const XLSX = await import('xlsx')
       const buf = await file.arrayBuffer()
       const wb = XLSX.read(buf, { type: 'array' })
-      const parsed = emptySheets()
-      for (const name of wb.SheetNames) {
-        const key = SHEET_MAP[name]
-        if (!key) continue
-        parsed[key] = XLSX.utils.sheet_to_json(wb.Sheets[name]!, { defval: '' }) as Row[]
+      const sheetMap: Record<string, string> = {
+        '书籍清单': 'books', '存量明细': 'stock', '成员清单': 'members',
+        '借阅清单': 'loans', '评论清单': 'reviews', '荐购清单': 'purchaseRequests',
       }
-      setSheets(parsed)
-      const preview = await api.library.importFanshuPreview.mutate({ sheets: parsed })
+      const sheets: Record<string, unknown[]> = { books: [], stock: [], members: [], loans: [], reviews: [], purchaseRequests: [] }
+      for (const name of wb.SheetNames) {
+        const key = sheetMap[name]
+        if (key) sheets[key] = XLSX.utils.sheet_to_json(wb.Sheets[name]!, { defval: '' }) as unknown[]
+      }
+      const preview = await api.library.importFanshuPreview.mutate({ sheets: sheets as never })
       setCounts(preview)
     } catch {
       setError(t`Could not read this file. Make sure it is a 番薯借阅 Excel export (.xls/.xlsx).`)
@@ -119,13 +106,40 @@ function ImportPage() {
     }
   }
 
-  async function handleImport() {
+  async function handleUrlFetch() {
+    const u = url.trim()
+    if (!u) return
+    setError(null); setResult(null); setCounts(null); setPendingFile(null); setPendingUrl(u)
     setBusy(true)
-    setError(null)
     try {
-      const res = sheets
-        ? await api.library.importFanshu.mutate({ sheets, fileName: fileName ?? undefined })
-        : await api.library.importFanshuFromUrl.mutate({ url: url.trim() })
+      const preview = await api.library.importFanshuFromUrl.mutate({ url: u, preview: true })
+      setCounts(preview)
+    } catch {
+      setError(t`Could not fetch that URL. Paste a 番薯借阅 export link (https://…fanshujieyue.com/….xls).`)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function handleImport() {
+    setBusy(true); setError(null)
+    try {
+      let res: Counts
+      if (pendingFile) {
+        // Upload raw file → server parses + archives to R2 (preserves original).
+        const fd = new FormData()
+        fd.append('file', pendingFile)
+        const resp = await fetch('/api/library/import/file', {
+          method: 'POST',
+          credentials: 'include',
+          body: fd,
+        })
+        if (!resp.ok) throw new Error(await resp.text())
+        res = await resp.json() as Counts
+      } else {
+        // URL path: server fetches + archives to R2.
+        res = await api.library.importFanshuFromUrl.mutate({ url: pendingUrl })
+      }
       setResult(res)
       toast.success(t`Imported ${res.books} books, ${res.members} members, ${res.loans} loans.`)
       await queryClient.invalidateQueries({ queryKey: api.book.list.queryKey() })
@@ -139,96 +153,55 @@ function ImportPage() {
 
   return (
     <div className="mx-auto max-w-lg space-y-4">
-      <h1 className="text-2xl font-bold">
-        <Trans>Import from 番薯借阅</Trans>
-      </h1>
+      <h1 className="text-2xl font-bold"><Trans>Import from 番薯借阅</Trans></h1>
+
+      {/* Upload card */}
       <Card>
         <CardHeader>
-          <CardTitle>
-            <Trans>Upload export</Trans>
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">
+          <CardTitle><Trans>Upload export</Trans></CardTitle>
+          <CardDescription>
             <Trans>
               Upload the 番薯借阅 Excel export (.xls). Books, members, loans, reviews and purchase
-              requests are imported into this library. Re-importing updates existing rows (safe to
-              run again).
+              requests are imported into this library. Re-importing updates existing rows safely.
+              The original file is archived to R2 for auditability.
             </Trans>
-          </p>
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <input
-            type="file"
-            accept=".xls,.xlsx,application/vnd.ms-excel"
-            data-testid="import-file"
-            onChange={handleFile}
-            className="block w-full text-sm"
-          />
+          <input type="file" accept=".xls,.xlsx,application/vnd.ms-excel"
+            data-testid="import-file" onChange={handleFile} className="block w-full text-sm" />
 
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span className="h-px flex-1 bg-border" /> <Trans>or paste a link</Trans>{' '}
+            <span className="h-px flex-1 bg-border" />
+            <Trans>or paste a link</Trans>
             <span className="h-px flex-1 bg-border" />
           </div>
 
           <div className="flex gap-2">
-            <input
-              type="url"
-              inputMode="url"
+            <input type="url" inputMode="url"
               placeholder={t`https://…fanshujieyue.com/…/librarydata_….xls`}
-              data-testid="import-url"
-              value={url}
+              data-testid="import-url" value={url}
               onChange={(e) => setUrl(e.target.value)}
-              className="flex-1 rounded-md border px-2 py-1 text-sm"
-            />
-            <Button type="button" variant="outline" onClick={handleUrlImport} disabled={busy || !url.trim()}>
+              className="flex-1 rounded-md border px-2 py-1 text-sm" />
+            <Button type="button" variant="outline" onClick={handleUrlFetch}
+              disabled={busy || !url.trim()}>
               <Trans>Fetch</Trans>
             </Button>
           </div>
+
           {busy && !result && (
-            <p className="text-sm text-muted-foreground">
-              <Trans>Working…</Trans>
-            </p>
+            <p className="text-sm text-muted-foreground"><Trans>Working…</Trans></p>
           )}
           {error && (
-            <p className="text-sm text-destructive" data-testid="import-error">
-              {error}
-            </p>
+            <p className="text-sm text-destructive" data-testid="import-error">{error}</p>
           )}
 
           {counts && !result && (
-            <div className="rounded-md border p-3 text-sm" data-testid="import-preview">
-              <p className="font-medium">
-                <Trans>Preview — {fileName ?? ''}</Trans>
+            <div className="rounded-md border p-3" data-testid="import-preview">
+              <p className="text-sm font-medium">
+                <Trans>Preview — {pendingFile?.name ?? pendingUrl}</Trans>
               </p>
-              <ul className="mt-1 space-y-0.5 text-muted-foreground">
-                <li>
-                  <Plural value={counts.books} one="# book" other="# books" />
-                </li>
-                <li>
-                  <Plural value={counts.members} one="# member" other="# members" />
-                </li>
-                <li>
-                  <Plural value={counts.loans} one="# loan" other="# loans" />
-                </li>
-                <li>
-                  <Plural value={counts.reviews} one="# review" other="# reviews" />
-                </li>
-                <li>
-                  <Plural
-                    value={counts.purchaseRequests}
-                    one="# purchase request"
-                    other="# purchase requests"
-                  />
-                </li>
-                {(counts.orphanLoans.noMember > 0 || counts.orphanLoans.noBook > 0) && (
-                  <li className="text-amber-600">
-                    <Plural
-                      value={counts.orphanLoans.noMember + counts.orphanLoans.noBook}
-                      one="# loan skipped (unmatched member/book)"
-                      other="# loans skipped (unmatched member/book)"
-                    />
-                  </li>
-                )}
-              </ul>
+              <CountList c={counts} />
               <Button className="mt-3" onClick={handleImport} disabled={busy}>
                 {busy ? <Trans>Importing…</Trans> : <Trans>Import</Trans>}
               </Button>
@@ -236,79 +209,84 @@ function ImportPage() {
           )}
 
           {result && (
-            <div className="rounded-md border p-3 text-sm" data-testid="import-result">
-              <p className="font-medium text-green-600">
-                <Trans>Imported successfully</Trans>
-              </p>
-              <ul className="mt-1 space-y-0.5 text-muted-foreground">
-                <li>
-                  <Plural value={result.books} one="# book" other="# books" />
-                </li>
-                <li>
-                  <Plural value={result.members} one="# member" other="# members" />
-                </li>
-                <li>
-                  <Plural value={result.loans} one="# loan" other="# loans" />
-                </li>
-                <li>
-                  <Plural value={result.reviews} one="# review" other="# reviews" />
-                </li>
-                <li>
-                  <Plural
-                    value={result.purchaseRequests}
-                    one="# purchase request"
-                    other="# purchase requests"
-                  />
-                </li>
-              </ul>
+            <div className="rounded-md border p-3" data-testid="import-result">
+              <p className="text-sm font-medium text-green-600"><Trans>Imported successfully</Trans></p>
+              <CountList c={result} />
             </div>
           )}
         </CardContent>
       </Card>
 
+      {/* Import history */}
       {history && history.length > 0 && (
         <Card data-testid="import-history">
           <CardHeader>
-            <CardTitle>
-              <Trans>Import history</Trans>
-            </CardTitle>
-            <p className="text-sm text-muted-foreground">
-              <Trans>Every import is recorded with its source and counts.</Trans>
-            </p>
+            <CardTitle><Trans>Import history</Trans></CardTitle>
+            <CardDescription>
+              <Trans>Every import is recorded — who imported, when, from where, and where the file is stored.</Trans>
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <ul className="space-y-3 text-sm">
-              {history.map((run) => {
+              {(history as RunRow[]).map((run) => {
                 const c = (run.counts ?? {}) as Record<string, number>
+                const source = run.sourceUrl ?? run.fileName ?? '—'
                 return (
-                  <li key={run.id} className="rounded-md border p-3">
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium">
-                        {new Date(run.createdAt).toLocaleString()}
-                      </span>
-                      <span
-                        className={
-                          run.status === 'success' ? 'text-green-600' : 'text-destructive'
-                        }
-                      >
+                  <li key={run.id} className="rounded-md border p-3 space-y-1.5">
+                    {/* Who + when + status */}
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="min-w-0">
+                        <span className="font-medium">
+                          {new Date(run.createdAt).toLocaleString()}
+                        </span>
+                        {run.ranByUserName && (
+                          <span className="ml-2 text-muted-foreground">
+                            <Trans>by {run.ranByUserName}</Trans>
+                          </span>
+                        )}
+                      </div>
+                      <Badge variant={run.status === 'success' ? 'default' : 'destructive'}>
                         {run.status === 'success' ? <Trans>success</Trans> : <Trans>failed</Trans>}
-                      </span>
+                      </Badge>
                     </div>
-                    <p className="mt-1 text-muted-foreground">
-                      <Trans>
-                        {c.books ?? 0} books · {c.members ?? 0} members · {c.loans ?? 0} loans ·{' '}
-                        {c.reviews ?? 0} reviews · {c.purchaseRequests ?? 0} requests
-                      </Trans>
-                    </p>
-                    {(run.sourceUrl || run.fileName) && (
-                      <p className="mt-1 break-all text-xs text-muted-foreground">
-                        <Trans>Source: {run.sourceUrl ?? run.fileName ?? ''}</Trans>
+
+                    {/* Counts */}
+                    {run.status === 'success' && (
+                      <p className="text-xs text-muted-foreground">
+                        {c.books ?? 0} <Trans>books</Trans> ·{' '}
+                        {c.members ?? 0} <Trans>members</Trans> ·{' '}
+                        {c.loans ?? 0} <Trans>loans</Trans>
                       </p>
                     )}
-                    {run.r2Key && (
-                      <p className="break-all text-xs text-muted-foreground">
-                        <Trans>R2: {run.r2Key}</Trans>
+
+                    {/* Source (where from) */}
+                    <div className="flex items-start gap-1 text-xs text-muted-foreground">
+                      <span className="shrink-0 font-medium"><Trans>Source:</Trans></span>
+                      {run.sourceUrl ? (
+                        <a href={run.sourceUrl} target="_blank" rel="noreferrer"
+                          className="flex items-center gap-0.5 break-all text-primary hover:underline">
+                          {run.sourceUrl.length > 60 ? run.sourceUrl.slice(0, 60) + '…' : run.sourceUrl}
+                          <ExternalLink className="size-3 shrink-0" />
+                        </a>
+                      ) : (
+                        <span className="break-all">{run.fileName ?? '—'}</span>
+                      )}
+                    </div>
+
+                    {/* R2 key (where stored) */}
+                    {run.r2Key ? (
+                      <div className="flex items-start gap-1 text-xs text-muted-foreground">
+                        <span className="shrink-0 font-medium"><Trans>Archived:</Trans></span>
+                        <code className="break-all rounded bg-muted px-1">{run.r2Key}</code>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-muted-foreground/60">
+                        <Trans>File not archived (pre-R2 import)</Trans>
                       </p>
+                    )}
+
+                    {run.error && (
+                      <p className="text-xs text-destructive">{run.error}</p>
                     )}
                   </li>
                 )

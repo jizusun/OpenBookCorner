@@ -16,6 +16,7 @@ import {
   purchaseRequests,
   reviews,
   importRuns,
+  user,
   type Database,
 } from '@obc/db'
 
@@ -240,11 +241,26 @@ export class FanshuImportService {
 
   /** Import audit history for a library, newest first. */
   async listRuns(libraryId: string) {
-    return this.db
-      .select()
+    const rows = await this.db
+      .select({
+        id: importRuns.id,
+        libraryId: importRuns.libraryId,
+        source: importRuns.source,
+        sourceUrl: importRuns.sourceUrl,
+        r2Key: importRuns.r2Key,
+        fileName: importRuns.fileName,
+        ranByUserId: importRuns.ranByUserId,
+        status: importRuns.status,
+        counts: importRuns.counts,
+        error: importRuns.error,
+        createdAt: importRuns.createdAt,
+        ranByUserName: user.name,
+      })
       .from(importRuns)
+      .leftJoin(user, eq(importRuns.ranByUserId, user.id))
       .where(eq(importRuns.libraryId, libraryId))
       .orderBy(desc(importRuns.createdAt))
-      .all()
+      .all?.() ?? []
+    return rows
   }
 }
