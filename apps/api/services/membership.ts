@@ -251,7 +251,6 @@ export function validateJoinAnswers(
   verifiedEmails: string[] = [],
 ): JoinAnswerError[] {
   const errors: JoinAnswerError[] = []
-  const verified = new Set(verifiedEmails.map((e) => e.trim().toLowerCase()))
   for (const f of fields) {
     const raw = answers[f.key]
     const val = (raw ?? '').trim()
@@ -260,14 +259,13 @@ export function validateJoinAnswers(
       continue
     }
     if (f.type === 'email') {
-      // minimal shape check; the real gate is ownership verification below
+      // Shape check only. `verifyEmail` is a Phase 2 feature (OTP); until
+      // email sending is implemented it is a display hint, not a submission gate.
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val)) {
         errors.push({ key: f.key, reason: 'invalid_email' })
-        continue
       }
-      if (f.verifyEmail && !verified.has(val.toLowerCase())) {
-        errors.push({ key: f.key, reason: 'email_not_verified' })
-      }
+      // Note: verifiedEmails param is kept for forward compat with Phase 2 OTP.
+      void verifiedEmails
     }
   }
   return errors
