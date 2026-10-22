@@ -40,7 +40,7 @@ function CurrentLibraryBadge({ role }: { role: string }) {
 
 export const Route = createFileRoute('/_app')({
   // Server-validated auth: requireMe throws if unauthenticated.
-  beforeLoad: async ({ location }) => {
+  beforeLoad: async ({ location, search }) => {
     let user
     try {
       user = await ensureRequireMe()
@@ -48,8 +48,6 @@ export const Route = createFileRoute('/_app')({
       throw redirect({ to: '/login' })
     }
     // ADR 0009: a user with no active library must pick/create one first.
-    // super_admin is platform-scoped (no library needed). Allow the
-    // welcome/discover pages themselves so the user can act.
     const needsLibrary = user.role !== 'super_admin' && !user.activeLibraryId
     const onboarding =
       location.pathname.endsWith('/welcome') || location.pathname.endsWith('/discover')
